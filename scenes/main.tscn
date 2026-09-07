@@ -1,0 +1,407 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="game"]
+
+[ext_resource type="Script" path="res://scripts/rts_camera.gd" id="camera"]
+
+[ext_resource type="Script" path="res://scripts/selection_overlay.gd" id="selection"]
+
+[ext_resource type="PackedScene" path="res://scenes/environment.tscn" id="environment"]
+
+[ext_resource type="PackedScene" path="res://scenes/unit.tscn" id="unit"]
+
+[ext_resource type="PackedScene" path="res://scenes/building.tscn" id="building"]
+
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="hud"]
+
+[ext_resource type="NavigationMesh" path="res://assets/battle_navigation.tres" id="nav"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_material"]
+sky_top_color = Color(0.32,0.41,0.48,1)
+sky_horizon_color = Color(0.81,0.73,0.55,1)
+ground_bottom_color = Color(0.29,0.25,0.19,1)
+ground_horizon_color = Color(0.8,0.72,0.53,1)
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_material")
+
+[sub_resource type="Environment" id="world"]
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+ambient_light_color = Color(0.76,0.81,0.85,1)
+ambient_light_energy = 0.62
+reflected_light_source = 2
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 1.7
+ssao_intensity = 1.8
+ssao_power = 1.5
+ssao_detail = 0.5
+ssil_enabled = true
+ssil_radius = 3.0
+ssil_intensity = 0.4
+glow_enabled = true
+glow_intensity = 0.3
+glow_bloom = 0.03
+fog_enabled = true
+fog_light_color = Color(0.62,0.52,0.35,1)
+fog_light_energy = 0.5
+fog_density = 0.0012
+adjustment_enabled = true
+adjustment_brightness = 1.0
+adjustment_contrast = 1.06
+adjustment_saturation = 0.93
+
+[sub_resource type="Shader" id="vignette"]
+code = "shader_type canvas_item;\nvoid fragment() {\n vec2 d = (UV - vec2(0.5, 0.43)) * vec2(1.12, 1.0);\n float edge = smoothstep(0.31, 0.76, length(d));\n float top = pow(1.0 - UV.y, 5.0) * 0.22;\n COLOR = vec4(0.085, 0.066, 0.047, edge * 0.43 + top);\n}"
+
+[sub_resource type="ShaderMaterial" id="vignette_material"]
+shader = SubResource("vignette")
+
+[node name="AshenCrown" type="Node3D"]
+script = ExtResource("game")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("world")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-54,-31,0)
+light_color = Color(1,0.89,0.72,1)
+light_energy = 1.15
+shadow_enabled = true
+directional_shadow_max_distance = 135.0
+shadow_bias = 0.035
+shadow_normal_bias = 0.7
+directional_shadow_blend_splits = true
+directional_shadow_mode = 2
+light_angular_distance = 1.6
+
+[node name="CameraRig" type="Node3D" parent="."]
+position = Vector3(-10,0,14)
+script = ExtResource("camera")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+position = Vector3(0,42,29.409)
+rotation_degrees = Vector3(-55,0,0)
+projection = 1
+size = 32.0
+near = 0.1
+far = 220.0
+current = true
+
+[node name="Environment" parent="." instance=ExtResource("environment")]
+
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = ExtResource("nav")
+
+[node name="Buildings" type="Node3D" parent="."]
+
+
+[node name="Headquarters" parent="Buildings" instance=ExtResource("building")]
+position = Vector3(-22,0,23)
+building_type = "headquarters"
+team = 0
+
+[node name="EnemyKeep" parent="Buildings" instance=ExtResource("building")]
+position = Vector3(22,0,-24)
+building_type = "enemy_keep"
+team = 1
+
+[node name="NorthBarracks" parent="Buildings" instance=ExtResource("building")]
+position = Vector3(9,0,-21)
+building_type = "barracks"
+team = 1
+
+[node name="Watchtower" parent="Buildings" instance=ExtResource("building")]
+position = Vector3(25,0,-7)
+building_type = "tower"
+team = 1
+
+[node name="WestBarracks" parent="Buildings" instance=ExtResource("building")]
+position = Vector3(-4,0,-12)
+building_type = "barracks"
+team = 1
+
+[node name="Units" type="Node3D" parent="."]
+
+
+[node name="Blue0" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-9.0,0,12.5)
+unit_type = "swordsman"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue1" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-7.2,0,12.5)
+unit_type = "swordsman"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue2" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-5.4,0,12.5)
+unit_type = "swordsman"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue3" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-9.0,0,14.3)
+unit_type = "swordsman"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue4" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-7.2,0,14.3)
+unit_type = "swordsman"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue5" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-5.4,0,14.3)
+unit_type = "swordsman"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue6" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-9.0,0,18.0)
+unit_type = "archer"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue7" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-7.3,0,18.0)
+unit_type = "archer"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue8" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-9.0,0,19.7)
+unit_type = "archer"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue9" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-7.3,0,19.7)
+unit_type = "archer"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue10" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-4,0,16)
+unit_type = "knight"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue11" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-2,0,18)
+unit_type = "knight"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue12" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-14,0,18)
+unit_type = "catapult"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Blue13" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-12,0,22)
+unit_type = "cannon"
+team = 0
+rotation_degrees = Vector3(0,0,0)
+
+[node name="Red14" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-1.0,0,-4.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red15" parent="Units" instance=ExtResource("unit")]
+position = Vector3(0.7,0,-4.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red16" parent="Units" instance=ExtResource("unit")]
+position = Vector3(2.4,0,-4.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red17" parent="Units" instance=ExtResource("unit")]
+position = Vector3(4.1,0,-4.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red18" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-1.0,0,-5.6)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red19" parent="Units" instance=ExtResource("unit")]
+position = Vector3(0.7,0,-5.6)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red20" parent="Units" instance=ExtResource("unit")]
+position = Vector3(2.4,0,-5.6)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red21" parent="Units" instance=ExtResource("unit")]
+position = Vector3(2.0,0,-9)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red22" parent="Units" instance=ExtResource("unit")]
+position = Vector3(3.6,0,-9)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red23" parent="Units" instance=ExtResource("unit")]
+position = Vector3(5.2,0,-9)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red24" parent="Units" instance=ExtResource("unit")]
+position = Vector3(6.800000000000001,0,-9)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red25" parent="Units" instance=ExtResource("unit")]
+position = Vector3(18.0,0,-15.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red26" parent="Units" instance=ExtResource("unit")]
+position = Vector3(19.7,0,-15.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red27" parent="Units" instance=ExtResource("unit")]
+position = Vector3(21.4,0,-15.0)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red28" parent="Units" instance=ExtResource("unit")]
+position = Vector3(18.0,0,-16.5)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red29" parent="Units" instance=ExtResource("unit")]
+position = Vector3(19.7,0,-16.5)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red30" parent="Units" instance=ExtResource("unit")]
+position = Vector3(21.0,0,-18)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red31" parent="Units" instance=ExtResource("unit")]
+position = Vector3(22.5,0,-18)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red32" parent="Units" instance=ExtResource("unit")]
+position = Vector3(24.0,0,-18)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red33" parent="Units" instance=ExtResource("unit")]
+position = Vector3(25.5,0,-18)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red34" parent="Units" instance=ExtResource("unit")]
+position = Vector3(12,0,-13)
+unit_type = "knight"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red35" parent="Units" instance=ExtResource("unit")]
+position = Vector3(15,0,-11)
+unit_type = "knight"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red36" parent="Units" instance=ExtResource("unit")]
+position = Vector3(15,0,-18)
+unit_type = "catapult"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red37" parent="Units" instance=ExtResource("unit")]
+position = Vector3(22,0,-12)
+unit_type = "cannon"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red38" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-8,0,-6)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red39" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-10,0,-5)
+unit_type = "swordsman"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Red40" parent="Units" instance=ExtResource("unit")]
+position = Vector3(-10,0,-10)
+unit_type = "archer"
+team = 1
+rotation_degrees = Vector3(0,180,0)
+
+[node name="Effects" type="Node3D" parent="."]
+
+
+[node name="IncomeTimer" type="Timer" parent="."]
+wait_time = 1.0
+
+[node name="EnemyTimer" type="Timer" parent="."]
+wait_time = 100.0
+
+[node name="Atmosphere" type="CanvasLayer" parent="."]
+layer = 1
+
+[node name="Vignette" type="ColorRect" parent="Atmosphere"]
+material = SubResource("vignette_material")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Interface" parent="HUD" instance=ExtResource("hud")]
+
+
+[node name="SelectionOverlay" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("selection")

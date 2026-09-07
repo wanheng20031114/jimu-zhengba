@@ -1,0 +1,1261 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="hud"]
+
+[ext_resource type="Script" path="res://scripts/minimap.gd" id="minimap"]
+
+[sub_resource type="SystemFont" id="font"]
+font_names = PackedStringArray("Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC")
+font_weight = 500
+
+[sub_resource type="SystemFont" id="bold"]
+font_names = PackedStringArray("Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC")
+font_weight = 700
+
+[sub_resource type="StyleBoxFlat" id="panel"]
+bg_color = Color(0.075,0.085,0.085,0.96)
+border_color = Color(0.40,0.34,0.23,0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="normal"]
+bg_color = Color(0.15,0.155,0.145,0.96)
+border_color = Color(0.40,0.36,0.27,0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="hover"]
+bg_color = Color(0.25,0.245,0.18,1)
+border_color = Color(0.8,0.65,0.36,1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="pressed"]
+bg_color = Color(0.34,0.28,0.16,1)
+border_color = Color(0.92,0.77,0.43,1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="disabled"]
+bg_color = Color(0.105,0.115,0.11,0.95)
+border_color = Color(0.27,0.28,0.23,0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="hp_bg"]
+bg_color = Color(0.055,0.065,0.06,1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_left = 2
+corner_radius_bottom_right = 2
+
+[sub_resource type="StyleBoxFlat" id="hp_fg"]
+bg_color = Color(0.49,0.65,0.40,1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_left = 2
+corner_radius_bottom_right = 2
+
+[sub_resource type="Theme" id="theme"]
+default_font = SubResource("font")
+default_font_size = 15
+Button/colors/font_color = Color(0.9,0.88,0.79,1)
+Button/colors/font_hover_color = Color(1,0.94,0.74,1)
+Button/colors/font_disabled_color = Color(0.43,0.46,0.44,1)
+Button/styles/normal = SubResource("normal")
+Button/styles/hover = SubResource("hover")
+Button/styles/pressed = SubResource("pressed")
+Button/styles/disabled = SubResource("disabled")
+Button/styles/focus = SubResource("hover")
+Label/colors/font_color = Color(0.90,0.90,0.84,1)
+Label/colors/font_shadow_color = Color(0.04,0.04,0.035,0.8)
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Panel/styles/panel = SubResource("panel")
+ProgressBar/styles/background = SubResource("hp_bg")
+ProgressBar/styles/fill = SubResource("hp_fg")
+TooltipPanel/styles/panel = SubResource("panel")
+TooltipLabel/colors/font_color = Color(0.94,0.91,0.79,1)
+
+[node name="Interface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = SubResource("theme")
+script = ExtResource("hud")
+process_mode = 3
+
+[node name="TopLeft" type="Control" parent="."]
+layout_mode = 0
+offset_left = 28
+offset_top = 22
+offset_right = 448
+offset_bottom = 142
+mouse_filter = 2
+
+[node name="Eyebrow" type="Label" parent="TopLeft"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 400
+offset_bottom = 20
+text = "ASHEN CROWN  /  边境战役"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.92,0.81,0.56,1)
+
+[node name="Title" type="Label" parent="TopLeft"]
+layout_mode = 0
+offset_left = 0
+offset_top = 21
+offset_right = 340
+offset_bottom = 63
+text = "灰烬王国"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 31
+theme_override_fonts/font = SubResource("bold")
+
+[node name="Location" type="Label" parent="TopLeft"]
+layout_mode = 0
+offset_left = 1
+offset_top = 66
+offset_right = 341
+offset_bottom = 90
+text = "第一章   ·   沙石镇"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.84,0.82,0.72,1)
+
+[node name="Objective" type="Label" parent="TopLeft"]
+layout_mode = 0
+offset_left = 0
+offset_top = 103
+offset_right = 390
+offset_bottom = 129
+text = "摧毁敌方军事建筑  0 / 4"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+unique_name_in_owner = true
+
+[node name="EnemyCount" type="Label" parent="TopLeft"]
+layout_mode = 0
+offset_left = 0
+offset_top = 133
+offset_right = 330
+offset_bottom = 155
+text = "敌军 30    击败 0"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.82,0.79,0.66,1)
+unique_name_in_owner = true
+
+[node name="Resources" type="Panel" parent="."]
+layout_mode = 0
+offset_left = -364
+offset_top = 24
+offset_right = -24
+offset_bottom = 100
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+
+[node name="GoldCaption" type="Label" parent="Resources"]
+layout_mode = 0
+offset_left = 18
+offset_top = 8
+offset_right = 148
+offset_bottom = 30
+text = "◈  金币"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.87,0.74,0.45,1)
+
+[node name="GoldValue" type="Label" parent="Resources"]
+layout_mode = 0
+offset_left = 18
+offset_top = 29
+offset_right = 146
+offset_bottom = 65
+text = "320"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 28
+theme_override_fonts/font = SubResource("bold")
+theme_override_colors/font_color = Color(1,0.86,0.53,1)
+unique_name_in_owner = true
+
+[node name="Income" type="Label" parent="Resources"]
+layout_mode = 0
+offset_left = 104
+offset_top = 41
+offset_right = 179
+offset_bottom = 62
+text = "+1 / 秒"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.69,0.66,0.51,1)
+
+[node name="ArmyCaption" type="Label" parent="Resources"]
+layout_mode = 0
+offset_left = 204
+offset_top = 8
+offset_right = 319
+offset_bottom = 30
+text = "军队"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.67,0.77,0.8,1)
+
+[node name="ArmyValue" type="Label" parent="Resources"]
+layout_mode = 0
+offset_left = 202
+offset_top = 34
+offset_right = 332
+offset_bottom = 60
+text = "16 / 160"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 19
+unique_name_in_owner = true
+
+[node name="TimeValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = -240
+offset_top = 108
+offset_right = -164
+offset_bottom = 132
+text = "00:00"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.84,0.81,0.70,1)
+unique_name_in_owner = true
+anchor_left = 1.0
+anchor_right = 1.0
+
+[node name="HelpButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = -153
+offset_top = 108
+offset_right = -78
+offset_bottom = 138
+text = "?  操作"
+unique_name_in_owner = true
+focus_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+
+[node name="PauseButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = -68
+offset_top = 108
+offset_right = -24
+offset_bottom = 138
+text = "Ⅱ"
+unique_name_in_owner = true
+focus_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+
+[node name="CommandBar" type="Panel" parent="."]
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+anchor_right = 1.0
+offset_left = 238.0
+offset_top = -180.0
+offset_right = -24.0
+offset_bottom = -22.0
+grow_vertical = 0
+
+[node name="MapFrame" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 24
+offset_top = -226
+offset_right = 220
+offset_bottom = -22
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+
+[node name="MapTitle" type="Label" parent="MapFrame"]
+layout_mode = 0
+offset_left = 12
+offset_top = 6
+offset_right = 182
+offset_bottom = 30
+text = "沙石镇"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8,0.77,0.63,1)
+
+[node name="Minimap" type="Control" parent="MapFrame"]
+layout_mode = 0
+offset_left = 11
+offset_top = 32
+offset_right = 185
+offset_bottom = 192
+script = ExtResource("minimap")
+unique_name_in_owner = true
+clip_contents = true
+mouse_default_cursor_shape = 2
+
+[node name="Selection" type="Control" parent="CommandBar"]
+layout_mode = 0
+offset_left = 16
+offset_top = 13
+offset_right = 316
+offset_bottom = 149
+mouse_filter = 2
+
+[node name="SelectionCaption" type="Label" parent="CommandBar"]
+layout_mode = 0
+offset_left = 16
+offset_top = -28
+offset_right = 196
+offset_bottom = -4
+text = "所选部队"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.91,0.85,0.69,1)
+
+[node name="SelectedPortrait" type="TextureRect" parent="CommandBar/Selection"]
+layout_mode = 0
+offset_left = 0
+offset_top = 5
+offset_right = 94
+offset_bottom = 117
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+unique_name_in_owner = true
+
+[node name="SelectedRole" type="Label" parent="CommandBar/Selection"]
+layout_mode = 0
+offset_left = 107
+offset_top = 0
+offset_right = 297
+offset_bottom = 20
+text = "蓝旗军团"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.53,0.72,0.84,1)
+unique_name_in_owner = true
+
+[node name="SelectedName" type="Label" parent="CommandBar/Selection"]
+layout_mode = 0
+offset_left = 106
+offset_top = 21
+offset_right = 296
+offset_bottom = 47
+text = "大本营"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_fonts/font = SubResource("bold")
+unique_name_in_owner = true
+
+[node name="SelectionHP" type="ProgressBar" parent="CommandBar/Selection"]
+layout_mode = 0
+offset_left = 108
+offset_top = 58
+offset_right = 282
+offset_bottom = 65
+show_percentage = false
+value = 100.0
+unique_name_in_owner = true
+
+[node name="SelectionHPText" type="Label" parent="CommandBar/Selection"]
+layout_mode = 0
+offset_left = 108
+offset_top = 68
+offset_right = 282
+offset_bottom = 86
+text = "2200 / 2200"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.72,0.77,0.62,1)
+unique_name_in_owner = true
+
+[node name="SelectedStats" type="Label" parent="CommandBar/Selection"]
+layout_mode = 0
+offset_left = 108
+offset_top = 91
+offset_right = 294
+offset_bottom = 131
+text = "每秒 +1 金币\n右键设置集结点"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.72,0.74,0.7,1)
+unique_name_in_owner = true
+autowrap_mode = 2
+
+[node name="Separator1" type="ColorRect" parent="CommandBar"]
+layout_mode = 0
+offset_left = 323
+offset_top = 17
+offset_right = 324
+offset_bottom = 141
+color = Color(0.45,0.39,0.27,0.55)
+mouse_filter = 2
+
+[node name="Recruitment" type="Control" parent="CommandBar"]
+layout_mode = 0
+offset_left = 342
+offset_top = 0
+offset_right = 908
+offset_bottom = 156
+mouse_filter = 2
+
+[node name="RecruitTitle" type="Label" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 0
+offset_top = -28
+offset_right = 180
+offset_bottom = -4
+text = "即时招募"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.91,0.85,0.69,1)
+
+[node name="RecruitHint" type="Label" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 318
+offset_top = -28
+offset_right = 542
+offset_bottom = -4
+text = "消耗金币 · 即刻出兵"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.80,0.76,0.63,1)
+unique_name_in_owner = true
+horizontal_alignment = 2
+
+[node name="Recruit0" type="Button" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 0
+offset_top = 12
+offset_right = 101
+offset_bottom = 142
+text = ""
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="Portrait" type="TextureRect" parent="CommandBar/Recruitment/Recruit0"]
+layout_mode = 0
+offset_left = 4
+offset_top = 4
+offset_right = 97
+offset_bottom = 86
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Hotkey" type="Label" parent="CommandBar/Recruitment/Recruit0"]
+layout_mode = 0
+offset_left = 8
+offset_top = 4
+offset_right = 30
+offset_bottom = 24
+text = "Q"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.75,0.78,0.72,1)
+
+[node name="Name" type="Label" parent="CommandBar/Recruitment/Recruit0"]
+layout_mode = 0
+offset_left = 4
+offset_top = 83
+offset_right = 97
+offset_bottom = 106
+text = "剑士"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = SubResource("bold")
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="CommandBar/Recruitment/Recruit0"]
+layout_mode = 0
+offset_left = 4
+offset_top = 105
+offset_right = 97
+offset_bottom = 124
+text = "◈ 45"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.92,0.79,0.49,1)
+horizontal_alignment = 1
+
+[node name="Recruit1" type="Button" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 111
+offset_top = 12
+offset_right = 212
+offset_bottom = 142
+text = ""
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="Portrait" type="TextureRect" parent="CommandBar/Recruitment/Recruit1"]
+layout_mode = 0
+offset_left = 4
+offset_top = 4
+offset_right = 97
+offset_bottom = 86
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Hotkey" type="Label" parent="CommandBar/Recruitment/Recruit1"]
+layout_mode = 0
+offset_left = 8
+offset_top = 4
+offset_right = 30
+offset_bottom = 24
+text = "E"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.75,0.78,0.72,1)
+
+[node name="Name" type="Label" parent="CommandBar/Recruitment/Recruit1"]
+layout_mode = 0
+offset_left = 4
+offset_top = 83
+offset_right = 97
+offset_bottom = 106
+text = "弓箭手"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = SubResource("bold")
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="CommandBar/Recruitment/Recruit1"]
+layout_mode = 0
+offset_left = 4
+offset_top = 105
+offset_right = 97
+offset_bottom = 124
+text = "◈ 60"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.92,0.79,0.49,1)
+horizontal_alignment = 1
+
+[node name="Recruit2" type="Button" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 222
+offset_top = 12
+offset_right = 323
+offset_bottom = 142
+text = ""
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="Portrait" type="TextureRect" parent="CommandBar/Recruitment/Recruit2"]
+layout_mode = 0
+offset_left = 4
+offset_top = 4
+offset_right = 97
+offset_bottom = 86
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Hotkey" type="Label" parent="CommandBar/Recruitment/Recruit2"]
+layout_mode = 0
+offset_left = 8
+offset_top = 4
+offset_right = 30
+offset_bottom = 24
+text = "R"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.75,0.78,0.72,1)
+
+[node name="Name" type="Label" parent="CommandBar/Recruitment/Recruit2"]
+layout_mode = 0
+offset_left = 4
+offset_top = 83
+offset_right = 97
+offset_bottom = 106
+text = "骑士"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = SubResource("bold")
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="CommandBar/Recruitment/Recruit2"]
+layout_mode = 0
+offset_left = 4
+offset_top = 105
+offset_right = 97
+offset_bottom = 124
+text = "◈ 100"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.92,0.79,0.49,1)
+horizontal_alignment = 1
+
+[node name="Recruit3" type="Button" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 333
+offset_top = 12
+offset_right = 434
+offset_bottom = 142
+text = ""
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="Portrait" type="TextureRect" parent="CommandBar/Recruitment/Recruit3"]
+layout_mode = 0
+offset_left = 4
+offset_top = 4
+offset_right = 97
+offset_bottom = 86
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Hotkey" type="Label" parent="CommandBar/Recruitment/Recruit3"]
+layout_mode = 0
+offset_left = 8
+offset_top = 4
+offset_right = 30
+offset_bottom = 24
+text = "T"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.75,0.78,0.72,1)
+
+[node name="Name" type="Label" parent="CommandBar/Recruitment/Recruit3"]
+layout_mode = 0
+offset_left = 4
+offset_top = 83
+offset_right = 97
+offset_bottom = 106
+text = "投石车"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = SubResource("bold")
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="CommandBar/Recruitment/Recruit3"]
+layout_mode = 0
+offset_left = 4
+offset_top = 105
+offset_right = 97
+offset_bottom = 124
+text = "◈ 140"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.92,0.79,0.49,1)
+horizontal_alignment = 1
+
+[node name="Recruit4" type="Button" parent="CommandBar/Recruitment"]
+layout_mode = 0
+offset_left = 444
+offset_top = 12
+offset_right = 545
+offset_bottom = 142
+text = ""
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="Portrait" type="TextureRect" parent="CommandBar/Recruitment/Recruit4"]
+layout_mode = 0
+offset_left = 4
+offset_top = 4
+offset_right = 97
+offset_bottom = 86
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Hotkey" type="Label" parent="CommandBar/Recruitment/Recruit4"]
+layout_mode = 0
+offset_left = 8
+offset_top = 4
+offset_right = 30
+offset_bottom = 24
+text = "Y"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.75,0.78,0.72,1)
+
+[node name="Name" type="Label" parent="CommandBar/Recruitment/Recruit4"]
+layout_mode = 0
+offset_left = 4
+offset_top = 83
+offset_right = 97
+offset_bottom = 106
+text = "加农炮"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = SubResource("bold")
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="CommandBar/Recruitment/Recruit4"]
+layout_mode = 0
+offset_left = 4
+offset_top = 105
+offset_right = 97
+offset_bottom = 124
+text = "◈ 180"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.92,0.79,0.49,1)
+horizontal_alignment = 1
+
+[node name="Separator2" type="ColorRect" parent="CommandBar"]
+layout_mode = 0
+offset_left = 906
+offset_top = 17
+offset_right = 907
+offset_bottom = 141
+color = Color(0.45,0.39,0.27,0.55)
+mouse_filter = 2
+
+[node name="Orders" type="Control" parent="CommandBar"]
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 926.0
+offset_top = 0.0
+offset_right = -16.0
+offset_bottom = 150.0
+mouse_filter = 2
+
+[node name="OrdersCaption" type="Label" parent="CommandBar/Orders"]
+layout_mode = 0
+offset_left = 0
+offset_top = -28
+offset_right = 160
+offset_bottom = -4
+text = "战场指令"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.91,0.85,0.69,1)
+
+[node name="AttackButton" type="Button" parent="CommandBar/Orders"]
+layout_mode = 0
+offset_left = 0
+offset_top = 16
+offset_right = 122
+offset_bottom = 58
+text = "攻击前进  A"
+unique_name_in_owner = true
+focus_mode = 0
+toggle_mode = true
+
+[node name="StopButton" type="Button" parent="CommandBar/Orders"]
+layout_mode = 0
+offset_left = 134
+offset_top = 16
+offset_right = 239
+offset_bottom = 58
+text = "停止  S"
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="HoldButton" type="Button" parent="CommandBar/Orders"]
+layout_mode = 0
+offset_left = 0
+offset_top = 68
+offset_right = 122
+offset_bottom = 102
+text = "坚守  H"
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="BaseButton" type="Button" parent="CommandBar/Orders"]
+layout_mode = 0
+offset_left = 134
+offset_top = 68
+offset_right = 239
+offset_bottom = 102
+text = "大本营  B"
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="ArmyButton" type="Button" parent="CommandBar/Orders"]
+layout_mode = 0
+offset_left = 0
+offset_top = 112
+offset_right = 239
+offset_bottom = 141
+text = "选择全部军队  G"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+
+[node name="Groups" type="Control" parent="."]
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 240.0
+offset_top = -254.0
+offset_right = 1050.0
+offset_bottom = -218.0
+mouse_filter = 2
+
+[node name="Group1" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 57
+offset_bottom = 29
+text = "1"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group2" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 66
+offset_top = 0
+offset_right = 123
+offset_bottom = 29
+text = "2"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group3" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 132
+offset_top = 0
+offset_right = 189
+offset_bottom = 29
+text = "3"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group4" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 198
+offset_top = 0
+offset_right = 255
+offset_bottom = 29
+text = "4"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group5" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 264
+offset_top = 0
+offset_right = 321
+offset_bottom = 29
+text = "5"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group6" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 330
+offset_top = 0
+offset_right = 387
+offset_bottom = 29
+text = "6"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group7" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 396
+offset_top = 0
+offset_right = 453
+offset_bottom = 29
+text = "7"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group8" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 462
+offset_top = 0
+offset_right = 519
+offset_bottom = 29
+text = "8"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="Group9" type="Button" parent="Groups"]
+layout_mode = 0
+offset_left = 528
+offset_top = 0
+offset_right = 585
+offset_bottom = 29
+text = "9"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
+[node name="GroupHint" type="Label" parent="Groups"]
+layout_mode = 0
+offset_left = 609
+offset_top = 0
+offset_right = 779
+offset_bottom = 29
+text = "Ctrl + 数字  编队"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.81,0.78,0.65,1)
+
+[node name="BottomHint" type="Label" parent="."]
+layout_mode = 0
+offset_left = 0
+offset_top = -20
+offset_right = 0.0
+offset_bottom = -2
+text = "框选部队    右键移动 / 攻击    中键拖动视角    滚轮缩放    F1 操作说明"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.76,0.75,0.67,0.85)
+anchor_top = 1.0
+anchor_bottom = 1.0
+anchor_right = 1.0
+horizontal_alignment = 1
+
+[node name="Toast" type="Label" parent="."]
+layout_mode = 0
+offset_left = -360
+offset_top = 164
+offset_right = 360
+offset_bottom = 202
+text = "集结军队，夺回沙石镇"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(1.0,0.91,0.68,1)
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_right = 0.5
+horizontal_alignment = 1
+
+[node name="HelpOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025,0.035,0.035,0.72)
+visible = false
+unique_name_in_owner = true
+mouse_filter = 0
+
+[node name="Paper" type="Panel" parent="HelpOverlay"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -365
+offset_top = -298
+offset_right = 365
+offset_bottom = 298
+
+[node name="Eyebrow" type="Label" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 34
+offset_top = 25
+offset_right = 684
+offset_bottom = 50
+text = "FIELD MANUAL   /   战地手册"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.82,0.69,0.44,1)
+
+[node name="Title" type="Label" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 34
+offset_top = 62
+offset_right = 684
+offset_bottom = 104
+text = "指挥你的军队"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = SubResource("bold")
+
+[node name="Intro" type="Label" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 34
+offset_top = 118
+offset_right = 684
+offset_bottom = 148
+text = "摧毁四座敌方军事建筑，保卫你的大本营。"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 15
+
+[node name="Keys" type="Label" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 38
+offset_top = 169
+offset_right = 283
+offset_bottom = 500
+text = "左键 / 拖动\nShift + 左键 / 框选\n双击单位\n右键\nShift + 右键\nA + 左键\nS / H\nCtrl + 1—9\n1—9 / 双按数字\n中键拖动 / 方向键\n滚轮 / 空格\nB / G\nF12 / F10"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.88,0.76,0.50,1)
+theme_override_constants/line_spacing = 7
+
+[node name="Actions" type="Label" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 283
+offset_top = 169
+offset_right = 700
+offset_bottom = 500
+text = "选择 / 框选部队\n追加或取消选择\n选择视野内同类单位\n移动、攻击敌人；大本营设置集结点\n追加行军路线\n攻击前进，沿途自动接敌\n停止 / 坚守\n建立编队\n召回编队 / 镜头定位\n移动镜头\n缩放 / 定位所选部队\n大本营 / 全部军队\n调试金币 +100 / 隐藏界面"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_constants/line_spacing = 7
+
+[node name="Economy" type="Label" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 36
+offset_top = 523
+offset_right = 706
+offset_bottom = 551
+text = "每秒自动获得 1 金币 · 选中大本营即可即时招募 · 摧毁敌方建筑获得战利品"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.65,0.70,0.65,1)
+
+[node name="CloseHelp" type="Button" parent="HelpOverlay/Paper"]
+layout_mode = 0
+offset_left = 529
+offset_top = 554
+offset_right = 695
+offset_bottom = 585
+text = "返回战场"
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="PauseOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025,0.035,0.035,0.72)
+visible = false
+unique_name_in_owner = true
+mouse_filter = 0
+
+[node name="Paper" type="Panel" parent="PauseOverlay"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -240
+offset_top = -160
+offset_right = 240
+offset_bottom = 160
+
+[node name="Eyebrow" type="Label" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 32
+offset_top = 25
+offset_right = 448
+offset_bottom = 49
+text = "ASHEN CROWN"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.82,0.69,0.44,1)
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 32
+offset_top = 74
+offset_right = 448
+offset_bottom = 120
+text = "战斗已暂停"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 29
+theme_override_fonts/font = SubResource("bold")
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 54
+offset_top = 169
+offset_right = 426
+offset_bottom = 213
+text = "继续战斗  [Esc]"
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="RestartButton" type="Button" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 54
+offset_top = 230
+offset_right = 426
+offset_bottom = 270
+text = "重新开始"
+unique_name_in_owner = true
+focus_mode = 0
+
+[node name="ResultOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025,0.035,0.035,0.72)
+visible = false
+unique_name_in_owner = true
+mouse_filter = 0
+
+[node name="Paper" type="Panel" parent="ResultOverlay"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -340
+offset_top = -205
+offset_right = 340
+offset_bottom = 205
+
+[node name="ResultEyebrow" type="Label" parent="ResultOverlay/Paper"]
+layout_mode = 0
+offset_left = 32
+offset_top = 39
+offset_right = 648
+offset_bottom = 64
+text = "VICTORY  /  胜利"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.91,0.76,0.42,1)
+unique_name_in_owner = true
+horizontal_alignment = 1
+
+[node name="ResultHeading" type="Label" parent="ResultOverlay/Paper"]
+layout_mode = 0
+offset_left = 32
+offset_top = 94
+offset_right = 648
+offset_bottom = 147
+text = "沙石镇已解放"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 35
+theme_override_fonts/font = SubResource("bold")
+unique_name_in_owner = true
+horizontal_alignment = 1
+
+[node name="ResultBody" type="Label" parent="ResultOverlay/Paper"]
+layout_mode = 0
+offset_left = 44
+offset_top = 179
+offset_right = 636
+offset_bottom = 279
+text = "蓝旗再次升起。"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+unique_name_in_owner = true
+horizontal_alignment = 1
+
+[node name="ResultRestart" type="Button" parent="ResultOverlay/Paper"]
+layout_mode = 0
+offset_left = 216
+offset_top = 323
+offset_right = 464
+offset_bottom = 367
+text = "再次出征"
+unique_name_in_owner = true
+focus_mode = 0

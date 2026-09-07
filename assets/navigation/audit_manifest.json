@@ -1,0 +1,2593 @@
+{
+  "grid_min": -40,
+  "grid_max": 40,
+  "grid_spacing": 1,
+  "height": 0.03,
+  "obstacle_padding": 1.15,
+  "environment_obstacles": 93,
+  "base": {
+    "vertices": 5266,
+    "polygons": 4666
+  },
+  "components": [
+    4658,
+    3,
+    3,
+    2
+  ],
+  "anchor": [
+    -10.5,
+    0.03,
+    19.5
+  ],
+  "routes": [
+    {
+      "name": "CentralBattlefield",
+      "start": [
+        -10.5,
+        0.03,
+        19.5
+      ],
+      "end": [
+        -0.5,
+        0.03,
+        -0.5
+      ]
+    },
+    {
+      "name": "EnemyFront",
+      "start": [
+        -10.5,
+        0.03,
+        19.5
+      ],
+      "end": [
+        15.5,
+        0.03,
+        -10.5
+      ]
+    },
+    {
+      "name": "KeepWestApproach",
+      "start": [
+        -10.5,
+        0.03,
+        19.5
+      ],
+      "end": [
+        13.5,
+        0.03,
+        -25.5
+      ]
+    },
+    {
+      "name": "WestWarehouseApproach",
+      "start": [
+        -10.5,
+        0.03,
+        19.5
+      ],
+      "end": [
+        -10.5,
+        0.03,
+        -13.5
+      ]
+    }
+  ],
+  "patches": [
+    {
+      "name": "Headquarters",
+      "mesh": "res://assets/navigation/Headquarters_cleared.tres",
+      "probe": [
+        -22.5,
+        0.03,
+        22.5
+      ],
+      "crossing_start": [
+        -28.5,
+        0.03,
+        27.5
+      ],
+      "crossing_end": [
+        -15.5,
+        0.03,
+        20.5
+      ],
+      "cells": [
+        [
+          -28,
+          22
+        ],
+        [
+          -28,
+          23
+        ],
+        [
+          -28,
+          24
+        ],
+        [
+          -28,
+          25
+        ],
+        [
+          -28,
+          26
+        ],
+        [
+          -28,
+          27
+        ],
+        [
+          -27,
+          18
+        ],
+        [
+          -27,
+          19
+        ],
+        [
+          -27,
+          20
+        ],
+        [
+          -27,
+          21
+        ],
+        [
+          -27,
+          22
+        ],
+        [
+          -27,
+          23
+        ],
+        [
+          -27,
+          24
+        ],
+        [
+          -27,
+          25
+        ],
+        [
+          -27,
+          26
+        ],
+        [
+          -27,
+          27
+        ],
+        [
+          -26,
+          18
+        ],
+        [
+          -26,
+          19
+        ],
+        [
+          -26,
+          20
+        ],
+        [
+          -26,
+          21
+        ],
+        [
+          -26,
+          22
+        ],
+        [
+          -26,
+          23
+        ],
+        [
+          -26,
+          24
+        ],
+        [
+          -26,
+          25
+        ],
+        [
+          -26,
+          26
+        ],
+        [
+          -26,
+          27
+        ],
+        [
+          -25,
+          18
+        ],
+        [
+          -25,
+          19
+        ],
+        [
+          -25,
+          20
+        ],
+        [
+          -25,
+          21
+        ],
+        [
+          -25,
+          22
+        ],
+        [
+          -25,
+          23
+        ],
+        [
+          -25,
+          24
+        ],
+        [
+          -25,
+          25
+        ],
+        [
+          -25,
+          26
+        ],
+        [
+          -25,
+          27
+        ],
+        [
+          -24,
+          18
+        ],
+        [
+          -24,
+          19
+        ],
+        [
+          -24,
+          20
+        ],
+        [
+          -24,
+          21
+        ],
+        [
+          -24,
+          22
+        ],
+        [
+          -24,
+          23
+        ],
+        [
+          -24,
+          24
+        ],
+        [
+          -24,
+          25
+        ],
+        [
+          -24,
+          26
+        ],
+        [
+          -24,
+          27
+        ],
+        [
+          -23,
+          18
+        ],
+        [
+          -23,
+          19
+        ],
+        [
+          -23,
+          20
+        ],
+        [
+          -23,
+          21
+        ],
+        [
+          -23,
+          22
+        ],
+        [
+          -23,
+          23
+        ],
+        [
+          -23,
+          24
+        ],
+        [
+          -23,
+          25
+        ],
+        [
+          -23,
+          26
+        ],
+        [
+          -23,
+          27
+        ],
+        [
+          -22,
+          18
+        ],
+        [
+          -22,
+          19
+        ],
+        [
+          -22,
+          20
+        ],
+        [
+          -22,
+          21
+        ],
+        [
+          -22,
+          22
+        ],
+        [
+          -22,
+          23
+        ],
+        [
+          -22,
+          24
+        ],
+        [
+          -22,
+          25
+        ],
+        [
+          -22,
+          26
+        ],
+        [
+          -22,
+          27
+        ],
+        [
+          -21,
+          20
+        ],
+        [
+          -21,
+          21
+        ],
+        [
+          -21,
+          22
+        ],
+        [
+          -21,
+          23
+        ],
+        [
+          -21,
+          24
+        ],
+        [
+          -21,
+          25
+        ],
+        [
+          -21,
+          26
+        ],
+        [
+          -21,
+          27
+        ],
+        [
+          -20,
+          20
+        ],
+        [
+          -20,
+          21
+        ],
+        [
+          -20,
+          22
+        ],
+        [
+          -20,
+          23
+        ],
+        [
+          -20,
+          24
+        ],
+        [
+          -20,
+          25
+        ],
+        [
+          -20,
+          26
+        ],
+        [
+          -20,
+          27
+        ],
+        [
+          -19,
+          20
+        ],
+        [
+          -19,
+          21
+        ],
+        [
+          -19,
+          22
+        ],
+        [
+          -19,
+          23
+        ],
+        [
+          -19,
+          24
+        ],
+        [
+          -19,
+          25
+        ],
+        [
+          -19,
+          26
+        ],
+        [
+          -19,
+          27
+        ],
+        [
+          -18,
+          20
+        ],
+        [
+          -18,
+          21
+        ],
+        [
+          -18,
+          22
+        ],
+        [
+          -18,
+          23
+        ],
+        [
+          -18,
+          24
+        ],
+        [
+          -18,
+          25
+        ],
+        [
+          -18,
+          26
+        ],
+        [
+          -18,
+          27
+        ],
+        [
+          -17,
+          20
+        ],
+        [
+          -17,
+          21
+        ],
+        [
+          -17,
+          22
+        ],
+        [
+          -17,
+          23
+        ],
+        [
+          -17,
+          24
+        ],
+        [
+          -17,
+          25
+        ],
+        [
+          -17,
+          26
+        ],
+        [
+          -17,
+          27
+        ]
+      ],
+      "main_boundary_edges": 25
+    },
+    {
+      "name": "EnemyKeep",
+      "mesh": "res://assets/navigation/EnemyKeep_cleared.tres",
+      "probe": [
+        21.5,
+        0.03,
+        -24.5
+      ],
+      "crossing_start": [
+        15.5,
+        0.03,
+        -28.5
+      ],
+      "crossing_end": [
+        28.5,
+        0.03,
+        -19.5
+      ],
+      "cells": [
+        [
+          16,
+          -29
+        ],
+        [
+          16,
+          -28
+        ],
+        [
+          16,
+          -27
+        ],
+        [
+          16,
+          -26
+        ],
+        [
+          16,
+          -25
+        ],
+        [
+          16,
+          -24
+        ],
+        [
+          16,
+          -23
+        ],
+        [
+          16,
+          -22
+        ],
+        [
+          16,
+          -21
+        ],
+        [
+          16,
+          -20
+        ],
+        [
+          17,
+          -29
+        ],
+        [
+          17,
+          -28
+        ],
+        [
+          17,
+          -27
+        ],
+        [
+          17,
+          -26
+        ],
+        [
+          17,
+          -25
+        ],
+        [
+          17,
+          -24
+        ],
+        [
+          17,
+          -23
+        ],
+        [
+          17,
+          -22
+        ],
+        [
+          17,
+          -21
+        ],
+        [
+          17,
+          -20
+        ],
+        [
+          18,
+          -29
+        ],
+        [
+          18,
+          -28
+        ],
+        [
+          18,
+          -27
+        ],
+        [
+          18,
+          -26
+        ],
+        [
+          18,
+          -25
+        ],
+        [
+          18,
+          -24
+        ],
+        [
+          18,
+          -23
+        ],
+        [
+          18,
+          -22
+        ],
+        [
+          18,
+          -21
+        ],
+        [
+          18,
+          -20
+        ],
+        [
+          19,
+          -29
+        ],
+        [
+          19,
+          -28
+        ],
+        [
+          19,
+          -27
+        ],
+        [
+          19,
+          -26
+        ],
+        [
+          19,
+          -25
+        ],
+        [
+          19,
+          -24
+        ],
+        [
+          19,
+          -23
+        ],
+        [
+          19,
+          -22
+        ],
+        [
+          19,
+          -21
+        ],
+        [
+          19,
+          -20
+        ],
+        [
+          20,
+          -29
+        ],
+        [
+          20,
+          -28
+        ],
+        [
+          20,
+          -27
+        ],
+        [
+          20,
+          -26
+        ],
+        [
+          20,
+          -25
+        ],
+        [
+          20,
+          -24
+        ],
+        [
+          20,
+          -23
+        ],
+        [
+          20,
+          -22
+        ],
+        [
+          20,
+          -21
+        ],
+        [
+          20,
+          -20
+        ],
+        [
+          21,
+          -29
+        ],
+        [
+          21,
+          -28
+        ],
+        [
+          21,
+          -27
+        ],
+        [
+          21,
+          -26
+        ],
+        [
+          21,
+          -25
+        ],
+        [
+          21,
+          -24
+        ],
+        [
+          21,
+          -23
+        ],
+        [
+          21,
+          -22
+        ],
+        [
+          21,
+          -21
+        ],
+        [
+          21,
+          -20
+        ],
+        [
+          22,
+          -29
+        ],
+        [
+          22,
+          -28
+        ],
+        [
+          22,
+          -27
+        ],
+        [
+          22,
+          -26
+        ],
+        [
+          22,
+          -25
+        ],
+        [
+          22,
+          -24
+        ],
+        [
+          22,
+          -23
+        ],
+        [
+          22,
+          -22
+        ],
+        [
+          22,
+          -21
+        ],
+        [
+          22,
+          -20
+        ],
+        [
+          23,
+          -29
+        ],
+        [
+          23,
+          -28
+        ],
+        [
+          23,
+          -27
+        ],
+        [
+          23,
+          -26
+        ],
+        [
+          23,
+          -25
+        ],
+        [
+          23,
+          -24
+        ],
+        [
+          23,
+          -23
+        ],
+        [
+          23,
+          -22
+        ],
+        [
+          23,
+          -21
+        ],
+        [
+          23,
+          -20
+        ],
+        [
+          24,
+          -29
+        ],
+        [
+          24,
+          -28
+        ],
+        [
+          24,
+          -27
+        ],
+        [
+          24,
+          -26
+        ],
+        [
+          24,
+          -25
+        ],
+        [
+          24,
+          -24
+        ],
+        [
+          24,
+          -23
+        ],
+        [
+          24,
+          -22
+        ],
+        [
+          24,
+          -21
+        ],
+        [
+          24,
+          -20
+        ],
+        [
+          25,
+          -29
+        ],
+        [
+          25,
+          -28
+        ],
+        [
+          25,
+          -27
+        ],
+        [
+          25,
+          -26
+        ],
+        [
+          25,
+          -25
+        ],
+        [
+          25,
+          -24
+        ],
+        [
+          25,
+          -23
+        ],
+        [
+          25,
+          -22
+        ],
+        [
+          25,
+          -21
+        ],
+        [
+          25,
+          -20
+        ],
+        [
+          26,
+          -29
+        ],
+        [
+          26,
+          -28
+        ],
+        [
+          26,
+          -27
+        ],
+        [
+          26,
+          -26
+        ],
+        [
+          26,
+          -25
+        ],
+        [
+          26,
+          -24
+        ],
+        [
+          26,
+          -23
+        ],
+        [
+          26,
+          -22
+        ],
+        [
+          26,
+          -21
+        ],
+        [
+          26,
+          -20
+        ],
+        [
+          27,
+          -29
+        ],
+        [
+          27,
+          -28
+        ],
+        [
+          27,
+          -27
+        ],
+        [
+          27,
+          -26
+        ],
+        [
+          27,
+          -25
+        ],
+        [
+          27,
+          -24
+        ],
+        [
+          27,
+          -23
+        ],
+        [
+          27,
+          -22
+        ],
+        [
+          27,
+          -21
+        ],
+        [
+          27,
+          -20
+        ]
+      ],
+      "main_boundary_edges": 36
+    },
+    {
+      "name": "NorthBarracks",
+      "mesh": "res://assets/navigation/NorthBarracks_cleared.tres",
+      "probe": [
+        8.5,
+        0.03,
+        -21.5
+      ],
+      "crossing_start": [
+        4.5,
+        0.03,
+        -24.5
+      ],
+      "crossing_end": [
+        13.5,
+        0.03,
+        -17.5
+      ],
+      "cells": [
+        [
+          5,
+          -25
+        ],
+        [
+          5,
+          -24
+        ],
+        [
+          5,
+          -23
+        ],
+        [
+          5,
+          -22
+        ],
+        [
+          5,
+          -21
+        ],
+        [
+          5,
+          -20
+        ],
+        [
+          5,
+          -19
+        ],
+        [
+          5,
+          -18
+        ],
+        [
+          6,
+          -25
+        ],
+        [
+          6,
+          -24
+        ],
+        [
+          6,
+          -23
+        ],
+        [
+          6,
+          -22
+        ],
+        [
+          6,
+          -21
+        ],
+        [
+          6,
+          -20
+        ],
+        [
+          6,
+          -19
+        ],
+        [
+          6,
+          -18
+        ],
+        [
+          7,
+          -25
+        ],
+        [
+          7,
+          -24
+        ],
+        [
+          7,
+          -23
+        ],
+        [
+          7,
+          -22
+        ],
+        [
+          7,
+          -21
+        ],
+        [
+          7,
+          -20
+        ],
+        [
+          7,
+          -19
+        ],
+        [
+          7,
+          -18
+        ],
+        [
+          8,
+          -25
+        ],
+        [
+          8,
+          -24
+        ],
+        [
+          8,
+          -23
+        ],
+        [
+          8,
+          -22
+        ],
+        [
+          8,
+          -21
+        ],
+        [
+          8,
+          -20
+        ],
+        [
+          8,
+          -19
+        ],
+        [
+          8,
+          -18
+        ],
+        [
+          9,
+          -25
+        ],
+        [
+          9,
+          -24
+        ],
+        [
+          9,
+          -23
+        ],
+        [
+          9,
+          -22
+        ],
+        [
+          9,
+          -21
+        ],
+        [
+          9,
+          -20
+        ],
+        [
+          9,
+          -19
+        ],
+        [
+          9,
+          -18
+        ],
+        [
+          10,
+          -25
+        ],
+        [
+          10,
+          -24
+        ],
+        [
+          10,
+          -23
+        ],
+        [
+          10,
+          -22
+        ],
+        [
+          10,
+          -21
+        ],
+        [
+          10,
+          -20
+        ],
+        [
+          10,
+          -19
+        ],
+        [
+          10,
+          -18
+        ],
+        [
+          11,
+          -25
+        ],
+        [
+          11,
+          -24
+        ],
+        [
+          11,
+          -23
+        ],
+        [
+          11,
+          -22
+        ],
+        [
+          11,
+          -21
+        ],
+        [
+          11,
+          -20
+        ],
+        [
+          11,
+          -19
+        ],
+        [
+          11,
+          -18
+        ],
+        [
+          12,
+          -25
+        ],
+        [
+          12,
+          -24
+        ],
+        [
+          12,
+          -23
+        ],
+        [
+          12,
+          -22
+        ],
+        [
+          12,
+          -21
+        ],
+        [
+          12,
+          -20
+        ],
+        [
+          12,
+          -19
+        ],
+        [
+          12,
+          -18
+        ]
+      ],
+      "main_boundary_edges": 32
+    },
+    {
+      "name": "Watchtower",
+      "mesh": "res://assets/navigation/Watchtower_cleared.tres",
+      "probe": [
+        24.5,
+        0.03,
+        -7.5
+      ],
+      "crossing_start": [
+        21.5,
+        0.03,
+        -9.5
+      ],
+      "crossing_end": [
+        28.5,
+        0.03,
+        -4.5
+      ],
+      "cells": [
+        [
+          22,
+          -10
+        ],
+        [
+          22,
+          -9
+        ],
+        [
+          22,
+          -8
+        ],
+        [
+          22,
+          -7
+        ],
+        [
+          22,
+          -6
+        ],
+        [
+          22,
+          -5
+        ],
+        [
+          23,
+          -10
+        ],
+        [
+          23,
+          -9
+        ],
+        [
+          23,
+          -8
+        ],
+        [
+          23,
+          -7
+        ],
+        [
+          23,
+          -6
+        ],
+        [
+          23,
+          -5
+        ],
+        [
+          24,
+          -10
+        ],
+        [
+          24,
+          -9
+        ],
+        [
+          24,
+          -8
+        ],
+        [
+          24,
+          -7
+        ],
+        [
+          24,
+          -6
+        ],
+        [
+          24,
+          -5
+        ],
+        [
+          25,
+          -10
+        ],
+        [
+          25,
+          -9
+        ],
+        [
+          25,
+          -8
+        ],
+        [
+          25,
+          -7
+        ],
+        [
+          25,
+          -6
+        ],
+        [
+          25,
+          -5
+        ],
+        [
+          26,
+          -10
+        ],
+        [
+          26,
+          -9
+        ],
+        [
+          26,
+          -8
+        ],
+        [
+          26,
+          -7
+        ],
+        [
+          26,
+          -6
+        ],
+        [
+          26,
+          -5
+        ],
+        [
+          27,
+          -10
+        ],
+        [
+          27,
+          -9
+        ],
+        [
+          27,
+          -8
+        ],
+        [
+          27,
+          -7
+        ],
+        [
+          27,
+          -6
+        ],
+        [
+          27,
+          -5
+        ]
+      ],
+      "main_boundary_edges": 24
+    },
+    {
+      "name": "WestBarracks",
+      "mesh": "res://assets/navigation/WestBarracks_cleared.tres",
+      "probe": [
+        -4.5,
+        0.03,
+        -12.5
+      ],
+      "crossing_start": [
+        -8.5,
+        0.03,
+        -15.5
+      ],
+      "crossing_end": [
+        0.5,
+        0.03,
+        -8.5
+      ],
+      "cells": [
+        [
+          -8,
+          -16
+        ],
+        [
+          -8,
+          -15
+        ],
+        [
+          -8,
+          -14
+        ],
+        [
+          -8,
+          -13
+        ],
+        [
+          -8,
+          -12
+        ],
+        [
+          -8,
+          -11
+        ],
+        [
+          -8,
+          -10
+        ],
+        [
+          -8,
+          -9
+        ],
+        [
+          -7,
+          -16
+        ],
+        [
+          -7,
+          -15
+        ],
+        [
+          -7,
+          -14
+        ],
+        [
+          -7,
+          -13
+        ],
+        [
+          -7,
+          -12
+        ],
+        [
+          -7,
+          -11
+        ],
+        [
+          -7,
+          -10
+        ],
+        [
+          -7,
+          -9
+        ],
+        [
+          -6,
+          -16
+        ],
+        [
+          -6,
+          -15
+        ],
+        [
+          -6,
+          -14
+        ],
+        [
+          -6,
+          -13
+        ],
+        [
+          -6,
+          -12
+        ],
+        [
+          -6,
+          -11
+        ],
+        [
+          -6,
+          -10
+        ],
+        [
+          -6,
+          -9
+        ],
+        [
+          -5,
+          -16
+        ],
+        [
+          -5,
+          -15
+        ],
+        [
+          -5,
+          -14
+        ],
+        [
+          -5,
+          -13
+        ],
+        [
+          -5,
+          -12
+        ],
+        [
+          -5,
+          -11
+        ],
+        [
+          -5,
+          -10
+        ],
+        [
+          -5,
+          -9
+        ],
+        [
+          -4,
+          -16
+        ],
+        [
+          -4,
+          -15
+        ],
+        [
+          -4,
+          -14
+        ],
+        [
+          -4,
+          -13
+        ],
+        [
+          -4,
+          -12
+        ],
+        [
+          -4,
+          -11
+        ],
+        [
+          -4,
+          -10
+        ],
+        [
+          -4,
+          -9
+        ],
+        [
+          -3,
+          -16
+        ],
+        [
+          -3,
+          -15
+        ],
+        [
+          -3,
+          -14
+        ],
+        [
+          -3,
+          -13
+        ],
+        [
+          -3,
+          -12
+        ],
+        [
+          -3,
+          -11
+        ],
+        [
+          -3,
+          -10
+        ],
+        [
+          -3,
+          -9
+        ],
+        [
+          -2,
+          -16
+        ],
+        [
+          -2,
+          -15
+        ],
+        [
+          -2,
+          -14
+        ],
+        [
+          -2,
+          -13
+        ],
+        [
+          -2,
+          -12
+        ],
+        [
+          -2,
+          -11
+        ],
+        [
+          -2,
+          -10
+        ],
+        [
+          -2,
+          -9
+        ],
+        [
+          -1,
+          -16
+        ],
+        [
+          -1,
+          -15
+        ],
+        [
+          -1,
+          -14
+        ],
+        [
+          -1,
+          -13
+        ],
+        [
+          -1,
+          -12
+        ],
+        [
+          -1,
+          -11
+        ],
+        [
+          -1,
+          -10
+        ],
+        [
+          -1,
+          -9
+        ]
+      ],
+      "main_boundary_edges": 32
+    }
+  ],
+  "patch_stats": {
+    "Headquarters": {
+      "vertices": 129,
+      "polygons": 106
+    },
+    "EnemyKeep": {
+      "vertices": 143,
+      "polygons": 120
+    },
+    "NorthBarracks": {
+      "vertices": 81,
+      "polygons": 64
+    },
+    "Watchtower": {
+      "vertices": 49,
+      "polygons": 36
+    },
+    "WestBarracks": {
+      "vertices": 81,
+      "polygons": 64
+    }
+  },
+  "spawns": [
+    {
+      "name": "Blue0",
+      "position": [
+        -9.0,
+        0.0,
+        12.5
+      ],
+      "kind": "swordsman",
+      "team": 0,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -9,
+        0.03,
+        12.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue1",
+      "position": [
+        -7.2,
+        0.0,
+        12.5
+      ],
+      "kind": "swordsman",
+      "team": 0,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -7.2,
+        0.03,
+        12.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue2",
+      "position": [
+        -5.4,
+        0.0,
+        12.5
+      ],
+      "kind": "swordsman",
+      "team": 0,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -5.4,
+        0.03,
+        12.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue3",
+      "position": [
+        -9.0,
+        0.0,
+        14.3
+      ],
+      "kind": "swordsman",
+      "team": 0,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -9,
+        0.03,
+        14.3
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue4",
+      "position": [
+        -7.2,
+        0.0,
+        14.3
+      ],
+      "kind": "swordsman",
+      "team": 0,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -7.2,
+        0.03,
+        14.3
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue5",
+      "position": [
+        -5.4,
+        0.0,
+        14.3
+      ],
+      "kind": "swordsman",
+      "team": 0,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -5.4,
+        0.03,
+        14.3
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue6",
+      "position": [
+        -9.0,
+        0.0,
+        18.0
+      ],
+      "kind": "archer",
+      "team": 0,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -9,
+        0.03,
+        18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue7",
+      "position": [
+        -7.3,
+        0.0,
+        18.0
+      ],
+      "kind": "archer",
+      "team": 0,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -7.3,
+        0.03,
+        18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue8",
+      "position": [
+        -9.0,
+        0.0,
+        19.7
+      ],
+      "kind": "archer",
+      "team": 0,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -9,
+        0.03,
+        19.7
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue9",
+      "position": [
+        -7.3,
+        0.0,
+        19.7
+      ],
+      "kind": "archer",
+      "team": 0,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -7.3,
+        0.03,
+        19.7
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue10",
+      "position": [
+        -4.0,
+        0.0,
+        16.0
+      ],
+      "kind": "knight",
+      "team": 0,
+      "radius": 0.78,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -4,
+        0.03,
+        16
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue11",
+      "position": [
+        -2.0,
+        0.0,
+        18.0
+      ],
+      "kind": "knight",
+      "team": 0,
+      "radius": 0.78,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -2,
+        0.03,
+        18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue12",
+      "position": [
+        -14.0,
+        0.0,
+        18.0
+      ],
+      "kind": "catapult",
+      "team": 0,
+      "radius": 1.05,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -14,
+        0.03,
+        18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue13",
+      "position": [
+        -12.0,
+        0.0,
+        22.0
+      ],
+      "kind": "cannon",
+      "team": 0,
+      "radius": 1.0,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -12,
+        0.03,
+        22
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red14",
+      "position": [
+        -1.0,
+        0.0,
+        -4.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -1,
+        0.03,
+        -4
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red15",
+      "position": [
+        0.7,
+        0.0,
+        -4.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        0.7,
+        0.03,
+        -4
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red16",
+      "position": [
+        2.4,
+        0.0,
+        -4.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        2.4,
+        0.03,
+        -4
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red17",
+      "position": [
+        4.1,
+        0.0,
+        -4.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        4.1,
+        0.03,
+        -4
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red18",
+      "position": [
+        -1.0,
+        0.0,
+        -5.6
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -1,
+        0.03,
+        -5.6
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red19",
+      "position": [
+        0.7,
+        0.0,
+        -5.6
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        0.7,
+        0.03,
+        -5.6
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red20",
+      "position": [
+        2.4,
+        0.0,
+        -5.6
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        2.4,
+        0.03,
+        -5.6
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red21",
+      "position": [
+        2.0,
+        0.0,
+        -9.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        2,
+        0.03,
+        -9
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red22",
+      "position": [
+        3.6,
+        0.0,
+        -9.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        3.6,
+        0.03,
+        -9
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red23",
+      "position": [
+        5.2,
+        0.0,
+        -9.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        5.2,
+        0.03,
+        -9
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red24",
+      "position": [
+        6.800000000000001,
+        0.0,
+        -9.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        6.800000000000001,
+        0.03,
+        -9
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red25",
+      "position": [
+        18.0,
+        0.0,
+        -15.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [
+        "Cart11"
+      ],
+      "distance_to_navigation": 2.0,
+      "navigation_projection": [
+        16,
+        0.03,
+        -15
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        15.5,
+        0.0,
+        -15.5
+      ]
+    },
+    {
+      "name": "Red26",
+      "position": [
+        19.7,
+        0.0,
+        -15.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [
+        "Cart11"
+      ],
+      "distance_to_navigation": 2.3,
+      "navigation_projection": [
+        22,
+        0.03,
+        -15
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        22.5,
+        0.0,
+        -14.5
+      ]
+    },
+    {
+      "name": "Red27",
+      "position": [
+        21.4,
+        0.0,
+        -15.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.6,
+      "navigation_projection": [
+        22,
+        0.03,
+        -15
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        23.5,
+        0.0,
+        -13.5
+      ]
+    },
+    {
+      "name": "Red28",
+      "position": [
+        18.0,
+        0.0,
+        -16.5
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.5,
+      "navigation_projection": [
+        18,
+        0.03,
+        -17
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        17.5,
+        0.0,
+        -17.5
+      ]
+    },
+    {
+      "name": "Red29",
+      "position": [
+        19.7,
+        0.0,
+        -16.5
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [
+        "Palisade25"
+      ],
+      "distance_to_navigation": 1.772,
+      "navigation_projection": [
+        18,
+        0.03,
+        -17
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        24.5,
+        0.0,
+        -16.5
+      ]
+    },
+    {
+      "name": "Red30",
+      "position": [
+        21.0,
+        0.0,
+        -18.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 3.0,
+      "navigation_projection": [
+        18,
+        0.03,
+        -18
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        24.5,
+        0.0,
+        -14.5
+      ]
+    },
+    {
+      "name": "Red31",
+      "position": [
+        22.5,
+        0.0,
+        -18.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 1.5,
+      "navigation_projection": [
+        24,
+        0.03,
+        -18
+      ],
+      "reaches_main_component": false,
+      "suggested_position": [
+        25.5,
+        0.0,
+        -15.5
+      ]
+    },
+    {
+      "name": "Red32",
+      "position": [
+        24.0,
+        0.0,
+        -18.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        24,
+        0.03,
+        -18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red33",
+      "position": [
+        25.5,
+        0.0,
+        -18.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        25.5,
+        0.03,
+        -18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red34",
+      "position": [
+        12.0,
+        0.0,
+        -13.0
+      ],
+      "kind": "knight",
+      "team": 1,
+      "radius": 0.78,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        12,
+        0.03,
+        -13
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red35",
+      "position": [
+        15.0,
+        0.0,
+        -11.0
+      ],
+      "kind": "knight",
+      "team": 1,
+      "radius": 0.78,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        15,
+        0.03,
+        -11
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red36",
+      "position": [
+        15.0,
+        0.0,
+        -18.0
+      ],
+      "kind": "catapult",
+      "team": 1,
+      "radius": 1.05,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        15,
+        0.03,
+        -18
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red37",
+      "position": [
+        22.0,
+        0.0,
+        -12.0
+      ],
+      "kind": "cannon",
+      "team": 1,
+      "radius": 1.0,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        22,
+        0.03,
+        -12
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red38",
+      "position": [
+        -8.0,
+        0.0,
+        -6.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -8,
+        0.03,
+        -6
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red39",
+      "position": [
+        -10.0,
+        0.0,
+        -5.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -10,
+        0.03,
+        -5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red40",
+      "position": [
+        -10.0,
+        0.0,
+        -10.0
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -10,
+        0.03,
+        -10
+      ],
+      "reaches_main_component": true
+    }
+  ]
+}

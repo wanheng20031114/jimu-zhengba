@@ -1,0 +1,19 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Build caches, machine-local scripts and validation output
+__pycache__/
+*.pyc
+*.log
+*.pid
+.local/
+builds/
+artifacts/*
+!artifacts/battlefield.png
+!artifacts/integration-results.json
+tests/stress_*.png*
+tests/stress_*.json
+tests/isolated_*.png
+assets/models/**/preview*.png*
+assets/models/**/detail_*.png*

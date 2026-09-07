@@ -1,0 +1,121 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/projectile.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Material_wood"]
+albedo_color = Color(0.36, 0.22, 0.11, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Material_iron"]
+albedo_color = Color(0.18, 0.2, 0.2, 1)
+metallic = 0.65
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="Material_feather"]
+albedo_color = Color(0.84, 0.8, 0.66, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="Mesh_shaft"]
+material = SubResource("Material_wood")
+top_radius = 0.026
+bottom_radius = 0.026
+height = 0.95
+radial_segments = 6
+
+[sub_resource type="CylinderMesh" id="Mesh_arrowhead"]
+material = SubResource("Material_iron")
+top_radius = 0.0
+bottom_radius = 0.09
+height = 0.2
+radial_segments = 4
+
+[sub_resource type="BoxMesh" id="Mesh_feather"]
+material = SubResource("Material_feather")
+size = Vector3(0.22, 0.028, 0.24)
+
+[sub_resource type="StandardMaterial3D" id="Material_stone"]
+albedo_color = Color(0.47, 0.43, 0.35, 1)
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="Mesh_stone"]
+material = SubResource("Material_stone")
+radius = 0.36
+height = 0.65
+radial_segments = 7
+rings = 3
+
+[sub_resource type="SphereMesh" id="Mesh_cannonball"]
+material = SubResource("Material_iron")
+radius = 0.2
+height = 0.4
+radial_segments = 10
+rings = 5
+
+[sub_resource type="StandardMaterial3D" id="Material_trail"]
+transparency = 1
+vertex_color_use_as_albedo = true
+shading_mode = 0
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="Mesh_trail"]
+material = SubResource("Material_trail")
+radius = 0.15
+height = 0.3
+radial_segments = 6
+rings = 3
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(0.54, 0.46, 0.34, 0.45, 0.47, 0.43, 0.36, 0.24, 0.5, 0.46, 0.4, 0)
+
+[sub_resource type="Curve" id="Curve_trail"]
+_data = [Vector2(0, 0.3), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Projectile" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Arrow" type="Node3D" parent="."]
+
+[node name="Shaft" type="MeshInstance3D" parent="Arrow"]
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_shaft")
+
+[node name="Head" type="MeshInstance3D" parent="Arrow"]
+position = Vector3(0, 0, -0.54)
+rotation = Vector3(-1.5708, 0, 0)
+mesh = SubResource("Mesh_arrowhead")
+
+[node name="FeatherA" type="MeshInstance3D" parent="Arrow"]
+position = Vector3(0, 0, 0.33)
+mesh = SubResource("Mesh_feather")
+
+[node name="FeatherB" type="MeshInstance3D" parent="Arrow"]
+position = Vector3(0, 0, 0.33)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_feather")
+
+[node name="Stone" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("Mesh_stone")
+
+[node name="Cannonball" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("Mesh_cannonball")
+
+[node name="Trail" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 16
+lifetime = 0.4
+local_coords = false
+mesh = SubResource("Mesh_trail")
+direction = Vector3(0, 1, 0)
+spread = 40.0
+gravity = Vector3(0, 0.3, 0)
+initial_velocity_min = 0.0
+initial_velocity_max = 0.2
+scale_amount_min = 0.8
+scale_amount_max = 1.5
+scale_amount_curve = SubResource("Curve_trail")
+color_ramp = SubResource("Gradient_trail")
+

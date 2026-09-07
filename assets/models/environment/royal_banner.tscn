@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://assets/models/environment/banner_wind.gdshader" id="1_wind"]
+
+[sub_resource type="ShaderMaterial" id="ClothMaterial"]
+shader = ExtResource("1_wind")
+
+[sub_resource type="PlaneMesh" id="ClothMesh"]
+material = SubResource("ClothMaterial")
+size = Vector2(0.77, 2.30)
+subdivide_width = 8
+subdivide_depth = 28
+orientation = 2
+
+[sub_resource type="StandardMaterial3D" id="MountMaterial"]
+albedo_color = Color(0.46, 0.34, 0.16, 1)
+metallic = 0.55
+roughness = 0.40
+
+[sub_resource type="CylinderMesh" id="MountMesh"]
+material = SubResource("MountMaterial")
+top_radius = 0.034
+bottom_radius = 0.034
+height = 1.02
+radial_segments = 8
+rings = 1
+
+[sub_resource type="SphereMesh" id="FinialMesh"]
+material = SubResource("MountMaterial")
+radius = 0.071
+height = 0.142
+radial_segments = 8
+rings = 4
+
+[node name="RoyalBanner" type="Node3D"]
+
+[node name="EmbroideredCloth" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.15, 0.055)
+mesh = SubResource("ClothMesh")
+
+[node name="HangingRod" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.31, 0.038)
+rotation_degrees = Vector3(0, 0, 90)
+mesh = SubResource("MountMesh")
+
+[node name="LeftFinial" type="MeshInstance3D" parent="."]
+position = Vector3(-0.50, 2.31, 0.038)
+mesh = SubResource("FinialMesh")
+
+[node name="RightFinial" type="MeshInstance3D" parent="."]
+position = Vector3(0.50, 2.31, 0.038)
+mesh = SubResource("FinialMesh")

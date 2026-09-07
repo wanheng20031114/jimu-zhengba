@@ -1,0 +1,611 @@
+"""Original low-poly unit sculptures, authored offline and exported to native Godot scenes.
+
+All small fittings are consolidated per rigid part. The saved .tscn contains the
+actual joint hierarchy and AnimationPlayers; no geometry is generated at runtime.
+"""
+from pathlib import Path
+from collections import defaultdict
+import math
+import json
+import numpy as np
+import trimesh as tm
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "assets/models/units"
+OUT.mkdir(parents=True, exist_ok=True)
+P = {
+    "steel": (118, 135, 143), "edge": (174, 186, 184),
+    "darksteel": (59, 70, 77), "gold": (196, 147, 64),
+    "goldlight": (231, 186, 91), "blue": (44, 87, 126),
+    "leather": (89, 53, 33), "leatherlight": (126, 78, 41),
+    "wood": (111, 70, 35), "woodlight": (158, 106, 57),
+    "wooddark": (70, 44, 28), "rope": (168, 142, 90),
+    "black": (26, 29, 29), "skin": (201, 150, 106),
+    "ivory": (226, 216, 183), "horse": (132, 84, 49),
+    "horselight": (161, 111, 65), "mane": (51, 38, 28),
+    "bronze": (122, 110, 69), "bronzelight": (171, 147, 82),
+}
+METALS = {"steel", "edge", "darksteel", "gold", "goldlight", "bronze", "bronzelight"}
+
+
+def matrix(pos=(0, 0, 0), rot=(0, 0, 0)):
+    m = tm.transformations.euler_matrix(*rot)
+    m[:3, 3] = pos
+    return m
+
+
+def box(size, pos=(0, 0, 0), rot=(0, 0, 0), bevel=0.0):
+    size = np.array(size, float)
+    if bevel:
+        half = size / 2
+        b = min(bevel, min(half) * .6)
+        verts = []
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                for sz in (-1, 1):
+                    sign = np.array((sx, sy, sz))
+                    for axis in range(3):
+                        v = (half - b) * sign
+                        v[axis] = half[axis] * sign[axis]
+                        verts.append(v)
+        mesh = tm.convex.convex_hull(np.array(verts))
+    else:
+        mesh = tm.creation.box(size)
+    mesh.apply_transform(matrix(pos, rot))
+    return mesh
+
+
+def ellipsoid(size, pos=(0, 0, 0), rot=(0, 0, 0), sub=1):
+    mesh = tm.creation.icosphere(subdivisions=sub, radius=1)
+    mesh.apply_scale(size)
+    mesh.apply_transform(matrix(pos, rot))
+    return mesh
+
+
+def rod(a, b, radius, sections=8, r2=None):
+    a, b = np.array(a, float), np.array(b, float)
+    d = b - a
+    if r2 is None:
+        mesh = tm.creation.cylinder(radius=radius, height=np.linalg.norm(d), sections=sections)
+    else:
+        mesh = lathe([(0, radius), (np.linalg.norm(d), r2)], sections)
+        mesh.apply_translation((0, -np.linalg.norm(d) / 2, 0))
+        mesh.apply_transform(tm.transformations.rotation_matrix(math.pi / 2, (1, 0, 0)))
+    m = tm.geometry.align_vectors((0, 0, 1), d)
+    m[:3, 3] = (a + b) / 2
+    mesh.apply_transform(m)
+    return mesh
+
+
+def lathe(profile, sections=12, pos=(0, 0, 0), rot=(0, 0, 0), caps=True):
+    verts = [(r * math.cos(a * math.tau / sections), y,
+              r * math.sin(a * math.tau / sections))
+             for y, r in profile for a in range(sections)]
+    faces = []
+    for k in range(len(profile) - 1):
+        for i in range(sections):
+            j = (i + 1) % sections
+            a, b, c, d = k*sections+i, k*sections+j, (k+1)*sections+j, (k+1)*sections+i
+            faces.extend(((a, c, b), (a, d, c)))
+    if caps:
+        for row, reverse in ((0, True), (len(profile) - 1, False)):
+            center = len(verts)
+            verts.append((0, profile[row][0], 0))
+            for i in range(sections):
+                tri = (center, row * sections + i, row * sections + (i + 1) % sections)
+                faces.append(tri[::-1] if reverse else tri)
+    mesh = tm.Trimesh(vertices=verts, faces=faces, process=False)
+    mesh.fix_normals()
+    mesh.apply_transform(matrix(pos, rot))
+    return mesh
+
+
+def polygon(points, depth, pos=(0, 0, 0), rot=(0, 0, 0)):
+    verts = [(x, y, z) for z in (-depth / 2, depth / 2) for x, y in points]
+    mesh = tm.convex.convex_hull(np.array(verts))
+    mesh.apply_transform(matrix(pos, rot))
+    return mesh
+
+
+def ring(radius, minor, pos=(0, 0, 0), rot=(0, 0, 0), n=16, m=4):
+    mesh = tm.creation.torus(major_radius=radius, minor_radius=minor,
+                            major_sections=n, minor_sections=m)
+    mesh.apply_transform(matrix(pos, rot))
+    return mesh
+
+
+class Sculpture:
+    def __init__(self, name):
+        self.name = name
+        self.parts = {}
+        self.joints = {}
+        self.parents = {}
+
+    def joint(self, name, pos=(0, 0, 0), parent=None):
+        self.parts[name] = defaultdict(list)
+        self.joints[name] = pos
+        self.parents[name] = parent
+        return name
+
+    def part_path(self, part):
+        return self.part_path(self.parents[part]) + "/" + part if self.parents[part] else "Rig/" + part
+
+    def add(self, part, mesh, color, shade=1.0):
+        srgb = np.clip(np.array(P[color], float) * shade / 255.0, 0, 1)
+        c = np.where(srgb <= .04045, srgb / 12.92, ((srgb + .055) / 1.055) ** 2.4) * 255.0
+        # Vertex paint supplies deliberate planar color variation without textures.
+        colors = np.tile(np.append(np.clip(c, 0, 255), 255).astype(np.uint8), (len(mesh.vertices), 1))
+        mesh.visual = tm.visual.ColorVisuals(mesh=mesh, vertex_colors=colors)
+        category = "Heraldry" if color == "blue" else "ForgedMetal" if color in METALS else "PaintedMatte"
+        self.parts[part][category].append(mesh)
+
+    def b(self, part, size, pos, color, rot=(0, 0, 0), bevel=.02):
+        self.add(part, box(size, pos, rot, bevel), color)
+
+    def r(self, part, a, b, radius, color, sections=8, r2=None):
+        self.add(part, rod(a, b, radius, sections, r2), color)
+
+    def e(self, part, size, pos, color, rot=(0, 0, 0), sub=1):
+        self.add(part, ellipsoid(size, pos, rot, sub), color)
+
+    def save(self):
+        folder = OUT / self.name
+        folder.mkdir(exist_ok=True)
+        counts = []
+        for part, categories in self.parts.items():
+            scene = tm.Scene()
+            combined=[]
+            for category, pieces in categories.items():
+                for piece in pieces:
+                    color=piece.visual.vertex_colors.copy()
+                    # Alpha is a material tag, never transparency: 0 matte, 128
+                    # forged metal, 255 heraldry. The shared native shader reads it.
+                    color[:,3]=255 if category=="Heraldry" else 128 if category=="ForgedMetal" else 0
+                    piece.visual=tm.visual.ColorVisuals(mesh=piece,vertex_colors=color)
+                    combined.append(piece)
+            merged=tm.util.concatenate(combined)
+            merged.unmerge_vertices()
+            material=tm.visual.material.PBRMaterial(name="UnitSurface",
+                baseColorFactor=[255,255,255,255],metallicFactor=0,roughnessFactor=.8,
+                alphaMode="OPAQUE",doubleSided=False)
+            color=merged.visual.vertex_colors.copy()
+            merged.visual=tm.visual.TextureVisuals(material=material)
+            merged.visual.vertex_attributes['color']=color
+            scene.add_geometry(merged,node_name="Sculpture",geom_name="Sculpture")
+            counts.append(len(merged.faces))
+            (folder / f"{part}.glb").write_bytes(scene.export(file_type="glb", include_normals=True))
+        (folder/"parts.json").write_text(json.dumps(list(self.parts)),encoding="utf-8")
+        write_scene(self)
+        print(f"{self.name}: {len(self.parts)} rigid parts, {sum(counts):,} triangles")
+
+
+def rivets(s, p, positions, r=.021, color="gold"):
+    for v in positions:
+        s.e(p, (r, r, r * .55), v, color)
+
+
+def shield(s, p, center, large=False):
+    x, y, z = center
+    scale = 1.1 if large else 1
+    pts = [(-.29, .34), (.29, .34), (.28, -.09), (0, -.43), (-.28, -.09)]
+    s.add(p, polygon([(a * scale, b * scale) for a,b in pts], .095, center), "gold")
+    s.add(p, polygon([(a * scale * .84, b * scale * .84) for a,b in pts], .025,
+                     (x, y, z - .058)), "blue")
+    # Raised heraldic sun-and-cross, readable from the tactical camera.
+    s.b(p, (.055, .53 * scale, .022), (x, y + .015, z - .078), "goldlight", bevel=.006)
+    s.b(p, (.38 * scale, .055, .022), (x, y + .075, z - .079), "goldlight", bevel=.006)
+    s.e(p, (.070, .070, .033), (x, y + .075, z - .09), "gold")
+    rivets(s,p,[(x+a*.91*scale,y+b*.91*scale,z-.059) for a,b in pts],.017)
+
+
+def sword(s, p, center, length=.84):
+    x,y,z = center
+    s.r(p,(x,y-.14,z),(x,y+.055,z),.035,"leather",8)
+    for yy in (-.10,-.05,0):
+        s.add(p, ring(.036,.008,(x,y+yy,z),(math.pi/2,0,0),n=8),"gold")
+    s.e(p,(.052,.049,.044),(x,y-.17,z),"gold")
+    s.b(p,(.30,.057,.070),(x,y+.075,z),"gold",rot=(0,0,.05))
+    s.add(p,polygon([(-.054,0),(.054,0),(.044,length-.15),(0,length),(-.044,length-.15)],
+                    .034,(x,y+.1,z)),"edge")
+    s.b(p,(.014,length-.18,.008),(x,y+.1+(length-.18)/2,z-.022),"steel",bevel=.002)
+
+
+def helmet(s, p, center, knight=False):
+    x,y,z = center
+    s.add(p, lathe([(-.12,.29),(0,.33),(.14,.29),(.24,.20),(.29,.075)],12,center),"steel")
+    s.add(p, lathe([(-.13,.304),(-.08,.335),(-.045,.333)],12,center,caps=False),"gold" if knight else "edge")
+    # Broad recessed eye opening, separated cheek plates and raised nose guard.
+    s.b(p,(.42,.15,.095),(x,y-.16,z-.218),"black",bevel=.035)
+    for sign in (-1,1):
+        s.add(p,polygon([(-.095,.08),(.095,.08),(.072,-.15),(-.07,-.20)],.04,
+                        (x+sign*.155,y-.225,z-.262),(0,sign*.22,sign*.08)),"steel")
+    s.b(p,(.059,.25,.048),(x,y-.16,z-.292),"edge",bevel=.012)
+    s.b(p,(.43,.030,.04),(x,y-.101,z-.283),"edge",bevel=.006)
+    rivets(s,p,[(x+xx,y-.05,z-.319) for xx in (-.22,-.11,0,.11,.22)],.017)
+    # Crest ridge and cloth plume.
+    s.b(p,(.052,.25,.12),(x,y+.20,z+.015),"gold" if knight else "edge",bevel=.022)
+    if knight:
+        for i in range(5):
+            s.e(p,(.083,.12,.15),(x,y+.29-i*.016,z+.05+i*.10),"blue",rot=(.35,0,0))
+
+
+def infantry(name, archer=False):
+    s = Sculpture(name)
+    body=s.joint("Body",(0,1.05,0))
+    head=s.joint("Head",(0,1.57,0))
+    left=s.joint("ArmLeft",(-.34,1.28,0))
+    right=s.joint("ArmRight",(.34,1.28,0))
+    ll=s.joint("LegLeft",(-.155,.75,0))
+    lr=s.joint("LegRight",(.155,.75,0))
+    # Tailored tunic: taper at waist and split skirt over a dark mail undersuit.
+    s.add(body,lathe([(-.28,.28),(-.08,.25),(.21,.33),(.31,.27)],8),"blue")
+    s.b(body,(.46,.14,.33),(0,-.05,0),"leather",bevel=.025)
+    s.b(body,(.11,.10,.040),(0,-.047,-.19),"gold")
+    for xx in (-.18,.18):
+        s.b(body,(.15,.29,.09),(xx,-.27,-.15),"blue",rot=(0,0,-xx*.38))
+        s.b(body,(.15,.026,.10),(xx,-.42,-.15),"gold",rot=(0,0,-xx*.38),bevel=.003)
+    if archer:
+        s.b(body,(.32,.40,.13),(0,.08,-.23),"leatherlight",bevel=.06)
+        s.b(body,(.09,.69,.05),(0,.06,-.275),"leather",rot=(0,0,-.38))
+        s.b(body,(.20,.045,.055),(-.05,.15,-.315),"gold",rot=(0,0,-.38))
+        # Rolled hood and dark felt cap framing an expressive face.
+        s.e(head,(.28,.29,.27),(0,-.01,.01),"blue",sub=2)
+        s.e(head,(.213,.221,.198),(0,-.015,-.139),"skin",sub=1)
+        s.b(head,(.41,.065,.23),(0,.113,-.17),"blue",bevel=.035)
+        s.e(head,(.27,.13,.26),(0,.21,.01),"blue")
+        for xx in (-.081,.081):
+            s.b(head,(.040,.025,.014),(xx,.020,-.320),"black",bevel=.004)
+            s.b(head,(.07,.026,.017),(xx,.067,-.305),"leather",rot=(0,0,xx),bevel=.004)
+        s.e(head,(.045,.064,.074),(0,-.044,-.311),"skin")
+        s.b(head,(.14,.044,.041),(0,-.106,-.3),"leather",bevel=.011)
+        # Leather quiver, contrasting lip, individual shafts and fletching.
+        s.add(body,lathe([(-.29,.108),(.28,.145),(.32,.145)],10,(.19,.03,.29),(0,0,-.14)),"leather")
+        s.add(body,lathe([(.23,.149),(.29,.149)],10,(.19,.03,.29),(0,0,-.14),caps=False),"gold")
+        for i in range(6):
+            xx=.1+(i%3)*.067; zz=.25+(i//3)*.095; yy=.54+(.045*(i%2))
+            s.r(body,(xx,.13,zz),(xx+.045,yy,zz),.012,"woodlight",6)
+            s.b(body,(.073,.103,.008),(xx+.038,yy-.018,zz),"ivory",rot=(0,0,-.12),bevel=.002)
+    else:
+        s.b(body,(.47,.39,.17),(0,.105,-.22),"steel",bevel=.075)
+        s.b(body,(.035,.35,.024),(0,.1,-.317),"edge",bevel=.006)
+        for sign in (-1,1):
+            for i in range(3):
+                s.b(body,(.20,.065,.095),(sign*.145,-.24-i*.060,-.175),"darksteel",rot=(0,0,-sign*.09),bevel=.016)
+        helmet(s,head,(0,.025,0))
+    for part,sign in ((left,-1),(right,1)):
+        s.e(part,(.235,.18,.24),(sign*.04,.018,0),"leather" if archer else "steel")
+        if not archer:
+            s.b(part,(.32,.032,.31),(sign*.04,.024,-.042),"edge",rot=(0,0,sign*.13),bevel=.020)
+        s.r(part,(sign*.045,-.08,0),(sign*.10,-.33,-.04),.106,"blue",8)
+        s.e(part,(.115,.10,.11),(sign*.10,-.30,-.055),"darksteel" if not archer else "leather")
+        s.r(part,(sign*.10,-.30,-.04),(sign*.11,-.49,-.11),.100,"steel" if not archer else "leatherlight",8)
+        s.b(part,(.17,.085,.15),(sign*.11,-.475,-.10),"gold" if not archer else "leather",bevel=.025)
+        s.e(part,(.097,.093,.1),(sign*.12,-.54,-.115),"skin" if archer else "darksteel")
+        rivets(s,part,[(sign*.10,-.37,-.144),(sign*.10,-.44,-.15)],.015)
+    for part in (ll,lr):
+        s.r(part,(0,.01,0),(0,-.29,.02),.116,"leather" if archer else "darksteel",8)
+        s.e(part,(.12,.11,.11),(0,-.28,-.033),"leatherlight" if archer else "steel")
+        s.b(part,(.18,.25,.155),(0,-.43,-.01),"leather" if archer else "steel",bevel=.03)
+        s.b(part,(.213,.17,.33),(0,-.65,-.075),"leather",bevel=.044)
+        s.b(part,(.22,.045,.34),(0,-.714,-.07),"black",bevel=.012)
+        s.b(part,(.21,.036,.18),(0,-.53,-.025),"gold" if not archer else "leatherlight",bevel=.01)
+    if archer:
+        # Long laminated bow held ahead of the body; string has its own visible V.
+        bow_points=[(-.13,-1.01,-.25),(-.26,-.86,-.35),(-.31,-.62,-.40),(-.30,-.38,-.43),(-.26,-.15,-.37),(-.13,.07,-.25)]
+        for a,b in zip(bow_points,bow_points[1:]):
+            s.r(left,a,b,.032,"woodlight",8)
+        s.r(left,bow_points[0],(-.12,-.48,-.07),.009,"rope",6)
+        s.r(left,(-.12,-.48,-.07),bow_points[-1],.009,"rope",6)
+        s.r(left,(-.30,-.60,-.405),(-.30,-.39,-.418),.041,"leather",8)
+        # Readied arrow points along the forward axis.
+        arrow=s.joint("Arrow",parent="ArmRight")
+        s.r(arrow,(-.01,-.44,-.10),(-.01,-.44,-1.01),.014,"woodlight",6)
+        s.add(arrow,polygon([(-.046,0),(.046,0),(0,.12)],.020,(-.01,-.44,-1.035),(math.pi/2,0,0)),"edge")
+        s.b(arrow,(.10,.015,.13),(-.01,-.44,-.16),"ivory",bevel=.004)
+    else:
+        shield(s,left,(-.12,-.35,-.225))
+        sword(s,right,(.12,-.52,-.17))
+        # Sheath and a small hip pouch complete the back and side silhouette.
+        s.b(body,(.082,.58,.084),(-.27,-.25,.1),"leather",rot=(0,0,-.16))
+        s.b(body,(.15,.17,.12),(.265,-.13,.08),"leatherlight",bevel=.025)
+        s.b(body,(.10,.026,.02),(.265,-.11,.014),"gold",bevel=.004)
+    return s
+
+
+def horse_knight():
+    s=Sculpture("knight")
+    b=s.joint("Body",(0,1.10,0))
+    # Strong horse silhouette: chest, barrel, rump and angular sloping neck.
+    s.e(b,(.43,.44,.77),(0,0,.06),"horse",sub=2)
+    s.e(b,(.39,.41,.37),(0,.018,-.49),"horselight",sub=1)
+    s.e(b,(.44,.43,.40),(0,.02,.62),"horse",sub=1)
+    s.e(b,(.25,.52,.31),(0,.38,-.62),"horselight",rot=(-.43,0,0),sub=1)
+    s.e(b,(.225,.23,.37),(0,.72,-.89),"horse",rot=(.38,0,0),sub=1)
+    s.e(b,(.207,.185,.22),(0,.56,-1.17),"horselight",sub=1)
+    s.e(b,(.16,.11,.08),(0,.52,-1.36),"mane")
+    for sign in (-1,1):
+        s.add(b,polygon([(-.06,0),(.06,0),(.025,.25)],.11,(sign*.13,.9,-.79),(0,sign*.18,sign*.15)),"horse")
+        s.e(b,(.017,.041,.041),(sign*.205,.76,-1.05),"black")
+        s.e(b,(.008,.013,.013),(sign*.22,.77,-1.059),"ivory")
+        s.b(b,(.042,.14,.37),(sign*.208,.55,-1.14),"leather",rot=(.34,0,0),bevel=.008)
+        s.r(b,(sign*.22,.61,-1.21),(sign*.24,.68,-.54),.017,"rope",6)
+        s.r(b,(sign*.24,.68,-.54),(sign*.26,.73,-.17),.017,"rope",6)
+        s.add(b,ring(.056,.010,(sign*.224,.58,-1.205),(0,math.pi/2,0),n=10),"gold")
+    s.b(b,(.43,.055,.073),(0,.49,-1.32),"leather",rot=(.16,0,0))
+    # Scalloped dark mane, tail with multiple individually sculpted locks.
+    for i in range(7):
+        s.e(b,(.076,.145,.13),(0,.79-i*.07,-.65+i*.083),"mane",rot=(-.5,0,0))
+    for i in range(5):
+        s.e(b,(.10-i*.01,.22,.12),(0,.1-i*.15,.86+i*.078),"mane",rot=(-.32,0,0))
+    # Blue horse caparison and gold-edged saddle blanket.
+    for sign in (-1,1):
+        s.add(b,polygon([(-.52,.27),(.46,.27),(.48,-.14),(.27,-.33),(-.44,-.27)],.035,
+                        (sign*.425,-.02,.06),(0,math.pi/2,0)),"blue")
+        s.b(b,(.047,.035,.89),(sign*.454,-.245,.08),"gold",rot=(.035,0,0),bevel=.006)
+        s.b(b,(.051,.25,.042),(sign*.449,-.048,-.08),"goldlight",bevel=.005)
+        s.b(b,(.051,.040,.22),(sign*.451,-.01,-.08),"goldlight",bevel=.005)
+        s.b(b,(.055,.44,.087),(sign*.32,.27,.10),"leather",rot=(0,0,sign*.18),bevel=.01)
+        s.add(b,ring(.09,.016,(sign*.37,.03,.09),(0,math.pi/2,0),n=10),"darksteel")
+    s.b(b,(.62,.13,.54),(0,.42,.12),"leatherlight",bevel=.05)
+    s.b(b,(.54,.16,.095),(0,.53,.36),"leather",rot=(-.18,0,0),bevel=.025)
+    s.b(b,(.44,.12,.095),(0,.50,-.15),"leather",bevel=.025)
+    # Barding browplate follows horse forehead; triangular nose plate.
+    s.add(b,polygon([(-.15,.15),(.15,.15),(.13,-.10),(0,-.29),(-.13,-.10)],.03,
+                    (0,.74,-1.17),(.42,0,0)),"steel")
+    s.b(b,(.033,.25,.025),(0,.76,-1.245),"gold",rot=(.42,0,0),bevel=.006)
+    for idx,(xx,zz) in enumerate(((-.29,-.49),(.29,-.49),(-.32,.57),(.32,.57))):
+        p=s.joint(("LegFrontLeft","LegFrontRight","LegRearLeft","LegRearRight")[idx],(xx,.99,zz))
+        rear=idx>=2
+        knee=.12 if rear else -.03
+        s.r(p,(0,0,0),(0,-.40,knee),.112,"horse",8,r2=.075)
+        s.e(p,(.091,.105,.094),(0,-.4,knee),"horselight")
+        s.r(p,(0,-.39,knee),(0,-.88,.015),.065,"horse",8,r2=.050)
+        s.b(p,(.16,.145,.235),(0,-.89,-.035),"mane",bevel=.027)
+        s.b(p,(.17,.025,.237),(0,-.958,-.035),"darksteel",bevel=.008)
+        if not rear:
+            s.b(p,(.145,.21,.086),(0,-.21,-.073),"steel",bevel=.02)
+    # Rider torso sits naturally above the saddle, with armor and tucked boots.
+    rider=s.joint("Rider",(0,1.75,.08))
+    s.add(rider,lathe([(-.24,.28),(-.1,.24),(.20,.32),(.30,.245)],8),"blue")
+    s.b(rider,(.46,.35,.16),(0,.10,-.21),"steel",bevel=.06)
+    s.b(rider,(.04,.32,.025),(0,.10,-.30),"gold",bevel=.006)
+    s.b(rider,(.49,.09,.39),(0,-.105,0),"leather",bevel=.02)
+    s.b(rider,(.10,.075,.035),(0,-.10,-.214),"gold")
+    for sign in (-1,1):
+        s.r(rider,(sign*.16,-.13,.06),(sign*.40,-.30,.10),.12,"darksteel",8)
+        s.r(rider,(sign*.40,-.3,.1),(sign*.41,-.57,-.005),.10,"steel",8)
+        s.b(rider,(.17,.16,.28),(sign*.41,-.66,-.075),"darksteel",bevel=.027)
+        s.b(rider,(.11,.43,.065),(sign*.22,-.20,-.16),"blue",rot=(0,0,sign*.25),bevel=.016)
+    # Flowing short cloak: thick faceted asymmetric hem.
+    s.add(rider,polygon([(-.29,.27),(.29,.27),(.37,-.28),(.13,-.43),(-.35,-.34)],.045,(0,-.02,.27),(-.20,0,0)),"blue")
+    for xx in (-.23,0,.23):
+        s.b(rider,(.015,.43,.013),(xx,-.03,.355),"gold",rot=(-.20,0,-xx*.24),bevel=.003)
+    head=s.joint("Head",(0,2.18,.03))
+    helmet(s,head,(0,0,0),True)
+    for p,sign in ((s.joint("ArmLeft",(-.34,1.97,.06)),-1),(s.joint("ArmRight",(.34,1.97,.06)),1)):
+        s.e(p,(.235,.18,.24),(sign*.025,.01,0),"steel")
+        for yy in (0,-.075):
+            s.b(p,(.32,.035,.31),(sign*.04,yy,-.042),"edge",rot=(0,0,sign*.15),bevel=.014)
+        s.r(p,(0,-.1,0),(sign*.085,-.29,-.05),.105,"blue",8)
+        s.r(p,(sign*.085,-.29,-.05),(sign*.08,-.43,-.16),.101,"steel",8)
+        s.e(p,(.10,.095,.10),(sign*.08,-.47,-.19),"darksteel")
+    shield(s,"ArmLeft",(-.12,-.34,-.255),True)
+    sword(s,"ArmRight",(.09,-.43,-.22),1.0)
+    return s
+
+
+def wheel(s, part, radius=.46, width=.16):
+    # Real open spokes and separate iron tire. Axis X.
+    s.add(part,ring(radius-.045,.057,rot=(0,math.pi/2,0),n=16,m=4),"woodlight")
+    s.add(part,ring(radius+.004,.025,rot=(0,math.pi/2,0),n=16,m=4),"darksteel")
+    for angle in np.arange(8)*math.tau/8:
+        a=(0,math.cos(angle)*.09,math.sin(angle)*.09)
+        b=(0,math.cos(angle)*(radius-.07),math.sin(angle)*(radius-.07))
+        s.r(part,a,b,.039,"wood",6)
+    s.r(part,(-width/2,0,0),(width/2,0,0),.12,"wooddark",12)
+    s.r(part,(-width/2-.015,0,0),(width/2+.015,0,0),.060,"darksteel",10)
+    for side in (-1,1):
+        s.r(part,(side*width*.48,0,0),(side*(width*.5+.025),0,0),.102,"gold",10)
+
+
+def beam(s,p,a,b,width=.14,depth=.16,color="wood"):
+    a,b=np.array(a,float),np.array(b,float)
+    m=box((width,depth,np.linalg.norm(b-a)),bevel=.018)
+    t=tm.geometry.align_vectors((0,0,1),b-a)
+    t[:3,3]=(a+b)/2
+    m.apply_transform(t)
+    s.add(p,m,color)
+
+
+def catapult():
+    s=Sculpture("catapult")
+    body=s.joint("Body")
+    # Chamfered oak chassis, cross members and individual deck slats.
+    for xx in (-.64,.64):
+        s.b(body,(.22,.22,2.19),(xx,.56,.10),"wood",bevel=.033)
+        s.b(body,(.245,.035,2.12),(xx,.68,.10),"woodlight",bevel=.008)
+    for zz in (-.80,-.35,.20,.72,1.10):
+        s.b(body,(1.36,.18,.16),(0,.52,zz),"wooddark",bevel=.02)
+    for i in range(8):
+        s.b(body,(1.08,.07,.11),(0,.68,-.37+i*.18),"woodlight" if i%3 else "wood",bevel=.008)
+    for zz in (-.67,.87):
+        s.r(body,(-1.07,.43,zz),(1.07,.43,zz),.083,"darksteel",10)
+        for side in (-1,1):
+            p=s.joint(f"Wheel{'Left' if side<0 else 'Right'}{'Front' if zz<0 else 'Rear'}",(side*.97,.47,zz))
+            wheel(s,p,.45,.22)
+    # A-frame bearing towers with bolted metal mounting plates.
+    for side in (-1,1):
+        for zz in (-.59,.57):
+            beam(s,body,(side*.61,.69,zz),(side*.61,1.66,-.05),.18,.18,"woodlight")
+            s.b(body,(.235,.24,.055),(side*.61,.77,zz-.07),"darksteel",bevel=.016)
+            rivets(s,body,[(side*.61+.07,.78,zz-.103),(side*.61-.07,.78,zz-.103)],.025)
+        s.b(body,(.28,.22,.31),(side*.61,1.63,-.05),"wooddark",bevel=.03)
+    s.r(body,(-.79,1.62,-.05),(.79,1.62,-.05),.113,"darksteel",12)
+    # Rope-wrapped torsion bundle and tensioning windlass.
+    s.r(body,(-.42,.92,-.48),(.42,.92,-.48),.14,"rope",12)
+    for x in np.linspace(-.38,.38,12):
+        s.add(body,ring(.15,.018,(x,.92,-.48),(0,math.pi/2,0),n=10),"rope")
+    s.r(body,(-.83,.91,.93),(.83,.91,.93),.10,"wooddark",10)
+    for x in np.linspace(-.22,.22,9):
+        s.add(body,ring(.115,.022,(x,.91,.93),(0,math.pi/2,0),n=10),"rope")
+    for side in (-1,1):
+        s.b(body,(.10,.61,.075),(side*.84,.91,.93),"wood",rot=(.42,0,0),bevel=.016)
+        s.r(body,(side*.84,1.14,.83),(side*1.04,1.14,.83),.048,"woodlight",8)
+    # Mechanism visibly hinges at the bearing. Rest arm points backward and up.
+    arm=s.joint("ThrowArm",(0,1.62,-.05))
+    beam(s,arm,(0,-.35,-.51),(0,.79,.91),.19,.19,"woodlight")
+    for t in (.05,.33,.63):
+        s.b(arm,(.22,.105,.24),(0,-.35+t*.8,-.51+t),"darksteel",rot=(.66,0,0),bevel=.014)
+    # Deep polygonal spoon with an actual open cup and stone seated inside.
+    s.add(arm,lathe([(-.06,.18),(0,.32),(.19,.32),(.23,.29),(.19,.26),(.025,.245)],10,
+                   (0,.77,.89),caps=False),"wooddark")
+    s.add(arm,ring(.315,.026,(0,.94,.89),(math.pi/2,0,0),n=10),"darksteel")
+    payload=s.joint("Payload",(0,.91,.89),parent="ThrowArm")
+    s.e(payload,(.23,.22,.23),(0,0,0),"steel",sub=1)
+    for side in (-1,1):
+        s.r(body,(side*.28,.93,.91),(side*.09,1.40,.05),.016,"rope",6)
+    # Blue hanging banner gives the siege engine a readable faction marking.
+    s.b(body,(.71,.04,.032),(0,.65,-1.025),"gold",bevel=.005)
+    s.add(body,polygon([(-.34,.17),(.34,.17),(.32,-.12),(0,-.23),(-.32,-.12)],.024,(0,.45,-1.035)),"blue")
+    s.b(body,(.046,.25,.022),(0,.46,-1.06),"goldlight",bevel=.003)
+    s.b(body,(.25,.038,.022),(0,.50,-1.06),"goldlight",bevel=.003)
+    return s
+
+
+def cannon():
+    s=Sculpture("cannon")
+    b=s.joint("Body")
+    # Thick splayed cheeks, tail trail and stacked cross braces.
+    for side in (-1,1):
+        s.add(b,polygon([(-.90,-.16),(.80,-.16),(.44,.31),(-.47,.44)],.20,
+                        (side*.41,.70,.03),(0,math.pi/2,0)),"wood")
+        beam(s,b,(side*.43,.48,.3),(side*.29,.28,1.39),.20,.20,"woodlight")
+        s.b(b,(.215,.14,.30),(side*.29,.30,1.24),"darksteel",rot=(.12,0,0),bevel=.022)
+    for zz in (-.53,.03,.63,1.30):
+        s.b(b,(.92 if zz<1 else .71,.15,.18),(0,.42 if zz<1 else .21,zz),"wooddark",bevel=.025)
+    s.b(b,(.61,.09,.66),(0,.53,.27),"woodlight",bevel=.013)
+    s.r(b,(-1.08,.57,-.07),(1.08,.57,-.07),.10,"darksteel",12)
+    for side in (-1,1):
+        p=s.joint("WheelLeft" if side<0 else "WheelRight",(side*.89,.57,-.07))
+        wheel(s,p,.55,.23)
+        for zz in (-.40,.23):
+            s.b(b,(.055,.22,.16),(side*.531,.71,zz),"darksteel",bevel=.016)
+            s.e(b,(.025,.033,.033),(side*.566,.71,zz),"gold")
+    barrel=s.joint("Barrel",(0,.94,-.12))
+    # Lathed hollow bronze bore, using connected outer and inner muzzle rings.
+    profile=[(-.78,.21),(-.66,.28),(-.25,.28),(.33,.23),(.96,.215),
+             (1.06,.275),(1.20,.275),(1.25,.23),(1.25,.16)]
+    s.add(barrel,lathe(profile,16,rot=(-math.pi/2-.08,0,0),caps=False),"bronze")
+    s.add(barrel,lathe([(1.25,.16),(.97,.16)],16,rot=(-math.pi/2-.08,0,0),caps=False),"black")
+    # Deep black chamber seals bore well behind the lip: muzzle reads as hollow.
+    s.add(barrel,lathe([(.96,.158),(.97,.158)],16,rot=(-math.pi/2-.08,0,0)),"black")
+    # Multiple polished reinforcement bands and muzzle crown.
+    for yy,rr in ((-.59,.285),(-.19,.286),(.44,.238),(1.085,.281)):
+        s.add(barrel,lathe([(yy-.034,rr),(yy+.034,rr)],16,rot=(-math.pi/2-.08,0,0),caps=False),"bronzelight")
+    s.e(barrel,(.24,.24,.16),(0,-.047,.78),"bronze")
+    s.e(barrel,(.095,.095,.13),(0,-.07,.95),"bronzelight")
+    s.r(barrel,(-.59,0,0),(.59,0,0),.10,"darksteel",12)
+    # Touch hole, cast top ornament, and decorative side rivets.
+    s.b(barrel,(.10,.07,.12),(0,.28,.42),"bronzelight",bevel=.019)
+    s.e(barrel,(.025,.012,.025),(0,.319,.42),"black")
+    for side in (-1,1):
+        for zz in (-.33,.0,.34):
+            s.e(barrel,(.019,.035,.035),(side*.268,.01,zz),"gold")
+    # Elevation screw and iron handling loop at the trail.
+    s.r(b,(0,.50,.62),(0,.78,.53),.031,"darksteel",10)
+    for yy in (.55,.60,.65,.70):
+        s.add(b,ring(.041,.009,(0,yy,.60-(yy-.55)*.35),(math.pi/2,0,0),n=8),"steel")
+    s.add(b,ring(.14,.026,(0,.24,1.47),(math.pi/2,0,0),n=12),"darksteel")
+    # Faction panels, rammer, cannonballs and a powder pouch.
+    for side in (-1,1):
+        s.b(b,(.031,.25,.42),(side*.55,.64,.23),"blue",bevel=.012)
+        s.b(b,(.036,.17,.035),(side*.57,.64,.23),"goldlight",bevel=.004)
+        s.b(b,(.036,.035,.24),(side*.57,.68,.23),"goldlight",bevel=.004)
+    s.r(b,(.57,.38,.20),(.57,.25,1.34),.028,"woodlight",8)
+    s.e(b,(.067,.067,.14),(.57,.25,1.31),"ivory")
+    for xx,zz in ((-.17,.88),(.16,.88),(0,1.13)):
+        s.e(b,(.135,.135,.135),(xx,.54,zz),"darksteel",sub=2)
+    return s
+
+
+def vec(v):
+    return "Vector3(" + ", ".join(f"{float(x):.6f}" for x in v) + ")"
+
+
+def anim_resource(name, duration, tracks, loop=False):
+    lines=[f'[sub_resource type="Animation" id="Animation_{name}"]',f'resource_name = "{name}"',f'length = {duration}',f'loop_mode = {1 if loop else 0}']
+    for i,track in enumerate(tracks):
+        path,values=track[:2]
+        times=track[2] if len(track)>2 else [duration*j/(len(values)-1) for j in range(len(values))]
+        discrete=isinstance(values[0],bool)
+        formatted=[("true" if v else "false") if isinstance(v,bool) else vec(v) for v in values]
+        lines += [f'tracks/{i}/type = "value"',f'tracks/{i}/imported = false',f'tracks/{i}/enabled = true',
+            f'tracks/{i}/path = NodePath("{path}")',f'tracks/{i}/interp = 1',f'tracks/{i}/loop_wrap = true',
+            f'tracks/{i}/keys = {{"times": PackedFloat32Array({", ".join(str(round(t,5)) for t in times)}), "transitions": PackedFloat32Array({", ".join("1" for _ in times)}), "update": {1 if discrete else 0}, "values": [{", ".join(formatted)}]}}']
+    return "\n".join(lines)
+
+
+def write_scene(s):
+    parts=list(s.parts)
+    lines=[f'[gd_scene load_steps={len(parts)+7} format=3]',
+           '[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="1_script"]']
+    for i,p in enumerate(parts):
+        lines.append(f'[ext_resource type="ArrayMesh" path="res://assets/models/units/{s.name}/{p}.res" id="{i+2}_{p}"]')
+    walk=[]
+    idle=[]
+    if s.name in ("swordsman","archer"):
+        for p,sign in (("LegLeft",1),("LegRight",-1)):
+            walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,.56,0,-.56,0)]))
+            idle.append((f"Rig/{p}:rotation",[(0,0,0),(0,0,0)]))
+        walk.append(("Rig:position",[(0,y,0) for y in (0,.042,0,.042,0)]))
+        idle.append(("Rig:position",[(0,0,0),(0,.014,0),(0,0,0)]))
+    elif s.name=="knight":
+        for p,sign in (("LegFrontLeft",1),("LegFrontRight",-1),("LegRearLeft",-1),("LegRearRight",1)):
+            walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,.53,0,-.53,0)]))
+            idle.append((f"Rig/{p}:rotation",[(0,0,0),(0,0,0)]))
+        walk.append(("Rig:position",[(0,y,0) for y in (0,.065,0,.065,0)]))
+        idle.append(("Rig:position",[(0,0,0),(0,.016,0),(0,0,0)]))
+    else:
+        for p in parts:
+            if p.startswith("Wheel"):
+                walk.append((f"Rig/{p}:rotation",[(0,0,0),(-math.pi,0,0),(-math.tau,0,0)]))
+        idle.append(("Rig:position",[(0,0,0),(0,0,0)]))
+    if s.name in ("swordsman","knight"):
+        strike=[("Rig/ArmRight:rotation",[(0,0,0),(.85,0,-.28),(-1.45,0,.1),(-.35,0,0),(0,0,0)]),
+                ("Rig/ArmLeft:rotation",[(0,0,0),(.10,0,.12),(.32,0,.10),(0,0,0),(0,0,0)]),
+                ("Rig/Head:rotation",[(0,0,0),(0,-.12,0),(.06,.1,0),(0,0,0),(0,0,0)])]
+        duration=.60 if s.name=="swordsman" else .68
+        timing=[0,.12,.22,.39,.60] if s.name=="swordsman" else [0,.10,.20,.40,.68]
+        strike=[(p,v,timing) for p,v in strike]
+    elif s.name=="archer":
+        strike=[("Rig/ArmLeft:rotation",[(0,0,0),(.74,0,-.11),(.74,0,-.11),(.61,0,-.08),(0,0,0)]),
+                ("Rig/ArmRight:rotation",[(0,0,0),(.72,-.3,.23),(.72,-.3,.23),(.46,.05,.04),(0,0,0)])]
+        duration=.68
+        strike=[(p,v,[0,.14,.27,.38,.68]) for p,v in strike]
+        strike.append(("Rig/ArmRight/Arrow:visible",[True,False,True],[0,.27,.61]))
+    elif s.name=="catapult":
+        strike=[("Rig/ThrowArm:rotation",[(0,0,0),(.20,0,0),(-1.60,0,0),(-1.60,0,0),(-.45,0,0),(0,0,0)])]
+        duration=1.18
+        strike=[(p,v,[0,.22,.48,.60,.94,1.18]) for p,v in strike]
+        strike.append(("Rig/ThrowArm/Payload:visible",[True,False,True],[0,.48,1.12]))
+    else:
+        rest=s.joints["Barrel"]
+        strike=[("Rig/Barrel:position",[rest,rest,(rest[0],rest[1]-.015,rest[2]+.25),(rest[0],rest[1],rest[2]+.14),rest],[0,.24,.29,.40,.65])]
+        duration=.65
+    lines += [anim_resource("walk",.72 if s.name!="knight" else .60,walk,True),
+              anim_resource("idle",2.6,idle,True),anim_resource("strike",duration,strike),
+              '[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
+              '[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]\n_data = {&"strike": SubResource("Animation_strike")}',
+              f'[node name="{s.name.title()}" type="Node3D"]\nscript = ExtResource("1_script")\nkind = "{s.name}"',
+              '[node name="Rig" type="Node3D" parent="."]']
+    for i,p in enumerate(parts):
+        parent=s.part_path(s.parents[p]) if s.parents[p] else "Rig"
+        lines += [f'[node name="{p}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[p])}\nmesh = ExtResource("{i+2}_{p}")']
+    lines += ['[node name="Locomotion" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
+              '[node name="Attack" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
+    (OUT/f"{s.name}.tscn").write_text("\n\n".join(lines)+"\n",encoding="utf-8")
+
+
+if __name__=="__main__":
+    for model in (infantry("swordsman"),infantry("archer",True),horse_knight(),catapult(),cannon()):
+        model.save()

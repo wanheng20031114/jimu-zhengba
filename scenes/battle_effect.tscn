@@ -1,0 +1,183 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle_effect.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Material_spark"]
+transparency = 1
+vertex_color_use_as_albedo = true
+shading_mode = 0
+albedo_color = Color(1, 0.9, 0.6, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_spark"]
+material = SubResource("Material_spark")
+size = Vector3(0.045, 0.18, 0.045)
+
+[sub_resource type="Gradient" id="Gradient_spark"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(1, 0.96, 0.7, 1, 1, 0.72, 0.3, 0.8, 0.5, 0.35, 0.2, 0)
+
+[sub_resource type="StandardMaterial3D" id="Material_dust"]
+transparency = 1
+vertex_color_use_as_albedo = true
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="Mesh_dust"]
+material = SubResource("Material_dust")
+radius = 0.48
+height = 0.75
+radial_segments = 7
+rings = 3
+
+[sub_resource type="Gradient" id="Gradient_dust"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(0.56, 0.43, 0.28, 0.55, 0.64, 0.54, 0.4, 0.4, 0.72, 0.64, 0.51, 0)
+
+[sub_resource type="Curve" id="Curve_dust"]
+_data = [Vector2(0, 0.35), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="Material_debris"]
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.69, 0.61, 0.47, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="Mesh_debris"]
+material = SubResource("Material_debris")
+size = Vector3(0.16, 0.13, 0.23)
+
+[sub_resource type="StandardMaterial3D" id="Material_ring"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.6, 0.78, 0.8, 0.8)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Material_ring")
+inner_radius = 0.7
+outer_radius = 0.76
+rings = 48
+ring_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="Material_flash"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.73, 0.27, 0.9)
+
+[sub_resource type="SphereMesh" id="Mesh_flash"]
+material = SubResource("Material_flash")
+radius = 0.7
+height = 1.3
+radial_segments = 9
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="Material_direction"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.5, 0.85, 0.9, 0.9)
+
+[sub_resource type="CylinderMesh" id="Mesh_direction"]
+material = SubResource("Material_direction")
+top_radius = 0.19
+bottom_radius = 0.0
+height = 0.5
+radial_segments = 4
+
+[sub_resource type="Curve" id="Curve_spark"]
+_data = [Vector2(0, 0.9), 0.0, 0.0, 0, 0, Vector2(1, 0.15), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_debris"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="BattleEffect" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Sparks" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 8
+lifetime = 0.55
+one_shot = true
+explosiveness = 1.0
+mesh = SubResource("Mesh_spark")
+emission_shape = 2
+emission_sphere_radius = 0.18
+direction = Vector3(0, 1, 0)
+spread = 100.0
+gravity = Vector3(0, -6, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 4.5
+angular_velocity_min = -240.0
+angular_velocity_max = 240.0
+scale_amount_min = 0.7
+scale_amount_max = 1.5
+scale_amount_curve = SubResource("Curve_spark")
+color_ramp = SubResource("Gradient_spark")
+
+[node name="Dust" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 12
+lifetime = 1.65
+one_shot = true
+explosiveness = 0.93
+mesh = SubResource("Mesh_dust")
+emission_shape = 2
+emission_sphere_radius = 0.65
+direction = Vector3(0, 1, 0)
+spread = 70.0
+gravity = Vector3(0.1, 0.2, 0.12)
+initial_velocity_min = 0.6
+initial_velocity_max = 2.2
+angular_velocity_min = -40.0
+angular_velocity_max = 40.0
+scale_amount_min = 0.7
+scale_amount_max = 1.5
+scale_amount_curve = SubResource("Curve_dust")
+color_ramp = SubResource("Gradient_dust")
+
+[node name="Debris" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 16
+lifetime = 1.5
+one_shot = true
+explosiveness = 1.0
+mesh = SubResource("Mesh_debris")
+emission_shape = 2
+emission_sphere_radius = 0.7
+direction = Vector3(0, 1, 0)
+spread = 55.0
+gravity = Vector3(0, -9.8, 0)
+initial_velocity_min = 2.5
+initial_velocity_max = 6.5
+angular_velocity_min = -260.0
+angular_velocity_max = 260.0
+scale_amount_min = 0.7
+scale_amount_max = 2.3
+scale_amount_curve = SubResource("Curve_debris")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.07, 0)
+visible = false
+cast_shadow = 0
+material_override = SubResource("Material_ring")
+mesh = SubResource("Mesh_ring")
+
+[node name="Flash" type="MeshInstance3D" parent="."]
+visible = false
+position = Vector3(0, 0.5, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_flash")
+
+[node name="Direction" type="MeshInstance3D" parent="."]
+visible = false
+position = Vector3(0, 0.5, 0)
+cast_shadow = 0
+material_override = SubResource("Material_direction")
+mesh = SubResource("Mesh_direction")
+
+[node name="Lifetime" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="Lifetime" to="." method="_on_lifetime_timeout"]

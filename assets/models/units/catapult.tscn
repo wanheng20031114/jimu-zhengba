@@ -1,0 +1,128 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="1_script"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/Body.res" id="2_Body"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelLeftFront.res" id="3_WheelLeftFront"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelRightFront.res" id="4_WheelRightFront"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelLeftRear.res" id="5_WheelLeftRear"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelRightRear.res" id="6_WheelRightRear"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/ThrowArm.res" id="7_ThrowArm"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/Payload.res" id="8_Payload"]
+
+[sub_resource type="Animation" id="Animation_walk"]
+resource_name = "walk"
+length = 0.72
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/WheelLeftFront:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0.0, 0.36, 0.72), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(-3.141593, 0.000000, 0.000000), Vector3(-6.283185, 0.000000, 0.000000)]}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/WheelRightFront:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {"times": PackedFloat32Array(0.0, 0.36, 0.72), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(-3.141593, 0.000000, 0.000000), Vector3(-6.283185, 0.000000, 0.000000)]}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/WheelLeftRear:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {"times": PackedFloat32Array(0.0, 0.36, 0.72), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(-3.141593, 0.000000, 0.000000), Vector3(-6.283185, 0.000000, 0.000000)]}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/WheelRightRear:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {"times": PackedFloat32Array(0.0, 0.36, 0.72), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(-3.141593, 0.000000, 0.000000), Vector3(-6.283185, 0.000000, 0.000000)]}
+
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+length = 2.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0.0, 2.6), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(0.000000, 0.000000, 0.000000)]}
+
+[sub_resource type="Animation" id="Animation_strike"]
+resource_name = "strike"
+length = 1.18
+loop_mode = 0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/ThrowArm:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.22, 0.48, 0.6, 0.94, 1.18), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(0.200000, 0.000000, 0.000000), Vector3(-1.600000, 0.000000, 0.000000), Vector3(-1.600000, 0.000000, 0.000000), Vector3(-0.450000, 0.000000, 0.000000), Vector3(0.000000, 0.000000, 0.000000)]}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/ThrowArm/Payload:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {"times": PackedFloat32Array(0, 0.48, 1.12), "transitions": PackedFloat32Array(1, 1, 1), "update": 1, "values": [true, false, true]}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]
+_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]
+_data = {&"strike": SubResource("Animation_strike")}
+
+[node name="Catapult" type="Node3D"]
+script = ExtResource("1_script")
+kind = "catapult"
+
+[node name="Rig" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Rig"]
+position = Vector3(0.000000, 0.000000, 0.000000)
+mesh = ExtResource("2_Body")
+
+[node name="WheelLeftFront" type="MeshInstance3D" parent="Rig"]
+position = Vector3(-0.970000, 0.470000, -0.670000)
+mesh = ExtResource("3_WheelLeftFront")
+
+[node name="WheelRightFront" type="MeshInstance3D" parent="Rig"]
+position = Vector3(0.970000, 0.470000, -0.670000)
+mesh = ExtResource("4_WheelRightFront")
+
+[node name="WheelLeftRear" type="MeshInstance3D" parent="Rig"]
+position = Vector3(-0.970000, 0.470000, 0.870000)
+mesh = ExtResource("5_WheelLeftRear")
+
+[node name="WheelRightRear" type="MeshInstance3D" parent="Rig"]
+position = Vector3(0.970000, 0.470000, 0.870000)
+mesh = ExtResource("6_WheelRightRear")
+
+[node name="ThrowArm" type="MeshInstance3D" parent="Rig"]
+position = Vector3(0.000000, 1.620000, -0.050000)
+mesh = ExtResource("7_ThrowArm")
+
+[node name="Payload" type="MeshInstance3D" parent="Rig/ThrowArm"]
+position = Vector3(0.000000, 0.910000, 0.890000)
+mesh = ExtResource("8_Payload")
+
+[node name="Locomotion" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("AnimationLibrary_locomotion")}
+autoplay = "idle"
+
+[node name="Attack" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("AnimationLibrary_attack")}

@@ -1,0 +1,173 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle_building.gd" id="1_script"]
+
+[sub_resource type="BoxShape3D" id="Shape_building"]
+resource_local_to_scene = true
+size = Vector3(9, 6, 8)
+
+[sub_resource type="Shader" id="Shader_health"]
+code = "shader_type spatial;\nrender_mode unshaded, cull_disabled, depth_test_disabled, shadows_disabled;\ninstance uniform float health : hint_range(0.0, 1.0) = 1.0;\ninstance uniform vec4 bar_color : source_color = vec4(0.53, 0.75, 0.33, 1.0);\nvoid vertex() {\n    mat4 billboard = mat4(\n        vec4(INV_VIEW_MATRIX[0].xyz * length(MODEL_MATRIX[0].xyz), 0.0),\n        vec4(INV_VIEW_MATRIX[1].xyz * length(MODEL_MATRIX[1].xyz), 0.0),\n        vec4(INV_VIEW_MATRIX[2].xyz * length(MODEL_MATRIX[2].xyz), 0.0),\n        MODEL_MATRIX[3]);\n    MODELVIEW_MATRIX = VIEW_MATRIX * billboard;\n}\nvoid fragment() {\n    vec2 edge = abs(UV - vec2(0.5));\n    float border = step(0.445, edge.y) + step(0.488, edge.x);\n    vec3 background = vec3(0.075, 0.063, 0.052);\n    vec3 filled = bar_color.rgb * (0.83 + UV.y * 0.28);\n    float amount = step(UV.x, 0.025 + health * 0.95);\n    ALBEDO = mix(mix(background * 1.7, filled, amount), background, min(border, 1.0));\n    ALPHA = 1.0;\n}"
+
+[sub_resource type="ShaderMaterial" id="Material_health"]
+render_priority = 3
+shader = SubResource("Shader_health")
+
+[sub_resource type="QuadMesh" id="Mesh_health"]
+material = SubResource("Material_health")
+size = Vector2(1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_selection"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.45, 0.83, 0.94, 0.95)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="Mesh_selection"]
+material = SubResource("Material_selection")
+inner_radius = 0.74
+outer_radius = 0.77
+rings = 64
+ring_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="Material_smoke"]
+transparency = 1
+vertex_color_use_as_albedo = true
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="Mesh_smoke"]
+material = SubResource("Material_smoke")
+radius = 0.65
+height = 1.1
+radial_segments = 8
+rings = 4
+
+[sub_resource type="Gradient" id="Gradient_smoke"]
+offsets = PackedFloat32Array(0, 0.3, 1)
+colors = PackedColorArray(0.28, 0.25, 0.22, 0.6, 0.3, 0.28, 0.25, 0.45, 0.38, 0.35, 0.3, 0)
+
+[sub_resource type="StandardMaterial3D" id="Material_rubble"]
+albedo_color = Color(0.68, 0.58, 0.42, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Material_rubble_light"]
+albedo_color = Color(0.81, 0.73, 0.56, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="Mesh_rubble"]
+material = SubResource("Material_rubble")
+size = Vector3(1, 0.55, 0.65)
+
+[sub_resource type="PrismMesh" id="Mesh_rubble_angular"]
+material = SubResource("Material_rubble_light")
+size = Vector3(1, 0.8, 0.9)
+
+[node name="Building" type="StaticBody3D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 3, 0)
+shape = SubResource("Shape_building")
+
+[node name="ModelPivot" type="Node3D" parent="."]
+
+[node name="ProjectileOrigin" type="Marker3D" parent="."]
+position = Vector3(0, 5.6, 0)
+
+[node name="HealthBar" type="MeshInstance3D" parent="."]
+position = Vector3(0, 6.8, 0)
+scale = Vector3(5.5, 0.25, 1)
+visible = false
+cast_shadow = 0
+extra_cull_margin = 5.0
+material_override = SubResource("Material_health")
+mesh = SubResource("Mesh_health")
+
+[node name="SelectionRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.055, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_selection")
+surface_material_override/0 = SubResource("Material_selection")
+
+[node name="DamageSmoke" type="CPUParticles3D" parent="."]
+position = Vector3(0, 3.8, 0)
+emitting = false
+amount = 16
+lifetime = 3.6
+mesh = SubResource("Mesh_smoke")
+emission_shape = 2
+emission_sphere_radius = 1.5
+direction = Vector3(0.1, 1, 0)
+spread = 20.0
+gravity = Vector3(0.25, 0.3, 0.15)
+initial_velocity_min = 0.6
+initial_velocity_max = 1.0
+scale_amount_min = 0.6
+scale_amount_max = 1.8
+color_ramp = SubResource("Gradient_smoke")
+
+[node name="Rubble" type="Node3D" parent="."]
+visible = false
+
+[node name="Foundation" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(0, 0.055, 0)
+scale = Vector3(2.5, 0.2, 2.5)
+mesh = SubResource("Mesh_rubble")
+
+[node name="BrokenWallA" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(-0.5, 0.2, -0.6)
+rotation = Vector3(0.16, 0.23, -0.5)
+scale = Vector3(1.2, 0.9, 0.9)
+mesh = SubResource("Mesh_rubble")
+
+[node name="BrokenWallB" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(0.6, 0.14, 0.5)
+rotation = Vector3(0.3, -0.5, 0.6)
+scale = Vector3(1.5, 0.9, 1.2)
+mesh = SubResource("Mesh_rubble")
+
+[node name="StoneA" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(-0.6, 0.13, 0.55)
+rotation = Vector3(0.2, 1.1, 0.7)
+scale = Vector3(0.55, 0.8, 0.8)
+mesh = SubResource("Mesh_rubble_angular")
+
+[node name="StoneB" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(0.7, 0.15, -0.6)
+rotation = Vector3(0, -0.5, -0.3)
+scale = Vector3(0.8, 0.6, 0.7)
+mesh = SubResource("Mesh_rubble_angular")
+
+[node name="StoneC" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(0.1, 0.22, 0.05)
+rotation = Vector3(-0.3, 0.4, 0.2)
+scale = Vector3(1.05, 1.0, 0.8)
+mesh = SubResource("Mesh_rubble_angular")
+
+[node name="StoneD" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(-1.2, 0.08, -0.25)
+rotation = Vector3(0.3, 0.7, 0)
+scale = Vector3(0.4, 0.4, 0.7)
+mesh = SubResource("Mesh_rubble")
+
+[node name="StoneE" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(1.15, 0.07, 0.25)
+rotation = Vector3(0, -0.5, 0.15)
+scale = Vector3(0.55, 0.4, 0.6)
+mesh = SubResource("Mesh_rubble_angular")
+
+[node name="StoneF" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(0.25, 0.08, 1.1)
+rotation = Vector3(0.3, 0.7, 0)
+scale = Vector3(0.55, 0.5, 0.4)
+mesh = SubResource("Mesh_rubble")
+
+[node name="StoneG" type="MeshInstance3D" parent="Rubble"]
+position = Vector3(-0.3, 0.1, -1.1)
+rotation = Vector3(0, -0.35, 0.3)
+scale = Vector3(0.7, 0.5, 0.5)
+mesh = SubResource("Mesh_rubble_angular")

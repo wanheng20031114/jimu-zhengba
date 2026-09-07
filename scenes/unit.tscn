@@ -1,0 +1,82 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle_unit.gd" id="1_script"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule_body"]
+resource_local_to_scene = true
+radius = 0.42
+height = 1.8
+
+[sub_resource type="Shader" id="Shader_health"]
+code = "shader_type spatial;\nrender_mode unshaded, cull_disabled, depth_test_disabled, shadows_disabled;\ninstance uniform float health : hint_range(0.0, 1.0) = 1.0;\ninstance uniform vec4 bar_color : source_color = vec4(0.53, 0.75, 0.33, 1.0);\nvoid vertex() {\n    mat4 billboard = mat4(\n        vec4(INV_VIEW_MATRIX[0].xyz * length(MODEL_MATRIX[0].xyz), 0.0),\n        vec4(INV_VIEW_MATRIX[1].xyz * length(MODEL_MATRIX[1].xyz), 0.0),\n        vec4(INV_VIEW_MATRIX[2].xyz * length(MODEL_MATRIX[2].xyz), 0.0),\n        MODEL_MATRIX[3]);\n    MODELVIEW_MATRIX = VIEW_MATRIX * billboard;\n}\nvoid fragment() {\n    vec2 edge = abs(UV - vec2(0.5));\n    float border = step(0.445, edge.y) + step(0.488, edge.x);\n    vec3 background = vec3(0.075, 0.063, 0.052);\n    vec3 filled = bar_color.rgb * (0.83 + UV.y * 0.28);\n    float amount = step(UV.x, 0.025 + health * 0.95);\n    ALBEDO = mix(mix(background * 1.7, filled, amount), background, min(border, 1.0));\n    ALPHA = 1.0;\n}"
+
+[sub_resource type="ShaderMaterial" id="Material_health"]
+render_priority = 3
+shader = SubResource("Shader_health")
+
+[sub_resource type="QuadMesh" id="Mesh_health"]
+material = SubResource("Material_health")
+size = Vector2(1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_selection"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.45, 0.83, 0.94, 0.95)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="Mesh_selection"]
+material = SubResource("Material_selection")
+inner_radius = 0.74
+outer_radius = 0.82
+rings = 48
+ring_segments = 6
+
+[node name="Unit" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("Capsule_body")
+
+[node name="ModelPivot" type="Node3D" parent="."]
+
+[node name="ProjectileOrigin" type="Marker3D" parent="ModelPivot"]
+position = Vector3(0, 1.55, -0.6)
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.4
+target_desired_distance = 0.22
+path_max_distance = 2.5
+avoidance_enabled = true
+radius = 0.48
+neighbor_distance = 5.5
+max_neighbors = 10
+time_horizon_agents = 0.6
+time_horizon_obstacles = 0.5
+max_speed = 3.7
+
+[node name="HealthBar" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.45, 0)
+scale = Vector3(1.25, 0.17, 1)
+visible = false
+cast_shadow = 0
+extra_cull_margin = 5.0
+material_override = SubResource("Material_health")
+mesh = SubResource("Mesh_health")
+
+[node name="SelectionRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.06, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_selection")
+surface_material_override/0 = SubResource("Material_selection")
+
+[node name="AttackWindup" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_apply_velocity"]
+[connection signal="timeout" from="AttackWindup" to="." method="_on_attack_windup_timeout"]
