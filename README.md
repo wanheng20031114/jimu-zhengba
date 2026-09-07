@@ -8,6 +8,10 @@
 
 使用 Godot 4.6.3 或更新的 4.6 版本导入 `project.godot`，等待资源导入完成后按 **F5**（主场景为 `scenes/main.tscn`）。使用 Forward+ 渲染，建议独立显卡。
 
+本机已打包的 Windows 版本位于 `builds/windows/AshenCrown.exe`；分发时使用 `builds/AshenCrown-Windows-x64.zip`，解压后保留 EXE 和 PCK 在同一目录。构建产物不纳入 Git。
+
+安装 Godot 4.6.3 的导出模板后，可运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1` 重新打包。导出使用项目内的 Windows Desktop 原生预设，默认 Vulkan。
+
 ## 玩法
 
 - 五种可操作单位：剑士、弓箭手、骑士、投石车、加农炮。
@@ -48,13 +52,18 @@
 - `tools/`：离线模型、界面与导航作者脚本。
 - `tests/`：引擎内功能验证与压力测试。
 
-离线建模脚本使用 Python 3、NumPy、SciPy 和 trimesh；运行游戏无需 Python。中文界面使用系统中文字体。
+离线建模脚本使用 Python 3、NumPy、SciPy、trimesh 和 Shapely 2.1+；运行游戏无需 Python。中文界面使用系统中文字体。
 
 ## 验证
 
 ```text
 Godot_console.exe --headless --path . -- --smoke-test
+Godot_console.exe --headless --path . -- --ui-smoke
 Godot_console.exe --headless --path . --script res://tests/combat_smoke.gd
+Godot_console.exe --headless --path . --script res://tests/battle_scenario.gd
+Godot_console.exe --headless --path . --script res://tests/navigation_audit.gd
 ```
 
-整合测试覆盖经济、F12 输入、即时生产、编队、导航、死亡、建筑奖励与胜利流程。详细验证结果随开发阶段更新。
+整合测试覆盖经济、F12 输入、即时生产、编队、导航、死亡、建筑奖励与胜负流程。原生视口验证覆盖实际模型预览、动作出手帧和鼠标输入；环境模型另有重复面与连续镜头检查。
+
+最终性能验证使用 RTX 3080、1600×900、Forward+ / Vulkan：160 人行军平均约 83 FPS，混战平均约 89 FPS，混战 P95 帧耗时约 15 ms。同版本 D3D12 对照较慢，因此选择 Vulkan 为默认后端。数据来自开发机器，不代表所有设备的帧率；方法和历史数据见 [性能验证](tests/performance_review.md)。

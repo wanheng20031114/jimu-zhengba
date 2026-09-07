@@ -78,7 +78,8 @@ func _ready() -> void:
 		await get_tree().create_timer(3.0).timeout
 		await RenderingServer.frame_post_draw
 		var screenshot := get_viewport().get_texture().get_image()
-		screenshot.save_png("res://artifacts/battlefield.png")
+		var capture_path := "res://artifacts/battlefield.png" if OS.has_feature("editor") else "user://battlefield.png"
+		screenshot.save_png(capture_path)
 		print("CAPTURE_SAVED")
 		await prepare_shutdown()
 		get_tree().quit()
@@ -522,20 +523,30 @@ func restart() -> void:
 	get_tree().reload_current_scene()
 
 func prepare_shutdown() -> void:
+	finished = true
 	$IncomeTimer.stop()
 	$EnemyTimer.stop()
+	var retiring_playbacks: Array[WeakRef] = []
 	for unit in get_tree().get_nodes_in_group("units"):
 		unit.set_physics_process(false)
 		unit.get_node("AttackWindup").stop()
+		unit.navigation_agent.avoidance_enabled = false
 	for building in get_tree().get_nodes_in_group("buildings"):
 		building.set_physics_process(false)
 	for effect in effect_container.get_children():
 		if effect is BattleEffect:
-			effect.get_node("Sound").stop()
+			var sound: AudioStreamPlayer3D = effect.get_node("Sound")
+			if sound.has_stream_playback():
+				retiring_playbacks.append(weakref(sound.get_stream_playback()))
+			sound.stop()
 		elif effect is BattleProjectile:
 			effect.set_physics_process(false)
-	$Audio.stop_all()
-	await get_tree().create_timer(0.18).timeout
+	retiring_playbacks.append_array($Audio.stop_all())
+	# stop() requests an audio-thread fade and deferred main-thread deletion.
+	# A fixed delay can expire before that deletion, especially with the Dummy driver.
+	while not retiring_playbacks.is_empty():
+		await get_tree().process_frame
+		retiring_playbacks = retiring_playbacks.filter(func(reference: WeakRef): return reference.get_ref() != null)
 	await get_tree().process_frame
 
 func _notification(what: int) -> void:

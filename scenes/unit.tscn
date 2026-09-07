@@ -44,9 +44,6 @@ shape = SubResource("Capsule_body")
 
 [node name="ModelPivot" type="Node3D" parent="."]
 
-[node name="ProjectileOrigin" type="Marker3D" parent="ModelPivot"]
-position = Vector3(0, 1.55, -0.6)
-
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.4
 target_desired_distance = 0.22

@@ -44,6 +44,7 @@ var waypoint_queue: Array[Dictionary] = []
 
 var _stats: Dictionary
 var _model: Node3D
+var _attack_animation: AnimationPlayer
 var _game: Node
 var _attack_cooldown: float = 0.0
 var _scan_time: float = 0.0
@@ -96,13 +97,10 @@ func _ready() -> void:
 	_model = MODELS[unit_type].instantiate()
 	_model.set_team(team)
 	model_pivot.add_child(_model)
+	_attack_animation = _model.get_node("Attack")
 	model_pivot.rotation.y = rotation.y
 	rotation.y = 0.0
 	_model.set_motion(false)
-	match unit_type:
-		"archer": $ModelPivot/ProjectileOrigin.position = Vector3(0.0, 1.45, -0.6)
-		"catapult": $ModelPivot/ProjectileOrigin.position = Vector3(0.0, 2.5, -1.0)
-		"cannon": $ModelPivot/ProjectileOrigin.position = Vector3(0.0, 1.2, -1.5)
 	navigation_agent.radius = radius
 	navigation_agent.max_speed = speed
 	navigation_agent.neighbor_distance = 5.5
@@ -164,6 +162,14 @@ func _physics_process(delta: float) -> void:
 				if navigation_agent.target_position.distance_squared_to(chase_destination) > 0.09:
 					_set_navigation_target(chase_destination)
 			desired_velocity = _path_velocity()
+			if target.is_in_group("buildings") and String(_stats.projectile).is_empty() and navigation_agent.is_navigation_finished():
+				# A padded navigation mesh ends before the physical wall. Complete the
+				# last contact step through CharacterBody3D so swords can reach it.
+				var contact_direction: Vector3 = target.get_attack_position(global_position) - global_position
+				contact_direction.y = 0.0
+				var contact_distance: float = attack_range + radius + 1.0
+				if contact_direction.length_squared() <= contact_distance * contact_distance:
+					desired_velocity = contact_direction.normalized() * speed
 	elif order in [Order.MOVE, Order.ATTACK_MOVE]:
 		if global_position.distance_squared_to(destination) < pow(maxf(0.65, radius * 0.8), 2.0):
 			_complete_waypoint()
@@ -191,7 +197,9 @@ func _physics_process(delta: float) -> void:
 		_moving = is_moving
 		_model.set_motion(_moving)
 	if navigation_agent.avoidance_enabled:
-		navigation_agent.velocity = desired_velocity
+		# NavigationAgent stops forwarding velocity after its path completes.
+		# Drive the same native RVO agent directly, including the final wall step.
+		NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), desired_velocity)
 	else:
 		_apply_velocity(desired_velocity)
 
@@ -302,6 +310,11 @@ func _on_attack_windup_timeout() -> void:
 	var kind: String = _stats.projectile
 	if not _within_attack_range(_strike_target, 1.4):
 		return
+	# The Timer can run a few milliseconds before AnimationPlayer in the same frame.
+	# Apply the authored release pose before reading the moving weapon socket.
+	var pose_delay: float = attack_windup.wait_time - _attack_animation.current_animation_position
+	if pose_delay > 0.0:
+		_attack_animation.advance(pose_delay + 0.000001)
 	if kind.is_empty():
 		_strike_target.receive_damage(_strike_damage, self)
 		_game.spawn_effect(_strike_target.global_position + Vector3.UP * 1.1, "hit", Color("f5d691"))
@@ -311,7 +324,7 @@ func _on_attack_windup_timeout() -> void:
 			_game.spawn_effect(get_projectile_origin(), "muzzle", Color("ffd898"))
 
 func get_projectile_origin() -> Vector3:
-	return $ModelPivot/ProjectileOrigin.global_position
+	return _model.get_projectile_origin()
 
 func set_selected(value: bool) -> void:
 	selected = value and alive
@@ -380,7 +393,7 @@ func _finish_order() -> void:
 	attack_windup.stop()
 	_set_navigation_target(global_position)
 	velocity = Vector3.ZERO
-	navigation_agent.velocity = Vector3.ZERO
+	NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), Vector3.ZERO)
 
 func receive_damage(amount: float, source: Node3D = null) -> void:
 	if not alive or (is_instance_valid(source) and source.team == team):

@@ -7,7 +7,6 @@ from build_navigation import build as build_navigation
 ROOT = Path(__file__).resolve().parents[1]
 SCENES = ROOT / 'scenes'
 SCENES.mkdir(exist_ok=True)
-(ROOT / 'assets/ui').mkdir(parents=True, exist_ok=True)
 (ROOT / 'artifacts').mkdir(exist_ok=True)
 
 def q(text):

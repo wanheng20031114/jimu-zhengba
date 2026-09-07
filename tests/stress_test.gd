@@ -51,6 +51,7 @@ func _run() -> void:
 		await _measure("normal_60_friendly_plus_enemy_march", 8.0)
 		_write_result()
 		finished = true
+		await game.prepare_shutdown()
 		quit(0 if failures.is_empty() else 2)
 		return
 	# Validate immediate recruitment through the production API before clearing.
@@ -152,6 +153,7 @@ func _run() -> void:
 	_check(get_nodes_in_group("units").is_empty(), "all stress units released")
 	_write_result()
 	finished = true
+	await game.prepare_shutdown()
 	quit(0 if failures.is_empty() else 2)
 
 func _spawn_friendly(index: int) -> void:

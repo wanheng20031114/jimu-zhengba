@@ -52,6 +52,9 @@ func initialize(source: Node3D, target: Node3D, damage: float, kind: String) -> 
 			_duration = clampf(distance / 25.0, 0.15, 0.85)
 			_arc_height = 0.13
 	global_position = _start
+	var launch_direction: Vector3 = (_end - _start) + Vector3.UP * (4.0 * _arc_height)
+	var launch_up: Vector3 = Vector3.RIGHT if absf(launch_direction.normalized().dot(Vector3.UP)) > 0.99 else Vector3.UP
+	look_at(_start + launch_direction, launch_up)
 	_active = true
 
 func _physics_process(delta: float) -> void:
