@@ -110,4 +110,5 @@ func run(controller: Node3D) -> void:
 	report_file.store_string(JSON.stringify(report, "  "))
 	report_file.close()
 	print("INTEGRATION: %d checks, %d failures" % [checks, failures.size()])
+	await game.prepare_shutdown()
 	get_tree().quit(0 if failures.is_empty() else 1)

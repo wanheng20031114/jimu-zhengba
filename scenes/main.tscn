@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="game"]
 
@@ -15,6 +15,20 @@
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="hud"]
 
 [ext_resource type="NavigationMesh" path="res://assets/battle_navigation.tres" id="nav"]
+
+[ext_resource type="NavigationMesh" path="res://assets/navigation/Headquarters_cleared.tres" id="patch_Headquarters"]
+
+[ext_resource type="NavigationMesh" path="res://assets/navigation/EnemyKeep_cleared.tres" id="patch_EnemyKeep"]
+
+[ext_resource type="NavigationMesh" path="res://assets/navigation/NorthBarracks_cleared.tres" id="patch_NorthBarracks"]
+
+[ext_resource type="NavigationMesh" path="res://assets/navigation/Watchtower_cleared.tres" id="patch_Watchtower"]
+
+[ext_resource type="NavigationMesh" path="res://assets/navigation/WestBarracks_cleared.tres" id="patch_WestBarracks"]
+
+[ext_resource type="PackedScene" path="res://scenes/rally_marker.tscn" id="rally"]
+
+[ext_resource type="PackedScene" path="res://scenes/audio.tscn" id="audio"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.32,0.41,0.48,1)
@@ -71,21 +85,21 @@ light_color = Color(1,0.89,0.72,1)
 light_energy = 1.15
 shadow_enabled = true
 directional_shadow_max_distance = 135.0
-shadow_bias = 0.035
-shadow_normal_bias = 0.7
+shadow_bias = 0.06
+shadow_normal_bias = 2.0
 directional_shadow_blend_splits = true
 directional_shadow_mode = 2
 light_angular_distance = 1.6
 
 [node name="CameraRig" type="Node3D" parent="."]
-position = Vector3(-10,0,14)
+position = Vector3(-12,0,18)
 script = ExtResource("camera")
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
-position = Vector3(0,42,29.409)
-rotation_degrees = Vector3(-55,0,0)
+position = Vector3(-12.053,42,33.115)
+rotation_degrees = Vector3(-50,-20,0)
 projection = 1
-size = 32.0
+size = 31.0
 near = 0.1
 far = 220.0
 current = true
@@ -95,6 +109,32 @@ current = true
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = ExtResource("nav")
+
+[node name="ClearedNavigation" type="Node3D" parent="."]
+
+
+[node name="Headquarters" type="NavigationRegion3D" parent="ClearedNavigation"]
+navigation_mesh = ExtResource("patch_Headquarters")
+enabled = false
+
+[node name="EnemyKeep" type="NavigationRegion3D" parent="ClearedNavigation"]
+navigation_mesh = ExtResource("patch_EnemyKeep")
+enabled = false
+
+[node name="NorthBarracks" type="NavigationRegion3D" parent="ClearedNavigation"]
+navigation_mesh = ExtResource("patch_NorthBarracks")
+enabled = false
+
+[node name="Watchtower" type="NavigationRegion3D" parent="ClearedNavigation"]
+navigation_mesh = ExtResource("patch_Watchtower")
+enabled = false
+
+[node name="WestBarracks" type="NavigationRegion3D" parent="ClearedNavigation"]
+navigation_mesh = ExtResource("patch_WestBarracks")
+enabled = false
+
+[node name="RallyMarker" parent="." instance=ExtResource("rally")]
+position = Vector3(-10,0,24)
 
 [node name="Buildings" type="Node3D" parent="."]
 
@@ -278,49 +318,49 @@ team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red25" parent="Units" instance=ExtResource("unit")]
-position = Vector3(18.0,0,-15.0)
+position = Vector3(15.5,0,-15.5)
 unit_type = "swordsman"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red26" parent="Units" instance=ExtResource("unit")]
-position = Vector3(19.7,0,-15.0)
+position = Vector3(22.5,0,-14.5)
 unit_type = "swordsman"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red27" parent="Units" instance=ExtResource("unit")]
-position = Vector3(21.4,0,-15.0)
+position = Vector3(23.5,0,-13.5)
 unit_type = "swordsman"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red28" parent="Units" instance=ExtResource("unit")]
-position = Vector3(18.0,0,-16.5)
+position = Vector3(17.5,0,-17.5)
 unit_type = "swordsman"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red29" parent="Units" instance=ExtResource("unit")]
-position = Vector3(19.7,0,-16.5)
+position = Vector3(24.5,0,-16.5)
 unit_type = "swordsman"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red30" parent="Units" instance=ExtResource("unit")]
-position = Vector3(21.0,0,-18)
+position = Vector3(24.5,0,-14.5)
 unit_type = "archer"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red31" parent="Units" instance=ExtResource("unit")]
-position = Vector3(22.5,0,-18)
+position = Vector3(25.5,0,-15.5)
 unit_type = "archer"
 team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Red32" parent="Units" instance=ExtResource("unit")]
-position = Vector3(24.0,0,-18)
+position = Vector3(24,0,-18)
 unit_type = "archer"
 team = 1
 rotation_degrees = Vector3(0,180,0)
@@ -374,6 +414,9 @@ team = 1
 rotation_degrees = Vector3(0,180,0)
 
 [node name="Effects" type="Node3D" parent="."]
+
+
+[node name="Audio" parent="." instance=ExtResource("audio")]
 
 
 [node name="IncomeTimer" type="Timer" parent="."]

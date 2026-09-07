@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/audio_director.gd" id="script"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambient_music.wav" id="music"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambient_wind.wav" id="wind"]
+
+[node name="Audio" type="Node"]
+script = ExtResource("script")
+
+[node name="UI" type="AudioStreamPlayer" parent="."]
+volume_db = -15.0
+max_polyphony = 3
+
+[node name="Wind" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("wind")
+volume_db = -29.0
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -25.0

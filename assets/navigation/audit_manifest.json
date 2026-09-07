@@ -15,6 +15,52 @@
     3,
     2
   ],
+  "component_bounds": [
+    {
+      "cells": 4658,
+      "min": [
+        -40,
+        -40
+      ],
+      "max": [
+        40,
+        40
+      ]
+    },
+    {
+      "cells": 3,
+      "min": [
+        -24,
+        17
+      ],
+      "max": [
+        -21,
+        18
+      ]
+    },
+    {
+      "cells": 3,
+      "min": [
+        34,
+        39
+      ],
+      "max": [
+        37,
+        40
+      ]
+    },
+    {
+      "cells": 2,
+      "min": [
+        -40,
+        38
+      ],
+      "max": [
+        -39,
+        40
+      ]
+    }
+  ],
   "anchor": [
     -10.5,
     0.03,
@@ -1780,6 +1826,7 @@
       "team": 0,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -9,
@@ -1799,6 +1846,7 @@
       "team": 0,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -7.2,
@@ -1818,6 +1866,7 @@
       "team": 0,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -5.4,
@@ -1837,6 +1886,7 @@
       "team": 0,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -9,
@@ -1856,6 +1906,7 @@
       "team": 0,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -7.2,
@@ -1875,6 +1926,7 @@
       "team": 0,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -5.4,
@@ -1894,6 +1946,7 @@
       "team": 0,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -9,
@@ -1913,6 +1966,7 @@
       "team": 0,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -7.3,
@@ -1932,6 +1986,7 @@
       "team": 0,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -9,
@@ -1951,6 +2006,7 @@
       "team": 0,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -7.3,
@@ -1970,6 +2026,7 @@
       "team": 0,
       "radius": 0.78,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -4,
@@ -1989,6 +2046,7 @@
       "team": 0,
       "radius": 0.78,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -2,
@@ -2008,6 +2066,7 @@
       "team": 0,
       "radius": 1.05,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -14,
@@ -2027,6 +2086,7 @@
       "team": 0,
       "radius": 1.0,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -12,
@@ -2046,6 +2106,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -1,
@@ -2065,6 +2126,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         0.7,
@@ -2084,6 +2146,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         2.4,
@@ -2103,6 +2166,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         4.1,
@@ -2122,6 +2186,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -1,
@@ -2141,6 +2206,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         0.7,
@@ -2160,6 +2226,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         2.4,
@@ -2179,6 +2246,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         2,
@@ -2198,6 +2266,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         3.6,
@@ -2217,6 +2286,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         5.2,
@@ -2236,6 +2306,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         6.800000000000001,
@@ -2247,176 +2318,142 @@
     {
       "name": "Red25",
       "position": [
-        18.0,
+        15.5,
         0.0,
-        -15.0
+        -15.5
       ],
       "kind": "swordsman",
       "team": 1,
       "radius": 0.48,
-      "physics_overlaps": [
-        "Cart11"
-      ],
-      "distance_to_navigation": 2.0,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        16,
-        0.03,
-        -15
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         15.5,
-        0.0,
+        0.03,
         -15.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red26",
       "position": [
-        19.7,
+        22.5,
         0.0,
-        -15.0
+        -14.5
       ],
       "kind": "swordsman",
       "team": 1,
       "radius": 0.48,
-      "physics_overlaps": [
-        "Cart11"
-      ],
-      "distance_to_navigation": 2.3,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        22,
-        0.03,
-        -15
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         22.5,
-        0.0,
+        0.03,
         -14.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red27",
       "position": [
-        21.4,
+        23.5,
         0.0,
-        -15.0
+        -13.5
       ],
       "kind": "swordsman",
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
-      "distance_to_navigation": 0.6,
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        22,
-        0.03,
-        -15
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         23.5,
-        0.0,
+        0.03,
         -13.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red28",
       "position": [
-        18.0,
+        17.5,
         0.0,
-        -16.5
+        -17.5
       ],
       "kind": "swordsman",
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
-      "distance_to_navigation": 0.5,
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        18,
-        0.03,
-        -17
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         17.5,
-        0.0,
+        0.03,
         -17.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red29",
       "position": [
-        19.7,
+        24.5,
         0.0,
         -16.5
       ],
       "kind": "swordsman",
       "team": 1,
       "radius": 0.48,
-      "physics_overlaps": [
-        "Palisade25"
-      ],
-      "distance_to_navigation": 1.772,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        18,
-        0.03,
-        -17
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         24.5,
-        0.0,
+        0.03,
         -16.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red30",
       "position": [
-        21.0,
+        24.5,
         0.0,
-        -18.0
+        -14.5
       ],
       "kind": "archer",
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
-      "distance_to_navigation": 3.0,
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        18,
-        0.03,
-        -18
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         24.5,
-        0.0,
+        0.03,
         -14.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red31",
       "position": [
-        22.5,
+        25.5,
         0.0,
-        -18.0
+        -15.5
       ],
       "kind": "archer",
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
-      "distance_to_navigation": 1.5,
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
       "navigation_projection": [
-        24,
-        0.03,
-        -18
-      ],
-      "reaches_main_component": false,
-      "suggested_position": [
         25.5,
-        0.0,
+        0.03,
         -15.5
-      ]
+      ],
+      "reaches_main_component": true
     },
     {
       "name": "Red32",
@@ -2429,6 +2466,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         24,
@@ -2448,6 +2486,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         25.5,
@@ -2467,6 +2506,7 @@
       "team": 1,
       "radius": 0.78,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         12,
@@ -2486,6 +2526,7 @@
       "team": 1,
       "radius": 0.78,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         15,
@@ -2505,6 +2546,7 @@
       "team": 1,
       "radius": 1.05,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         15,
@@ -2524,6 +2566,7 @@
       "team": 1,
       "radius": 1.0,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         22,
@@ -2543,6 +2586,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -8,
@@ -2562,6 +2606,7 @@
       "team": 1,
       "radius": 0.48,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -10,
@@ -2581,6 +2626,7 @@
       "team": 1,
       "radius": 0.42,
       "physics_overlaps": [],
+      "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -10,

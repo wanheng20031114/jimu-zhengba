@@ -185,10 +185,11 @@ def audit_spawns(units, obstacles, walkable, main_component):
     for unit in units:
         position, radius = unit["position"], unit["radius"]
         collisions = [o["name"] for o in obstacles if collision_at(position, radius * .85, o)]
+        unit_overlaps = [other["name"] for other in units if other["name"] != unit["name"] and math.dist((position[0], position[2]), (other["position"][0], other["position"][2])) < .85 * (radius + other["radius"])]
         projection, nav_distance = closest_point(position, walkable)
         component_projection, component_distance = closest_point(position, main_component)
-        item = {**unit, "physics_overlaps": collisions, "distance_to_navigation": round(nav_distance, 4), "navigation_projection": projection, "reaches_main_component": component_distance < .021}
-        if collisions or nav_distance > .021 or component_distance > .021:
+        item = {**unit, "physics_overlaps": collisions, "unit_overlaps": unit_overlaps, "distance_to_navigation": round(nav_distance, 4), "navigation_projection": projection, "reaches_main_component": component_distance < .021}
+        if collisions or unit_overlaps or nav_distance > .021 or component_distance > .021:
             candidates = sorted(main_component, key=lambda c: ((c[0] + .5 - position[0]) ** 2 + (c[1] + .5 - position[2]) ** 2, c))
             for cell in candidates:
                 proposal = center(cell)
@@ -232,7 +233,8 @@ def build():
     anchor = center(closest_center([-10, 0, 20], main_component))
     targets = [("CentralBattlefield", [0, 0, 0]), ("EnemyFront", [16, 0, -10]), ("KeepWestApproach", [14, 0, -25]), ("WestWarehouseApproach", [-10, 0, -13])]
     routes = [{"name": name, "start": anchor, "end": center(closest_center(position, main_component))} for name, position in targets]
-    manifest = {"grid_min": GRID_MIN, "grid_max": GRID_MAX, "grid_spacing": 1, "height": HEIGHT, "obstacle_padding": PADDING, "environment_obstacles": len(environment), "base": base_stats, "components": [len(group) for group in groups], "anchor": anchor, "routes": routes, "patches": patches, "patch_stats": patch_stats, "spawns": spawns}
+    component_bounds = [{"cells": len(group), "min": [min(c[0] for c in group), min(c[1] for c in group)], "max": [max(c[0] for c in group) + 1, max(c[1] for c in group) + 1]} for group in groups]
+    manifest = {"grid_min": GRID_MIN, "grid_max": GRID_MAX, "grid_spacing": 1, "height": HEIGHT, "obstacle_padding": PADDING, "environment_obstacles": len(environment), "base": base_stats, "components": [len(group) for group in groups], "component_bounds": component_bounds, "anchor": anchor, "routes": routes, "patches": patches, "patch_stats": patch_stats, "spawns": spawns}
     (NAV_DIR / "audit_manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     issues = [unit for unit in spawns if "suggested_position" in unit]
     print(json.dumps({"main_polygons": len(walkable), "components": manifest["components"], "patch_polygons": {name: stats["polygons"] for name, stats in patch_stats.items()}, "spawn_issues": [{"name": item["name"], "position": item["position"], "physics_overlaps": item["physics_overlaps"], "distance_to_navigation": item["distance_to_navigation"], "suggested_position": item["suggested_position"]} for item in issues]}, ensure_ascii=False, indent=2))

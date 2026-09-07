@@ -22,7 +22,7 @@ var kills: int = 0
 var buildings_destroyed: int = 0
 var selection: Array[Node3D] = []
 var control_groups: Dictionary = {}
-var rally_point := Vector3(-13, 0, 16)
+var rally_point := Vector3(-10, 0, 24)
 var attack_mode: bool = false
 var dragging: bool = false
 var drag_start := Vector2.ZERO
@@ -40,8 +40,10 @@ var game_started: bool = false
 var photo_mode: bool = false
 var last_notification: String = ""
 var tests_running: bool = false
+var _closing: bool = false
 
 func _ready() -> void:
+	get_tree().auto_accept_quit = false
 	hud.bind_game(self)
 	$IncomeTimer.timeout.connect(_on_income)
 	$EnemyTimer.timeout.connect(_on_enemy_wave)
@@ -63,6 +65,14 @@ func _ready() -> void:
 		var runner = test_script.new()
 		add_child(runner)
 		runner.run(self)
+	if "--ui-smoke" in OS.get_cmdline_user_args():
+		tests_running = true
+		camera_rig.edge_scroll = false
+		var test_script = load("res://tests/ui_input_test.gd")
+		var runner = test_script.new()
+		runner.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(runner)
+		runner.run(self)
 	if "--capture" in OS.get_cmdline_user_args():
 		camera_rig.edge_scroll = false
 		await get_tree().create_timer(3.0).timeout
@@ -70,11 +80,13 @@ func _ready() -> void:
 		var screenshot := get_viewport().get_texture().get_image()
 		screenshot.save_png("res://artifacts/battlefield.png")
 		print("CAPTURE_SAVED")
+		await prepare_shutdown()
 		get_tree().quit()
 
 func _process(delta: float) -> void:
 	if not finished:
 		elapsed += delta
+	$RallyMarker.visible = headquarters.alive and headquarters in selection
 	_ui_accumulator += delta
 	if _ui_accumulator > 0.12:
 		_ui_accumulator = 0.0
@@ -97,6 +109,11 @@ func _input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F10:
 			photo_mode = not photo_mode
 			hud.visible = not photo_mode
+			get_viewport().set_input_as_handled()
+			return
+		if event.physical_keycode == KEY_F11:
+			var mode: DisplayServer.WindowMode = DisplayServer.window_get_mode()
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if mode == DisplayServer.WINDOW_MODE_FULLSCREEN else DisplayServer.WINDOW_MODE_FULLSCREEN)
 			get_viewport().set_input_as_handled()
 			return
 		if event.physical_keycode == KEY_ESCAPE:
@@ -171,6 +188,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_T: recruit("catapult")
 			KEY_Y: recruit("cannon")
 			KEY_P: toggle_pause()
+			KEY_M:
+				var muted: bool = $Audio.toggle_mute()
+				hud.toast("声音已关闭" if muted else "声音已开启", 1.5)
 
 func entity_at(screen: Vector2) -> Node3D:
 	var from := camera.project_ray_origin(screen)
@@ -234,6 +254,8 @@ func select_entities(entities: Array, additive: bool = false, toggle: bool = fal
 			selection.append(entity)
 			entity.set_selected(true)
 	hud.refresh()
+	if not entities.is_empty():
+		$Audio.play_ui("select")
 
 func _prune_selection() -> void:
 	selection = selection.filter(func(entity): return is_instance_valid(entity) and entity.alive)
@@ -250,6 +272,7 @@ func command_move(destination: Vector3, assault: bool = false, queued: bool = fa
 	if army.is_empty():
 		if headquarters in selection and headquarters.alive:
 			rally_point = destination
+			$RallyMarker.global_position = destination
 			spawn_effect(destination, "move", Color("e6bd69"))
 			hud.toast("集结点已设置", 2.0)
 		return
@@ -277,6 +300,7 @@ func command_move(destination: Vector3, assault: bool = false, queued: bool = fa
 		else:
 			army[index].issue_move(target, assault)
 	spawn_effect(destination, "attack" if assault else "move", Color("ee9e57") if assault else Color("91d0ee"))
+	$Audio.play_ui("order")
 	hud.toast(("攻击前进" if assault else "行军") + (" · 路径已追加" if queued else ""), 1.5)
 
 func command_attack(target: Node3D) -> void:
@@ -285,6 +309,7 @@ func command_attack(target: Node3D) -> void:
 	for unit in own_selected_units():
 		unit.issue_attack(target)
 	spawn_effect(target.global_position, "attack", Color("ff7851"))
+	$Audio.play_ui("order")
 	hud.toast("集中攻击 · " + target.display_name, 1.8)
 
 func stop_selected() -> void:
@@ -328,7 +353,18 @@ func focus_selection() -> void:
 	camera_rig.focus_at(center / selection.size())
 
 func use_control_group(number: int, assign: bool = false, append: bool = false) -> void:
-	if assign:
+	if append:
+		var selected := own_selected_units()
+		if selected.is_empty():
+			hud.toast("先选择要加入编队的部队", 2.0)
+			return
+		var group: Array = control_groups.get(number, []).filter(func(entity): return is_instance_valid(entity) and entity.alive)
+		for unit in selected:
+			if unit not in group:
+				group.append(unit)
+		control_groups[number] = group
+		hud.toast("已加入编队 %d · 共 %d 人" % [number, group.size()], 2.0)
+	elif assign:
 		var selected := own_selected_units()
 		if selected.is_empty():
 			hud.toast("先选择部队，再按 Ctrl + 数字编队", 2.5)
@@ -338,7 +374,7 @@ func use_control_group(number: int, assign: bool = false, append: bool = false) 
 	elif control_groups.has(number):
 		var group: Array = control_groups[number].filter(func(entity): return is_instance_valid(entity) and entity.alive)
 		control_groups[number] = group
-		select_entities(group, append)
+		select_entities(group)
 		var now := Time.get_ticks_msec() / 1000.0
 		if _last_group == number and now - _last_group_time < 0.35:
 			focus_selection()
@@ -396,6 +432,8 @@ func spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE) -> void
 
 func on_entity_died(entity: Node3D) -> void:
 	selection.erase(entity)
+	if entity.is_in_group("buildings"):
+		get_node("ClearedNavigation/" + str(entity.name)).enabled = true
 	if entity.team == 1:
 		if entity.is_in_group("units"):
 			kills += 1
@@ -415,6 +453,7 @@ func _on_income() -> void:
 
 func debug_add_gold() -> void:
 	gold += 100
+	$Audio.play_ui("coin")
 	hud.toast("调试补给 +100 金币", 2.0)
 	hud.refresh()
 
@@ -464,11 +503,47 @@ func end_battle(victory: bool) -> void:
 	for unit in get_tree().get_nodes_in_group("units"):
 		if unit.alive:
 			unit.hold()
+			unit.get_node("AttackWindup").stop()
+			unit.set_physics_process(false)
+			unit.navigation_agent.avoidance_enabled = false
+	for building in get_tree().get_nodes_in_group("buildings"):
+		building.set_physics_process(false)
+	for effect in effect_container.get_children():
+		if effect is BattleProjectile:
+			effect.queue_free()
 	hud.show_result(victory, elapsed, kills)
 
 func restart() -> void:
+	if _closing:
+		return
+	_closing = true
 	get_tree().paused = false
+	await prepare_shutdown()
 	get_tree().reload_current_scene()
+
+func prepare_shutdown() -> void:
+	$IncomeTimer.stop()
+	$EnemyTimer.stop()
+	for unit in get_tree().get_nodes_in_group("units"):
+		unit.set_physics_process(false)
+		unit.get_node("AttackWindup").stop()
+	for building in get_tree().get_nodes_in_group("buildings"):
+		building.set_physics_process(false)
+	for effect in effect_container.get_children():
+		if effect is BattleEffect:
+			effect.get_node("Sound").stop()
+		elif effect is BattleProjectile:
+			effect.set_physics_process(false)
+	$Audio.stop_all()
+	await get_tree().create_timer(0.18).timeout
+	await get_tree().process_frame
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _closing:
+		_closing = true
+		get_tree().paused = false
+		await prepare_shutdown()
+		get_tree().quit()
 
 func _on_minimap_clicked(at: Vector3, command: bool) -> void:
 	if command:

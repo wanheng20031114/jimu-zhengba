@@ -1,8 +1,10 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="hud"]
 
 [ext_resource type="Script" path="res://scripts/minimap.gd" id="minimap"]
+
+[ext_resource type="PackedScene" path="res://scenes/model_previews.tscn" id="previews"]
 
 [sub_resource type="SystemFont" id="font"]
 font_names = PackedStringArray("Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC")
@@ -128,6 +130,9 @@ mouse_filter = 2
 theme = SubResource("theme")
 script = ExtResource("hud")
 process_mode = 3
+
+[node name="ModelPreviews" parent="." instance=ExtResource("previews")]
+
 
 [node name="TopLeft" type="Control" parent="."]
 layout_mode = 0
@@ -975,9 +980,9 @@ theme_override_font_sizes/font_size = 12
 layout_mode = 0
 offset_left = 609
 offset_top = 0
-offset_right = 779
+offset_right = 899
 offset_bottom = 29
-text = "Ctrl + 数字  编队"
+text = "Ctrl + 数字  建队    Shift + 数字  追加"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 11
@@ -1078,7 +1083,7 @@ offset_left = 38
 offset_top = 169
 offset_right = 283
 offset_bottom = 500
-text = "左键 / 拖动\nShift + 左键 / 框选\n双击单位\n右键\nShift + 右键\nA + 左键\nS / H\nCtrl + 1—9\n1—9 / 双按数字\n中键拖动 / 方向键\n滚轮 / 空格\nB / G\nF12 / F10"
+text = "左键 / 拖动\nShift + 左键 / 框选\n双击单位\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl + 1—9\nShift + 1—9\n1—9 / 双按数字\n屏幕边缘 / 中键 / 方向键\n滚轮 / 空格\nB / G\nF12 / F10\nF11 / M"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 14
@@ -1091,7 +1096,7 @@ offset_left = 283
 offset_top = 169
 offset_right = 700
 offset_bottom = 500
-text = "选择 / 框选部队\n追加或取消选择\n选择视野内同类单位\n移动、攻击敌人；大本营设置集结点\n追加行军路线\n攻击前进，沿途自动接敌\n停止 / 坚守\n建立编队\n召回编队 / 镜头定位\n移动镜头\n缩放 / 定位所选部队\n大本营 / 全部军队\n调试金币 +100 / 隐藏界面"
+text = "选择 / 框选部队\n追加或取消选择\n选择视野内同类单位\n移动或攻击 / 追加路线；大本营设集结点\n攻击前进 / 停止 / 坚守\n建立或覆盖编队\n将所选部队追加到编队\n召回编队 / 镜头定位\n移动镜头（四角可斜向移动）\n缩放 / 定位所选部队\n大本营 / 全部军队\n调试金币 +100 / 隐藏界面\n全屏切换 / 静音切换"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 14

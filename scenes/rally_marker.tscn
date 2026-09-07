@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="gold"]
+albedo_color = Color(0.55, 0.38, 0.16, 1)
+metallic = 0.45
+roughness = 0.65
+
+[sub_resource type="CylinderMesh" id="pole"]
+top_radius = 0.035
+bottom_radius = 0.055
+height = 2.2
+radial_segments = 8
+material = SubResource("gold")
+
+[sub_resource type="CylinderMesh" id="tip"]
+top_radius = 0.0
+bottom_radius = 0.09
+height = 0.23
+radial_segments = 6
+material = SubResource("gold")
+
+[sub_resource type="StandardMaterial3D" id="ring_material"]
+shading_mode = 0
+albedo_color = Color(0.75, 0.68, 0.37, 1)
+
+[sub_resource type="TorusMesh" id="ring"]
+inner_radius = 0.57
+outer_radius = 0.61
+rings = 32
+ring_segments = 4
+material = SubResource("ring_material")
+
+[sub_resource type="Shader" id="flag_shader"]
+code = "shader_type spatial;\nrender_mode cull_disabled;\nvoid vertex(){ VERTEX.z += sin(TIME * 2.2 + UV.x * 5.0) * UV.x * 0.10; }\nvoid fragment(){ float trim = step(0.88, UV.y) + step(UV.y, 0.10); ALBEDO = mix(vec3(0.04,0.19,0.31), vec3(0.65,0.44,0.13), min(trim,1.0)); ROUGHNESS=0.95;}"
+
+[sub_resource type="ShaderMaterial" id="flag_material"]
+shader = SubResource("flag_shader")
+
+[sub_resource type="QuadMesh" id="flag"]
+size = Vector2(0.95, 0.62)
+material = SubResource("flag_material")
+
+[node name="RallyMarker" type="Node3D"]
+
+[node name="Pole" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.1, 0)
+mesh = SubResource("pole")
+
+[node name="Finial" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.25, 0)
+mesh = SubResource("tip")
+
+[node name="Flag" type="MeshInstance3D" parent="."]
+position = Vector3(0.46, 1.8, 0)
+mesh = SubResource("flag")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.06, 0)
+mesh = SubResource("ring")
+cast_shadow = 0

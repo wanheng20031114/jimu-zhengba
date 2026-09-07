@@ -8,6 +8,8 @@ var game: Node3D
 var portraits: Dictionary = {}
 var _toast_remaining: float = 0.0
 var _refresh_counter: int = 0
+var _hovered_preview: String = ""
+var _selected_preview: String = "headquarters"
 
 @onready var gold_label: Label = %GoldValue
 @onready var army_label: Label = %ArmyValue
@@ -24,9 +26,11 @@ var _refresh_counter: int = 0
 
 func _ready() -> void:
 	for kind in UNIT_ORDER + ["headquarters"]:
-		portraits[kind] = load("res://assets/ui/" + kind + ".png")
+		portraits[kind] = $ModelPreviews.portrait(kind)
 	for index in range(buttons.size()):
 		buttons[index].pressed.connect(_on_recruit.bind(index))
+		buttons[index].mouse_entered.connect(_set_preview_hover.bind(UNIT_ORDER[index]))
+		buttons[index].mouse_exited.connect(_set_preview_hover.bind(""))
 		buttons[index].tooltip_text = UNIT_NAMES[index] + " · " + str(COSTS[index]) + " 金币\n" + DESCRIPTIONS[index] + "\n立即加入战场，无需等待"
 		buttons[index].get_node("Portrait").texture = portraits[UNIT_ORDER[index]]
 	%AttackButton.pressed.connect(func(): game.set_attack_mode(true))
@@ -47,8 +51,10 @@ func _ready() -> void:
 
 func bind_game(controller: Node3D) -> void:
 	game = controller
+	%Minimap.game = controller
 
 func _process(delta: float) -> void:
+	$ModelPreviews.set_animated((_hovered_preview if not _hovered_preview.is_empty() else _selected_preview) if visible and not get_tree().paused else "")
 	if _toast_remaining > 0.0:
 		_toast_remaining -= delta
 		toast_label.modulate.a = minf(_toast_remaining * 2.5, 1.0)
@@ -79,6 +85,7 @@ func refresh() -> void:
 		selected_role.text = "蓝旗军团"
 		selected_stats.text = "左键选择 · 拖动框选\n右键行军或攻击"
 		selected_portrait.texture = portraits.headquarters
+		_selected_preview = "headquarters"
 		hp_bar.visible = false
 		hp_label.visible = false
 	elif game.selection.size() == 1:
@@ -93,9 +100,11 @@ func refresh() -> void:
 		hp_label.text = "%d / %d" % [int(entity.hp), int(entity.max_hp)]
 		if entity.is_in_group("units"):
 			selected_portrait.texture = portraits[entity.unit_type]
+			_selected_preview = entity.unit_type
 			selected_stats.text = "攻击 %d    射程 %.1f\n%s" % [entity.attack_damage, entity.attack_range, entity.order_name]
 		else:
 			selected_portrait.texture = portraits.headquarters
+			_selected_preview = "headquarters"
 			selected_stats.text = "每秒 +1 金币\n右键地面设置集结点" if entity.team == 0 else "敌方军事建筑\n摧毁获得 90 金币"
 	else:
 		selected_name.text = "%d 支部队" % game.selection.size()
@@ -113,6 +122,7 @@ func refresh() -> void:
 			descriptions.append(key + " " + str(counts[key]))
 		selected_stats.text = " · ".join(descriptions)
 		selected_portrait.texture = portraits.knight
+		_selected_preview = "knight"
 		hp_bar.visible = true
 		hp_label.visible = true
 		hp_bar.max_value = maximum
@@ -132,10 +142,13 @@ func refresh() -> void:
 		var button: Button = get_node("Groups/Group" + str(index))
 		button.text = str(index) + ("  ·  " + str(count) if count > 0 else "")
 		button.modulate.a = 1.0 if count > 0 else 0.48
-		button.tooltip_text = "编队 %d · %d 人\nCtrl + %d 设定 · 双按 %d 定位" % [index, count, index, index]
+		button.tooltip_text = "编队 %d · %d 人\nCtrl + %d 覆盖 · Shift + %d 追加\n按 %d 召回 · 双按定位" % [index, count, index, index, index]
 
 func _on_recruit(index: int) -> void:
 	game.recruit(UNIT_ORDER[index])
+
+func _set_preview_hover(kind: String) -> void:
+	_hovered_preview = kind
 
 func toast(message: String, duration: float = 2.0) -> void:
 	toast_label.text = message
