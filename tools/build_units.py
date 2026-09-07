@@ -9,6 +9,7 @@ import math
 import json
 import numpy as np
 import trimesh as tm
+from scipy.spatial.transform import Rotation
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets/models/units"
@@ -120,6 +121,7 @@ class Sculpture:
         self.parts = {}
         self.joints = {}
         self.parents = {}
+        self.pivots = {}
 
     def joint(self, name, pos=(0, 0, 0), parent=None):
         self.parts[name] = defaultdict(list)
@@ -128,7 +130,19 @@ class Sculpture:
         return name
 
     def part_path(self, part):
-        return self.part_path(self.parents[part]) + "/" + part if self.parents[part] else "Rig/" + part
+        return self.part_path(self.parents[part]) + "/" + part if self.parents[part] else "Rig/Action/" + part
+
+    def pivot(self, name, pos=(0,0,0), parent=None):
+        self.pivots[name] = True
+        self.joints[name] = pos
+        self.parents[name] = parent
+        return name
+
+    def reparent(self, part, parent):
+        # Authoring poses contain no initial rotations, so subtraction preserves
+        # the sculpture's exact world-space geometry while inserting a joint.
+        self.joints[part] = tuple(np.array(self.joints[part])-np.array(self.joints[parent]))
+        self.parents[part] = parent
 
     def add(self, part, mesh, color, shade=1.0):
         srgb = np.clip(np.array(P[color], float) * shade / 255.0, 0, 1)
@@ -278,10 +292,16 @@ def infantry(name, archer=False):
             s.b(part,(.32,.032,.31),(sign*.04,.024,-.042),"edge",rot=(0,0,sign*.13),bevel=.020)
         s.r(part,(sign*.045,-.08,0),(sign*.10,-.33,-.04),.106,"blue",8)
         s.e(part,(.115,.10,.11),(sign*.10,-.30,-.055),"darksteel" if not archer else "leather")
-        s.r(part,(sign*.10,-.30,-.04),(sign*.11,-.49,-.11),.100,"steel" if not archer else "leatherlight",8)
-        s.b(part,(.17,.085,.15),(sign*.11,-.475,-.10),"gold" if not archer else "leather",bevel=.025)
-        s.e(part,(.097,.093,.1),(sign*.12,-.54,-.115),"skin" if archer else "darksteel")
-        rivets(s,part,[(sign*.10,-.37,-.144),(sign*.10,-.44,-.15)],.015)
+        fore=part
+        origin=np.zeros(3)
+        if archer and sign==1:
+            origin=np.array((.10,-.30,-.04))
+            fore=s.joint("ForearmRight",tuple(origin),parent=right)
+        local=lambda p: tuple(np.array(p)-origin)
+        s.r(fore,local((sign*.10,-.30,-.04)),local((sign*.11,-.49,-.11)),.100,"steel" if not archer else "leatherlight",8)
+        s.b(fore,(.17,.085,.15),local((sign*.11,-.475,-.10)),"gold" if not archer else "leather",bevel=.025)
+        s.e(fore,(.097,.093,.1),local((sign*.12,-.54,-.115)),"skin" if archer else "darksteel")
+        rivets(s,fore,[local((sign*.10,-.37,-.144)),local((sign*.10,-.44,-.15))],.015)
     for part in (ll,lr):
         s.r(part,(0,.01,0),(0,-.29,.02),.116,"leather" if archer else "darksteel",8)
         s.e(part,(.12,.11,.11),(0,-.28,-.033),"leatherlight" if archer else "steel")
@@ -291,17 +311,19 @@ def infantry(name, archer=False):
         s.b(part,(.21,.036,.18),(0,-.53,-.025),"gold" if not archer else "leatherlight",bevel=.01)
     if archer:
         # Long laminated bow held ahead of the body; string has its own visible V.
-        bow_points=[(-.13,-1.01,-.25),(-.26,-.86,-.35),(-.31,-.62,-.40),(-.30,-.38,-.43),(-.26,-.15,-.37),(-.13,.07,-.25)]
+        bow=s.joint("Bow",(-.115,-.54,-.13),parent=left)
+        bow_points=[(0,-.57,.12),(0,-.43,.045),(0,-.23,-.025),(0,0,0),(0,.23,-.025),(0,.43,.045),(0,.57,.12)]
         for a,b in zip(bow_points,bow_points[1:]):
-            s.r(left,a,b,.032,"woodlight",8)
-        s.r(left,bow_points[0],(-.12,-.48,-.07),.009,"rope",6)
-        s.r(left,(-.12,-.48,-.07),bow_points[-1],.009,"rope",6)
-        s.r(left,(-.30,-.60,-.405),(-.30,-.39,-.418),.041,"leather",8)
+            s.r(bow,a,b,.032,"woodlight",8)
+        s.r(bow,(0,-.10,0),(0,.10,0),.041,"leather",8)
+        for name in ("StringUpper","StringLower"):
+            string=s.joint(name,(0,0,.14),parent=bow)
+            s.r(string,(0,0,0),(0,1,0),.008,"rope",6)
         # Readied arrow points along the forward axis.
-        arrow=s.joint("Arrow",parent="ArmRight")
-        s.r(arrow,(-.01,-.44,-.10),(-.01,-.44,-1.01),.014,"woodlight",6)
-        s.add(arrow,polygon([(-.046,0),(.046,0),(0,.12)],.020,(-.01,-.44,-1.035),(math.pi/2,0,0)),"edge")
-        s.b(arrow,(.10,.015,.13),(-.01,-.44,-.16),"ivory",bevel=.004)
+        arrow=s.joint("Arrow",(0,0,.14),parent=bow)
+        s.r(arrow,(0,0,0),(0,0,-.95),.014,"woodlight",6)
+        s.add(arrow,polygon([(-.046,0),(.046,0),(0,.12)],.020,(0,0,-.975),(math.pi/2,0,0)),"edge")
+        s.b(arrow,(.10,.015,.13),(0,0,-.08),"ivory",bevel=.004)
     else:
         shield(s,left,(-.12,-.35,-.225))
         sword(s,right,(.12,-.52,-.17))
@@ -309,6 +331,9 @@ def infantry(name, archer=False):
         s.b(body,(.082,.58,.084),(-.27,-.25,.1),"leather",rot=(0,0,-.16))
         s.b(body,(.15,.17,.12),(.265,-.13,.08),"leatherlight",bevel=.025)
         s.b(body,(.10,.026,.02),(.265,-.11,.014),"gold",bevel=.004)
+    waist=s.pivot("Waist",(0,1.05,0))
+    for p in (body,head,left,right):
+        s.reparent(p,waist)
     return s
 
 
@@ -391,6 +416,21 @@ def horse_knight():
         s.e(p,(.10,.095,.10),(sign*.08,-.47,-.19),"darksteel")
     shield(s,"ArmLeft",(-.12,-.34,-.255),True)
     sword(s,"ArmRight",(.09,-.43,-.22),1.0)
+    # Preserve all horse geometry while separating the neck/head for a recoil nod.
+    horse_head=s.joint("HorseHead",(0,.27,-.50),parent=b)
+    for category,pieces in s.parts[b].items():
+        retained=[]
+        for piece in pieces:
+            center=piece.centroid
+            if center[1]>.25 and center[2]<-.40:
+                piece.apply_translation((0,-.27,.50))
+                s.parts[horse_head][category].append(piece)
+            else:
+                retained.append(piece)
+        s.parts[b][category]=retained
+    waist=s.pivot("Waist",(0,1.75,.08))
+    for p in (rider,head,"ArmLeft","ArmRight"):
+        s.reparent(p,waist)
     return s
 
 
@@ -545,7 +585,118 @@ def anim_resource(name, duration, tracks, loop=False):
     return "\n".join(lines)
 
 
+def godot_rotation(euler):
+    x,y,z=euler
+    return Rotation.from_euler("YXZ",[y,x,z]).as_matrix()
+
+
+def godot_euler(basis):
+    y,x,z=Rotation.from_matrix(basis).as_euler("YXZ")
+    return (float(x),float(y),float(z))
+
+
+def aimed_right_arm(s,left_rotation,draw):
+    shoulder=np.array(s.joints["ArmRight"])
+    grip=np.array(s.joints["ArmLeft"])+godot_rotation(left_rotation)@np.array(s.joints["Bow"])
+    target=grip+np.array((0,0,draw))
+    upper=np.array((.10,-.30,-.04)); lower=np.array((.02,-.24,-.075))
+    a,b=np.linalg.norm(upper),np.linalg.norm(lower)
+    direction=target-shoulder
+    distance=min(np.linalg.norm(direction),a+b-.002)
+    direction/=np.linalg.norm(direction)
+    projection=(a*a-b*b+distance*distance)/(2*distance)
+    height=math.sqrt(max(0,a*a-projection*projection))
+    pole=np.array((.7,.12,.7))
+    pole-=direction*np.dot(pole,direction)
+    pole/=np.linalg.norm(pole)
+    elbow=direction*projection+pole*height
+    rotation=tm.geometry.align_vectors(upper,elbow)[:3,:3]
+    local_hand=rotation.T@(direction*distance-elbow)
+    forearm=tm.geometry.align_vectors(lower,local_hand)[:3,:3]
+    return godot_euler(rotation),godot_euler(forearm)
+
+
+def attack_tracks(s):
+    tracks=[]
+    def prop(part,kind):
+        return ("Rig/Action" if part=="Action" else s.part_path(part))+":"+kind
+    def rot(part,values,times): tracks.append((prop(part,"rotation"),values,times))
+    def pos(part,offsets,times):
+        base=np.zeros(3) if part=="Action" else np.array(s.joints[part])
+        tracks.append((prop(part,"position"),[tuple(base+np.array(o)) for o in offsets],times))
+    if s.name=="swordsman":
+        t=[0,.075,.15,.195,.22,.26,.35,.51,.69,.86]
+        rot("Waist",[(0,0,0),(.035,.13,-.045),(.045,.38,-.10),(.035,.35,-.08),(-.12,-.45,.045),(-.13,-.61,.065),(-.055,-.38,.04),(.012,-.12,0),(0,.025,0),(0,0,0)],t)
+        rot("ArmRight",[(0,0,0),(.52,-.13,-.30),(1.0,-.40,-.78),(.88,-.44,-.72),(-1.38,.10,.28),(-1.56,.28,.47),(-.85,.21,.23),(-.20,.03,.02),(.045,0,0),(0,0,0)],t)
+        rot("ArmLeft",[(0,0,0),(.18,-.10,.08),(.38,-.23,.19),(.42,-.26,.22),(.52,-.13,.15),(.50,-.08,.12),(.35,-.06,.075),(.14,0,.025),(0,0,0),(0,0,0)],t)
+        rot("Head",[(0,0,0),(-.015,-.065,0),(-.02,-.22,.025),(-.01,-.21,.02),(.035,.27,-.02),(.045,.35,-.035),(.02,.24,-.02),(0,.08,0),(0,0,0),(0,0,0)],t)
+        pos("Action",[(0,0,0),(-.02,-.018,.025),(-.03,-.035,.05),(-.01,-.02,.025),(.035,0,-.19),(.04,-.01,-.23),(.025,-.023,-.17),(.01,-.01,-.06),(0,0,0),(0,0,0)],t)
+        pos("LegLeft",[(0,0,0),(-.02,.02,-.02),(-.025,.045,-.075),(-.025,.018,-.13),(-.025,0,-.15),(-.025,0,-.15),(-.02,0,-.13),(-.012,.025,-.07),(0,.01,-.015),(0,0,0)],t)
+        pos("LegRight",[(0,0,0),(.02,0,.03),(.025,0,.065),(.025,0,.065),(.03,0,.085),(.03,0,.085),(.02,0,.055),(.01,0,.02),(0,0,0),(0,0,0)],t)
+        return .86,tracks
+    if s.name=="knight":
+        t=[0,.06,.13,.178,.20,.235,.33,.49,.71,.94]
+        rot("Waist",[(0,0,0),(.015,.18,-.035),(.025,.42,-.08),(.02,.37,-.07),(-.11,-.42,.055),(-.12,-.59,.075),(-.045,-.34,.04),(.02,-.1,0),(0,.02,0),(0,0,0)],t)
+        rot("ArmRight",[(0,0,0),(.48,-.18,-.38),(1.18,-.48,-.90),(1.12,-.45,-.87),(-1.32,.25,.43),(-1.49,.45,.63),(-.75,.25,.36),(-.14,.04,.08),(.035,0,0),(0,0,0)],t)
+        rot("ArmLeft",[(0,0,0),(.16,-.13,.06),(.30,-.19,.13),(.32,-.20,.13),(.45,-.08,.15),(.41,-.08,.13),(.24,-.06,.07),(.08,0,.02),(0,0,0),(0,0,0)],t)
+        rot("Head",[(0,0,0),(0,-.10,0),(-.025,-.27,.025),(-.02,-.25,.015),(.035,.24,-.02),(.04,.34,-.04),(.025,.2,-.02),(0,.05,0),(0,0,0),(0,0,0)],t)
+        pos("Action",[(0,0,0),(0,-.018,.015),(0,-.027,.045),(0,-.005,.015),(.025,.02,-.23),(.03,-.015,-.29),(.015,-.035,-.22),(0,-.012,-.085),(0,.005,-.01),(0,0,0)],t)
+        rot("Body",[(0,0,0),(.018,0,0),(.045,0,-.012),(.03,0,-.012),(-.065,0,.015),(-.05,0,.014),(.035,0,.008),(-.012,0,0),(0,0,0),(0,0,0)],t)
+        rot("HorseHead",[(0,0,0),(-.015,0,0),(-.065,-.015,0),(-.04,-.01,0),(.16,.025,0),(.115,.02,0),(-.065,-.015,0),(.025,0,0),(-.005,0,0),(0,0,0)],t)
+        pos("Waist",[(0,0,0),(0,-.008,.01),(0,-.025,.025),(0,-.01,.015),(0,.018,-.045),(0,-.005,-.03),(0,-.024,.005),(0,.008,0),(0,0,0),(0,0,0)],t)
+        return .94,tracks
+    if s.name=="archer":
+        t=[0,.075,.135,.205,.26,.27,.295,.35,.50,.72,.90,1.10]
+        left=[(0,0,0),(.82,-.32,0),(1.60,-.65,0),(1.60,-.65,0),(1.60,-.65,0),(1.60,-.65,0),(1.58,-.65,0),(1.50,-.61,0),(.95,-.40,0),(.25,-.10,0),(0,0,0),(0,0,0)]
+        draw=[.14,.17,.29,.46,.46,.14,.205,.14,.14,.14,.14,.14]
+        rot("ArmLeft",left,t)
+        rot("Bow",[godot_euler(godot_rotation(v).T) for v in left],t)
+        right=[];fore=[]
+        for index,(left_pose,pull) in enumerate(zip(left,draw)):
+            if index in (0,10,11):
+                r,f=(0,0,0),(0,0,0)
+            elif index==9:
+                r,f=(.12,-.1,-.18),(.10,0,-.22)
+            else:
+                reach=.49 if index in (5,6,7) else pull
+                r,f=aimed_right_arm(s,left_pose,reach)
+            right.append(r);fore.append(f)
+        rot("ArmRight",right,t);rot("ForearmRight",fore,t)
+        for string,tip_y in (("StringUpper",.57),("StringLower",-.57)):
+            tracks.append((prop(string,"position"),[(0,0,d) for d in draw],t))
+            rot(string,[(math.atan2(.12-d,tip_y),0,0) for d in draw],t)
+            tracks.append((prop(string,"scale"),[(1,math.hypot(tip_y,.12-d),1) for d in draw],t))
+        tracks.append((prop("Arrow","position"),[(0,0,d) for d in draw],t))
+        tracks.append((prop("Arrow","visible"),[True,False,True],[0,.27,.82]))
+        rot("Waist",[(0,0,0),(.015,.055,-.025),(.005,.12,-.04),(0,.14,-.04),(0,.14,-.04),(-.02,.12,-.035),(-.035,.10,-.02),(-.015,.085,-.01),(.02,.03,0),(.01,-.025,.01),(0,0,0),(0,0,0)],t)
+        rot("Head",[(0,0,0),(-.03,-.03,-.015),(-.045,-.1,-.04),(-.045,-.12,-.04),(-.045,-.12,-.04),(-.035,-.1,-.03),(-.015,-.07,-.015),(0,-.06,0),(.02,.02,0),(.015,.04,0),(0,0,0),(0,0,0)],t)
+        pos("Action",[(0,0,0),(0,-.018,.015),(0,-.025,.025),(0,-.015,.04),(0,-.015,.04),(0,0,.018),(0,.005,.006),(0,-.008,0),(0,-.012,0),(0,0,0),(0,0,0),(0,0,0)],t)
+        pos("LegLeft",[(0,0,0),(-.025,0,-.03),(-.04,0,-.045),(-.04,0,-.045),(-.04,0,-.045),(-.04,0,-.045),(-.04,0,-.04),(-.03,0,-.035),(-.015,0,-.02),(0,0,0),(0,0,0),(0,0,0)],t)
+        return 1.10,tracks
+    if s.name=="catapult":
+        t=[0,.18,.32,.44,.48,.53,.61,.70,.86,1.08,1.34,1.53,1.72]
+        rot("ThrowArm",[(x,0,0) for x in [0,.10,.22,.25,-1.60,-1.82,-1.56,-1.73,-1.54,-.92,-.20,.025,0]],t)
+        pos("Action",[(0,0,0),(0,-.003,0),(0,-.008,-.006),(0,-.012,-.012),(0,.023,.015),(0,.012,.09),(0,-.012,.065),(0,.006,.028),(0,-.003,.008),(0,0,0),(0,0,0),(0,0,0),(0,0,0)],t)
+        rot("Body",[(x,0,z) for x,z in [(0,0),(-.003,0),(-.008,0),(-.012,0),(.018,.004),(.032,-.004),(-.016,.004),(.012,-.002),(-.005,0),(0,0),(0,0),(0,0),(0,0)]],t)
+        for wheel in [p for p in s.pivots if p.endswith("Kick")]:
+            rot(wheel,[(x,0,0) for x in [0,0,-.008,-.015,.03,.17,.11,.052,.016,0,0,0,0]],t)
+        tracks.append((prop("Payload","visible"),[True,False,True],[0,.48,1.61]))
+        return 1.72,tracks
+    t=[0,.12,.22,.249,.25,.285,.34,.415,.50,.64,.82,1.02]
+    pos("Barrel",[(0,y,z) for y,z in [(0,0),(.003,-.006),(.006,-.012),(.006,-.012),(.006,-.012),(-.025,.32),(-.018,.27),(-.011,.16),(-.004,.078),(.004,.019),(0,0),(0,0)]],t)
+    rot("Barrel",[(x,0,0) for x in [0,-.012,-.026,-.026,-.026,-.075,-.043,-.052,-.025,-.008,.004,0]],t)
+    pos("Action",[(0,y,z) for y,z in [(0,0),(0,0),(-.005,0),(-.005,0),(-.005,0),(.023,.15),(.010,.12),(-.010,.065),(.004,.028),(-.002,.006),(0,0),(0,0)]],t)
+    rot("Body",[(x,0,z) for x,z in [(0,0),(0,0),(-.005,0),(-.005,0),(-.005,0),(.065,.01),(.025,-.012),(-.025,.008),(.014,-.004),(-.004,0),(0,0),(0,0)]],t)
+    for wheel in [p for p in s.pivots if p.endswith("Kick")]:
+        rot(wheel,[(x,0,0) for x in [0,0,0,0,0,.27,.22,.115,.045,.008,0,0]],t)
+    return 1.02,tracks
+
+
 def write_scene(s):
+    if s.name in ("catapult","cannon"):
+        for part in [p for p in s.parts if p.startswith("Wheel")]:
+            kick=s.pivot(part+"Kick",s.joints[part])
+            s.reparent(part,kick)
     parts=list(s.parts)
     lines=[f'[gd_scene load_steps={len(parts)+7} format=3]',
            '[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="1_script"]']
@@ -570,37 +721,42 @@ def write_scene(s):
             if p.startswith("Wheel"):
                 walk.append((f"Rig/{p}:rotation",[(0,0,0),(-math.pi,0,0),(-math.tau,0,0)]))
         idle.append(("Rig:position",[(0,0,0),(0,0,0)]))
-    if s.name in ("swordsman","knight"):
-        strike=[("Rig/ArmRight:rotation",[(0,0,0),(.85,0,-.28),(-1.45,0,.1),(-.35,0,0),(0,0,0)]),
-                ("Rig/ArmLeft:rotation",[(0,0,0),(.10,0,.12),(.32,0,.10),(0,0,0),(0,0,0)]),
-                ("Rig/Head:rotation",[(0,0,0),(0,-.12,0),(.06,.1,0),(0,0,0),(0,0,0)])]
-        duration=.60 if s.name=="swordsman" else .68
-        timing=[0,.12,.22,.39,.60] if s.name=="swordsman" else [0,.10,.20,.40,.68]
-        strike=[(p,v,timing) for p,v in strike]
-    elif s.name=="archer":
-        strike=[("Rig/ArmLeft:rotation",[(0,0,0),(.74,0,-.11),(.74,0,-.11),(.61,0,-.08),(0,0,0)]),
-                ("Rig/ArmRight:rotation",[(0,0,0),(.72,-.3,.23),(.72,-.3,.23),(.46,.05,.04),(0,0,0)])]
-        duration=.68
-        strike=[(p,v,[0,.14,.27,.38,.68]) for p,v in strike]
-        strike.append(("Rig/ArmRight/Arrow:visible",[True,False,True],[0,.27,.61]))
-    elif s.name=="catapult":
-        strike=[("Rig/ThrowArm:rotation",[(0,0,0),(.20,0,0),(-1.60,0,0),(-1.60,0,0),(-.45,0,0),(0,0,0)])]
-        duration=1.18
-        strike=[(p,v,[0,.22,.48,.60,.94,1.18]) for p,v in strike]
-        strike.append(("Rig/ThrowArm/Payload:visible",[True,False,True],[0,.48,1.12]))
-    else:
-        rest=s.joints["Barrel"]
-        strike=[("Rig/Barrel:position",[rest,rest,(rest[0],rest[1]-.015,rest[2]+.25),(rest[0],rest[1],rest[2]+.14),rest],[0,.24,.29,.40,.65])]
-        duration=.65
+    def remap(track):
+        path,values=track[:2]
+        if path.startswith("Rig/"):
+            node,prop=path[4:].split(":")
+            path=s.part_path(node)+":"+prop
+        return (path,values,*track[2:])
+    walk=[remap(track) for track in walk]
+    idle=[remap(track) for track in idle]
+    duration,strike=attack_tracks(s)
+    socket_parent=s.part_path("Bow") if s.name=="archer" else s.part_path("ThrowArm") if s.name=="catapult" else s.part_path("Barrel") if s.name=="cannon" else "Rig/Action"
+    socket_position=(0,0,-.83) if s.name=="archer" else (0,.91,.89) if s.name=="catapult" else (0,-.10,-1.25) if s.name=="cannon" else (0,1.4,-.6)
     lines += [anim_resource("walk",.72 if s.name!="knight" else .60,walk,True),
               anim_resource("idle",2.6,idle,True),anim_resource("strike",duration,strike),
               '[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
               '[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]\n_data = {&"strike": SubResource("Animation_strike")}',
-              f'[node name="{s.name.title()}" type="Node3D"]\nscript = ExtResource("1_script")\nkind = "{s.name}"',
-              '[node name="Rig" type="Node3D" parent="."]']
-    for i,p in enumerate(parts):
-        parent=s.part_path(s.parents[p]) if s.parents[p] else "Rig"
-        lines += [f'[node name="{p}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[p])}\nmesh = ExtResource("{i+2}_{p}")']
+              f'[node name="{s.name.title()}" type="Node3D"]\nscript = ExtResource("1_script")\nkind = "{s.name}"\nprojectile_socket = NodePath("{socket_parent}/ProjectileSocket")',
+              '[node name="Rig" type="Node3D" parent="."]',
+              '[node name="Action" type="Node3D" parent="Rig"]']
+    emitted=set()
+    def emit(p):
+        if p in emitted:return
+        parent_part=s.parents[p]
+        if parent_part:emit(parent_part)
+        parent=s.part_path(parent_part) if parent_part else "Rig/Action"
+        if p in s.pivots:
+            lines.append(f'[node name="{p}" type="Node3D" parent="{parent}"]\nposition = {vec(s.joints[p])}')
+        else:
+            i=parts.index(p)
+            extra=""
+            if p.startswith("String"):
+                tip_y=.57 if p=="StringUpper" else -.57
+                extra=f'\nrotation = {vec((math.atan2(-.02,tip_y),0,0))}\nscale = {vec((1,math.hypot(tip_y,.02),1))}'
+            lines.append(f'[node name="{p}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[p])}\nmesh = ExtResource("{i+2}_{p}"){extra}')
+        emitted.add(p)
+    for p in parts:emit(p)
+    lines.append(f'[node name="ProjectileSocket" type="Marker3D" parent="{socket_parent}"]\nposition = {vec(socket_position)}')
     lines += ['[node name="Locomotion" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
               '[node name="Attack" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
     (OUT/f"{s.name}.tscn").write_text("\n\n".join(lines)+"\n",encoding="utf-8")

@@ -35,18 +35,18 @@ rings = 4
 [node name="RoyalBanner" type="Node3D"]
 
 [node name="EmbroideredCloth" type="MeshInstance3D" parent="."]
-position = Vector3(0, 1.15, 0.055)
+position = Vector3(0, 1.15, 0.13)
 mesh = SubResource("ClothMesh")
 
 [node name="HangingRod" type="MeshInstance3D" parent="."]
-position = Vector3(0, 2.31, 0.038)
+position = Vector3(0, 2.31, 0.113)
 rotation_degrees = Vector3(0, 0, 90)
 mesh = SubResource("MountMesh")
 
 [node name="LeftFinial" type="MeshInstance3D" parent="."]
-position = Vector3(-0.50, 2.31, 0.038)
+position = Vector3(-0.50, 2.31, 0.113)
 mesh = SubResource("FinialMesh")
 
 [node name="RightFinial" type="MeshInstance3D" parent="."]
-position = Vector3(0.50, 2.31, 0.038)
+position = Vector3(0.50, 2.31, 0.113)
 mesh = SubResource("FinialMesh")

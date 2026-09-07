@@ -30,9 +30,9 @@ func _ready() -> void:
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png("res://assets/models/units/detail_%s_attack.png" % unit.name.to_lower())
 		if unit.name == "Catapult":
-			assert(not unit.get_node("Rig/ThrowArm/Payload").visible, "Catapult payload must leave the spoon at release")
+			assert(not unit.get_node("Rig/Action/ThrowArm/Payload").visible, "Catapult payload must leave the spoon at release")
 		if unit.name == "Archer":
-			assert(not unit.get_node("Rig/ArmRight/Arrow").visible, "Archer must release the readied arrow")
+			assert(not unit.get_node("Rig/Action/Waist/ArmLeft/Bow/Arrow").visible, "Archer must release the readied arrow")
 		unit.set_motion(true)
 		assert(unit.get_node("Locomotion").current_animation == "walk")
 		unit.die()

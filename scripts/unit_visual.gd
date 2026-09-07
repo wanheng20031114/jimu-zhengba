@@ -1,6 +1,7 @@
 extends Node3D
 ## Saved rigid-part sculptures driven by native AnimationPlayers.
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon") var kind: String = "swordsman"
+@export var projectile_socket: NodePath
 
 @onready var locomotion: AnimationPlayer = $Locomotion
 @onready var attack: AnimationPlayer = $Attack
@@ -27,6 +28,9 @@ func strike() -> void:
 func die() -> void:
 	locomotion.pause()
 	attack.pause()
+
+func get_projectile_origin() -> Vector3:
+	return get_node(projectile_socket).global_position
 
 func set_team(team: int) -> void:
 	_team = team

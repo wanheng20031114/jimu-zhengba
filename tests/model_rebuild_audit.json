@@ -1,0 +1,90 @@
+{
+  "checks": 360,
+  "failures": [],
+  "purpose": "Native resources and offline authoring consistency; not a performance benchmark",
+  "rendered": false,
+  "scenes": [
+    {
+      "animation_tracks": 13,
+      "kind": "swordsman",
+      "meshes": 6,
+      "nodes": 13,
+      "triangles": 4268
+    },
+    {
+      "animation_tracks": 22,
+      "kind": "archer",
+      "meshes": 11,
+      "nodes": 18,
+      "triangles": 3712
+    },
+    {
+      "animation_tracks": 18,
+      "kind": "knight",
+      "meshes": 10,
+      "nodes": 17,
+      "triangles": 7728
+    },
+    {
+      "animation_tracks": 13,
+      "kind": "catapult",
+      "meshes": 7,
+      "nodes": 17,
+      "triangles": 6972
+    },
+    {
+      "animation_tracks": 9,
+      "kind": "cannon",
+      "meshes": 4,
+      "nodes": 12,
+      "triangles": 5216
+    }
+  ],
+  "source_files_byte_identical": [
+    "swordsman/parts.json",
+    "swordsman/Body.glb",
+    "swordsman/Head.glb",
+    "swordsman/ArmLeft.glb",
+    "swordsman/ArmRight.glb",
+    "swordsman/LegLeft.glb",
+    "swordsman/LegRight.glb",
+    "archer/parts.json",
+    "archer/Body.glb",
+    "archer/Head.glb",
+    "archer/ArmLeft.glb",
+    "archer/ArmRight.glb",
+    "archer/LegLeft.glb",
+    "archer/LegRight.glb",
+    "archer/ForearmRight.glb",
+    "archer/Bow.glb",
+    "archer/StringUpper.glb",
+    "archer/StringLower.glb",
+    "archer/Arrow.glb",
+    "knight/parts.json",
+    "knight/Body.glb",
+    "knight/LegFrontLeft.glb",
+    "knight/LegFrontRight.glb",
+    "knight/LegRearLeft.glb",
+    "knight/LegRearRight.glb",
+    "knight/Rider.glb",
+    "knight/Head.glb",
+    "knight/ArmLeft.glb",
+    "knight/ArmRight.glb",
+    "knight/HorseHead.glb",
+    "catapult/parts.json",
+    "catapult/Body.glb",
+    "catapult/WheelLeftFront.glb",
+    "catapult/WheelRightFront.glb",
+    "catapult/WheelLeftRear.glb",
+    "catapult/WheelRightRear.glb",
+    "catapult/ThrowArm.glb",
+    "catapult/Payload.glb",
+    "cannon/parts.json",
+    "cannon/Body.glb",
+    "cannon/WheelLeft.glb",
+    "cannon/WheelRight.glb",
+    "cannon/Barrel.glb"
+  ],
+  "source_file_count": 43,
+  "project_assets_overwritten": false
+}

@@ -13,6 +13,8 @@ from pathlib import Path
 
 import numpy as np
 import trimesh as tm
+from shapely import constrained_delaunay_triangles
+from shapely.geometry import Polygon
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets/models/environment"
@@ -44,6 +46,17 @@ C = {
 def color(value, variation=0.0):
     value = C.get(value, value) if isinstance(value, str) else value
     return np.array([*np.clip(np.asarray(value, dtype=float) * (1.0 + variation), 0, 255), 255], dtype=np.uint8)
+
+
+def write_asset(path, data):
+    """Publish complete files atomically while the user's editor auto-imports."""
+    if isinstance(data,str):
+        data=data.encode("utf-8")
+    if path.exists() and path.read_bytes()==data:
+        return
+    temporary=path.with_suffix(path.suffix+".tmp")
+    temporary.write_bytes(data)
+    temporary.replace(path)
 
 
 def family(value):
@@ -205,6 +218,15 @@ class Model:
             merged = tm.util.concatenate(meshes)
             if wrapper:
                 merged.vertices[:, 1] = np.maximum(merged.vertices[:, 1], 0.0)
+            # Compare triangles by position without welding their vertices:
+            # neighboring stones/soil regions intentionally keep distinct colors
+            # and hard normals at an otherwise shared geometric edge.
+            triangles=np.round(merged.triangles,8)
+            order=np.lexsort((triangles[:,:,2],triangles[:,:,1],triangles[:,:,0]),axis=1)
+            canonical=np.take_along_axis(triangles,order[:,:,None],axis=1)
+            _,unique=np.unique(canonical.reshape((-1,9)),axis=0,return_index=True)
+            merged.update_faces(np.sort(unique))
+            merged.update_faces(merged.nondegenerate_faces(height=1e-7))
             merged.unmerge_vertices()
             rgba = merged.visual.vertex_colors.copy()
             srgb = rgba[:, :3].astype(np.float32) / 255.0
@@ -246,14 +268,14 @@ class Model:
                 for primitive in mesh["primitives"]:
                     primitive["material"] = index
         blob = tm.exchange.gltf.export_glb(scene, include_normals=True, tree_postprocessor=materials)
-        (OUT / f"{name}.glb").write_bytes(blob)
+        write_asset(OUT / f"{name}.glb",blob)
         if wrapper:
             extras=''
             flag_resource=''
             if name=="headquarters":
                 flag_resource='\n[ext_resource type="PackedScene" path="res://assets/models/environment/royal_banner.tscn" id="2_banner"]'
                 extras='\n[node name="RoyalBannerLeft" parent="." instance=ExtResource("2_banner")]\nposition = Vector3(-3.23, 0.48, 3.365)\n\n[node name="RoyalBannerRight" parent="." instance=ExtResource("2_banner")]\nposition = Vector3(3.23, 0.48, 3.365)\n'
-            (OUT / f"{name}.tscn").write_text(f'[gd_scene load_steps={3 if name=="headquarters" else 2} format=3]\n\n[ext_resource type="PackedScene" path="res://assets/models/environment/{name}.glb" id="1_visual"]{flag_resource}\n\n[node name="{name.title().replace("_", "")}" type="Node3D"]\n\n[node name="Architecture" parent="." instance=ExtResource("1_visual")]\n{extras}', encoding="utf-8")
+            write_asset(OUT / f"{name}.tscn",f'[gd_scene load_steps={3 if name=="headquarters" else 2} format=3]\n\n[ext_resource type="PackedScene" path="res://assets/models/environment/{name}.glb" id="1_visual"]{flag_resource}\n\n[node name="{name.title().replace("_", "")}" type="Node3D"]\n\n[node name="Architecture" parent="." instance=ExtResource("1_visual")]\n{extras}')
         bounds = scene.bounds
         print(f"{name}: {sum(len(g.faces) for g in scene.geometry.values()):,} triangles, {len(scene.geometry)} meshes, bounds {np.round(bounds, 2).tolist()}")
         return {"bounds": bounds.tolist(), "triangles": sum(len(g.faces) for g in scene.geometry.values()), "meshes": len(scene.geometry)}
@@ -274,21 +296,22 @@ def stone_rows(m, w, h, d, center=(0, 0, 0), block=1.05, rows=None):
 def window(m, x, y, z, width=.78, height=1.08, shutters=True):
     m.box((width+.22, height+.23, .15), (x, y, z), "stone_light", bevel=.035)
     m.box((width, height, .17), (x, y+.01, z+.065), "dark")
-    m.box((.075, height, .07), (x, y, z+.17), "wood")
-    m.box((width, .065, .08), (x, y+.03, z+.17), "wood")
+    m.box((.075, height-.04, .07), (x, y, z+.18), "wood")
+    m.box((width-.04, .065, .08), (x, y+.03, z+.22), "wood")
     m.box((width+.34, .12, .28), (x, y-height/2-.06, z+.09), "stone_light", bevel=.025)
     if shutters:
         for sign in (-1, 1):
             m.box((.27, height, .11), (x+sign*(width/2+.13), y, z+.13), "wood_light", rot=(0, sign*.27, 0), bevel=.013)
             for yy in (-height*.3, height*.3):
-                m.box((.25, .07, .04), (x+sign*(width/2+.13), y+yy, z+.20), "wood_dark")
+                # Hinge bands follow their shutter plane and sit 3 cm proud.
+                m.box((.25, .07, .04), (x+sign*(width/2+.13)+sign*math.sin(.27)*.10, y+yy, z+.13+math.cos(.27)*.10), "wood_dark", rot=(0, sign*.27, 0))
 
 
 def arched_gate(m, width, height, depth, center, portcullis=False):
     x, base, z = center
     radius = width / 2
     spring = height - radius
-    m.box((width, spring, .08), (x, base+spring/2, z), "dark")
+    m.box((width, spring-.04, .08), (x, base+(spring+.04)/2, z), "dark")
     arch = [[x-radius, base+spring]] + [[x+math.cos(a)*radius, base+spring+math.sin(a)*radius] for a in np.linspace(math.pi, 0, 13)] + [[x+radius, base+spring]]
     mesh = tm.convex.convex_hull(np.asarray([[xx, yy, zz] for zz in (z-.04, z+.04) for xx, yy in arch]))
     m.add(mesh, "dark")
@@ -322,9 +345,10 @@ def banner(m, x, y, z, team="blue", size=1.0):
     faces = [[0,1,5],[1,4,5],[1,2,4],[2,3,4]]
     sheet = tm.Trimesh(verts, faces, process=False)
     m.add(sheet, team)
-    m.add(tm.Trimesh(verts,[f[::-1] for f in faces],process=False), team)
-    m.box((.085*size,.43*size,.019), (x+.43*size,y+1.61*size,z+.072), "gold")
-    m.box((.40*size,.073*size,.020), (x+.43*size,y+1.62*size,z+.083), "gold")
+    # Fabric is already a double-sided glTF material: one sheet, no duplicate
+    # back faces. The raised crest clears the maximum local fold depth.
+    m.box((.085*size,.43*size,.019), (x+.43*size,y+1.61*size,z+.145), "gold")
+    m.box((.40*size,.073*size,.020), (x+.43*size,y+1.62*size,z+.175), "gold")
 
 
 def tiled_roof(m, w, d, eave, peak, center=(0,0), blue=False):
@@ -345,7 +369,9 @@ def tiled_roof(m, w, d, eave, peak, center=(0,0), blue=False):
             for col in range(cols):
                 xx=-hw+(col+.5)*w/cols+(row%2-.5)*.055
                 material=("slate_light" if (col+row)%4==0 else "slate") if blue else ("terracotta_light" if (col+row)%4==0 else "terracotta")
-                m.box((w/cols-.02,.075,hd/rows/math.cos(angle)+.045), (x+xx,yy,z+sign*zz), material, rot=(-sign*angle,0,0), bevel=.014, variation=RNG.uniform(-.09,.08))
+                # The tile's long axis descends along the actual roof slope.
+                # A narrow mortar joint replaces overlapping coplanar tile rows.
+                m.box((w/cols-.02,.075,hd/rows/math.cos(angle)-.018), (x+xx,yy,z+sign*zz), material, rot=(sign*angle,0,0), bevel=.014, variation=RNG.uniform(-.09,.08))
     for sign in (-1,1):
         m.box((w+.1,.20,.19),(x,eave-.035,z+sign*hd),"wood_dark",bevel=.02)
         m.beam((x+sign*hw,eave-.07,z-hd),(x+sign*hw,peak+.05,z),.19,"wood_dark")
@@ -359,7 +385,7 @@ def battlements(m, x,z,w,d, y):
     for sign in (-1,1):
         for xx in np.linspace(-w/2+.2,w/2-.2,max(3,round(w/.75))):
             m.box((.43,.60,.44),(x+xx,y+.34,z+sign*(d/2-.12)),"stone_light",bevel=.04)
-        for zz in np.linspace(-d/2+.5,d/2-.5,max(2,round(d/.9))):
+        for zz in np.linspace(-d/2+.62,d/2-.62,max(2,round(d/.9))):
             m.box((.44,.60,.43),(x+sign*(w/2-.12),y+.34,z+zz),"stone_light",bevel=.04)
 
 
@@ -416,7 +442,7 @@ def enemy_keep():
     m.box((6.35,4.1,5.55),(0,2.34,-.2),"plaster",bevel=.06)
     stone_rows(m,6.4,1.15,.18,(0,.31,2.62),rows=3)
     battlements(m,0,-.2,6.45,5.65,4.44)
-    arched_gate(m,2.03,3.03,.42,(0,.31,2.67),True)
+    arched_gate(m,2.03,3.03,.42,(0,.34,2.73),True)
     for x in (-2.30,2.30):
         window(m,x,2.95,2.70,.34,1.14,False)
     for sign in (-1,1):
@@ -447,20 +473,23 @@ def house(barracks=False):
     w,d=(5.8,4.6) if barracks else (4.9,4.2)
     h=2.95 if barracks else 3.18
     m.box((w+.30,.26,d+.30),(0,.13,0),"stone",bevel=.06)
-    m.box((w,h,d),(0,.26+h/2,0),"plaster",bevel=.035)
+    m.box((w,h-.06,d),(0,.26+(h-.06)/2,0),"plaster",bevel=.035)
     for z in (-d/2,d/2):
         stone_rows(m,w,.65,.16,(0,.26,z),rows=2)
         for x in np.linspace(-w/2+.1,w/2-.1,5):
             m.box((.16,h,.19),(x,.26+h/2,z),"wood_dark",bevel=.013)
         for yy in (1.07,h+.19):
-            m.box((w+.08,.18,.19),(0,yy,z),"wood",bevel=.014)
+            m.box((w+.08,.18,.19),(0,yy,z+math.copysign(.045,z)),"wood",bevel=.014)
         for x in (-w*.375,w*.375):
-            m.beam((x-.42,1.20,z+.04),(x+.42,h+.02,z+.04),.105,"wood")
+            brace_z=z+math.copysign(.035,z)
+            m.beam((x-.42,1.20,brace_z),(x+.42,h+.02,brace_z),.105,"wood")
     for x in (-w/2,w/2):
-        m.box((.19,.18,d),(x,1.07,0),"wood")
-        m.box((.19,.18,d),(x,h+.18,0),"wood")
+        # Side rails stop inside the front rails, forming an actual butt joint
+        # rather than two long boxes crossing with equal-height top surfaces.
+        m.box((.19,.18,d-.16),(x+math.copysign(.045,x),1.07,0),"wood")
+        m.box((.19,.18,d-.16),(x+math.copysign(.045,x),h+.18,0),"wood")
         for z in (-d/2+.10,0,d/2-.10):
-            m.box((.19,h,.16),(x,.26+h/2,z),"wood_dark")
+            m.box((.19,h-.04,.16),(x,.26+(h-.04)/2,z),"wood_dark")
         for z in (-d*.26,d*.26):
             inset=Model()
             window(inset,0,2.06,0,.60,.84,False)
@@ -480,7 +509,7 @@ def house(barracks=False):
             m.box((.75,.13,.52),(x,.32,d/2+.48),"wood_dark")
             for j in (-1,0,1):
                 m.beam((x+j*.20,.35,d/2+.54),(x+j*.20,2.05,d/2+.35),.06,"wood_light")
-                m.cone(.12,0,.33,(x+j*.20,2.16,d/2+.35),"iron_light",sections=4)
+                m.cone(.09,0,.33,(x+j*.20,2.16,d/2+.35),"iron_light",sections=4)
     return m
 
 
@@ -491,13 +520,13 @@ def tower():
     for sign in (-1,1):
         m.box((.57,2.08,.85),(sign*1.60,1.09,.65),"stone",bevel=.06)
         m.box((.81,.20,1.02),(sign*1.60,2.18,.65),"stone_light",bevel=.03)
-    m.box((2.63,.12,2.63),(0,5.77,0),"wood_dark")
+    m.box((2.63,.12,2.63),(0,5.815,0),"wood_dark")
     return m
 
 
 def wall():
     m=Model()
-    stone_rows(m,3.8,1.25,.53,rows=3)
+    stone_rows(m,3.76,1.25,.53,rows=3)
     m.box((3.95,.21,.69),(0,1.34,0),"stone_light",bevel=.055)
     for x in (-1.9,1.9):
         stone_rows(m,.66,1.45,.67,(x,0,0),rows=3)
@@ -513,7 +542,7 @@ def palisade():
         m.cone(.17,.145,h,(x,h/2,0),"wood_light",sections=7)
         m.cone(.145,0,.34,(x,h+.17,0),"wood",sections=7)
         for yy in (.45,1.18):
-            m.ring(.168,.185,.12,(x,yy,0),"wood_dark",sections=7)
+            m.ring(.168,.185,.12,(x,yy+(i%2)*.035,0),"wood_dark",sections=7)
     for yy in (.45,1.18):
         m.box((3.91,.17,.20),(0,yy,.17),"wood",bevel=.015)
     return m
@@ -553,7 +582,7 @@ def crate():
     for sign in (-1,1):
         for yy in (.10,.83):
             m.box((1.10,.13,.09),(0,yy,sign*.545),"wood")
-            m.box((.09,.13,1.10),(sign*.545,yy,0),"wood")
+            m.box((.09,.13,.98),(sign*.545,yy,0),"wood")
         m.beam((-.43,.16,sign*.59),(.43,.77,sign*.59),.105,"wood")
         m.beam((sign*.59,.16,-.43),(sign*.59,.77,.43),.105,"wood")
     for xx in (-.44,.44):
@@ -592,7 +621,13 @@ def well():
     for row in range(3):
         for i in range(12):
             a=(i+row*.5)*math.tau/12
-            m.box((.48,.31,.30),(.82*math.cos(a),.18+row*.32,.82*math.sin(a)),"stone_light",rot=(0,-a+math.pi/2,0),bevel=.035,variation=RNG.uniform(-.10,.04))
+            angles=(a-math.pi/12+.018,a+math.pi/12-.018)
+            contour=Polygon([(radius*math.cos(theta),radius*math.sin(theta)) for radius,theta in [(.67,angles[0]),(.97,angles[0]),(.97,angles[1]),(.67,angles[1])]])
+            outer=np.asarray(contour.exterior.coords)[:-1]
+            inset=np.asarray(contour.buffer(-.022,join_style=2).exterior.coords)[:-1]
+            bottom=.025+row*.32
+            verts=[[x,bottom+yy,z] for yy,ring in [(.0,inset),(.022,outer),(.288,outer),(.31,inset)] for x,z in ring]
+            m.add(tm.convex.convex_hull(np.asarray(verts)),"stone_light",variation=RNG.uniform(-.10,.04))
     m.cylinder(.63,.035,(0,.24,0),"water",sections=16)
     for x in (-1.04,1.04):
         m.box((.16,2.65,.17),(x,1.325,0),"wood",bevel=.015)
@@ -616,12 +651,12 @@ def cart():
         m.box((1.65,.10,.27),(0,.84,(i-3.5)*.28),"wood_light",bevel=.008,variation=RNG.uniform(-.05,.08))
     for xx in (-.85,.85):
         for zz in (-1.06,0,1.06):
-            m.box((.11,.85,.11),(xx,1.18,zz),"wood",bevel=.012)
+            m.box((.15,.85,.10),(xx,1.18,zz),"wood",bevel=.012)
         for yy in (1.01,1.29,1.56):
             m.box((.09,.19,2.24),(xx,yy,0),"wood_light",bevel=.008)
     for zz in (-1.12,1.12):
         for yy in (1.01,1.29,1.56):
-            m.box((1.7,.19,.09),(0,yy,zz),"wood_light",bevel=.008)
+            m.box((1.57,.19,.09),(0,yy,zz),"wood_light",bevel=.008)
     for zz in (-.77,.77):
         m.cylinder(.09,2.20,(0,.58,zz),"iron",sections=8,rot=(0,0,math.pi/2))
         for xx in (-1.06,1.06):
@@ -629,7 +664,7 @@ def cart():
             m.ring(.575,.61,.14,(xx,.58,zz),"iron",sections=14,rot=(0,0,math.pi/2))
             m.cylinder(.145,.24,(xx,.58,zz),"wood_light",sections=10,rot=(0,0,math.pi/2))
             for a in np.linspace(0,math.tau,8,endpoint=False):
-                m.beam((xx,.58,zz),(xx,.58+math.sin(a)*.49,zz+math.cos(a)*.49),.065,"wood_light")
+                m.beam((xx,.58+math.sin(a)*.13,zz+math.cos(a)*.13),(xx,.58+math.sin(a)*.49,zz+math.cos(a)*.49),.065,"wood_light")
     for xx in (-.62,.62):
         m.beam((xx,.71,1.07),(xx,.55,3.10),.13,"wood")
     return m
@@ -647,15 +682,16 @@ def tent():
             mesh=tm.Trimesh(verts,[[0,1,3],[0,3,2]],process=False)
             mat="blue" if band in (1,5) else "canvas"
             m.add(mesh,mat)
-            m.add(tm.Trimesh(verts,[[0,3,1],[0,2,3]],process=False),mat)
         for z in np.linspace(-half_d,half_d,8):
-            m.beam((0,peak+.014,z),(side*half_w,.085,z),.025,"burlap")
+            # Stop the seam short of the ridge so the two seam end caps do not
+            # occupy the same plane at the tent's peak.
+            m.beam((side*.028,peak-.010,z),(side*half_w,.085,z),.025,"burlap")
     # Open front flaps and a closed canvas back retain the tent's hollow shape.
-    back=tm.Trimesh([[-half_w,.05,-half_d],[0,peak,-half_d],[half_w,.05,-half_d]],[[0,1,2],[2,1,0]],process=False)
+    back=tm.Trimesh([[-half_w,.05,-half_d],[0,peak,-half_d],[half_w,.05,-half_d]],[[0,1,2]],process=False)
     m.add(back,"canvas")
     for side in (-1,1):
         verts=[[0,peak,half_d],[side*half_w,.07,half_d],[side*.79,.06,half_d+.04],[side*.39,1.40,half_d+.04]]
-        m.add(tm.Trimesh(verts,[[0,1,2],[0,2,3],[2,1,0],[3,2,0]],process=False),"canvas")
+        m.add(tm.Trimesh(verts,[[0,1,2],[0,2,3]],process=False),"canvas")
         m.beam((side*.82,.16,half_d+.06),(side*.35,1.48,half_d+.06),.067,"burlap")
     for z in (-half_d-.04,half_d+.04):
         m.cylinder(.055,2.46,(0,1.23,z),"wood",sections=8)
@@ -671,7 +707,7 @@ def tent():
 
 def sacks():
     m=Model()
-    for index,(x,z,s) in enumerate([(-.32,-.10,1),(.35,.17,.78),(-.12,.47,.61)]):
+    for index,(x,z,s) in enumerate([(-.32,-.10,1),(.35,.205,.78),(-.12,.47,.61)]):
         verts=[]
         rings=[(0,.23),(.18,.37),(.50,.40),(.77,.33),(.91,.14),(1.03,.16)]
         sides=12
@@ -701,16 +737,17 @@ def sacks():
 def hay_bale():
     m=Model()
     m.box((1.72,.81,.93),(0,.405,0),"straw",bevel=.12)
-    for i in range(26):
-        yy=.11+(i%7)*.098
-        zz=-.39+(i%9)*.095
-        m.box((1.65,.012,.012),(0,.807,zz),"straw_light",variation=(i%4)*.025)
+    for i in range(9):
+        zz=-.39+i*.095
+        m.box((1.65,.012,.012),(0,.831,zz),"straw_light",variation=(i%4)*.025)
+    for i in range(7):
+        yy=.11+i*.098
         for sign in (-1,1):
-            m.box((1.64,.014,.012),(0,yy,sign*.467),"straw_light",variation=(i%4)*.025)
+            m.box((1.64,.014,.012),(0,yy,sign*.489),"straw_light",variation=(i%4)*.025)
     for xx in (-.47,.47):
-        m.box((.052,.025,.96),(xx,.827,0),"wood_dark",bevel=.005)
+        m.box((.052,.025,1.0),(xx,.870,0),"wood_dark",bevel=.005)
         for sign in (-1,1):
-            m.box((.052,.78,.025),(xx,.417,sign*.478),"wood_dark",bevel=.005)
+            m.box((.052,.78,.025),(xx,.417,sign*.516),"wood_dark",bevel=.005)
     return m
 
 
@@ -736,11 +773,11 @@ def broken_wheel():
     for i in range(11):
         a0=(i+1)*math.tau/14+.008
         a1=(i+2)*math.tau/14-.008
-        for inner,outer,mat in ((.42,.55,"wood"),(.548,.574,"iron")):
+        for inner,outer,mat in ((.42,.545,"wood"),(.550,.574,"iron")):
             verts=[[math.cos(a)*r,y,math.sin(a)*r] for y in (.055,.18) for r in (inner,outer) for a in (a0,a1)]
             m.add(tm.convex.convex_hull(np.asarray(verts)),mat)
     for a in (1.05,1.85,2.65,3.45,4.25,5.05):
-        m.beam((0,.12,0),(.47*math.cos(a),.12,.47*math.sin(a)),.055,"wood_light")
+        m.beam((.13*math.cos(a),.12,.13*math.sin(a)),(.47*math.cos(a),.12,.47*math.sin(a)),.055,"wood_light")
     m.cylinder(.13,.20,(0,.11,0),"wood_light",sections=9)
     m.cylinder(.045,.22,(0,.12,0),"iron",sections=8)
     return m
@@ -757,7 +794,7 @@ def broken_shield():
     m.cylinder(.14,.09,(0,.18,0),"iron",sections=10)
     m.box((.84,.06,.07),(0,.11,-.52),"iron")
     m.beam((.43,.11,-.47),(.43,.11,.02),.055,"iron")
-    m.beam((.42,.11,.01),(.19,.11,.43),.055,"iron")
+    m.beam((.40,.11,.07),(.19,.11,.43),.055,"iron")
     return m
 
 
@@ -794,7 +831,7 @@ def tuft(m,x,z,scale=1.0):
         h=RNG.uniform(.18,.43)*scale
         lean=RNG.uniform(.07,.20)*scale
         verts=[[x-w*math.cos(a),.025,z-w*math.sin(a)],[x+w*math.cos(a),.025,z+w*math.sin(a)],[x+lean*math.cos(a),h,z+lean*math.sin(a)]]
-        m.add(tm.Trimesh(verts,[[0,1,2],[2,1,0]],process=False),"grass" if i%2 else "grass_light",variation=RNG.uniform(-.11,.05))
+        m.add(tm.Trimesh(verts,[[0,1,2]],process=False),"grass" if i%2 else "grass_light",variation=RNG.uniform(-.11,.05))
 
 
 BUILDINGS = [(-22,23,9,8),(22,-24,9,8),(9,-21,6,5),(25,-7,4,4),(-4,-12,6,5)]
@@ -804,9 +841,30 @@ def reserved(x,z,margin=1.0):
     return any(abs(x-bx)<w/2+margin and abs(z-bz)<d/2+margin for bx,bz,w,d in BUILDINGS)
 
 
+def horizontal_surface(model, polygon, height, material, variation=0.0):
+    """Triangulate a disjoint, possibly holed ground region once, facing up."""
+    if polygon.is_empty:
+        return
+    triangles=constrained_delaunay_triangles(polygon)
+    vertices=[]
+    faces=[]
+    for triangle in triangles.geoms:
+        coords=np.asarray(triangle.exterior.coords)[:3]
+        start=len(vertices)
+        vertices.extend([[x,height,z] for x,z in coords])
+        face=[start,start+1,start+2]
+        a,b,c=np.asarray(vertices[-3:])
+        if np.cross(b-a,c-a)[1]<0:
+            face.reverse()
+        faces.append(face)
+    model.add(tm.Trimesh(vertices,faces,process=False),material,variation=variation)
+
+
 def terrain():
     m=Model()
-    m.box((84,.72,84),(0,-.39,0),"earth",bevel=.12)
+    # The substrate ends below the lowest earth vertex. Previously its top
+    # crossed the jittered earth triangles at y=-0.03.
+    m.box((84,.72,84),(0,-.435,0),"earth",bevel=.12)
     # A jittered paved-earth field; face color variations stay broad and quiet.
     step=2.0
     grid=[]
@@ -817,7 +875,8 @@ def terrain():
             z=-42+iz*step
             if ix not in (0,count-1):x+=RNG.uniform(-.50,.50)
             if iz not in (0,count-1):z+=RNG.uniform(-.50,.50)
-            grid.append((x,-.025+RNG.uniform(-.006,.006),z))
+            RNG.uniform(-.006,.006)  # Retain the established deterministic layout.
+            grid.append((x,-.03,z))
     faces=[]
     colors=[]
     for iz in range(count-1):
@@ -834,28 +893,40 @@ def terrain():
                 base=soil*(1-road*.9)+np.asarray(C["road"])*road*.9
                 variation=RNG.uniform(-.044,.034)+.017*math.sin(x*.22+z*.13)
                 colors.append(color(base,variation))
-    mesh=tm.Trimesh(grid,faces,process=False)
-    mesh.visual.face_colors=colors
-    m.parts["Earth"].append(mesh)
     # Broad, irregular ochre earth islands establish the same stepped color
     # hierarchy as the reference village, without a noisy texture overlay.
+    soil_islands=[]
     for i in range(96):
         cx,cz=RNG.uniform(-40,40,2)
         if reserved(cx,cz,.7) or abs(cx+.65*cz)<6.3:
             continue
         w,d=RNG.uniform(1.7,4.9,2)
         points=[(-w*.50,-d*.25),(-w*.31,-d*.25),(-w*.31,-d*.50),(w*.21,-d*.50),(w*.21,-d*.33),(w*.50,-d*.33),(w*.50,d*.21),(w*.24,d*.21),(w*.24,d*.50),(-w*.34,d*.50),(-w*.34,d*.28),(-w*.50,d*.28)]
-        verts=[[cx,-.007,cz]]+[[cx+x,-.007,cz+z] for x,z in points]
-        faces=[[0,(j+1)%len(points)+1,j+1] for j in range(len(points))]
         shade = tuple(np.asarray(C["sand"])*RNG.uniform(.83,.96))
-        m.add(tm.Trimesh(verts,faces,process=False),shade)
+        soil_islands.append((Polygon([(cx+x,cz+z) for x,z in points]),shade))
     # A continuous, laid stone road, aligned to its travel direction. Dark mortar
     # stays between the staggered courses; no separate bright paper-like tiles.
     angle=-math.atan(.65)
     ca,sa=math.cos(angle),math.sin(angle)
     def road_point(cross,along):
         return cross*ca+along*sa, -cross*sa+along*ca
-    m.box((6.22,.026,94.0),(0,-.020,0),"road_mortar",rot=(0,angle,0))
+    road_bed=Polygon([road_point(c,t) for c,t in [(-3.11,-47),(3.11,-47),(3.11,47),(-3.11,47)]])
+    cx,cz,r=-13,12,3.45
+    courtyard_bed=Polygon([(cx+r*math.cos(a),cz+r*math.sin(a)) for a in np.linspace(0,math.tau,40,endpoint=False)])
+    # The apron and avenue are one shared mortar surface. Earth islands are
+    # clipped into disjoint regions, retaining their original palette/contours.
+    paved_bed=road_bed.union(courtyard_bed)
+    horizontal_surface(m,paved_bed,-.012,"road_mortar")
+    claimed=paved_bed
+    for polygon,shade in reversed(soil_islands):
+        horizontal_surface(m,polygon.difference(claimed),-.03,shade)
+        claimed=claimed.union(polygon)
+    # Soil color islands belong to the earth itself. Cut the base triangles
+    # around them so there is exactly one surface at y=-0.03, without floating
+    # color plates or their unwanted contact shadows.
+    for face,rgba in zip(faces,colors):
+        polygon=Polygon([(grid[index][0],grid[index][2]) for index in face])
+        horizontal_surface(m,polygon.difference(claimed),-.03,tuple(rgba[:3]))
     for row in range(96):
         along=-47+(row+.5)*.978
         offset=(row%2)*.5
@@ -868,24 +939,29 @@ def terrain():
             mat="road" if worn else "paving"
             width=right-left-.047
             m.box((width,.050,.927),(x,-.009,z),mat,rot=(0,angle+RNG.uniform(-.009,.009),0),bevel=.020,variation=RNG.uniform(-.065,.065))
-    # Thin, irregular sand tongues bury the outer joints without affecting
-    # physics or creating raised obstacles along the usable road surface.
+    # Low sand banks settle onto earth at their outer edge and onto the stone
+    # tops at their inner edge. This avoids a floating sheet and its dark rim.
     for side in (-1,1):
         for along in np.arange(-43,45,4.8):
             reach=RNG.uniform(.45,1.13)
             coords=[(side*(3.14-reach),along-.83),(side*3.97,along-1.71),(side*4.30,along+.71),(side*(3.10-reach*.42),along+1.29)]
-            verts=[[road_point(c,t)[0],.018,road_point(c,t)[1]] for c,t in coords]
-            faces=[[0,2,1],[0,3,2]] if side>0 else [[0,1,2],[0,2,3]]
+            middle=np.mean(coords,axis=0)
+            mx,mz=road_point(*middle)
+            verts=[[mx,.047,mz]]+[[road_point(c,t)[0],.016 if abs(c)<3.11 else -.03,road_point(c,t)[1]] for c,t in coords]
+            faces=[]
+            for i in range(4):
+                face=[0,i+1,(i+1)%4+1]
+                a,b,c=np.asarray([verts[index] for index in face])
+                if np.cross(b-a,c-a)[1]<0:face.reverse()
+                faces.append(face)
             m.add(tm.Trimesh(verts,faces,process=False),"road",variation=RNG.uniform(-.075,-.025))
     # Ordered stone paving surrounds the village well and meets the main road.
-    cx,cz,r=-13,12,3.45
-    m.cylinder(r,.026,(cx,-.021,cz),"road_mortar",sections=40)
     for row in range(-5,6):
         for col in range(-5,6):
             x=cx+(col+(row%2)*.5)*.65
             z=cz+row*.73
             if (x-cx)**2+(z-cz)**2>(r-.20)**2:continue
-            if abs(x+.65*z)/1.19 < 3.22 or reserved(x,z,.15):continue
+            if abs(x+.65*z)/1.19 < 3.62 or reserved(x,z,.15):continue
             m.box((.603,.05,.683),(x,-.009,z),"paving",rot=(0,RNG.uniform(-.015,.015),0),bevel=.020,variation=RNG.uniform(-.045,.055))
     return m
 
@@ -978,8 +1054,8 @@ def build_environment(models):
     for i,o in enumerate(obstacles):
         pos=o["position"]
         lines += ['',f'[node name="{o["name"]}" type="CollisionShape3D" parent="SolidEnvironment"]',f'position = Vector3({pos[0]:.4f}, {pos[1]:.4f}, {pos[2]:.4f})',f'rotation = Vector3(0, {o["rotation_y"]:.6f}, 0)',f'shape = SubResource("ObstacleShape{i}")']
-    (SCENES/"environment.tscn").write_text('\n'.join(lines)+'\n',encoding="utf-8")
-    (ROOT/"assets/environment_obstacles.json").write_text(json.dumps({"version":1,"bounds":[-42,-42,42,42],"obstacles":obstacles},indent=2),encoding="utf-8")
+    write_asset(SCENES/"environment.tscn",'\n'.join(lines)+'\n')
+    write_asset(ROOT/"assets/environment_obstacles.json",json.dumps({"version":1,"bounds":[-42,-42,42,42],"obstacles":obstacles},indent=2))
 
 
 def main():
@@ -993,7 +1069,7 @@ def main():
     manifest["terrain"]=terrain().save("terrain",False)
     RNG=np.random.default_rng(932712)
     build_environment(models)
-    (OUT/"model_manifest.json").write_text(json.dumps(manifest,indent=2),encoding="utf-8")
+    write_asset(OUT/"model_manifest.json",json.dumps(manifest,indent=2))
 
 
 if __name__=="__main__":
