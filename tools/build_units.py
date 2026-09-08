@@ -568,6 +568,186 @@ def cannon():
     return s
 
 
+def farmer():
+    """A workman with separately posed hands, a forged pick and a wooden mallet."""
+    s=Sculpture("farmer")
+    body=s.joint("Body",(0,1.05,0))
+    head=s.joint("Head",(0,1.57,0))
+    left=s.joint("ArmLeft",(-.32,1.32,0))
+    right=s.joint("ArmRight",(.32,1.32,0))
+    # Rolled linen sleeves and a blue, tailored work tunic beneath the apron.
+    s.add(body,lathe([(-.30,.28),(-.06,.245),(.22,.31),(.30,.235)],8),"blue")
+    s.b(body,(.32,.47,.072),(0,-.08,-.264),"leatherlight",bevel=.027)
+    for sign in (-1,1):
+        s.b(body,(.048,.45,.032),(sign*.13,.16,-.231),"leather",rot=(0,0,sign*.16),bevel=.009)
+        s.b(body,(.13,.31,.095),(sign*.15,-.31,-.115),"blue",rot=(0,0,-sign*.06),bevel=.016)
+    s.b(body,(.51,.10,.36),(0,-.055,0),"leather",bevel=.016)
+    s.b(body,(.095,.083,.039),(0,-.052,-.205),"gold",bevel=.010)
+    s.b(body,(.052,.044,.012),(0,-.052,-.23),"wooddark",bevel=.006)
+    # Belt pouch has a flap, stitching, buckle and a short awl on the other hip.
+    s.b(body,(.19,.22,.16),(.28,-.16,.045),"leather",bevel=.037)
+    s.b(body,(.18,.105,.024),(.28,-.085,-.046),"leatherlight",bevel=.020)
+    s.b(body,(.032,.055,.018),(.28,-.10,-.064),"gold",bevel=.005)
+    for y in (-.19,-.15,-.11):
+        s.b(body,(.024,.009,.01),(.216,y,-.041),"rope",bevel=.002)
+    s.r(body,(-.285,-.29,.015),(-.285,.03,.015),.021,"woodlight",8)
+    s.r(body,(-.285,-.39,.015),(-.285,-.26,.015),.014,"darksteel",6)
+    # A softened cloth cap with a stitched turned brim; visible hair, ears and face.
+    s.e(head,(.233,.248,.216),(0,-.015,-.015),"skin",sub=2)
+    s.e(head,(.254,.19,.238),(0,.105,.01),"mane",sub=1)
+    s.e(head,(.268,.130,.251),(-.025,.209,.015),"rope",rot=(0,0,.12),sub=2)
+    s.add(head,lathe([(.102,.255),(.158,.273),(.194,.247)],12),"rope")
+    s.b(head,(.385,.046,.17),(0,.145,-.215),"leatherlight",rot=(.10,0,0),bevel=.027)
+    for sign in (-1,1):
+        s.e(head,(.047,.082,.055),(sign*.225,-.043,-.003),"skin")
+        s.b(head,(.040,.023,.014),(sign*.080,.011,-.230),"black",bevel=.003)
+        s.b(head,(.078,.025,.019),(sign*.080,.058,-.218),"mane",rot=(0,0,sign*.06),bevel=.004)
+        s.b(head,(.09,.043,.036),(sign*.039,-.104,-.232),"leather",rot=(0,0,sign*.12),bevel=.014)
+        s.b(head,(.060,.14,.065),(sign*.201,.014,.009),"mane",rot=(0,0,-sign*.12),bevel=.019)
+    s.e(head,(.041,.061,.070),(0,-.045,-.229),"skin")
+    for part,sign in ((left,-1),(right,1)):
+        s.e(part,(.171,.145,.177),(sign*.025,.005,0),"ivory")
+        s.r(part,(0,-.065,0),(sign*.045,-.24,0),.102,"ivory",8)
+        s.add(part,lathe([(-.033,.107),(.033,.109)],8,(sign*.037,-.19,0),(0,0,-sign*.18)),"rope")
+        fore=s.joint("ForearmLeft" if sign<0 else "ForearmRight",(sign*.045,-.24,0),parent=part)
+        s.r(fore,(0,0,0),(sign*.025,-.20,-.045),.076,"skin",8)
+        s.b(fore,(.137,.069,.133),(sign*.025,-.207,-.047),"leather",bevel=.018)
+        s.e(fore,(.080,.080,.09),(sign*.025,-.235,-.055),"skin")
+    for name,x in (("LegLeft",-.155),("LegRight",.155)):
+        leg=s.joint(name,(x,.75,0))
+        s.r(leg,(0,.015,0),(0,-.32,.018),.112,"ivory",8)
+        s.b(leg,(.18,.24,.16),(0,-.43,0),"leather",bevel=.027)
+        s.b(leg,(.216,.18,.335),(0,-.647,-.08),"leather",bevel=.041)
+        s.b(leg,(.224,.042,.344),(0,-.716,-.076),"wooddark",bevel=.01)
+        for y in (-.34,-.43):
+            s.b(leg,(.187,.026,.174),(0,y,-.01),"leatherlight",bevel=.008)
+    waist=s.pivot("Waist",(0,1.05,0))
+    for part in (body,head,left,right):
+        s.reparent(part,waist)
+    tool=s.joint("Pick",(.39,-.19,-.09),parent=waist)
+    s.r(tool,(0,-.24,0),(0,.72,0),.037,"woodlight",10)
+    s.r(tool,(0,-.13,0),(0,.13,0),.042,"leather",10)
+    for y in (-.09,-.03,.03,.09):
+        s.add(tool,ring(.043,.007,(0,y,0),(math.pi/2,0,0),n=8),"rope")
+    s.b(tool,(.19,.16,.15),(0,.66,0),"darksteel",bevel=.023)
+    # A downward-curved pick point and broad, sharpened adze oppose each other.
+    s.add(tool,polygon([(-.49,.54),(-.30,.71),(-.055,.735),(.075,.67),(-.10,.64),(-.31,.63)],.10),"steel")
+    s.add(tool,polygon([(.04,.72),(.30,.70),(.46,.55),(.46,.49),(.26,.61),(.04,.62)],.13),"darksteel")
+    s.b(tool,(.057,.085,.15),(.445,.535,0),"edge",rot=(0,0,-.30),bevel=.008)
+    s.r(tool,(-.073,.66,-.084),(-.073,.66,.084),.024,"gold",8)
+    mallet=s.joint("Mallet",(.39,-.19,-.09),parent=waist)
+    s.r(mallet,(0,-.20,0),(0,.45,0),.039,"woodlight",8)
+    s.b(mallet,(.35,.23,.21),(0,.45,0),"wood",bevel=.035)
+    for sign in (-1,1):
+        s.b(mallet,(.031,.22,.202),(sign*.145,.45,0),"darksteel",bevel=.012)
+        s.e(mallet,(.012,.022,.022),(sign*.165,.45,-.045),"steel")
+    return s
+
+
+def farmer_arm_pose(s, side, target):
+    """Offline two-bone solve: hands remain wrapped around the authored tool."""
+    sign=-1 if side=="Left" else 1
+    shoulder=np.array(s.joints["Arm"+side])
+    upper=np.array((sign*.045,-.24,0))
+    lower=np.array((sign*.025,-.235,-.055))
+    direction=np.array(target)-shoulder
+    a,b=np.linalg.norm(upper),np.linalg.norm(lower)
+    distance=min(np.linalg.norm(direction),a+b-.001)
+    direction/=np.linalg.norm(direction)
+    projection=(a*a-b*b+distance*distance)/(2*distance)
+    pole=np.array((sign*.80,-.10,.40))
+    pole-=direction*np.dot(pole,direction)
+    pole/=np.linalg.norm(pole)
+    elbow=direction*projection+pole*math.sqrt(max(0,a*a-projection*projection))
+    rotation=tm.geometry.align_vectors(upper,elbow)[:3,:3]
+    local_hand=rotation.T@(direction*distance-elbow)
+    forearm=tm.geometry.align_vectors(lower,local_hand)[:3,:3]
+    return godot_euler(rotation),godot_euler(forearm)
+
+
+def farmer_work_tracks(s, mode):
+    mining=mode=="gather"
+    duration=1.5 if mining else 1.0
+    t=[q*duration for q in (0,.18,.36,.47,.52,.58,.72,1)]
+    positions=[(0,.12,-.24),(0,.31,-.20),(.03,.55,-.23),(.03,.53,-.23),(0,.11,-.31),(0,.10,-.31),(0,.12,-.27),(0,.12,-.24)]
+    rotations=[(-.25,0,-.10),(-.20,0,-.18),(-.20,0,-.18),(-.24,0,-.17),(-1.05,0,-.10),(-1.15,0,-.08),(-.60,0,-.10),(-.25,0,-.10)]
+    if not mining:
+        positions=[(.34,-.03,-.30),(.32,.13,-.30),(.29,.32,-.18),(.29,.30,-.18),(.29,.05,-.36),(.29,.04,-.36),(.32,-.02,-.34),(.34,-.03,-.30)]
+        rotations=[(-.25,0,-.14),(-.10,0,-.17),(.25,0,-.19),(.18,0,-.19),(-1.25,0,-.10),(-1.30,0,-.10),(-.60,0,-.13),(-.25,0,-.14)]
+    path=lambda part,prop:s.part_path(part)+":"+prop
+    tracks=[(path("Pick","visible"),[mining,mining],[0,duration]),(path("Mallet","visible"),[not mining,not mining],[0,duration])]
+    tool="Pick" if mining else "Mallet"
+    tracks.extend([(path(tool,"position"),positions,t),(path(tool,"rotation"),rotations,t)])
+    for side in ("Left","Right"):
+        shoulders=[];forearms=[]
+        for position,rotation in zip(positions,rotations):
+            target=np.array(position)
+            if side=="Left":
+                target=target+godot_rotation(rotation)@np.array((0,-.19,0)) if mining else np.array((-.18,-.05,-.30))
+            shoulder,forearm=farmer_arm_pose(s,side,target)
+            shoulders.append(shoulder);forearms.append(forearm)
+        tracks.extend([(path("Arm"+side,"rotation"),shoulders,t),(path("Forearm"+side,"rotation"),forearms,t)])
+    tracks.append((path("Waist","rotation"),[(x,y,0) for x,y in [(0,.03),(.05,.06),(.11,.07),(.08,.06),(-.17,-.025),(-.20,-.035),(-.07,0),(0,.03)]],t))
+    tracks.append((path("Head","rotation"),[(x,0,0) for x in [.08,.02,-.05,-.03,.13,.15,.10,.08]],t))
+    tracks.append(("Rig:position",[(0,y,0) for y in [0,.01,.026,.017,-.055,-.06,-.02,0]],t))
+    for part in ("LegLeft","LegRight"):
+        tracks.append((path(part,"rotation"),[(0,0,0),(0,0,0)],[0,duration]))
+    return duration,tracks
+
+
+def write_farmer_scene(s):
+    parts=list(s.parts)
+    lines=[f'[gd_scene load_steps={len(parts)+9} format=3]',
+           '[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="1_script"]']
+    for i,p in enumerate(parts):
+        lines.append(f'[ext_resource type="ArrayMesh" path="res://assets/models/units/farmer/{p}.res" id="{i+2}_{p}"]')
+    path=lambda part,prop:s.part_path(part)+":"+prop
+    idle=[];walk=[]
+    for part,sign in (("LegLeft",1),("LegRight",-1)):
+        idle.append((path(part,"rotation"),[(0,0,0),(0,0,0)]))
+        walk.append((path(part,"rotation"),[(sign*a,0,0) for a in (0,.50,0,-.50,0)]))
+    for part in ("Waist","Head","ArmLeft","ForearmLeft"):
+        idle.append((path(part,"rotation"),[(0,0,0),(0,0,0)]))
+        walk.append((path(part,"rotation"),[(0,0,0),(0,0,0)]))
+    right,fore=farmer_arm_pose(s,"Right",(.39,-.19,-.09))
+    for part,pose in (("ArmRight",right),("ForearmRight",fore)):
+        idle.append((path(part,"rotation"),[pose,pose]))
+        walk.append((path(part,"rotation"),[pose,pose]))
+    for tracks in (idle,walk):
+        for part in ("Pick","Mallet"):
+            tracks.extend([(path(part,"position"),[(.39,-.19,-.09),(.39,-.19,-.09)]),
+                           (path(part,"rotation"),[(0,0,0),(0,0,0)]),
+                           (path(part,"visible"),[part=="Pick",part=="Pick"])])
+    idle.append(("Rig:position",[(0,0,0),(0,.014,0),(0,0,0)]))
+    walk.append(("Rig:position",[(0,y,0) for y in (0,.04,0,.04,0)]))
+    duration,gather=farmer_work_tracks(s,"gather")
+    build_duration,build=farmer_work_tracks(s,"build")
+    lines += [anim_resource("idle",2.6,idle,True),anim_resource("walk",.76,walk,True),
+              anim_resource("gather",duration,gather,True),anim_resource("build",build_duration,build,True),
+              anim_resource("strike",duration,gather),
+              '[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
+              '[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]\n_data = {&"strike": SubResource("Animation_strike"), &"gather": SubResource("Animation_gather"), &"build": SubResource("Animation_build")}',
+              '[node name="Farmer" type="Node3D"]\nscript = ExtResource("1_script")\nkind = "farmer"\nprojectile_socket = NodePath("Rig/Action/ProjectileSocket")',
+              '[node name="Rig" type="Node3D" parent="."]','[node name="Action" type="Node3D" parent="Rig"]']
+    emitted=set()
+    def emit(part):
+        if part in emitted:return
+        parent_part=s.parents[part]
+        if parent_part:emit(parent_part)
+        parent=s.part_path(parent_part) if parent_part else "Rig/Action"
+        if part in s.pivots:
+            lines.append(f'[node name="{part}" type="Node3D" parent="{parent}"]\nposition = {vec(s.joints[part])}')
+        else:
+            extra='\nvisible = false' if part=="Mallet" else ''
+            lines.append(f'[node name="{part}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[part])}\nmesh = ExtResource("{parts.index(part)+2}_{part}"){extra}')
+        emitted.add(part)
+    for part in parts:emit(part)
+    lines += ['[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action"]\nposition = Vector3(0,1.4,-0.6)',
+              '[node name="Locomotion" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
+              '[node name="Attack" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
+    (OUT/"farmer.tscn").write_text("\n\n".join(lines)+"\n",encoding="utf-8")
+
+
 def vec(v):
     return "Vector3(" + ", ".join(f"{float(x):.6f}" for x in v) + ")"
 
@@ -693,6 +873,9 @@ def attack_tracks(s):
 
 
 def write_scene(s):
+    if s.name=="farmer":
+        write_farmer_scene(s)
+        return
     if s.name in ("catapult","cannon"):
         for part in [p for p in s.parts if p.startswith("Wheel")]:
             kick=s.pivot(part+"Kick",s.joints[part])
@@ -763,5 +946,5 @@ def write_scene(s):
 
 
 if __name__=="__main__":
-    for model in (infantry("swordsman"),infantry("archer",True),horse_knight(),catapult(),cannon()):
+    for model in (infantry("swordsman"),infantry("archer",True),horse_knight(),catapult(),cannon(),farmer()):
         model.save()

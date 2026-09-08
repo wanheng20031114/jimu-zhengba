@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/worker_ai_host.gd" id="1_host"]
+
+[sub_resource type="NavigationMesh" id="Navigation_test"]
+vertices = PackedVector3Array(-40, 0, -40, -40, 0, 40, 40, 0, 40, 40, 0, -40)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+
+[node name="WorkerAIHost" type="Node3D"]
+script = ExtResource("1_host")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("Navigation_test")
+
+[node name="Units" type="Node3D" parent="."]
+
+[node name="Buildings" type="Node3D" parent="."]
+
+[node name="Resources" type="Node3D" parent="."]
+
+[node name="Effects" type="Node3D" parent="."]

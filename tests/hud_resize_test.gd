@@ -92,7 +92,7 @@ func _run() -> void:
 		game.camera_rig.edge_scroll = false
 		game.get_node("EnemyTimer").stop()
 		game.get_node("IncomeTimer").stop()
-		game.get_node("Audio").stop_all()
+		game.get_node("Audio").set_volume_percent(0)
 		for entity: Node in get_nodes_in_group("entities"):
 			entity.set_physics_process(false)
 		await create_timer(.5).timeout
@@ -106,14 +106,14 @@ func _run() -> void:
 		check(actual == target_size, "native requested client size applied")
 		check(DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS), "test window has native no-focus flag")
 		inspect_controls(game.hud, report.controls)
-		for index: int in range(5):
+		for index: int in range(6):
 			var before_gold: int = game.gold
 			var before_count: int = game.player_count()
 			await click_control("Recruit" + str(index))
 			check(game.player_count() == before_count + 1 and game.gold == before_gold - game.hud.COSTS[index], "client pixel click recruits " + game.hud.UNIT_ORDER[index])
 		check(game.headquarters in game.selection, "GUI clicks preserve HQ selection")
 		await click_control("ArmyButton")
-		check(game.selection.size() == game.player_count(), "native client click selects army")
+		check(game.selection.size() == get_nodes_in_group("friendly_units").filter(func(unit): return unit.alive and unit.unit_type != "farmer").size(), "native client click selects military army")
 		await click_control("AttackButton")
 		check(game.attack_mode, "native client click activates attack mode")
 		game.set_attack_mode(false)
@@ -129,6 +129,14 @@ func _run() -> void:
 		check(game.camera_rig.destination.distance_to(Vector3(10.08, 0, -10.08)) < .05, "minimap client coordinate maps to correct world point")
 		game.camera_rig.focus_at(Vector3(-10, 0, 17), true)
 		await capture("hud")
+		var worker: Node3D = get_nodes_in_group("friendly_units").filter(func(unit): return unit.unit_type == "farmer")[0]
+		game.select_entities([worker])
+		inspect_controls(game.hud, report.controls)
+		await click_control("BuildButton")
+		check(game.build_mode, "native client build button opens placement")
+		game.set_build_mode(false)
+		await capture("worker")
+		game.select_entities([game.headquarters])
 		await click_control("HelpButton")
 		check(game.hud.help_visible(), "client click opens help")
 		inspect_overlay("HelpOverlay", report.overlays)

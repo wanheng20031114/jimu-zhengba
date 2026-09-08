@@ -34,6 +34,9 @@ func _draw() -> void:
 		draw_rect(Rect2(pos - ext * 0.5, ext), Color("bba675"))
 	if not is_instance_valid(game):
 		return
+	for mine: Node3D in get_tree().get_nodes_in_group("resource_veins"):
+		var at := _map(mine.global_position)
+		draw_colored_polygon(PackedVector2Array([at + Vector2(0,-4), at + Vector2(4,0), at + Vector2(0,4), at + Vector2(-4,0)]), Color("efc75b"))
 	for entity in get_tree().get_nodes_in_group("entities"):
 		if not entity.alive:
 			continue

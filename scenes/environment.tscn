@@ -1,302 +1,244 @@
-[gd_scene load_steps=105 format=3]
+[gd_scene load_steps=81 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/environment/terrain.glb" id="1_terrain"]
+
 [ext_resource type="PackedScene" path="res://assets/models/environment/world_details.glb" id="2_details"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/cart.tscn" id="3_cart"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/house.tscn" id="4_house"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/palisade.tscn" id="5_palisade"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/ruin.tscn" id="6_ruin"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/tent.tscn" id="7_tent"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/wall.tscn" id="8_wall"]
-[ext_resource type="PackedScene" path="res://assets/models/environment/well.tscn" id="9_well"]
+
+[ext_resource type="PackedScene" path="res://assets/models/environment/rock_large.tscn" id="3_rock_large"]
+
+[ext_resource type="PackedScene" path="res://assets/models/environment/rock_medium.tscn" id="4_rock_medium"]
+
+[ext_resource type="PackedScene" path="res://assets/models/environment/tree_oak.tscn" id="5_tree_oak"]
+
+[ext_resource type="PackedScene" path="res://assets/models/environment/tree_pine.tscn" id="6_tree_pine"]
 
 [sub_resource type="BoxShape3D" id="FloorShape"]
 size = Vector3(84, 1, 84)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape0"]
-size = Vector3(5.3000, 5.8000, 4.7000)
+size = Vector3(4.2525, 3.2550, 3.7800)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape1"]
-size = Vector3(4.7700, 5.2200, 4.2300)
+size = Vector3(2.4440, 1.8800, 2.1714)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape2"]
-size = Vector3(4.9290, 5.3940, 4.3710)
+size = Vector3(3.6450, 2.7900, 3.2400)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape3"]
-size = Vector3(5.3000, 5.8000, 4.7000)
+size = Vector3(2.2100, 1.7000, 1.9635)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape4"]
-size = Vector3(4.8760, 5.3360, 4.3240)
+size = Vector3(3.8475, 2.9450, 3.4200)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape5"]
-size = Vector3(6.2000, 3.8000, 4.7000)
+size = Vector3(2.2100, 1.7000, 1.9635)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape6"]
-size = Vector3(5.4560, 3.3440, 4.1360)
+size = Vector3(4.0500, 3.1000, 3.6000)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape7"]
-size = Vector3(6.4480, 3.9520, 4.8880)
+size = Vector3(2.2880, 1.7600, 2.0328)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape8"]
-size = Vector3(5.5800, 3.4200, 4.2300)
+size = Vector3(4.3740, 3.3480, 3.8880)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape9"]
-size = Vector3(2.4000, 3.3000, 2.0000)
+size = Vector3(2.3400, 1.8000, 2.0790)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape10"]
-size = Vector3(2.3000, 1.8000, 3.4000)
+size = Vector3(3.8475, 2.9450, 3.4200)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape11"]
-size = Vector3(2.1160, 1.6560, 3.1280)
+size = Vector3(2.3400, 1.8000, 2.0790)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape12"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(2.4700, 1.9000, 2.1945)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape13"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(2.2880, 1.7600, 2.0328)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape14"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.9016, 2.9400, 0.9016)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape15"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.6440, 2.7600, 0.6440)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape16"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.7350, 3.1500, 0.7350)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape17"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.8464, 2.7600, 0.8464)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape18"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.8464, 2.7600, 0.8464)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape19"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.7140, 3.0600, 0.7140)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape20"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.7350, 3.1500, 0.7350)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape21"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.8924, 2.9100, 0.8924)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape22"]
-size = Vector3(4.5000, 1.7000, 0.9000)
+size = Vector3(0.8372, 2.7300, 0.8372)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape23"]
-size = Vector3(4.0000, 2.0000, 0.6500)
+size = Vector3(0.7210, 3.0900, 0.7210)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape24"]
-size = Vector3(4.0000, 2.0000, 0.6500)
+size = Vector3(0.7350, 3.1500, 0.7350)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape25"]
-size = Vector3(4.0000, 2.0000, 0.6500)
+size = Vector3(0.8280, 2.7000, 0.8280)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape26"]
-size = Vector3(4.0000, 2.0000, 0.6500)
+size = Vector3(0.8372, 2.7300, 0.8372)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape27"]
-size = Vector3(2.5696, 2.3760, 3.0624)
+size = Vector3(0.6160, 2.6400, 0.6160)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape28"]
-size = Vector3(2.7156, 2.5110, 3.2364)
+size = Vector3(0.9973, 3.2521, 0.9973)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape29"]
-size = Vector3(0.8959, 1.8000, 0.8959)
+size = Vector3(0.6394, 2.7403, 0.6394)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape30"]
-size = Vector3(0.6878, 1.8000, 0.6878)
+size = Vector3(0.6493, 2.7827, 0.6493)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape31"]
-size = Vector3(0.7050, 1.8000, 0.7050)
+size = Vector3(0.8611, 2.8079, 0.8611)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape32"]
-size = Vector3(0.7153, 1.8000, 0.7153)
+size = Vector3(0.7213, 3.0912, 0.7213)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape33"]
-size = Vector3(0.7903, 1.8000, 0.7903)
+size = Vector3(0.7906, 2.5781, 0.7906)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape34"]
-size = Vector3(0.7041, 1.8000, 0.7041)
+size = Vector3(0.7443, 3.1897, 0.7443)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape35"]
-size = Vector3(0.5307, 1.8000, 0.5307)
+size = Vector3(0.7699, 2.5105, 0.7699)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape36"]
-size = Vector3(0.8658, 1.8000, 0.8658)
+size = Vector3(0.7172, 3.0737, 0.7172)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape37"]
-size = Vector3(0.5943, 1.8000, 0.5943)
+size = Vector3(0.6358, 2.7248, 0.6358)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape38"]
-size = Vector3(0.8234, 1.8000, 0.8234)
+size = Vector3(0.9498, 3.0971, 0.9498)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape39"]
-size = Vector3(0.6815, 1.8000, 0.6815)
+size = Vector3(0.7318, 3.1364, 0.7318)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape40"]
-size = Vector3(0.8329, 1.8000, 0.8329)
+size = Vector3(0.5813, 2.4914, 0.5813)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape41"]
-size = Vector3(0.8489, 1.8000, 0.8489)
+size = Vector3(0.8316, 2.7116, 0.8316)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape42"]
-size = Vector3(0.5866, 1.8000, 0.5866)
+size = Vector3(0.6540, 2.8028, 0.6540)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape43"]
-size = Vector3(0.6761, 1.8000, 0.6761)
+size = Vector3(0.6699, 2.8710, 0.6699)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape44"]
-size = Vector3(0.7132, 1.8000, 0.7132)
+size = Vector3(0.9098, 2.9668, 0.9098)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape45"]
-size = Vector3(0.7410, 1.8000, 0.7410)
+size = Vector3(0.6833, 2.9285, 0.6833)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape46"]
-size = Vector3(0.7799, 1.8000, 0.7799)
+size = Vector3(0.7703, 3.3015, 0.7703)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape47"]
-size = Vector3(0.7643, 1.8000, 0.7643)
+size = Vector3(0.8036, 2.6204, 0.8036)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape48"]
-size = Vector3(0.9160, 1.8000, 0.9160)
+size = Vector3(0.6253, 2.6799, 0.6253)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape49"]
-size = Vector3(0.6390, 1.8000, 0.6390)
+size = Vector3(0.6754, 2.8946, 0.6754)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape50"]
-size = Vector3(0.6632, 1.8000, 0.6632)
+size = Vector3(0.7803, 2.5445, 0.7803)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape51"]
-size = Vector3(0.7505, 1.8000, 0.7505)
+size = Vector3(0.6821, 2.9235, 0.6821)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape52"]
-size = Vector3(0.6082, 1.8000, 0.6082)
+size = Vector3(0.6593, 2.8258, 0.6593)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape53"]
-size = Vector3(0.7225, 1.8000, 0.7225)
+size = Vector3(0.7932, 2.5864, 0.7932)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape54"]
-size = Vector3(0.5586, 1.8000, 0.5586)
+size = Vector3(0.5653, 2.4226, 0.5653)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape55"]
-size = Vector3(0.9241, 1.8000, 0.9241)
+size = Vector3(0.7750, 3.3214, 0.7750)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape56"]
-size = Vector3(0.8902, 1.8000, 0.8902)
+size = Vector3(0.9930, 3.2382, 0.9930)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape57"]
-size = Vector3(0.8193, 1.8000, 0.8193)
+size = Vector3(0.7149, 3.0638, 0.7149)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape58"]
-size = Vector3(0.5473, 1.8000, 0.5473)
+size = Vector3(0.5588, 2.3949, 0.5588)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape59"]
-size = Vector3(0.5445, 1.8000, 0.5445)
+size = Vector3(0.7866, 2.5649, 0.7866)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape60"]
-size = Vector3(0.9265, 1.8000, 0.9265)
+size = Vector3(0.5572, 2.3878, 0.5572)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape61"]
-size = Vector3(0.7670, 1.8000, 0.7670)
+size = Vector3(0.7764, 3.3273, 0.7764)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape62"]
-size = Vector3(0.7107, 1.8000, 0.7107)
+size = Vector3(0.9001, 2.9350, 0.9001)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape63"]
-size = Vector3(0.8825, 1.8000, 0.8825)
+size = Vector3(0.6526, 2.7967, 0.6526)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape64"]
-size = Vector3(0.9078, 1.8000, 0.9078)
+size = Vector3(0.8552, 2.7887, 0.8552)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape65"]
-size = Vector3(0.6571, 1.8000, 0.6571)
+size = Vector3(0.7301, 3.1292, 0.7301)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape66"]
-size = Vector3(0.7790, 1.8000, 0.7790)
+size = Vector3(0.6569, 2.8155, 0.6569)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape67"]
-size = Vector3(0.6946, 1.8000, 0.6946)
+size = Vector3(0.8847, 2.8850, 0.8847)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape68"]
-size = Vector3(0.5451, 1.8000, 0.5451)
+size = Vector3(0.7134, 3.0574, 0.7134)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape69"]
-size = Vector3(0.6610, 1.8000, 0.6610)
+size = Vector3(0.5555, 2.3807, 0.5555)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape70"]
-size = Vector3(0.5627, 1.8000, 0.5627)
+size = Vector3(0.8787, 2.8653, 0.8787)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape71"]
-size = Vector3(0.5770, 1.8000, 0.5770)
+size = Vector3(0.5900, 2.5285, 0.5900)
 
 [sub_resource type="BoxShape3D" id="ObstacleShape72"]
-size = Vector3(0.6058, 1.8000, 0.6058)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape73"]
-size = Vector3(0.7065, 1.8000, 0.7065)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape74"]
-size = Vector3(0.6571, 1.8000, 0.6571)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape75"]
-size = Vector3(0.8093, 1.8000, 0.8093)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape76"]
-size = Vector3(0.8389, 1.8000, 0.8389)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape77"]
-size = Vector3(0.6134, 1.8000, 0.6134)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape78"]
-size = Vector3(0.6095, 1.8000, 0.6095)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape79"]
-size = Vector3(0.9363, 1.8000, 0.9363)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape80"]
-size = Vector3(0.5972, 1.8000, 0.5972)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape81"]
-size = Vector3(0.7433, 1.8000, 0.7433)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape82"]
-size = Vector3(0.9093, 1.8000, 0.9093)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape83"]
-size = Vector3(0.9518, 1.8000, 0.9518)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape84"]
-size = Vector3(0.7198, 1.8000, 0.7198)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape85"]
-size = Vector3(0.9006, 1.8000, 0.9006)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape86"]
-size = Vector3(0.5993, 1.8000, 0.5993)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape87"]
-size = Vector3(0.5453, 1.8000, 0.5453)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape88"]
-size = Vector3(0.6834, 1.8000, 0.6834)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape89"]
-size = Vector3(0.6737, 1.8000, 0.6737)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape90"]
-size = Vector3(0.7745, 1.8000, 0.7745)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape91"]
-size = Vector3(0.9130, 1.8000, 0.9130)
-
-[sub_resource type="BoxShape3D" id="ObstacleShape92"]
-size = Vector3(0.6364, 1.8000, 0.6364)
+size = Vector3(0.6762, 2.8981, 0.6762)
 
 [node name="Environment" type="Node3D"]
 
 [node name="EarthAndAncientRoad" parent="." instance=ExtResource("1_terrain")]
 
-[node name="TownDetailsAndBoundaryGrove" parent="." instance=ExtResource("2_details")]
+[node name="GroundCoverAndBoundaryGrove" parent="." instance=ExtResource("2_details")]
 
 [node name="Ground" type="StaticBody3D" parent="."]
 collision_layer = 1
@@ -306,618 +248,513 @@ collision_mask = 0
 position = Vector3(0, -0.53, 0)
 shape = SubResource("FloorShape")
 
-[node name="Architecture" type="Node3D" parent="."]
+[node name="NaturalObstacles" type="Node3D" parent="."]
 
-[node name="House00" parent="Architecture" instance=ExtResource("4_house")]
-position = Vector3(-29, 0, 9)
-rotation = Vector3(0, 0.160000, 0)
-scale = Vector3(1.0, 1.0, 1.0)
+[node name="RockLarge00" parent="NaturalObstacles" instance=ExtResource("3_rock_large")]
+position = Vector3(-29,0,5)
+rotation = Vector3(0,0.240000,0)
+scale = Vector3(1.05,1.05,1.05)
 
-[node name="House01" parent="Architecture" instance=ExtResource("4_house")]
-position = Vector3(-29, 0, -5)
-rotation = Vector3(0, -0.140000, 0)
-scale = Vector3(0.9, 0.9, 0.9)
+[node name="RockMedium01" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(-31.1,0,2.8)
+rotation = Vector3(0,-0.300000,0)
+scale = Vector3(0.94,0.94,0.94)
 
-[node name="House02" parent="Architecture" instance=ExtResource("4_house")]
-position = Vector3(17, 0, 12)
-rotation = Vector3(0, -0.350000, 0)
-scale = Vector3(0.93, 0.93, 0.93)
+[node name="RockLarge02" parent="NaturalObstacles" instance=ExtResource("3_rock_large")]
+position = Vector3(-27,0,-7)
+rotation = Vector3(0,-0.170000,0)
+scale = Vector3(0.9,0.9,0.9)
 
-[node name="House03" parent="Architecture" instance=ExtResource("4_house")]
-position = Vector3(28, 0, 22)
-rotation = Vector3(0, 0.120000, 0)
-scale = Vector3(1.0, 1.0, 1.0)
+[node name="RockMedium03" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(-29.2,0,-8.5)
+rotation = Vector3(0,0.600000,0)
+scale = Vector3(0.85,0.85,0.85)
 
-[node name="House04" parent="Architecture" instance=ExtResource("4_house")]
-position = Vector3(-13, 0, 32)
-rotation = Vector3(0, 0.200000, 0)
-scale = Vector3(0.92, 0.92, 0.92)
+[node name="RockLarge04" parent="NaturalObstacles" instance=ExtResource("3_rock_large")]
+position = Vector3(16,0,15)
+rotation = Vector3(0,-0.430000,0)
+scale = Vector3(0.95,0.95,0.95)
 
-[node name="Ruin05" parent="Architecture" instance=ExtResource("6_ruin")]
-position = Vector3(-16, 0, -2)
-rotation = Vector3(0, 0.080000, 0)
-scale = Vector3(1.0, 1.0, 1.0)
+[node name="RockMedium05" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(18.5,0,15.1)
+rotation = Vector3(0,0.190000,0)
+scale = Vector3(0.85,0.85,0.85)
 
-[node name="Ruin06" parent="Architecture" instance=ExtResource("6_ruin")]
-position = Vector3(13, 0, 0)
-rotation = Vector3(0, -0.210000, 0)
-scale = Vector3(0.88, 0.88, 0.88)
+[node name="RockLarge06" parent="NaturalObstacles" instance=ExtResource("3_rock_large")]
+position = Vector3(28,0,23)
+rotation = Vector3(0,0.100000,0)
+scale = Vector3(1.0,1.0,1.0)
 
-[node name="Ruin07" parent="Architecture" instance=ExtResource("6_ruin")]
-position = Vector3(-21, 0, -24)
-rotation = Vector3(0, 0.260000, 0)
-scale = Vector3(1.04, 1.04, 1.04)
+[node name="RockMedium07" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(30.3,0,24.4)
+rotation = Vector3(0,0.510000,0)
+scale = Vector3(0.88,0.88,0.88)
 
-[node name="Ruin08" parent="Architecture" instance=ExtResource("6_ruin")]
-position = Vector3(30, 0, -34)
-rotation = Vector3(0, -0.200000, 0)
-scale = Vector3(0.9, 0.9, 0.9)
+[node name="RockLarge08" parent="NaturalObstacles" instance=ExtResource("3_rock_large")]
+position = Vector3(-20,0,-25)
+rotation = Vector3(0,0.380000,0)
+scale = Vector3(1.08,1.08,1.08)
 
-[node name="Well09" parent="Architecture" instance=ExtResource("9_well")]
-position = Vector3(-13, 0, 12)
-rotation = Vector3(0, 0.000000, 0)
-scale = Vector3(1.0, 1.0, 1.0)
+[node name="RockMedium09" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(-22.5,0,-23.5)
+rotation = Vector3(0,-0.310000,0)
+scale = Vector3(0.9,0.9,0.9)
 
-[node name="Cart10" parent="Architecture" instance=ExtResource("3_cart")]
-position = Vector3(-18, 0, 17)
-rotation = Vector3(0, 0.300000, 0)
-scale = Vector3(1.0, 1.0, 1.0)
+[node name="RockLarge10" parent="NaturalObstacles" instance=ExtResource("3_rock_large")]
+position = Vector3(31,0,-32)
+rotation = Vector3(0,-0.180000,0)
+scale = Vector3(0.95,0.95,0.95)
 
-[node name="Cart11" parent="Architecture" instance=ExtResource("3_cart")]
-position = Vector3(19, 0, -14)
-rotation = Vector3(0, -0.350000, 0)
-scale = Vector3(0.92, 0.92, 0.92)
+[node name="RockMedium11" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(33.0,0,-33.0)
+rotation = Vector3(0,0.580000,0)
+scale = Vector3(0.9,0.9,0.9)
 
-[node name="Wall12" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-29, 0, 13)
-rotation = Vector3(0, 0.120000, 0)
-scale = Vector3(1, 1, 1)
+[node name="RockMedium12" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(-13,0,33)
+rotation = Vector3(0,0.190000,0)
+scale = Vector3(0.95,0.95,0.95)
 
-[node name="Wall13" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-33, 0, 9)
-rotation = Vector3(0, 1.570796, 0)
-scale = Vector3(1, 1, 1)
+[node name="RockMedium13" parent="NaturalObstacles" instance=ExtResource("4_rock_medium")]
+position = Vector3(13,0,-1)
+rotation = Vector3(0,0.640000,0)
+scale = Vector3(0.88,0.88,0.88)
 
-[node name="Wall14" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-28, 0, -9)
-rotation = Vector3(0, -0.120000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak14" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(-32,0,9)
+rotation = Vector3(0,0.300000,0)
+scale = Vector3(0.98,0.98,0.98)
 
-[node name="Wall15" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-32, 0, -5)
-rotation = Vector3(0, 1.570796, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreePine15" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(-33,0,4)
+rotation = Vector3(0,0.800000,0)
+scale = Vector3(0.92,0.92,0.92)
 
-[node name="Wall16" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(18, 0, 16)
-rotation = Vector3(0, -0.350000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreePine16" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(-31,0,-5)
+rotation = Vector3(0,0.500000,0)
+scale = Vector3(1.05,1.05,1.05)
 
-[node name="Wall17" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(22, 0, 13)
-rotation = Vector3(0, 1.220796, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak17" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(-27,0,-13)
+rotation = Vector3(0,0.900000,0)
+scale = Vector3(0.92,0.92,0.92)
 
-[node name="Wall18" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(28, 0, 26)
-rotation = Vector3(0, 0.120000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak18" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(20,0,19)
+rotation = Vector3(0,0.400000,0)
+scale = Vector3(0.92,0.92,0.92)
 
-[node name="Wall19" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(32, 0, 23)
-rotation = Vector3(0, 1.570796, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreePine19" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(23,0,21)
+rotation = Vector3(0,0.700000,0)
+scale = Vector3(1.02,1.02,1.02)
 
-[node name="Wall20" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-17, 0, 32)
-rotation = Vector3(0, 1.570796, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreePine20" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(30,0,28)
+rotation = Vector3(0,0.200000,0)
+scale = Vector3(1.05,1.05,1.05)
 
-[node name="Wall21" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-21, 0, -20)
-rotation = Vector3(0, 0.240000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak21" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(25,0,28)
+rotation = Vector3(0,0.900000,0)
+scale = Vector3(0.97,0.97,0.97)
 
-[node name="Wall22" parent="Architecture" instance=ExtResource("8_wall")]
-position = Vector3(-25, 0, -24)
-rotation = Vector3(0, 1.810796, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak22" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(-16,0,-25)
+rotation = Vector3(0,0.300000,0)
+scale = Vector3(0.91,0.91,0.91)
 
-[node name="Palisade23" parent="Architecture" instance=ExtResource("5_palisade")]
-position = Vector3(-23, 0, 15)
-rotation = Vector3(0, -0.070000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreePine23" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(-18,0,-29)
+rotation = Vector3(0,0.800000,0)
+scale = Vector3(1.03,1.03,1.03)
 
-[node name="Palisade24" parent="Architecture" instance=ExtResource("5_palisade")]
-position = Vector3(-27, 0, 16)
-rotation = Vector3(0, -0.070000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreePine24" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(27,0,-34)
+rotation = Vector3(0,0.100000,0)
+scale = Vector3(1.05,1.05,1.05)
 
-[node name="Palisade25" parent="Architecture" instance=ExtResource("5_palisade")]
-position = Vector3(21, 0, -17)
-rotation = Vector3(0, 0.080000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak25" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(33,0,-28)
+rotation = Vector3(0,0.600000,0)
+scale = Vector3(0.9,0.9,0.9)
 
-[node name="Palisade26" parent="Architecture" instance=ExtResource("5_palisade")]
-position = Vector3(29, 0, -17)
-rotation = Vector3(0, -0.110000, 0)
-scale = Vector3(1, 1, 1)
+[node name="TreeOak26" parent="NaturalObstacles" instance=ExtResource("5_tree_oak")]
+position = Vector3(-17,0,34)
+rotation = Vector3(0,0.100000,0)
+scale = Vector3(0.91,0.91,0.91)
 
-[node name="WestSupplyTent" parent="Architecture" instance=ExtResource("7_tent")]
-position = Vector3(-30.1, 0, 19.1)
-rotation = Vector3(0, -0.120000, 0)
-scale = Vector3(0.88, 0.88, 0.88)
-
-[node name="RuinedOutpostTent" parent="Architecture" instance=ExtResource("7_tent")]
-position = Vector3(-14.6, 0, -24.0)
-rotation = Vector3(0, 0.200000, 0)
-scale = Vector3(0.93, 0.93, 0.93)
+[node name="TreePine27" parent="NaturalObstacles" instance=ExtResource("6_tree_pine")]
+position = Vector3(-20,0,33)
+rotation = Vector3(0,0.800000,0)
+scale = Vector3(0.88,0.88,0.88)
 
 [node name="SolidEnvironment" type="StaticBody3D" parent="."]
 collision_layer = 1
 collision_mask = 0
 
-[node name="House00" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-29.0000, 2.9000, 9.0000)
-rotation = Vector3(0, 0.160000, 0)
+[node name="RockLarge00" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-29.0000,1.6275,5.0000)
+rotation = Vector3(0,0.240000,0)
 shape = SubResource("ObstacleShape0")
 
-[node name="House01" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-29.0000, 2.6100, -5.0000)
-rotation = Vector3(0, -0.140000, 0)
+[node name="RockMedium01" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-31.1000,0.9400,2.8000)
+rotation = Vector3(0,-0.300000,0)
 shape = SubResource("ObstacleShape1")
 
-[node name="House02" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(17.0000, 2.6970, 12.0000)
-rotation = Vector3(0, -0.350000, 0)
+[node name="RockLarge02" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-27.0000,1.3950,-7.0000)
+rotation = Vector3(0,-0.170000,0)
 shape = SubResource("ObstacleShape2")
 
-[node name="House03" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(28.0000, 2.9000, 22.0000)
-rotation = Vector3(0, 0.120000, 0)
+[node name="RockMedium03" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-29.2000,0.8500,-8.5000)
+rotation = Vector3(0,0.600000,0)
 shape = SubResource("ObstacleShape3")
 
-[node name="House04" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-13.0000, 2.6680, 32.0000)
-rotation = Vector3(0, 0.200000, 0)
+[node name="RockLarge04" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(16.0000,1.4725,15.0000)
+rotation = Vector3(0,-0.430000,0)
 shape = SubResource("ObstacleShape4")
 
-[node name="Ruin05" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-16.0000, 1.9000, -2.0000)
-rotation = Vector3(0, 0.080000, 0)
+[node name="RockMedium05" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(18.5000,0.8500,15.1000)
+rotation = Vector3(0,0.190000,0)
 shape = SubResource("ObstacleShape5")
 
-[node name="Ruin06" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(13.0000, 1.6720, 0.0000)
-rotation = Vector3(0, -0.210000, 0)
+[node name="RockLarge06" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(28.0000,1.5500,23.0000)
+rotation = Vector3(0,0.100000,0)
 shape = SubResource("ObstacleShape6")
 
-[node name="Ruin07" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-21.0000, 1.9760, -24.0000)
-rotation = Vector3(0, 0.260000, 0)
+[node name="RockMedium07" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(30.3000,0.8800,24.4000)
+rotation = Vector3(0,0.510000,0)
 shape = SubResource("ObstacleShape7")
 
-[node name="Ruin08" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(30.0000, 1.7100, -34.0000)
-rotation = Vector3(0, -0.200000, 0)
+[node name="RockLarge08" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-20.0000,1.6740,-25.0000)
+rotation = Vector3(0,0.380000,0)
 shape = SubResource("ObstacleShape8")
 
-[node name="Well09" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-13.0000, 1.6500, 12.0000)
-rotation = Vector3(0, 0.000000, 0)
+[node name="RockMedium09" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-22.5000,0.9000,-23.5000)
+rotation = Vector3(0,-0.310000,0)
 shape = SubResource("ObstacleShape9")
 
-[node name="Cart10" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-18.0000, 0.9000, 17.0000)
-rotation = Vector3(0, 0.300000, 0)
+[node name="RockLarge10" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(31.0000,1.4725,-32.0000)
+rotation = Vector3(0,-0.180000,0)
 shape = SubResource("ObstacleShape10")
 
-[node name="Cart11" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(19.0000, 0.8280, -14.0000)
-rotation = Vector3(0, -0.350000, 0)
+[node name="RockMedium11" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(33.0000,0.9000,-33.0000)
+rotation = Vector3(0,0.580000,0)
 shape = SubResource("ObstacleShape11")
 
-[node name="Wall12" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-29.0000, 0.8500, 13.0000)
-rotation = Vector3(0, 0.120000, 0)
+[node name="RockMedium12" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-13.0000,0.9500,33.0000)
+rotation = Vector3(0,0.190000,0)
 shape = SubResource("ObstacleShape12")
 
-[node name="Wall13" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-33.0000, 0.8500, 9.0000)
-rotation = Vector3(0, 1.570796, 0)
+[node name="RockMedium13" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(13.0000,0.8800,-1.0000)
+rotation = Vector3(0,0.640000,0)
 shape = SubResource("ObstacleShape13")
 
-[node name="Wall14" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-28.0000, 0.8500, -9.0000)
-rotation = Vector3(0, -0.120000, 0)
+[node name="TreeOak14" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-32.0000,1.4700,9.0000)
+rotation = Vector3(0,0.300000,0)
 shape = SubResource("ObstacleShape14")
 
-[node name="Wall15" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-32.0000, 0.8500, -5.0000)
-rotation = Vector3(0, 1.570796, 0)
+[node name="TreePine15" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-33.0000,1.3800,4.0000)
+rotation = Vector3(0,0.800000,0)
 shape = SubResource("ObstacleShape15")
 
-[node name="Wall16" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(18.0000, 0.8500, 16.0000)
-rotation = Vector3(0, -0.350000, 0)
+[node name="TreePine16" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-31.0000,1.5750,-5.0000)
+rotation = Vector3(0,0.500000,0)
 shape = SubResource("ObstacleShape16")
 
-[node name="Wall17" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(22.0000, 0.8500, 13.0000)
-rotation = Vector3(0, 1.220796, 0)
+[node name="TreeOak17" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-27.0000,1.3800,-13.0000)
+rotation = Vector3(0,0.900000,0)
 shape = SubResource("ObstacleShape17")
 
-[node name="Wall18" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(28.0000, 0.8500, 26.0000)
-rotation = Vector3(0, 0.120000, 0)
+[node name="TreeOak18" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(20.0000,1.3800,19.0000)
+rotation = Vector3(0,0.400000,0)
 shape = SubResource("ObstacleShape18")
 
-[node name="Wall19" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(32.0000, 0.8500, 23.0000)
-rotation = Vector3(0, 1.570796, 0)
+[node name="TreePine19" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(23.0000,1.5300,21.0000)
+rotation = Vector3(0,0.700000,0)
 shape = SubResource("ObstacleShape19")
 
-[node name="Wall20" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-17.0000, 0.8500, 32.0000)
-rotation = Vector3(0, 1.570796, 0)
+[node name="TreePine20" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(30.0000,1.5750,28.0000)
+rotation = Vector3(0,0.200000,0)
 shape = SubResource("ObstacleShape20")
 
-[node name="Wall21" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-21.0000, 0.8500, -20.0000)
-rotation = Vector3(0, 0.240000, 0)
+[node name="TreeOak21" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(25.0000,1.4550,28.0000)
+rotation = Vector3(0,0.900000,0)
 shape = SubResource("ObstacleShape21")
 
-[node name="Wall22" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-25.0000, 0.8500, -24.0000)
-rotation = Vector3(0, 1.810796, 0)
+[node name="TreeOak22" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-16.0000,1.3650,-25.0000)
+rotation = Vector3(0,0.300000,0)
 shape = SubResource("ObstacleShape22")
 
-[node name="Palisade23" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-23.0000, 1.0000, 15.0000)
-rotation = Vector3(0, -0.070000, 0)
+[node name="TreePine23" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-18.0000,1.5450,-29.0000)
+rotation = Vector3(0,0.800000,0)
 shape = SubResource("ObstacleShape23")
 
-[node name="Palisade24" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-27.0000, 1.0000, 16.0000)
-rotation = Vector3(0, -0.070000, 0)
+[node name="TreePine24" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(27.0000,1.5750,-34.0000)
+rotation = Vector3(0,0.100000,0)
 shape = SubResource("ObstacleShape24")
 
-[node name="Palisade25" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(21.0000, 1.0000, -17.0000)
-rotation = Vector3(0, 0.080000, 0)
+[node name="TreeOak25" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(33.0000,1.3500,-28.0000)
+rotation = Vector3(0,0.600000,0)
 shape = SubResource("ObstacleShape25")
 
-[node name="Palisade26" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(29.0000, 1.0000, -17.0000)
-rotation = Vector3(0, -0.110000, 0)
+[node name="TreeOak26" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-17.0000,1.3650,34.0000)
+rotation = Vector3(0,0.100000,0)
 shape = SubResource("ObstacleShape26")
 
-[node name="WestSupplyTent" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-30.1000, 1.1880, 19.1000)
-rotation = Vector3(0, -0.120000, 0)
+[node name="TreePine27" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-20.0000,1.3200,33.0000)
+rotation = Vector3(0,0.800000,0)
 shape = SubResource("ObstacleShape27")
 
-[node name="RuinedOutpostTent" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-14.6000, 1.2555, -24.0000)
-rotation = Vector3(0, 0.200000, 0)
+[node name="BoundaryTree0" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-35.9516,1.6261,39.3921)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape28")
 
-[node name="BoundaryTree0" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(38.1248, 0.9000, 39.2495)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree1" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-39.5365,1.3701,-36.4440)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape29")
 
-[node name="BoundaryTree1" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-39.5624, 0.9000, 20.2174)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree2" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-37.5854,1.3913,-38.7066)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape30")
 
-[node name="BoundaryTree2" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-21.2866, 0.9000, -37.7642)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree3" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(37.5684,1.4040,-36.7005)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape31")
 
-[node name="BoundaryTree3" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(35.2983, 0.9000, 10.8910)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree5" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-38.6549,1.5456,-29.9330)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape32")
 
-[node name="BoundaryTree4" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-9.0795, 0.9000, 39.6171)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree6" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-30.3773,1.2890,-39.2299)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape33")
 
-[node name="BoundaryTree5" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-35.3261, 0.9000, 17.2325)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree7" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(38.8079,1.5949,-31.2708)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape34")
 
-[node name="BoundaryTree6" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-21.8596, 0.9000, -39.0849)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree9" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-37.9437,1.2552,-23.4181)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape35")
 
-[node name="BoundaryTree7" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(37.7518, 0.9000, 24.7398)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree10" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-23.8708,1.5369,-39.7509)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape36")
 
-[node name="BoundaryTree8" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-0.6595, 0.9000, 36.1113)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree11" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(37.8667,1.3624,-22.3534)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape37")
 
-[node name="BoundaryTree9" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-40.0269, 0.9000, -17.1204)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree12" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-15.5633,1.5485,38.0809)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape38")
 
-[node name="BoundaryTree10" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(38.0577, 0.9000, -35.9446)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree13" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-39.7761,1.5682,-17.5083)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape39")
 
-[node name="BoundaryTree11" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(36.4087, 0.9000, 37.6974)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree14" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-17.3797,1.2457,-38.7523)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape40")
 
-[node name="BoundaryTree12" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-33.0282, 0.9000, 40.0815)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree15" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(39.9262,1.3558,-17.4746)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape41")
 
-[node name="BoundaryTree13" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-37.8633, 0.9000, -28.3511)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree16" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-9.2913,1.4014,39.6454)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape42")
 
-[node name="BoundaryTree14" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-31.8040, 0.9000, -40.4067)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree17" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-39.5720,1.4355,-10.7407)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape43")
 
-[node name="BoundaryTree15" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(39.7983, 0.9000, 18.4993)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree18" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-10.7527,1.4834,-38.2053)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape44")
 
-[node name="BoundaryTree16" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-34.2073, 0.9000, 39.6394)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree19" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(37.6623,1.4642,-10.7085)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape45")
 
-[node name="BoundaryTree17" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-36.6782, 0.9000, -34.6451)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree20" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-2.1097,1.6507,39.8700)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape46")
 
-[node name="BoundaryTree18" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-33.0381, 0.9000, -35.5017)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree21" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-37.8386,1.3102,-3.8465)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape47")
 
-[node name="BoundaryTree19" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(40.2850, 0.9000, 32.3739)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree22" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-2.4140,1.3399,-38.0437)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape48")
 
-[node name="BoundaryTree20" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-30.7817, 0.9000, 35.8836)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree23" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(40.0947,1.4473,-3.4199)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape49")
 
-[node name="BoundaryTree21" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-36.3281, 0.9000, 21.3105)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree24" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(4.1416,1.2723,39.5019)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape50")
 
-[node name="BoundaryTree22" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-15.2700, 0.9000, -40.7718)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree25" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-39.2557,1.4617,3.1158)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape51")
 
-[node name="BoundaryTree23" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(39.4875, 0.9000, 12.4230)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree26" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(3.1623,1.4129,-38.8673)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape52")
 
-[node name="BoundaryTree25" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-38.1125, 0.9000, -23.1900)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree27" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(38.6039,1.2932,4.4290)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape53")
 
-[node name="BoundaryTree27" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(36.5834, 0.9000, -25.4154)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree28" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(9.9011,1.2113,38.1616)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape54")
 
-[node name="BoundaryTree28" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-37.0468, 0.9000, 35.8996)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree29" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-37.8460,1.6607,9.5812)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape55")
 
-[node name="BoundaryTree29" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-37.7705, 0.9000, -28.4094)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree30" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(9.8187,1.6191,-38.7095)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape56")
 
-[node name="BoundaryTree30" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-4.9644, 0.9000, -38.7400)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree31" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(39.1569,1.5319,10.4635)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape57")
 
-[node name="BoundaryTree31" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(37.7250, 0.9000, 37.4732)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree32" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(18.4305,1.1975,38.6884)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape58")
 
 [node name="BoundaryTree33" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-36.5243, 0.9000, 19.7155)
-rotation = Vector3(0, 0.000000, 0)
+position = Vector3(-37.7626,1.2825,16.8260)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape59")
 
 [node name="BoundaryTree34" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(39.1736, 0.9000, -38.3775)
-rotation = Vector3(0, 0.000000, 0)
+position = Vector3(17.9422,1.1939,-38.1343)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape60")
 
 [node name="BoundaryTree35" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(40.6124, 0.9000, -10.5547)
-rotation = Vector3(0, 0.000000, 0)
+position = Vector3(38.9896,1.6636,18.4773)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape61")
 
 [node name="BoundaryTree36" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(26.5333, 0.9000, 40.9330)
-rotation = Vector3(0, 0.000000, 0)
+position = Vector3(23.9097,1.4675,40.0211)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape62")
 
 [node name="BoundaryTree37" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-35.1660, 0.9000, -13.3610)
-rotation = Vector3(0, 0.000000, 0)
+position = Vector3(-40.1691,1.3984,24.9297)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape63")
 
-[node name="BoundaryTree38" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-5.8156, 0.9000, -35.9967)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree39" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(37.8047,1.3943,24.9422)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape64")
 
-[node name="BoundaryTree39" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(34.8441, 0.9000, 20.1263)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree40" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(31.8721,1.5646,37.8050)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape65")
 
-[node name="BoundaryTree40" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-3.7745, 0.9000, 35.3489)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree41" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-40.0548,1.4077,30.5808)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape66")
 
-[node name="BoundaryTree41" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-35.5578, 0.9000, 1.5232)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree42" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(31.2085,1.4425,-37.9910)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape67")
 
-[node name="BoundaryTree42" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(14.6620, 0.9000, -35.8753)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree43" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(38.1743,1.5287,30.7741)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape68")
 
-[node name="BoundaryTree43" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(36.0551, 0.9000, -36.8969)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree44" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(36.8035,1.1904,38.6617)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape69")
 
-[node name="BoundaryTree44" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(0.0247, 0.9000, 38.8300)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree45" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(-39.5502,1.4327,37.4007)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape70")
 
-[node name="BoundaryTree45" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-37.0208, 0.9000, -25.6366)
-rotation = Vector3(0, 0.000000, 0)
+[node name="BoundaryTree46" type="CollisionShape3D" parent="SolidEnvironment"]
+position = Vector3(36.8940,1.2643,-38.5214)
+rotation = Vector3(0,0.000000,0)
 shape = SubResource("ObstacleShape71")
 
-[node name="BoundaryTree46" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(2.5225, 0.9000, -34.6398)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape72")
-
 [node name="BoundaryTree47" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(39.4012, 0.9000, -35.7147)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape73")
-
-[node name="BoundaryTree48" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(28.1631, 0.9000, 37.8937)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape74")
-
-[node name="BoundaryTree49" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-35.9195, 0.9000, -24.8155)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape75")
-
-[node name="BoundaryTree51" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(36.8413, 0.9000, -10.3412)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape76")
-
-[node name="BoundaryTree52" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-36.7753, 0.9000, 37.4912)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape77")
-
-[node name="BoundaryTree53" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-37.6229, 0.9000, 38.6132)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape78")
-
-[node name="BoundaryTree54" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(4.7277, 0.9000, -37.7095)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape79")
-
-[node name="BoundaryTree55" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(40.7439, 0.9000, 30.2511)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape80")
-
-[node name="BoundaryTree56" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(23.3406, 0.9000, 36.8795)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape81")
-
-[node name="BoundaryTree57" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-39.8719, 0.9000, -37.7616)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape82")
-
-[node name="BoundaryTree58" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(11.7411, 0.9000, -38.6936)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape83")
-
-[node name="BoundaryTree59" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(38.6632, 0.9000, -30.1652)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape84")
-
-[node name="BoundaryTree60" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(32.4683, 0.9000, 40.4322)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape85")
-
-[node name="BoundaryTree61" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-37.4532, 0.9000, -9.0345)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape86")
-
-[node name="BoundaryTree62" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(39.7957, 0.9000, -35.1804)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape87")
-
-[node name="BoundaryTree63" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(40.5609, 0.9000, -11.0353)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape88")
-
-[node name="BoundaryTree64" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(35.5703, 0.9000, 37.8474)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape89")
-
-[node name="BoundaryTree65" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-38.5132, 0.9000, 36.7388)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape90")
-
-[node name="BoundaryTree66" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-11.8448, 0.9000, -34.8863)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape91")
-
-[node name="BoundaryTree67" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(39.8179, 0.9000, 26.7935)
-rotation = Vector3(0, 0.000000, 0)
-shape = SubResource("ObstacleShape92")
+position = Vector3(39.2006,1.4491,36.9681)
+rotation = Vector3(0,0.000000,0)
+shape = SubResource("ObstacleShape72")

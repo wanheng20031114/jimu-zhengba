@@ -20,7 +20,7 @@ func run(controller: Node3D) -> void:
 	for entity in get_tree().get_nodes_in_group("entities"):
 		entity.set_physics_process(false)
 	await get_tree().physics_frame
-	check(game.player_count() == 14, "Authored starting army contains all five classes")
+	check(game.player_count() == 16, "Authored starting force contains five military classes and two farmers")
 	check(game.enemy_count() == 27, "Authored enemy deployment is complete")
 	check(game.get_node("Buildings").get_child_count() == 5, "HQ and four hostile military buildings exist")
 	check(game.headquarters in game.selection, "HQ selected at game start")
@@ -43,12 +43,13 @@ func run(controller: Node3D) -> void:
 		var recruited: bool = game.recruit(kind)
 		expected -= game.UNIT_COSTS[kind]
 		check(recruited and game.gold == expected, "Immediate recruitment charges correct cost: " + kind)
-	check(game.player_count() == before + 5, "Five recruits exist immediately without a queue timer")
+	check(game.player_count() == before + 6, "Six recruits exist immediately without a queue timer")
 	game.gold = 0
 	before = game.player_count()
 	check(not game.recruit("swordsman") and game.player_count() == before, "Unaffordable recruitment cannot create a free unit")
 	game.select_army()
-	check(game.own_selected_units().size() == game.player_count(), "Select army excludes enemies and buildings")
+	var military_count: int = get_tree().get_nodes_in_group("friendly_units").filter(func(unit): return unit.alive and unit.unit_type != "farmer").size()
+	check(game.own_selected_units().size() == military_count, "Select army excludes workers, enemies and buildings")
 	game.use_control_group(3, true)
 	var assigned: int = game.selection.size()
 	game.select_entities([])

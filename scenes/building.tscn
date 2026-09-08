@@ -1,6 +1,8 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle_building.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/defense_tower.tscn" id="2_tower"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/scaffolding.tscn" id="3_scaffolding"]
 
 [sub_resource type="BoxShape3D" id="Shape_building"]
 resource_local_to_scene = true
@@ -74,12 +76,31 @@ shape = SubResource("Shape_building")
 
 [node name="ModelPivot" type="Node3D" parent="."]
 
+[node name="DefenseTower" parent="ModelPivot" instance=ExtResource("2_tower")]
+visible = false
+
+[node name="Scaffolding" parent="ModelPivot" instance=ExtResource("3_scaffolding")]
+visible = false
+
 [node name="ProjectileOrigin" type="Marker3D" parent="."]
 position = Vector3(0, 5.6, 0)
+
+[node name="DebrisLifetime" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
 
 [node name="HealthBar" type="MeshInstance3D" parent="."]
 position = Vector3(0, 6.8, 0)
 scale = Vector3(5.5, 0.25, 1)
+visible = false
+cast_shadow = 0
+extra_cull_margin = 5.0
+material_override = SubResource("Material_health")
+mesh = SubResource("Mesh_health")
+
+[node name="ConstructionBar" type="MeshInstance3D" parent="."]
+position = Vector3(0, 6.4, 0)
+scale = Vector3(2.5, 0.22, 1)
 visible = false
 cast_shadow = 0
 extra_cull_margin = 5.0
@@ -171,3 +192,5 @@ position = Vector3(-0.3, 0.1, -1.1)
 rotation = Vector3(0, -0.35, 0.3)
 scale = Vector3(0.7, 0.5, 0.5)
 mesh = SubResource("Mesh_rubble_angular")
+
+[connection signal="timeout" from="DebrisLifetime" to="." method="_on_debris_timeout"]

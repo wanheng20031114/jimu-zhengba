@@ -31,7 +31,7 @@ func _run() -> void:
 	await physics_frame
 	await physics_frame
 	checks["no_focus_window"] = DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS)
-	checks["uses_initial_army"] = game.player_count() == 14
+	checks["uses_initial_army"] = game.player_count() == 16
 	game.select_army()
 	game.use_control_group(1, true)
 	game.command_move(Vector3(1, 0, -4), true)

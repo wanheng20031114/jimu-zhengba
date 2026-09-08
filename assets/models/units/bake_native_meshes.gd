@@ -7,7 +7,10 @@ func _initialize() -> void:
 func _bake() -> void:
 	var material: ShaderMaterial = load("res://assets/models/units/unit_surface.tres")
 	var saved: int = 0
-	for kind: String in ["swordsman", "archer", "knight", "catapult", "cannon"]:
+	var kinds: PackedStringArray = OS.get_cmdline_user_args()
+	if kinds.is_empty():
+		kinds = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]
+	for kind: String in kinds:
 		var folder: String = "res://assets/models/units/" + kind + "/"
 		var parts: Array = JSON.parse_string(FileAccess.get_file_as_string(folder + "parts.json"))
 		for part: String in parts:
@@ -24,7 +27,7 @@ func _bake() -> void:
 			saved += 1
 	print("NATIVE_UNIT_MESHES_SAVED ", saved)
 	# Use native 3D transform tracks for the denser authored attack poses.
-	for kind: String in ["swordsman", "archer", "knight", "catapult", "cannon"]:
+	for kind: String in kinds:
 		var path: String = "res://assets/models/units/" + kind + ".tscn"
 		var sculpture: Node3D = load(path).instantiate()
 		for player_name: String in ["Locomotion", "Attack"]:
@@ -39,7 +42,7 @@ func _bake() -> void:
 		assert(packed.pack(sculpture) == OK)
 		assert(ResourceSaver.save(packed, path) == OK)
 		sculpture.free()
-	print("NATIVE_UNIT_ATTACK_TRACKS_SAVED 5 scenes")
+	print("NATIVE_UNIT_ATTACK_TRACKS_SAVED ", kinds.size(), " scenes")
 	quit()
 
 static func convert_animation(old: Animation) -> Animation:

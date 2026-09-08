@@ -22,7 +22,7 @@ HEIGHT = 0.03
 PADDING = 1.15
 BUILDING_NAMES = ("Headquarters", "EnemyKeep", "NorthBarracks", "Watchtower", "WestBarracks")
 BUILDING_SIZES = {"headquarters": (9.0, 8.0), "enemy_keep": (9.0, 8.0), "barracks": (6.0, 5.0), "tower": (4.0, 4.0), "house": (6.0, 5.0)}
-UNIT_RADII = {"swordsman": .48, "archer": .42, "knight": .78, "catapult": 1.05, "cannon": 1.0}
+UNIT_RADII = {"swordsman": .48, "archer": .42, "knight": .78, "catapult": 1.05, "cannon": 1.0, "farmer": .42}
 ALL_CELLS = {(x, z) for x in range(GRID_MIN, GRID_MAX) for z in range(GRID_MIN, GRID_MAX)}
 
 

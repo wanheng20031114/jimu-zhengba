@@ -5,6 +5,7 @@ extends CharacterBody3D
 signal died(entity: Node3D)
 signal damaged(entity: Node3D, amount: float)
 signal sound_requested(kind: StringName, at: Vector3)
+signal gathered(worker: Node3D, amount: int)
 
 const MODELS: Dictionary = {
 	"swordsman": preload("res://assets/models/units/swordsman.tscn"),
@@ -12,6 +13,7 @@ const MODELS: Dictionary = {
 	"knight": preload("res://assets/models/units/knight.tscn"),
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
+	"farmer": preload("res://assets/models/units/farmer.tscn"),
 }
 
 const STATS: Dictionary = {
@@ -20,11 +22,14 @@ const STATS: Dictionary = {
 	"knight": {"name": "骑士", "description": "重甲骑兵，连续奔驰后发动高伤害冲锋。", "cost": 100, "hp": 320.0, "speed": 6.1, "damage": 39.0, "range": 1.2, "cooldown": 1.35, "radius": 0.78, "armor": 5.0, "sight": 12.0, "projectile": ""},
 	"catapult": {"name": "投石车", "description": "抛射巨石，对密集敌军和建筑造成范围伤害。", "cost": 140, "hp": 230.0, "speed": 2.2, "damage": 67.0, "range": 17.0, "cooldown": 4.2, "radius": 1.05, "armor": 2.0, "sight": 19.0, "projectile": "stone"},
 	"cannon": {"name": "加农炮", "description": "发射爆炸炮弹，擅长轰击敌方防御建筑。", "cost": 180, "hp": 285.0, "speed": 2.0, "damage": 96.0, "range": 15.0, "cooldown": 3.5, "radius": 1.0, "armor": 3.0, "sight": 18.0, "projectile": "cannon"},
+	"farmer": {"name": "农民", "description": "在矿脉旁持续采金，每3秒获得3金币；花费100金币、施工20秒建造防御塔。", "cost": 50, "hp": 75.0, "speed": 3.6, "damage": 8.0, "range": 0.9, "cooldown": 1.3, "radius": 0.42, "armor": 0.0, "sight": 8.0, "projectile": ""},
 }
 
-enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD }
+enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
+const GATHER_SECONDS: float = 3.0
+const GATHER_GOLD: int = 3
 
-@export_enum("swordsman", "archer", "knight", "catapult", "cannon") var unit_type: String = "swordsman"
+@export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var team: int = 0
 
 var hp: float = 1.0
@@ -42,6 +47,8 @@ var order: Order = Order.IDLE
 var target: Node3D
 var destination: Vector3
 var waypoint_queue: Array[Dictionary] = []
+var work_target: Node3D
+var work_progress: float = 0.0
 
 var _stats: Dictionary
 var _model: Node3D
@@ -64,12 +71,17 @@ var _corpse_meshes: Array[GeometryInstance3D] = []
 var _target_query: PhysicsShapeQueryParameters3D
 var _space_state: PhysicsDirectSpaceState3D
 var _foley_distance: float = 0.0
+var _working: bool = false
+var _work_seconds: float = 0.0
+var _work_sound_time: float = 0.45
+var _claimed_site: bool = false
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var model_pivot: Node3D = $ModelPivot
 @onready var health_bar: MeshInstance3D = $HealthBar
 @onready var selection_ring: MeshInstance3D = $SelectionRing
 @onready var attack_windup: Timer = $AttackWindup
+@onready var work_bar: MeshInstance3D = $WorkBar
 
 func _ready() -> void:
 	_stats = STATS[unit_type]
@@ -144,7 +156,9 @@ func _physics_process(delta: float) -> void:
 		_scan_time = randf_range(0.3, 0.4)
 		_refresh_target()
 	var desired_velocity := Vector3.ZERO
-	if _valid_target(target):
+	if order in [Order.GATHER, Order.BUILD]:
+		desired_velocity = _work_velocity(delta)
+	elif _valid_target(target):
 		var to_target: Vector3 = target.global_position - global_position
 		to_target.y = 0.0
 		if _within_attack_range(target):
@@ -162,7 +176,9 @@ func _physics_process(delta: float) -> void:
 				var target_radius: float = 0.0 if target.is_in_group("buildings") else target.radius
 				var stop_distance: float = target_radius + radius + attack_range * 0.6
 				var chase_destination: Vector3 = attack_point + approach.normalized() * stop_distance
-				if navigation_agent.target_position.distance_squared_to(chase_destination) > 0.09:
+				# An idle agent has a finished path and a default target at the
+				# origin. Even an unchanged/nearby destination must start that path.
+				if navigation_agent.is_navigation_finished() or navigation_agent.target_position.distance_squared_to(chase_destination) > 0.09:
 					_set_navigation_target(chase_destination)
 			desired_velocity = _path_velocity()
 			if target.is_in_group("buildings") and String(_stats.projectile).is_empty() and navigation_agent.is_navigation_finished():
@@ -247,7 +263,7 @@ func _face_direction(direction: Vector3, delta: float) -> void:
 			model_pivot.rotation.y = lerp_angle(model_pivot.rotation.y, desired_angle, minf(1.0, delta * 12.0))
 
 func _valid_target(entity: Node3D) -> bool:
-	return is_instance_valid(entity) and entity != self and entity.alive and entity.team != team
+	return is_instance_valid(entity) and entity != self and entity.is_in_group("entities") and entity.alive and entity.team != team
 
 func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
 	var building: bool = entity.is_in_group("buildings")
@@ -258,6 +274,11 @@ func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
 	return distance.length_squared() <= reach * reach
 
 func _refresh_target() -> void:
+	# Workers finish economic orders even under fire. An explicit attack still
+	# lets the player use a pickaxe for self-defence.
+	if unit_type == "farmer" and order != Order.ATTACK:
+		target = null
+		return
 	if order == Order.MOVE:
 		target = _move_retaliation if _retaliation_time > 0.0 and _valid_target(_move_retaliation) and _within_attack_range(_move_retaliation) else null
 		return
@@ -348,6 +369,141 @@ func set_selected(value: bool) -> void:
 	selection_ring.visible = selected
 	health_bar.visible = selected or hp < max_hp
 
+func issue_gather(mine: Node3D, queued: bool = false) -> bool:
+	if not alive or unit_type != "farmer" or not is_instance_valid(mine) or not mine.is_in_group("resource_veins"):
+		return false
+	return _issue_work(mine, Order.GATHER, queued)
+
+func issue_build(site: Node3D, queued: bool = false) -> bool:
+	if not alive or unit_type != "farmer" or not is_instance_valid(site) or not site.is_in_group("buildings") or not site.alive or site.team != team or site.is_constructed:
+		return false
+	return _issue_work(site, Order.BUILD, queued)
+
+func _issue_work(entity: Node3D, work_order: Order, queued: bool) -> bool:
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+		if waypoint_queue.is_empty() and order == work_order and work_target == entity:
+			return true
+		if not waypoint_queue.is_empty():
+			var last_order: Dictionary = waypoint_queue.back()
+			if last_order.kind == "work" and last_order.entity == entity and last_order.order == work_order:
+				return true
+		waypoint_queue.append({"kind": "work", "entity": entity, "order": work_order})
+		return true
+	waypoint_queue.clear()
+	# A repeated mine/site command must not reset progress or release a builder.
+	if order == work_order and work_target == entity:
+		return true
+	_begin_work(entity, work_order)
+	return true
+
+func _begin_work(entity: Node3D, work_order: Order) -> void:
+	_interrupt_work()
+	order = work_order
+	work_target = entity
+	target = null
+	_move_retaliation = null
+	attack_windup.stop()
+	_repath_time = 0.0
+	order_name = "前往矿脉" if order == Order.GATHER else "前往工地"
+	_update_work_destination()
+
+func _update_work_destination() -> void:
+	if order == Order.GATHER:
+		destination = work_target.get_work_position(global_position)
+	else:
+		var edge: Vector3 = work_target.get_attack_position(global_position)
+		var outward: Vector3 = global_position - edge
+		outward.y = 0.0
+		if outward.length_squared() < 0.01:
+			outward = Vector3.RIGHT
+		destination = edge + outward.normalized() * (radius + 1.15)
+	_set_navigation_target(destination)
+
+func _work_velocity(delta: float) -> Vector3:
+	if not is_instance_valid(work_target) or not work_target.alive:
+		_complete_waypoint()
+		return Vector3.ZERO
+	if order == Order.BUILD and work_target.is_constructed:
+		_complete_waypoint()
+		return Vector3.ZERO
+	var contact: Vector3 = work_target.global_position if order == Order.GATHER else work_target.get_attack_position(global_position)
+	var reach: float = work_target.radius + 1.55 if order == Order.GATHER else 1.85
+	var distance: Vector3 = contact - global_position
+	distance.y = 0.0
+	if distance.length_squared() > reach * reach:
+		_set_working(false)
+		if order == Order.GATHER:
+			_work_seconds = 0.0
+			work_progress = 0.0
+		if _repath_time <= 0.0:
+			_repath_time = 0.6
+			_update_work_destination()
+		var approach_velocity: Vector3 = _path_velocity()
+		if NavigationServer3D.map_get_iteration_id(navigation_agent.get_navigation_map()) > 0 and navigation_agent.is_navigation_finished() and distance.length_squared() <= pow(reach + 1.25, 2.0):
+			# The baked clearance band can end just outside a worker's reach.
+			# CharacterBody3D supplies the final collision-safe contact step.
+			approach_velocity = distance.normalized() * speed
+		return approach_velocity
+	_face_direction(distance, delta)
+	if order == Order.BUILD:
+		# A worker pushed away can have its site taken over. Revalidate ownership
+		# before contributing so the former builder waits instead of animating work.
+		_claimed_site = work_target.try_claim_builder(self)
+		if not _claimed_site:
+			_set_working(false)
+			order_name = "等待工地空闲"
+			return Vector3.ZERO
+	_set_working(true)
+	if order == Order.GATHER:
+		order_name = "采集黄金 · +3 / 3秒"
+		_work_seconds += delta
+		work_progress = minf(_work_seconds / GATHER_SECONDS, 1.0)
+		if _work_seconds + 0.000001 >= GATHER_SECONDS:
+			_work_seconds -= GATHER_SECONDS
+			work_progress = maxf(0.0, _work_seconds / GATHER_SECONDS)
+			gathered.emit(self, GATHER_GOLD)
+			# A queued order follows this completed cycle; the last mining order
+			# continues indefinitely without transporting resources to a depot.
+			if not waypoint_queue.is_empty():
+				_complete_waypoint()
+				return Vector3.ZERO
+	else:
+		order_name = "建造防御塔"
+		work_target.contribute_work(self, delta)
+		work_progress = work_target.construction_progress
+		if work_target.is_constructed:
+			_complete_waypoint()
+			return Vector3.ZERO
+	work_bar.set_instance_shader_parameter("health", work_progress)
+	_work_sound_time -= delta
+	if _work_sound_time <= 0.0:
+		_work_sound_time += 1.5 if order == Order.GATHER else 1.0
+		sound_requested.emit(&"stone_chip" if order == Order.GATHER else &"wood_hit", global_position + Vector3.UP)
+	return Vector3.ZERO
+
+func _set_working(value: bool) -> void:
+	if _working == value:
+		return
+	_working = value
+	work_bar.visible = value
+	_model.set_working(value, "gather" if order == Order.GATHER else "build")
+	if value:
+		_work_sound_time = 0.45
+		work_bar.set_instance_shader_parameter("bar_color", Color("e9bf5c") if order == Order.GATHER else Color("72c6d8"))
+
+func _interrupt_work() -> void:
+	if _claimed_site and is_instance_valid(work_target):
+		work_target.release_builder(self)
+	_claimed_site = false
+	_set_working(false)
+	work_target = null
+	work_progress = 0.0
+	_work_seconds = 0.0
+
+func _exit_tree() -> void:
+	if _claimed_site and is_instance_valid(work_target):
+		work_target.release_builder(self)
+
 func issue_move(at: Vector3, attack_move: bool = false) -> void:
 	if not alive:
 		return
@@ -357,12 +513,13 @@ func issue_move(at: Vector3, attack_move: bool = false) -> void:
 func queue_move(at: Vector3, attack_move: bool = false) -> void:
 	if not alive:
 		return
-	if order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK]:
-		waypoint_queue.append({"position": at, "attack_move": attack_move})
+	if order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+		waypoint_queue.append({"kind": "move", "position": at, "attack_move": attack_move})
 	else:
 		_begin_move(at, attack_move)
 
 func _begin_move(at: Vector3, attack_move: bool) -> void:
+	_interrupt_work()
 	order = Order.ATTACK_MOVE if attack_move else Order.MOVE
 	order_name = "攻击前进" if attack_move else "移动中"
 	destination = Vector3(clampf(at.x, -40.0, 40.0), 0.0, clampf(at.z, -40.0, 40.0))
@@ -376,6 +533,7 @@ func issue_attack(entity: Node3D) -> void:
 	if not alive or not _valid_target(entity):
 		return
 	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
+	_interrupt_work()
 	waypoint_queue.clear()
 	order = Order.ATTACK
 	order_name = "攻击目标"
@@ -400,18 +558,29 @@ func hold() -> void:
 	_scan_time = 0.0
 
 func _complete_waypoint() -> void:
-	if not waypoint_queue.is_empty():
+	_interrupt_work()
+	while not waypoint_queue.is_empty():
 		var next_waypoint: Dictionary = waypoint_queue.pop_front()
-		_begin_move(next_waypoint.position, next_waypoint.attack_move)
-	else:
-		_finish_order()
+		if next_waypoint.kind == "move":
+			_begin_move(next_waypoint.position, next_waypoint.attack_move)
+			return
+		var next_entity: Variant = next_waypoint.entity
+		if not is_instance_valid(next_entity) or not next_entity.alive:
+			continue
+		if next_waypoint.order == Order.BUILD and next_entity.is_constructed:
+			continue
+		_begin_work(next_entity, next_waypoint.order)
+		return
+	_finish_order()
 
 func _finish_order() -> void:
+	_interrupt_work()
 	order = Order.IDLE
 	order_name = "待命"
 	target = null
 	destination = global_position
 	_home_position = global_position
+	_scan_time = 0.0
 	attack_windup.stop()
 	_set_navigation_target(global_position)
 	velocity = Vector3.ZERO
@@ -428,7 +597,7 @@ func receive_damage(amount: float, source: Node3D = null) -> void:
 	if hp <= 0.0:
 		_die()
 		return
-	if _valid_target(source):
+	if unit_type != "farmer" and _valid_target(source):
 		if order == Order.MOVE:
 			_move_retaliation = source
 			_retaliation_time = 2.0
@@ -440,6 +609,8 @@ func _update_health_bar() -> void:
 	health_bar.set_instance_shader_parameter("health", hp / max_hp)
 
 func _die() -> void:
+	_interrupt_work()
+	waypoint_queue.clear()
 	alive = false
 	sound_requested.emit(&"death_fall", global_position)
 	order_name = "阵亡"

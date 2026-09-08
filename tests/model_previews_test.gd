@@ -3,7 +3,7 @@ extends SceneTree
 var _failures: Array[String] = []
 var _checks: Array[String] = []
 var _previews: Node
-const KINDS: Array[String] = ["swordsman", "archer", "knight", "catapult", "cannon", "headquarters"]
+const KINDS: Array[String] = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "headquarters", "gold_vein", "defense_tower"]
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -42,7 +42,7 @@ func _run() -> void:
 		_check(viewport.render_target_update_mode == SubViewport.UPDATE_ONCE, kind + " uses one-shot render policy")
 		_check(viewport.own_world_3d, kind + " isolated world")
 		snapshots[kind] = pic.get_data()
-		if kind != "headquarters":
+		if kind in ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]:
 			var player: AnimationPlayer = viewport.get_node("World/Model/Locomotion")
 			positions[kind] = player.current_animation_position
 	_previews.set_animated("swordsman")
@@ -51,7 +51,7 @@ func _run() -> void:
 	for kind: String in KINDS:
 		var pic: Image = _previews.portrait(kind).get_image()
 		_check((pic.get_data() != snapshots[kind]) == (kind == "swordsman"), kind + " texture updates only when active")
-		if kind != "headquarters":
+		if kind in ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]:
 			var player: AnimationPlayer = _previews.get_node(kind + "/World/Model/Locomotion")
 			_check((player.current_animation_position != positions[kind]) == (kind == "swordsman"), kind + " animation advances only when active")
 	_previews.set_animated("headquarters")

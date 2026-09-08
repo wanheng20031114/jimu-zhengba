@@ -4,20 +4,21 @@
   "grid_spacing": 1,
   "height": 0.03,
   "obstacle_padding": 1.15,
-  "environment_obstacles": 93,
+  "environment_obstacles": 78,
   "base": {
-    "vertices": 5266,
-    "polygons": 4666
+    "vertices": 5473,
+    "polygons": 4894
   },
   "components": [
-    4658,
-    3,
-    3,
+    4877,
+    9,
+    4,
+    2,
     2
   ],
   "component_bounds": [
     {
-      "cells": 4658,
+      "cells": 4877,
       "min": [
         -40,
         -40
@@ -28,24 +29,24 @@
       ]
     },
     {
-      "cells": 3,
+      "cells": 9,
       "min": [
-        -24,
-        17
+        33,
+        -40
       ],
       "max": [
-        -21,
-        18
+        36,
+        -36
       ]
     },
     {
-      "cells": 3,
+      "cells": 4,
       "min": [
-        34,
-        39
+        38,
+        38
       ],
       "max": [
-        37,
+        40,
         40
       ]
     },
@@ -53,10 +54,21 @@
       "cells": 2,
       "min": [
         -40,
-        38
+        -40
       ],
       "max": [
         -39,
+        -38
+      ]
+    },
+    {
+      "cells": 2,
+      "min": [
+        -40,
+        39
+      ],
+      "max": [
+        -38,
         40
       ]
     }
@@ -137,11 +149,27 @@
       "crossing_end": [
         -15.5,
         0.03,
-        20.5
+        18.5
       ],
       "cells": [
         [
           -28,
+          18
+        ],
+        [
+          -28,
+          19
+        ],
+        [
+          -28,
+          20
+        ],
+        [
+          -28,
+          21
+        ],
+        [
+          -28,
           22
         ],
         [
@@ -406,6 +434,14 @@
         ],
         [
           -21,
+          18
+        ],
+        [
+          -21,
+          19
+        ],
+        [
+          -21,
           20
         ],
         [
@@ -438,6 +474,14 @@
         ],
         [
           -20,
+          18
+        ],
+        [
+          -20,
+          19
+        ],
+        [
+          -20,
           20
         ],
         [
@@ -470,6 +514,14 @@
         ],
         [
           -19,
+          18
+        ],
+        [
+          -19,
+          19
+        ],
+        [
+          -19,
           20
         ],
         [
@@ -502,6 +554,14 @@
         ],
         [
           -18,
+          18
+        ],
+        [
+          -18,
+          19
+        ],
+        [
+          -18,
           20
         ],
         [
@@ -531,6 +591,14 @@
         [
           -18,
           27
+        ],
+        [
+          -17,
+          18
+        ],
+        [
+          -17,
+          19
         ],
         [
           -17,
@@ -565,7 +633,7 @@
           27
         ]
       ],
-      "main_boundary_edges": 25
+      "main_boundary_edges": 42
     },
     {
       "name": "EnemyKeep",
@@ -578,12 +646,12 @@
       "crossing_start": [
         15.5,
         0.03,
-        -28.5
+        -19.5
       ],
       "crossing_end": [
         28.5,
         0.03,
-        -19.5
+        -28.5
       ],
       "cells": [
         [
@@ -1067,7 +1135,7 @@
           -20
         ]
       ],
-      "main_boundary_edges": 36
+      "main_boundary_edges": 41
     },
     {
       "name": "NorthBarracks",
@@ -1794,8 +1862,8 @@
   ],
   "patch_stats": {
     "Headquarters": {
-      "vertices": 129,
-      "polygons": 106
+      "vertices": 143,
+      "polygons": 120
     },
     "EnemyKeep": {
       "vertices": 143,
@@ -2096,7 +2164,47 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red14",
+      "name": "Blue14",
+      "position": [
+        -18.0,
+        0.0,
+        29.0
+      ],
+      "kind": "farmer",
+      "team": 0,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -18,
+        0.03,
+        29
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Blue15",
+      "position": [
+        -16.0,
+        0.0,
+        30.0
+      ],
+      "kind": "farmer",
+      "team": 0,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        -16,
+        0.03,
+        30
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red16",
       "position": [
         -1.0,
         0.0,
@@ -2110,46 +2218,6 @@
       "distance_to_navigation": 0.0,
       "navigation_projection": [
         -1,
-        0.03,
-        -4
-      ],
-      "reaches_main_component": true
-    },
-    {
-      "name": "Red15",
-      "position": [
-        0.7,
-        0.0,
-        -4.0
-      ],
-      "kind": "swordsman",
-      "team": 1,
-      "radius": 0.48,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        0.7,
-        0.03,
-        -4
-      ],
-      "reaches_main_component": true
-    },
-    {
-      "name": "Red16",
-      "position": [
-        2.4,
-        0.0,
-        -4.0
-      ],
-      "kind": "swordsman",
-      "team": 1,
-      "radius": 0.48,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        2.4,
         0.03,
         -4
       ],
@@ -2158,6 +2226,46 @@
     {
       "name": "Red17",
       "position": [
+        0.7,
+        0.0,
+        -4.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        0.7,
+        0.03,
+        -4
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red18",
+      "position": [
+        2.4,
+        0.0,
+        -4.0
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        2.4,
+        0.03,
+        -4
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red19",
+      "position": [
         4.1,
         0.0,
         -4.0
@@ -2176,7 +2284,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red18",
+      "name": "Red20",
       "position": [
         -1.0,
         0.0,
@@ -2196,47 +2304,47 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red19",
-      "position": [
-        0.7,
-        0.0,
-        -5.6
-      ],
-      "kind": "swordsman",
-      "team": 1,
-      "radius": 0.48,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        0.7,
-        0.03,
-        -5.6
-      ],
-      "reaches_main_component": true
-    },
-    {
-      "name": "Red20",
-      "position": [
-        2.4,
-        0.0,
-        -5.6
-      ],
-      "kind": "swordsman",
-      "team": 1,
-      "radius": 0.48,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        2.4,
-        0.03,
-        -5.6
-      ],
-      "reaches_main_component": true
-    },
-    {
       "name": "Red21",
+      "position": [
+        0.7,
+        0.0,
+        -5.6
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        0.7,
+        0.03,
+        -5.6
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red22",
+      "position": [
+        2.4,
+        0.0,
+        -5.6
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        2.4,
+        0.03,
+        -5.6
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red23",
       "position": [
         2.0,
         0.0,
@@ -2256,49 +2364,9 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red22",
-      "position": [
-        3.6,
-        0.0,
-        -9.0
-      ],
-      "kind": "archer",
-      "team": 1,
-      "radius": 0.42,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        3.6,
-        0.03,
-        -9
-      ],
-      "reaches_main_component": true
-    },
-    {
-      "name": "Red23",
-      "position": [
-        5.2,
-        0.0,
-        -9.0
-      ],
-      "kind": "archer",
-      "team": 1,
-      "radius": 0.42,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        5.2,
-        0.03,
-        -9
-      ],
-      "reaches_main_component": true
-    },
-    {
       "name": "Red24",
       "position": [
-        6.800000000000001,
+        3.6,
         0.0,
         -9.0
       ],
@@ -2309,7 +2377,7 @@
       "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
-        6.800000000000001,
+        3.6,
         0.03,
         -9
       ],
@@ -2318,49 +2386,49 @@
     {
       "name": "Red25",
       "position": [
-        15.5,
+        5.2,
         0.0,
-        -15.5
+        -9.0
       ],
-      "kind": "swordsman",
+      "kind": "archer",
       "team": 1,
-      "radius": 0.48,
+      "radius": 0.42,
       "physics_overlaps": [],
       "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
-        15.5,
+        5.2,
         0.03,
-        -15.5
+        -9
       ],
       "reaches_main_component": true
     },
     {
       "name": "Red26",
       "position": [
-        22.5,
+        6.800000000000001,
         0.0,
-        -14.5
+        -9.0
       ],
-      "kind": "swordsman",
+      "kind": "archer",
       "team": 1,
-      "radius": 0.48,
+      "radius": 0.42,
       "physics_overlaps": [],
       "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
-        22.5,
+        6.800000000000001,
         0.03,
-        -14.5
+        -9
       ],
       "reaches_main_component": true
     },
     {
       "name": "Red27",
       "position": [
-        23.5,
+        15.5,
         0.0,
-        -13.5
+        -15.5
       ],
       "kind": "swordsman",
       "team": 1,
@@ -2369,18 +2437,18 @@
       "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
-        23.5,
+        15.5,
         0.03,
-        -13.5
+        -15.5
       ],
       "reaches_main_component": true
     },
     {
       "name": "Red28",
       "position": [
-        17.5,
+        22.5,
         0.0,
-        -17.5
+        -14.5
       ],
       "kind": "swordsman",
       "team": 1,
@@ -2389,15 +2457,55 @@
       "unit_overlaps": [],
       "distance_to_navigation": 0.0,
       "navigation_projection": [
-        17.5,
+        22.5,
         0.03,
-        -17.5
+        -14.5
       ],
       "reaches_main_component": true
     },
     {
       "name": "Red29",
       "position": [
+        23.5,
+        0.0,
+        -13.5
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        23.5,
+        0.03,
+        -13.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red30",
+      "position": [
+        17.5,
+        0.0,
+        -17.5
+      ],
+      "kind": "swordsman",
+      "team": 1,
+      "radius": 0.48,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        17.5,
+        0.03,
+        -17.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red31",
+      "position": [
         24.5,
         0.0,
         -16.5
@@ -2416,47 +2524,47 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red30",
-      "position": [
-        24.5,
-        0.0,
-        -14.5
-      ],
-      "kind": "archer",
-      "team": 1,
-      "radius": 0.42,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        24.5,
-        0.03,
-        -14.5
-      ],
-      "reaches_main_component": true
-    },
-    {
-      "name": "Red31",
-      "position": [
-        25.5,
-        0.0,
-        -15.5
-      ],
-      "kind": "archer",
-      "team": 1,
-      "radius": 0.42,
-      "physics_overlaps": [],
-      "unit_overlaps": [],
-      "distance_to_navigation": 0.0,
-      "navigation_projection": [
-        25.5,
-        0.03,
-        -15.5
-      ],
-      "reaches_main_component": true
-    },
-    {
       "name": "Red32",
+      "position": [
+        24.5,
+        0.0,
+        -14.5
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        24.5,
+        0.03,
+        -14.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red33",
+      "position": [
+        25.5,
+        0.0,
+        -15.5
+      ],
+      "kind": "archer",
+      "team": 1,
+      "radius": 0.42,
+      "physics_overlaps": [],
+      "unit_overlaps": [],
+      "distance_to_navigation": 0.0,
+      "navigation_projection": [
+        25.5,
+        0.03,
+        -15.5
+      ],
+      "reaches_main_component": true
+    },
+    {
+      "name": "Red34",
       "position": [
         24.0,
         0.0,
@@ -2476,7 +2584,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red33",
+      "name": "Red35",
       "position": [
         25.5,
         0.0,
@@ -2496,7 +2604,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red34",
+      "name": "Red36",
       "position": [
         12.0,
         0.0,
@@ -2516,7 +2624,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red35",
+      "name": "Red37",
       "position": [
         15.0,
         0.0,
@@ -2536,7 +2644,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red36",
+      "name": "Red38",
       "position": [
         15.0,
         0.0,
@@ -2556,7 +2664,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red37",
+      "name": "Red39",
       "position": [
         22.0,
         0.0,
@@ -2576,7 +2684,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red38",
+      "name": "Red40",
       "position": [
         -8.0,
         0.0,
@@ -2596,7 +2704,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red39",
+      "name": "Red41",
       "position": [
         -10.0,
         0.0,
@@ -2616,7 +2724,7 @@
       "reaches_main_component": true
     },
     {
-      "name": "Red40",
+      "name": "Red42",
       "position": [
         -10.0,
         0.0,

@@ -1,9 +1,9 @@
 extends Control
 
-const UNIT_ORDER := ["swordsman", "archer", "knight", "catapult", "cannon"]
-const UNIT_NAMES := ["剑士", "弓箭手", "骑士", "投石车", "加农炮"]
-const COSTS := [45, 60, 100, 140, 180]
-const DESCRIPTIONS := ["可靠的近战步兵\n剑盾冲锋，守护远程部队", "远程齐射\n利用射程压制敌方步兵", "重装骑兵\n迅速接敌，冲锋造成额外伤害", "远程攻城器械\n抛射巨石，造成范围伤害", "重型火炮\n炮弹爆炸，适合摧毁建筑"]
+const UNIT_ORDER := ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]
+const UNIT_NAMES := ["剑士", "弓箭手", "骑士", "投石车", "加农炮", "农民"]
+const COSTS := [45, 60, 100, 140, 180, 50]
+const DESCRIPTIONS := ["可靠的近战步兵\n剑盾冲锋，守护远程部队", "远程齐射\n利用射程压制敌方步兵", "重装骑兵\n迅速接敌，冲锋造成额外伤害", "远程攻城器械\n抛射巨石，造成范围伤害", "重型火炮\n炮弹爆炸，适合摧毁建筑", "采矿与建造\n矿边每3秒+3金币；建造防御塔"]
 var game: Node3D
 var portraits: Dictionary = {}
 var _toast_remaining: float = 0.0
@@ -22,10 +22,10 @@ var _selected_preview: String = "headquarters"
 @onready var hp_bar: ProgressBar = %SelectionHP
 @onready var hp_label: Label = %SelectionHPText
 @onready var toast_label: Label = %Toast
-@onready var buttons: Array[Button] = [%Recruit0, %Recruit1, %Recruit2, %Recruit3, %Recruit4]
+@onready var buttons: Array[Button] = [%Recruit0, %Recruit1, %Recruit2, %Recruit3, %Recruit4, %Recruit5]
 
 func _ready() -> void:
-	for kind in UNIT_ORDER + ["headquarters"]:
+	for kind in UNIT_ORDER + ["headquarters", "gold_vein", "defense_tower"]:
 		portraits[kind] = $ModelPreviews.portrait(kind)
 	for index in range(buttons.size()):
 		buttons[index].pressed.connect(_on_recruit.bind(index))
@@ -38,6 +38,10 @@ func _ready() -> void:
 	%HoldButton.pressed.connect(func(): game.hold_selected())
 	%BaseButton.pressed.connect(func(): game.select_headquarters())
 	%ArmyButton.pressed.connect(func(): game.select_army())
+	%BuildButton.pressed.connect(func(): game.set_build_mode(not game.build_mode))
+	%CancelSiteButton.pressed.connect(_on_building_action)
+	%IdleWorkerButton.pressed.connect(func(): game.select_idle_worker())
+	%TowerPortrait.texture = portraits.defense_tower
 	%HelpButton.pressed.connect(toggle_help)
 	%CloseHelp.pressed.connect(toggle_help)
 	%PauseButton.pressed.connect(func(): game.toggle_pause())
@@ -94,7 +98,27 @@ func refresh() -> void:
 	%EnemyCount.text = "敌军 %d    击败 %d" % [game.enemy_count(), game.kills]
 	var can_recruit: bool = is_instance_valid(game.headquarters) and game.headquarters.alive and game.headquarters in game.selection and not game.finished
 	%RecruitHint.text = "消耗金币 · 即刻出兵" if can_recruit else "选中大本营以招募  [B]"
+	var selected_site: BattleBuilding
+	if game.selection.size() == 1 and game.selection[0] is BattleBuilding:
+		selected_site = game.selection[0]
+	var construction_selected: bool = selected_site != null and selected_site.team == 0 and selected_site.building_type == "defense_tower"
+	var workers_selected: bool = not game.own_selected_workers().is_empty()
+	var worker_panel: bool = workers_selected or construction_selected
+	$CommandBar/Recruitment/RecruitTitle.text = "防御建设" if worker_panel else "即时招募"
+	%BuildPanel.visible = worker_panel
+	%BuildButton.disabled = not workers_selected or game.gold < game.TOWER_COST or game.finished
+	%CancelSiteButton.visible = construction_selected
+	%CancelSiteButton.text = "拆除防御塔  [Ctrl+Delete]" if construction_selected and selected_site.is_constructed else "取消施工  [Delete]"
+	%BuildQueueHint.visible = not %CancelSiteButton.visible
+	if worker_panel:
+		%RecruitHint.text = "Shift 排队 · 20 秒施工" if workers_selected else "农民右键可接手工地"
+		if construction_selected and selected_site.is_constructed:
+			%RecruitHint.text = "自动警戒 · 可拆除腾出道路"
+		%BuildInfo.text = "防御塔 · 100 金币\n施工 20 秒 · 自动攻击 · 无需驻军"
+		if construction_selected:
+			%BuildInfo.text = "防御塔已就绪\n自动警戒 · 射程 12 · 无需驻军" if selected_site.is_constructed else "防御塔施工 %d%%\n取消返还未完成部分的金币" % roundi(selected_site.construction_progress * 100)
 	for index in range(buttons.size()):
+		buttons[index].visible = not worker_panel
 		buttons[index].disabled = not can_recruit or game.gold < COSTS[index]
 		buttons[index].get_node("Cost").modulate = Color("e9c97b") if game.gold >= COSTS[index] else Color("c27055")
 	if game.selection.is_empty():
@@ -112,17 +136,32 @@ func refresh() -> void:
 		selected_role.modulate = Color("90bcda") if entity.team == 0 else Color("e98968")
 		hp_bar.visible = true
 		hp_label.visible = true
-		hp_bar.max_value = entity.max_hp
-		hp_bar.value = entity.hp
-		hp_label.text = "%d / %d" % [int(entity.hp), int(entity.max_hp)]
+		if entity.is_in_group("resource_veins"):
+			hp_bar.visible = false
+			hp_label.visible = false
+			selected_portrait.texture = portraits.gold_vein
+			_selected_preview = "gold_vein"
+			selected_role.text = "中立资源 · 金矿"
+			selected_role.modulate = Color("e5c76b")
+			selected_stats.text = "农民右键开始采集\n每人每 3 秒 +3 金币"
+		else:
+			hp_bar.max_value = entity.max_hp
+			hp_bar.value = entity.hp
+			hp_label.text = "%d / %d" % [int(entity.hp), int(entity.max_hp)]
 		if entity.is_in_group("units"):
 			selected_portrait.texture = portraits[entity.unit_type]
 			_selected_preview = entity.unit_type
 			selected_stats.text = "攻击 %d    射程 %.1f\n%s" % [entity.attack_damage, entity.attack_range, entity.order_name]
-		else:
+			if entity.unit_type == "farmer":
+				selected_stats.text = "采矿 +3 / 3秒 · 建塔 [V]\n%s%s" % [entity.order_name, " · 队列 %d" % entity.waypoint_queue.size() if not entity.waypoint_queue.is_empty() else ""]
+		elif entity.is_in_group("buildings"):
 			selected_portrait.texture = portraits.headquarters
 			_selected_preview = "headquarters"
 			selected_stats.text = "每秒 +1 金币\n右键地面设置集结点" if entity.team == 0 else "敌方军事建筑\n摧毁获得 90 金币"
+			if entity.building_type == "defense_tower":
+				selected_portrait.texture = portraits.defense_tower
+				_selected_preview = "defense_tower"
+				selected_stats.text = "自动攻击范围内敌军\n无法进驻单位" if entity.is_constructed else "施工 %d%%\n农民右键继续建造" % roundi(entity.construction_progress * 100)
 	else:
 		selected_name.text = "%d 支部队" % game.selection.size()
 		selected_role.text = "蓝旗军团 · 联合编队"
@@ -163,6 +202,12 @@ func refresh() -> void:
 
 func _on_recruit(index: int) -> void:
 	game.recruit(UNIT_ORDER[index])
+
+func _on_building_action() -> void:
+	if game.selection.size() == 1 and game.selection[0] is BattleBuilding and game.selection[0].is_constructed:
+		game.demolish_selected_towers()
+	else:
+		game.cancel_selected_construction()
 
 func _set_preview_hover(kind: String) -> void:
 	_hovered_preview = kind

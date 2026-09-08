@@ -40,6 +40,11 @@ C = {
     "paving": (148, 137, 113), "road_mortar": (104, 91, 66),
     "canvas": (180, 166, 131), "burlap": (154, 127, 82),
     "straw": (157, 129, 62), "straw_light": (193, 164, 87),
+    "granite": (103, 103, 94), "granite_light": (142, 141, 123),
+    "ore_rock": (78, 83, 82), "ore_rock_light": (115, 119, 107),
+    "gold_light": (238, 190, 82), "gold_dark": (170, 119, 39),
+    "leaf_dark": (55, 75, 47), "leaf_pine": (68, 89, 50),
+    "bark": (95, 67, 45), "bark_light": (129, 90, 51),
 }
 
 
@@ -62,11 +67,11 @@ def write_asset(path, data):
 def family(value):
     if not isinstance(value, str):
         return "Earth"
-    if value in ("iron", "iron_light", "gold"):
+    if value in ("iron", "iron_light", "gold", "gold_light", "gold_dark"):
         return "Metal"
     if value in ("blue", "red", "canvas", "burlap"):
         return "Fabric"
-    if "wood" in value:
+    if "wood" in value or "bark" in value:
         return "Timber"
     if "leaf" in value or "grass" in value:
         return "Foliage"
@@ -276,6 +281,21 @@ class Model:
                 flag_resource='\n[ext_resource type="PackedScene" path="res://assets/models/environment/royal_banner.tscn" id="2_banner"]'
                 extras='\n[node name="RoyalBannerLeft" parent="." instance=ExtResource("2_banner")]\nposition = Vector3(-3.23, 0.48, 3.365)\n\n[node name="RoyalBannerRight" parent="." instance=ExtResource("2_banner")]\nposition = Vector3(3.23, 0.48, 3.365)\n'
             write_asset(OUT / f"{name}.tscn",f'[gd_scene load_steps={3 if name=="headquarters" else 2} format=3]\n\n[ext_resource type="PackedScene" path="res://assets/models/environment/{name}.glb" id="1_visual"]{flag_resource}\n\n[node name="{name.title().replace("_", "")}" type="Node3D"]\n\n[node name="Architecture" parent="." instance=ExtResource("1_visual")]\n{extras}')
+            if name=="defense_tower":
+                # Saved material overrides retain the consolidated sculpture and
+                # expose a native per-instance construction plane to its building.
+                lines=['[gd_scene load_steps=5 format=3]',
+                       '[ext_resource type="PackedScene" path="res://assets/models/environment/defense_tower.glb" id="1_visual"]',
+                       '[ext_resource type="Shader" path="res://assets/models/environment/construction.gdshader" id="2_shader"]',
+                       '[sub_resource type="ShaderMaterial" id="Matte"]\nshader = ExtResource("2_shader")\nshader_parameter/metalness = 0.0\nshader_parameter/roughness = 0.84',
+                       '[sub_resource type="ShaderMaterial" id="Metal"]\nshader = ExtResource("2_shader")\nshader_parameter/metalness = 0.65\nshader_parameter/roughness = 0.38',
+                       '[node name="DefenseTower" type="Node3D"]',
+                       '[node name="Architecture" parent="." instance=ExtResource("1_visual")]']
+                for i,group in enumerate(scene.geometry):
+                    material="Metal" if group=="Metal" else "Matte"
+                    lines.append(f'[node name="{group}" parent="Architecture" index="{i}"]\nmaterial_override = SubResource("{material}")')
+                lines.append('[editable path="Architecture"]')
+                write_asset(OUT/"defense_tower.tscn","\n\n".join(lines)+"\n")
         bounds = scene.bounds
         print(f"{name}: {sum(len(g.faces) for g in scene.geometry.values()):,} triangles, {len(scene.geometry)} meshes, bounds {np.round(bounds, 2).tolist()}")
         return {"bounds": bounds.tolist(), "triangles": sum(len(g.faces) for g in scene.geometry.values()), "meshes": len(scene.geometry)}
@@ -616,6 +636,185 @@ def rock():
     return m
 
 
+def fractured_boulder(m, center, scale, material="granite", seed=1):
+    """A closed, irregular convex mass, with broad cut planes rather than spheres."""
+    random=np.random.default_rng(seed)
+    mesh=tm.creation.icosphere(subdivisions=1)
+    mesh.vertices*=random.uniform(.80,1.15,(len(mesh.vertices),1))
+    mesh.vertices[:,1]=np.maximum(mesh.vertices[:,1],-.43)
+    mesh=tm.convex.convex_hull(mesh.vertices)
+    return m.add(mesh,material,center,rot=(0,random.uniform(-.4,.4),.06),scale=scale)
+
+
+def natural_rock(large=True):
+    m=Model()
+    factor=1.0 if large else .64
+    fractured_boulder(m,(-.42*factor,.90*factor,.03*factor),np.array((1.55,2.02,1.22))*factor,"granite",619)
+    fractured_boulder(m,(.98*factor,.52*factor,.31*factor),np.array((.99,1.14,.94))*factor,"granite_light",621)
+    fractured_boulder(m,(-.76*factor,.27*factor,1.05*factor),np.array((.72,.64,.52))*factor,"granite",627)
+    # Faceted lichen patches are tiny rock growths, with enough depth to avoid z-fighting.
+    for x,y,z in [(-.80,1.92,.26),(.03,2.13,-.13),(.65,1.12,.83),(-1.16,.46,.91)]:
+        m.add(tm.creation.icosphere(subdivisions=0),"leaf_light",(x*factor,y*factor,z*factor),scale=(.18*factor,.06*factor,.20*factor),variation=-.12)
+    for j,(x,z) in enumerate([(-1.65,-.20),(1.61,.96),(.70,1.58),(-.42,-1.36)]):
+        fractured_boulder(m,(x*factor,.105*factor,z*factor),np.array((.25,.23,.20))*factor,"granite_light",630+j)
+    return m
+
+
+def gold_vein():
+    m=Model()
+    core=fractured_boulder(m,(-.38,.57,.01),(1.27,1.43,1.09),"ore_rock",773)
+    shoulder=fractured_boulder(m,(.93,.35,.28),(.88,.83,.94),"ore_rock_light",779)
+    fractured_boulder(m,(-.77,.23,.88),(.83,.54,.66),"ore_rock",783)
+    # Surface fault exposures follow the actual cut rock planes. Their shallow
+    # solid extrusion stays outside the stone instead of disappearing inside it.
+    for chunk in (core,shoulder):
+        exposed=0
+        for i,(triangle,normal) in enumerate(zip(chunk.triangles,chunk.face_normals)):
+            center=np.mean(triangle,axis=0)
+            if center[1]<.56 or normal[1]<.03 or max(normal[1],normal[2],normal[0])<.37 or i%3==0:
+                continue
+            barycentric=np.array([[.76,.19,.05],[.39,.56,.05],[.15,.70,.15],
+                                  [.06,.37,.57],[.26,.10,.64],[.58,.08,.34]])
+            contour=barycentric@np.roll(triangle,i%3,axis=0)
+            scale=.83 if i%2 else .96
+            top=center+(contour-center)*scale+normal*.014
+            bottom=top-normal*.045
+            m.add(tm.convex.convex_hull(np.concatenate((top,bottom))),"gold" if i%2 else "gold_dark")
+            if exposed%3==0:
+                crystal=tm.creation.icosphere(subdivisions=0)
+                crystal.apply_scale((.15,.22,.12))
+                m.add(crystal,"gold_light",tuple(center+normal*.13))
+            exposed+=1
+    # Angular golden ore grows through faults as connected volumetric seams.
+    for start,end,width in [((-.94,1.17,.57),(-.48,1.50,.17),.10),
+                            ((-.48,1.50,.17),(.11,1.59,-.15),.095),
+                            ((.11,1.59,-.15),(.32,1.12,-.68),.12),
+                            ((-.58,1.36,.60),(-.26,.80,1.06),.13),
+                            ((.53,.97,.60),(1.21,.77,.62),.10),
+                            ((1.21,.77,.62),(1.62,.30,.60),.095)]:
+        m.beam(start,end,width,"gold",depth=width*1.5,bevel=.014)
+    clusters=[(-.57,1.30,.54,.24),(-.16,1.54,.04,.21),(.58,.95,.42,.20),
+              (1.26,.66,.62,.18),(-.78,.48,1.08,.22),(-1.15,.79,-.24,.17)]
+    for i,(x,y,z,size) in enumerate(clusters):
+        for j in range(3):
+            m.cone(size*.65,0,size*1.7,(x+(j-1)*size*.55,y+(j%2)*size*.18,z+j*.06),
+                   ["gold","gold_light","gold_dark"][(i+j)%3],sections=5,
+                   rot=(.15-j*.15,i*.7,(j-1)*.24))
+    for j,(x,z) in enumerate([(-1.60,.76),(1.70,-.10),(.99,1.45),(-.24,-1.35),(-1.35,-.88)]):
+        fractured_boulder(m,(x,.12,z),(.24,.29,.25),"ore_rock_light",799+j)
+        if j%2==0:
+            m.add(tm.creation.icosphere(subdivisions=0),"gold",(x+.03,.23,z+.06),scale=(.10,.075,.07))
+    return m
+
+
+def oak_tree():
+    m=Model()
+    m.cone(.41,.20,3.5,(0,1.75,0),"bark",sections=9,rot=(0,0,-.035))
+    for i,angle in enumerate(np.linspace(0,math.tau,6,endpoint=False)):
+        direction=np.array((math.cos(angle),0,math.sin(angle)))
+        m.beam(tuple(direction*.1+(0,.55,0)),tuple(direction*.98+(0,.05,0)),.22,"bark")
+        m.beam(tuple(direction*.34+(0,.64,0)),tuple(direction*.21+(0,2.65+(i%2)*.22,0)),.065,"bark_light",bevel=.008)
+    branches=[(-1.20,3.68,.25),(.99,4.02,-.33),(.32,4.74,.12),(-.24,3.74,1.37),(.03,3.83,-1.21)]
+    for i,p in enumerate(branches):
+        m.beam((0,2.06,0),p,.22 if i<2 else .16,"bark")
+        for j,(offset,scale) in enumerate([((0,0,0),(1.32,1.23,1.20)),((.49,.43,-.26),(.82,.90,.87))]):
+            random=np.random.default_rng(981+i*7+j)
+            crown=tm.creation.icosphere(subdivisions=1)
+            crown.vertices*=random.uniform(.88,1.10,(len(crown.vertices),1))
+            m.add(crown,["leaf","leaf_light","leaf_dark"][(i+j)%3],tuple(np.array(p)+offset),scale=scale)
+    # A healed branch knot and bark collar break the trunk silhouette.
+    m.cone(.13,.06,.31,(.35,1.82,.04),"bark_light",sections=7,rot=(0,0,-1.15))
+    return m
+
+
+def pine_tree():
+    m=Model()
+    m.cone(.29,.105,5.50,(0,2.75,0),"bark",sections=8)
+    for i,angle in enumerate(np.linspace(0,math.tau,5,endpoint=False)):
+        m.beam((0,.45,0),(.70*math.cos(angle),.04,.70*math.sin(angle)),.14,"bark")
+    # Overlapping asymmetric tiers have modeled twig tips and a legible pointed crown.
+    for level,(y,radius,height) in enumerate([(1.87,1.75,1.72),(2.77,1.55,1.72),(3.60,1.20,1.62),(4.34,.92,1.42),(4.94,.58,1.25)]):
+        m.cone(radius,.05,height,(0,y,0),"leaf_pine" if level%2==0 else "leaf_dark",sections=9,rot=(0,level*.53,0))
+        for j in range(4):
+            angle=j*math.pi/2+level*.67
+            end=(math.cos(angle)*radius*.89,y-height*.34,math.sin(angle)*radius*.89)
+            m.beam((0,y-height*.13,0),end,.050,"bark",bevel=.006)
+            m.cone(radius*.30,0,height*.65,(end[0]*.78,y-height*.15,end[2]*.78),"leaf" if j%2 else "leaf_pine",sections=5,rot=(.10,angle,-.04))
+    return m
+
+
+def defense_tower():
+    m=Model()
+    # Same dressed warm stone as the keep, with a complete stone shell on all sides.
+    square_tower(m,0,0,2.9,4.88)
+    arched_gate(m,.72,1.49,.18,(0,.11,1.49))
+    for sign in (-1,1):
+        for side in (-1,1):
+            m.box((.38,3.73,.38),(sign*1.35,2.05,side*1.35),"stone",bevel=.047)
+        for row in range(7):
+            y=.50+row*.56
+            for x in (-1.33,1.33):
+                m.box((.30,.32,.26),(x,y,sign*1.48),"stone_light",bevel=.023)
+        # Arrow slit recesses and surrounds face the two open sides.
+        m.box((.035,.80,.22),(sign*1.474,3.3,0),"dark",bevel=.013)
+        for z in (-.22,.22):
+            m.box((.11,.93,.16),(sign*1.52,3.3,z),"stone_light",bevel=.018)
+    m.box((2.52,.14,2.52),(0,4.98,0),"wood_dark",bevel=.013)
+    for i in range(9):
+        m.box((.263,.08,2.42),(-1.14+i*.285,5.09,0),"wood_light",bevel=.008,variation=(i%3-1)*.06)
+    # An unmanned heavy arbalest is built into the parapet, not a garrison slot.
+    m.cylinder(.36,.45,(0,5.36,0),"wood",sections=12)
+    m.ring(.35,.43,.11,(0,5.53,0),"iron",sections=12)
+    m.box((.25,.24,1.74),(0,5.72,-.18),"wood",rot=(-.12,0,0),bevel=.024)
+    m.box((.12,.06,1.48),(0,5.866,-.22),"wood_dark",rot=(-.12,0,0),bevel=.011)
+    for sign in (-1,1):
+        points=[(0,5.79,-.70),(sign*.52,5.79,-.68),(sign*.96,5.78,-.47),(sign*1.13,5.77,-.23)]
+        for a,b in zip(points,points[1:]):m.beam(a,b,.085,"wood_light",depth=.14)
+        m.beam(points[-1],(0,5.79,.17),.015,"burlap",depth=.015,bevel=.002)
+        m.box((.12,.17,.22),(sign*.17,5.74,.39),"iron",bevel=.016)
+    m.beam((0,5.91,.10),(0,5.91,-1.09),.027,"wood_light",depth=.027,bevel=.004)
+    m.cone(.060,0,.20,(0,5.91,-1.17),"iron_light",sections=4,rot=(-math.pi/2,0,0))
+    m.box((.17,.019,.18),(0,5.95,.04),"canvas",bevel=.003)
+    for x in (-1.27,1.27):
+        banner(m,x,4.60,0,"blue",.60)
+    return m
+
+
+def scaffolding():
+    m=Model()
+    # The construction footprint fits exactly inside the 4 x 4 build rectangle.
+    for x in (-1.70,1.70):
+        for z in (-1.70,1.70):
+            m.box((.19,3.82,.19),(x,1.91,z),"wood",bevel=.020)
+            m.box((.36,.15,.36),(x,.075,z),"wood_dark",bevel=.017)
+            for y in (1.08,2.86):
+                m.box((.21,.12,.23),(x,y,z),"burlap",bevel=.011)
+    for side in (-1,1):
+        for y in (1.03,2.81):
+            m.beam((-1.77,y,side*1.70),(1.77,y,side*1.70),.17,"wood_light")
+            m.beam((side*1.70,y,-1.77),(side*1.70,y,1.77),.17,"wood_light")
+        m.beam((-1.65,.22,side*1.73),(1.65,2.76,side*1.73),.13,"wood")
+        m.beam((side*1.73,.22,1.65),(side*1.73,2.76,-1.65),.13,"wood")
+        for i in range(3):
+            m.box((3.64,.10,.19),(0,2.97,side*(1.25+i*.22)),"wood_light",bevel=.013,variation=(i-1)*.06)
+    # The low foundation and neatly piled timber make the site legible at 0%.
+    for z in (-1.08,1.08):
+        stone_rows(m,2.58,.49,.36,(0,.02,z),block=.65,rows=2)
+    for x in (-1.20,1.20):
+        m.box((.36,.49,1.92),(x,.26,0),"stone",bevel=.030)
+    for i in range(5):
+        m.box((.13,.11,1.49),(-.43+(i%3)*.18,.13+(i//3)*.12,-.02),"wood_light",rot=(0,.13,0),bevel=.012)
+    # An integral ladder, iron fasteners, and a small blueprint workboard.
+    for x in (-.35,.35):m.beam((x,.03,1.88),(x,3.12,1.17),.095,"wood")
+    for i in range(9):
+        y=.27+i*.32
+        m.beam((-.35,y,1.88-y*.229),(.35,y,1.88-y*.229),.080,"wood_light")
+    m.box((.64,.09,.46),(.79,.78,.23),"wood_dark",rot=(.30,0,0),bevel=.010)
+    m.box((.49,.018,.35),(.79,.842,.22),"canvas",rot=(.30,0,0),bevel=.005)
+    m.beam((.79,0,.36),(.79,.73,.23),.12,"wood")
+    return m
+
+
 def well():
     m=Model()
     for row in range(3):
@@ -835,10 +1034,11 @@ def tuft(m,x,z,scale=1.0):
 
 
 BUILDINGS = [(-22,23,9,8),(22,-24,9,8),(9,-21,6,5),(25,-7,4,4),(-4,-12,6,5)]
+RESOURCE_VEINS = [(-31,17),(-9,27),(-17,2),(9,3),(31,-19)]
 
 
 def reserved(x,z,margin=1.0):
-    return any(abs(x-bx)<w/2+margin and abs(z-bz)<d/2+margin for bx,bz,w,d in BUILDINGS)
+    return any(abs(x-bx)<w/2+margin and abs(z-bz)<d/2+margin for bx,bz,w,d in BUILDINGS) or any((x-mx)**2+(z-mz)**2<(2.2+margin)**2 for mx,mz in RESOURCE_VEINS)
 
 
 def horizontal_surface(model, polygon, height, material, variation=0.0):
@@ -911,11 +1111,9 @@ def terrain():
     def road_point(cross,along):
         return cross*ca+along*sa, -cross*sa+along*ca
     road_bed=Polygon([road_point(c,t) for c,t in [(-3.11,-47),(3.11,-47),(3.11,47),(-3.11,47)]])
-    cx,cz,r=-13,12,3.45
-    courtyard_bed=Polygon([(cx+r*math.cos(a),cz+r*math.sin(a)) for a in np.linspace(0,math.tau,40,endpoint=False)])
     # The apron and avenue are one shared mortar surface. Earth islands are
     # clipped into disjoint regions, retaining their original palette/contours.
-    paved_bed=road_bed.union(courtyard_bed)
+    paved_bed=road_bed
     horizontal_surface(m,paved_bed,-.012,"road_mortar")
     claimed=paved_bed
     for polygon,shade in reversed(soil_islands):
@@ -955,14 +1153,6 @@ def terrain():
                 if np.cross(b-a,c-a)[1]<0:face.reverse()
                 faces.append(face)
             m.add(tm.Trimesh(verts,faces,process=False),"road",variation=RNG.uniform(-.075,-.025))
-    # Ordered stone paving surrounds the village well and meets the main road.
-    for row in range(-5,6):
-        for col in range(-5,6):
-            x=cx+(col+(row%2)*.5)*.65
-            z=cz+row*.73
-            if (x-cx)**2+(z-cz)**2>(r-.20)**2:continue
-            if abs(x+.65*z)/1.19 < 3.62 or reserved(x,z,.15):continue
-            m.box((.603,.05,.683),(x,-.009,z),"paving",rot=(0,RNG.uniform(-.015,.015),0),bevel=.020,variation=RNG.uniform(-.045,.055))
     return m
 
 
@@ -970,98 +1160,110 @@ def build_environment(models):
     decor=Model()
     obstacles=[]
     instances=[]
-
-    def place(name,x,z,angle=0,scale=1,collision=True,label=None):
-        idx=len(instances)
-        label=label or f"{name.title()}{idx:02d}"
+    def obstacle(label,x,z,w,h,d,angle=0,resource=False):
+        ca,sa=abs(math.cos(angle)),abs(math.sin(angle))
+        item={"name":label,"position":[x,h/2,z],"size":[w,h,d],"rotation_y":angle,
+              "aabb_min":[x-(w*ca+d*sa)/2,0,z-(w*sa+d*ca)/2],
+              "aabb_max":[x+(w*ca+d*sa)/2,h,z+(w*sa+d*ca)/2]}
+        if resource:item["resource"]=True
+        obstacles.append(item)
+    def place(name,x,z,angle=0,scale=1,label=None):
+        label=label or f"{name.title().replace('_','')}{len(instances):02d}"
         instances.append((name,label,x,z,angle,scale))
-        dims={"house":(5.3,5.8,4.7),"ruin":(6.2,3.8,4.7),"wall":(4.5,1.7,.9),"palisade":(4.0,2.0,.65),"well":(2.4,3.3,2.0),"cart":(2.3,1.8,3.4),"tent":(2.92,2.70,3.48)}
-        if collision and name in dims:
-            w,h,d=dims[name]
-            w*=scale;h*=scale;d*=scale
-            ca,sa=abs(math.cos(angle)),abs(math.sin(angle))
-            obstacles.append({"name":label,"position":[x,h/2,z],"size":[w,h,d],"rotation_y":angle,"aabb_min":[x-(w*ca+d*sa)/2,0,z-(w*sa+d*ca)/2],"aabb_max":[x+(w*ca+d*sa)/2,h,z+(w*sa+d*ca)/2]})
-
-    # Buildings sit to the sides of the central diagonal avenue.
-    for item in [("house",-29,9,.16,1.0),("house",-29,-5,-.14,.90),("house",17,12,-.35,.93),("house",28,22,.12,1.0),("house",-13,32,.20,.92),("ruin",-16,-2,.08,1.0),("ruin",13,0,-.21,.88),("ruin",-21,-24,.26,1.04),("ruin",30,-34,-.2,.9),("well",-13,12,0,1.0),("cart",-18,17,.30,1.0),("cart",19,-14,-.35,.92)]:
+        # Trunks block movement; canopies do not consume their whole ground projection.
+        dims={"rock_large":(4.05,3.1,3.60),"rock_medium":(2.60,2.0,2.31),
+              "tree_oak":(.92,3.0,.92),"tree_pine":(.70,3.0,.70)}
+        w,h,d=dims[name]
+        obstacle(label,x,z,w*scale,h*scale,d*scale,angle)
+    # Small composed natural groups replace every former decorative house, ruin,
+    # wall, cart, well and supply tent. The diagonal army road stays continuous.
+    for item in [
+        ("rock_large",-29,5,.24,1.05),("rock_medium",-31.1,2.8,-.30,.94),
+        ("rock_large",-27,-7,-.17,.90),("rock_medium",-29.2,-8.5,.60,.85),
+        ("rock_large",16,15,-.43,.95),("rock_medium",18.5,15.1,.19,.85),
+        ("rock_large",28,23,.10,1.00),("rock_medium",30.3,24.4,.51,.88),
+        ("rock_large",-20,-25,.38,1.08),("rock_medium",-22.5,-23.5,-.31,.90),
+        ("rock_large",31,-32,-.18,.95),("rock_medium",33.0,-33.0,.58,.90),
+        ("rock_medium",-13,33,.19,.95),("rock_medium",13,-1,.64,.88)]:
         place(*item)
-    for item in [("wall",-29,13,.12),("wall",-33,9,math.pi/2),("wall",-28,-9,-.12),("wall",-32,-5,math.pi/2),("wall",18,16,-.35),("wall",22,13,math.pi/2-.35),("wall",28,26,.12),("wall",32,23,math.pi/2),("wall",-17,32,math.pi/2),("wall",-21,-20,.24),("wall",-25,-24,math.pi/2+.24),("palisade",-23,15,-.07),("palisade",-27,16,-.07),("palisade",21,-17,.08),("palisade",29,-17,-.11)]:
+    for item in [
+        ("tree_oak",-32,9,.3,.98),("tree_pine",-33,4,.8,.92),
+        ("tree_pine",-31,-5,.5,1.05),("tree_oak",-27,-13,.9,.92),
+        ("tree_oak",20,19,.4,.92),("tree_pine",23,21,.7,1.02),
+        ("tree_pine",30,28,.2,1.05),("tree_oak",25,28,.9,.97),
+        ("tree_oak",-16,-25,.3,.91),("tree_pine",-18,-29,.8,1.03),
+        ("tree_pine",27,-34,.1,1.05),("tree_oak",33,-28,.6,.90),
+        ("tree_oak",-17,34,.1,.91),("tree_pine",-20,33,.8,.88)]:
         place(*item)
-    # Two small supply camps occupy side courtyards, clear of army spawn points
-    # and the central avenue. Only their canvas footprint blocks navigation.
-    place("tent",-30.1,19.1,-.12,.88,label="WestSupplyTent")
-    place("tent",-14.6,-24.0,.20,.93,label="RuinedOutpostTent")
-    for name,x,z,angle,scale in [("sacks",-31.8,16.6,.3,1.0),("sacks",-27.7,20.9,-.4,.92),("sacks",-12.2,-23.1,.1,.93),("sacks",19.2,15.1,.8,.8),("hay_bale",-30.3,22.2,.12,.88),("hay_bale",-28.2,22.7,-.14,.76),("hay_bale",-12.0,-25.0,.20,.9),("hay_bale",30.1,20.0,.15,.85),("campfire",-27.6,18.9,.1,.90),("campfire",-15.3,-20.4,.4,1.0)]:
-        decor.absorb(models[name],(x,0,z),angle,(scale,scale,scale))
-    # Readable hand arranged prop clusters at walls, house entries and encampments.
-    for cx,cz,rot in [(-26,12,.2),(-32,-2,-.1),(19,14,.15),(30,25,.2),(-10,32,-.2),(-18,-21,.4),(29,-33,.3),(-28,25,.2),(27,-27,.4),(7,-24,.1)]:
-        for j,(name,dx,dz,s) in enumerate([("barrel",0,0,1),("barrel",.78,.12,.92),("crate",-.87,.1,.86),("crate",-.85,1.04,.74)]):
-            decor.absorb(models[name],(cx+dx,0,cz+dz),rot+j*.07,(s,s,s))
-    # Stone and foliage clusters form a varied silhouette at the board edge.
-    for i in range(68):
+    # Baked boundary groves share only a few material surfaces, while saved
+    # native trunk colliders stay individually editable and enter offline navigation.
+    for i in range(48):
         side=i%4
-        along=RNG.uniform(-40,40)
-        across=RNG.uniform(34.5,41.0)
+        along=-37+(i//4)*6.8+RNG.uniform(-1.1,1.1)
+        across=RNG.uniform(37.2,40.2)
         x,z=((along,across),(-across,along),(along,-across),(across,along))[side]
-        size=RNG.uniform(.75,1.36)
-        rotation=RNG.uniform(0,math.tau)
-        if reserved(x,z,1) or abs(x+.65*z)/1.19 < 4.8:continue
-        decor.absorb(models["tree"],(x,0,z),rotation,(size,size,size))
-        # Tree trunk avoidance; canopies do not incorrectly block their whole footprint.
-        obstacles.append({"name":f"BoundaryTree{i}","position":[x,.9,z],"size":[.70*size,1.8,.70*size],"rotation_y":0,"aabb_min":[x-.35*size,0,z-.35*size],"aabb_max":[x+.35*size,1.8,z+.35*size]})
-    for cx,cz in [(-36,-19),(-36,20),(34,5),(36,-27),(-6,-37),(10,37),(35,33),(-35,34),(-34,-35)]:
-        for j in range(4):
-            size=RNG.uniform(1.1,2.6)
-            decor.absorb(models["rock"],(cx+RNG.uniform(-2.2,2.2),-.05,cz+RNG.uniform(-2.2,2.2)),RNG.uniform(0,6.28),(size,size*.8,size))
-    for i in range(150):
-        x,z=RNG.uniform(-39,39,2)
-        if reserved(x,z,1.0) or abs(x+.65*z)<5.8:continue
-        size=RNG.uniform(.14,.38)
-        decor.absorb(models["rock"],(x,-.01,z),RNG.uniform(0,math.tau),(size,size,size))
-    for i in range(1020):
-        x,z=RNG.uniform(-41,41,2)
-        if reserved(x,z,.6) or abs(x+.65*z)<7:continue
-        tuft(decor,x,z,RNG.uniform(.65,1.35))
-    # Scattered plank and masonry fragments around ruined walls.
-    for cx,cz in [(-16,-2),(13,0),(-21,-24),(30,-34)]:
-        decor.absorb(models["broken_wheel"],(cx+3.16,.02,cz-.65),.44,(1,1,1))
-        decor.absorb(models["broken_shield"],(cx+2.20,.02,cz+2.48),-.53,(.90,.90,.90))
-        decor.box((.19,.14,1.95),(cx-.2,.11,cz+2.75),"wood_dark",rot=(0,.71,0),bevel=.014)
-        decor.box((.13,.12,1.22),(cx+.37,.11,cz+3.13),"wood",rot=(0,-.23,0),bevel=.014)
-        for i in range(17):
-            a=RNG.uniform(0,math.tau);r=RNG.uniform(2.2,4.4)
+        if reserved(x,z,1.8) or abs(x+.65*z)/1.19<5.3:continue
+        size=RNG.uniform(.78,1.13)
+        name="tree_oak" if i%3==0 else "tree_pine"
+        decor.absorb(models[name],(x,0,z),RNG.uniform(0,math.tau),(size,size,size))
+        width=(.92 if name=="tree_oak" else .70)*size
+        obstacle(f"BoundaryTree{i}",x,z,width,3.0*size,width)
+    # Small ground stones are below a footstep, visually grounding obstacle bases.
+    for name,label,cx,cz,angle,scale in instances:
+        for j in range(4 if name.startswith("rock") else 2):
+            a=RNG.uniform(0,math.tau)
+            r=RNG.uniform(1.3,2.2) if name.startswith("rock") else RNG.uniform(.9,1.4)
             x,z=cx+math.cos(a)*r,cz+math.sin(a)*r
-            if abs(x+.65*z)<4.5:continue
-            s=RNG.uniform(.21,.52)
-            if i%4==0:
-                decor.box((.13,.10,RNG.uniform(.45,1.15)),(x,.06,z),"wood_dark",rot=(0,RNG.uniform(0,6.28),0))
-            else:
-                decor.absorb(models["rock"],(x,0,z),a,(s,s,s))
+            if reserved(x,z,1.4):continue
+            size=RNG.uniform(.11,.22)
+            decor.absorb(models["rock_medium"],(x,0,z),a,(size,size*.65,size))
+    for i in range(870):
+        x,z=RNG.uniform(-41,41,2)
+        if reserved(x,z,1.7) or abs(x+.65*z)<7.4:continue
+        tuft(decor,x,z,RNG.uniform(.65,1.27))
+    # ResourceVein scenes in main own both mine visuals and physics. These entries
+    # are exclusively their permanent offline navigation/build-placement footprint.
+    for i,(x,z) in enumerate(RESOURCE_VEINS):
+        obstacle(f"GoldVein{i+1}",x,z,4.4,2.2,4.4,resource=True)
     decor.save("world_details",False)
-    # One saved physics floor and explicit box colliders for solid architecture.
-    lines=['[gd_scene load_steps=%d format=3]'%(5+len({n for n,*_ in instances})+len(obstacles)), '', '[ext_resource type="PackedScene" path="res://assets/models/environment/terrain.glb" id="1_terrain"]', '[ext_resource type="PackedScene" path="res://assets/models/environment/world_details.glb" id="2_details"]']
+    solids=[item for item in obstacles if not item.get("resource",False)]
+    names=sorted({name for name,*_ in instances})
+    lines=['[gd_scene load_steps=%d format=3]'%(4+len(names)+len(solids)),
+           '[ext_resource type="PackedScene" path="res://assets/models/environment/terrain.glb" id="1_terrain"]',
+           '[ext_resource type="PackedScene" path="res://assets/models/environment/world_details.glb" id="2_details"]']
     ids={}
-    for i,name in enumerate(sorted({n for n,*_ in instances})):
+    for i,name in enumerate(names):
         ids[name]=f"{i+3}_{name}"
         lines.append(f'[ext_resource type="PackedScene" path="res://assets/models/environment/{name}.tscn" id="{ids[name]}"]')
-    lines += ['', '[sub_resource type="BoxShape3D" id="FloorShape"]','size = Vector3(84, 1, 84)']
-    for i,o in enumerate(obstacles):
-        lines += ['',f'[sub_resource type="BoxShape3D" id="ObstacleShape{i}"]',f'size = Vector3({o["size"][0]:.4f}, {o["size"][1]:.4f}, {o["size"][2]:.4f})']
-    lines += ['','[node name="Environment" type="Node3D"]','','[node name="EarthAndAncientRoad" parent="." instance=ExtResource("1_terrain")]','','[node name="TownDetailsAndBoundaryGrove" parent="." instance=ExtResource("2_details")]','','[node name="Ground" type="StaticBody3D" parent="."]','collision_layer = 1','collision_mask = 0','','[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]','position = Vector3(0, -0.53, 0)','shape = SubResource("FloorShape")','','[node name="Architecture" type="Node3D" parent="."]']
+    lines+=['[sub_resource type="BoxShape3D" id="FloorShape"]\nsize = Vector3(84, 1, 84)']
+    for i,item in enumerate(solids):
+        w,h,d=item["size"]
+        lines.append(f'[sub_resource type="BoxShape3D" id="ObstacleShape{i}"]\nsize = Vector3({w:.4f}, {h:.4f}, {d:.4f})')
+    lines += ['[node name="Environment" type="Node3D"]',
+              '[node name="EarthAndAncientRoad" parent="." instance=ExtResource("1_terrain")]',
+              '[node name="GroundCoverAndBoundaryGrove" parent="." instance=ExtResource("2_details")]',
+              '[node name="Ground" type="StaticBody3D" parent="."]\ncollision_layer = 1\ncollision_mask = 0',
+              '[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]\nposition = Vector3(0, -0.53, 0)\nshape = SubResource("FloorShape")',
+              '[node name="NaturalObstacles" type="Node3D" parent="."]']
     for name,label,x,z,angle,scale in instances:
-        lines += ['',f'[node name="{label}" parent="Architecture" instance=ExtResource("{ids[name]}")]',f'position = Vector3({x}, 0, {z})',f'rotation = Vector3(0, {angle:.6f}, 0)',f'scale = Vector3({scale}, {scale}, {scale})']
-    lines += ['','[node name="SolidEnvironment" type="StaticBody3D" parent="."]','collision_layer = 1','collision_mask = 0']
-    for i,o in enumerate(obstacles):
-        pos=o["position"]
-        lines += ['',f'[node name="{o["name"]}" type="CollisionShape3D" parent="SolidEnvironment"]',f'position = Vector3({pos[0]:.4f}, {pos[1]:.4f}, {pos[2]:.4f})',f'rotation = Vector3(0, {o["rotation_y"]:.6f}, 0)',f'shape = SubResource("ObstacleShape{i}")']
-    write_asset(SCENES/"environment.tscn",'\n'.join(lines)+'\n')
-    write_asset(ROOT/"assets/environment_obstacles.json",json.dumps({"version":1,"bounds":[-42,-42,42,42],"obstacles":obstacles},indent=2))
+        lines.append(f'[node name="{label}" parent="NaturalObstacles" instance=ExtResource("{ids[name]}")]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)\nscale = Vector3({scale},{scale},{scale})')
+    lines += ['[node name="SolidEnvironment" type="StaticBody3D" parent="."]\ncollision_layer = 1\ncollision_mask = 0']
+    for i,item in enumerate(solids):
+        x,y,z=item["position"]
+        lines.append(f'[node name="{item["name"]}" type="CollisionShape3D" parent="SolidEnvironment"]\nposition = Vector3({x:.4f},{y:.4f},{z:.4f})\nrotation = Vector3(0,{item["rotation_y"]:.6f},0)\nshape = SubResource("ObstacleShape{i}")')
+    write_asset(SCENES/"environment.tscn","\n\n".join(lines)+"\n")
+    write_asset(ROOT/"assets/environment_obstacles.json",json.dumps({"version":2,"bounds":[-42,-42,42,42],
+                "resource_veins":[{"name":f"GoldVein{i+1}","position":[x,0,z],"radius":2.2} for i,(x,z) in enumerate(RESOURCE_VEINS)],
+                "obstacles":obstacles},indent=2))
 
 
 def main():
     global RNG
     RNG=np.random.default_rng(932710)
     models={"headquarters":headquarters(),"enemy_keep":enemy_keep(),"barracks":house(True),"tower":tower(),"house":house(),"ruin":ruin(),"wall":wall(),"palisade":palisade(),"barrel":barrel(),"crate":crate(),"tree":tree(),"rock":rock(),"well":well(),"cart":cart(),"tent":tent(),"sacks":sacks(),"hay_bale":hay_bale(),"campfire":campfire(),"broken_wheel":broken_wheel(),"broken_shield":broken_shield()}
+    # Existing military sculpture seeds remain untouched by the new natural set.
+    models.update({"gold_vein":gold_vein(),"rock_large":natural_rock(),"rock_medium":natural_rock(False),
+                   "tree_oak":oak_tree(),"tree_pine":pine_tree(),"defense_tower":defense_tower(),"scaffolding":scaffolding()})
     manifest={name:model.save(name) for name,model in models.items()}
     # Independent random streams keep later terrain edits from moving houses,
     # trees, navigation blockers or functional prop clusters.

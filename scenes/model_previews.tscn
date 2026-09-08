@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/model_previews.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/models/units/swordsman.tscn" id="2_model"]
@@ -7,6 +7,11 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/catapult.tscn" id="5_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/cannon.tscn" id="6_model"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/headquarters.tscn" id="7_model"]
+
+
+[ext_resource type="PackedScene" path="res://assets/models/units/farmer.tscn" id="farmer_model"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/gold_vein.tscn" id="mine_model"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/defense_tower.tscn" id="tower_model"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial"]
 sky_top_color = Color(0.42, 0.50, 0.61, 1)
@@ -254,3 +259,113 @@ far = 60.0
 current = true
 
 [connection signal="timeout" from="PreviewTick" to="." method="_advance_portrait"]
+
+[node name="farmer" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="farmer"]
+
+[node name="Model" parent="farmer/World" instance=ExtResource("farmer_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="farmer/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="farmer/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="farmer/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="farmer/World"]
+position = Vector3(0, 0.98, 0)
+
+[node name="Camera3D" type="Camera3D" parent="farmer/World"]
+position = Vector3(3.2, 2.5, -5.5)
+projection = 1
+size = 2.6
+near = 0.1
+far = 60.0
+current = true
+
+
+[node name="gold_vein" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="gold_vein"]
+
+[node name="Model" parent="gold_vein/World" instance=ExtResource("mine_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="gold_vein/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="gold_vein/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="gold_vein/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="gold_vein/World"]
+position = Vector3(0, 1.0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="gold_vein/World"]
+position = Vector3(3.2, 2.5, -5.5)
+projection = 1
+size = 6.0
+near = 0.1
+far = 60.0
+current = true
+
+
+[node name="defense_tower" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="defense_tower"]
+
+[node name="Model" parent="defense_tower/World" instance=ExtResource("tower_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="defense_tower/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="defense_tower/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="defense_tower/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="defense_tower/World"]
+position = Vector3(0, 3.0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="defense_tower/World"]
+position = Vector3(8, 7, -11)
+projection = 1
+size = 7.6
+near = 0.1
+far = 60.0
+current = true
