@@ -1192,6 +1192,43 @@ text = "重新开始"
 unique_name_in_owner = true
 focus_mode = 0
 
+[node name="SoundCaption" type="Label" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 54
+offset_top = 132
+offset_right = 116
+offset_bottom = 157
+text = "音效"
+mouse_filter = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+unique_name_in_owner = true
+
+[node name="SoundVolume" type="HSlider" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 119
+offset_top = 133
+offset_right = 335
+offset_bottom = 157
+min_value = 0.0
+max_value = 100.0
+step = 1.0
+value = 85.0
+unique_name_in_owner = true
+focus_mode = 0
+tooltip_text = "调整游戏音效音量；不播放背景音乐"
+
+[node name="SoundMute" type="CheckButton" parent="PauseOverlay/Paper"]
+layout_mode = 0
+offset_left = 346
+offset_top = 130
+offset_right = 437
+offset_bottom = 159
+text = "静音"
+unique_name_in_owner = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+
 [node name="ResultOverlay" type="ColorRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0

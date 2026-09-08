@@ -122,12 +122,7 @@ func _run() -> void:
 
 func _load_battle() -> void:
 	if is_instance_valid(game):
-		for player: Node in game.get_node("Audio").get_children():
-			player.stop()
-		for effect: Node in game.get_node("Effects").get_children():
-			if effect is BattleEffect:
-				effect.get_node("Sound").stop()
-		await create_timer(0.1).timeout
+		await game.prepare_shutdown()
 	change_scene_to_file("res://scenes/main.tscn")
 	await scene_changed
 	game = current_scene
@@ -167,8 +162,5 @@ func _finish() -> void:
 	report.store_string(JSON.stringify(result, "  "))
 	report.close()
 	print("BATTLE_SCENARIO ", JSON.stringify(result))
-	for player: Node in game.get_node("Audio").get_children():
-		player.stop()
-	# Let normal finite effects finish before shutting down the audio mixer.
-	await create_timer(3.2).timeout
+	await game.prepare_shutdown()
 	quit(0 if failures.is_empty() else 1)

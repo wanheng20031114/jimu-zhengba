@@ -2,27 +2,12 @@ class_name BattleEffect
 extends Node3D
 ## Reusable authored particle scene. Only the relevant emitters are activated.
 
-const SOUNDS: Dictionary = {
-	"hit": preload("res://assets/audio/sword_hit.wav"),
-	"arrow_hit": preload("res://assets/audio/arrow_hit.wav"),
-	"muzzle": preload("res://assets/audio/cannon.wav"),
-	"stone_hit": preload("res://assets/audio/stone_hit.wav"),
-	"collapse": preload("res://assets/audio/collapse.wav"),
-	"spawn": preload("res://assets/audio/recruit.wav"),
-}
-const SOUND_VOLUME_DB: Dictionary = {"hit": -9.0, "arrow_hit": -10.0, "muzzle": -7.0, "stone_hit": -8.0, "collapse": -7.0, "spawn": -10.0}
-const SOUND_INTERVAL_MS: Dictionary = {"hit": 75, "arrow_hit": 90, "muzzle": 150, "stone_hit": 150, "collapse": 250, "spawn": 100}
-static var _next_sound_ms: Dictionary = {}
-
-func _exit_tree() -> void:
-	$Sound.stop()
-
 func initialize(kind: String, color: Color = Color.WHITE) -> void:
 	var duration: float = 1.4
 	$Sparks.color = color
 	$Ring.material_override.albedo_color = color
 	match kind:
-		"hit", "arrow_hit":
+		"hit", "arrow_hit", "wood_hit", "stone_chip":
 			$Sparks.amount = 7 if kind == "hit" else 3
 			$Sparks.restart()
 			$Sparks.emitting = true
@@ -88,21 +73,7 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 		_:
 			$Dust.restart()
 			$Dust.emitting = true
-	$Lifetime.start(maxf(duration, _play_sound(kind)))
-
-func _play_sound(kind: String) -> float:
-	if not SOUNDS.has(kind):
-		return 0.0
-	var now: int = Time.get_ticks_msec()
-	if now < int(_next_sound_ms.get(kind, 0)):
-		return 0.0
-	_next_sound_ms[kind] = now + int(SOUND_INTERVAL_MS[kind])
-	$Sound.stream = SOUNDS[kind]
-	$Sound.volume_db = SOUND_VOLUME_DB[kind]
-	$Sound.pitch_scale = randf_range(0.95, 1.05)
-	$Sound.play()
-	# Keep the existing scene alive for the full cannon/collapse tail.
-	return $Sound.stream.get_length() / $Sound.pitch_scale + 0.05
+	$Lifetime.start(duration)
 
 func _show_ring(color: Color, end_size: float, duration: float) -> void:
 	$Ring.show()

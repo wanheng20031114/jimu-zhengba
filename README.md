@@ -19,6 +19,7 @@
 - 每秒自动增加 **1 金币**，**F12** 通过 `debug_gold` 输入映射增加 **100 金币**。
 - 消灭守军并摧毁四座敌方军事建筑获胜；大本营被摧毁则失败。
 - 敌方兵营定时派出援军，摧毁兵营可切断增援；摧毁军事建筑获得 90 金币。
+- 连续对同一目标下达攻击命令会保留当前攻击进度；切换目标仍立即响应。
 
 | 操作 | 按键 |
 | --- | --- |
@@ -41,12 +42,21 @@
 | 全屏 / 静音 | F11 / M |
 | 调试金币 | F12 |
 
+## 音效
+
+包含 **54 个 WAV 变体、22 类运行事件**，覆盖五兵种挥击与发射、不同材质命中、炮弹爆炸、步伐、马蹄、车轮、死亡、建筑倒塌、招募和操作反馈。轻石击 `stone_chip` 复用投石命中的三个样本并降低增益。**不播放 BGM**；按 **Esc** 可调整音效音量，**M** 切换静音。
+
+声音结合 [Kenney Impact Sounds](https://kenney.nl/assets/impact-sounds)、[Kenney Interface Sounds](https://kenney.nl/assets/interface-sounds) 和 [Vehicle / Jan Schupke 武器与装备拟音](https://opengameart.org/content/fantasy-weapons-and-apparel-sfx-library) 的 CC0 录音，以及项目自制合成层。原音源、许可和离线重建记录见 [音效来源](assets/audio/CREDITS.md)。
+
+运行时使用 **38 个原生声部**（战斗 24、步伐等拟音 8、界面 6），限制同类连发与同时播放数量，并避免连续使用同一变体。监听点位于镜头所看战场上方，配合距离衰减、战斗总线轻压缩和 Master −1 dB 限峰；不会因 RTS 相机悬在高空而让近处战斗过分微弱。
+
 ## 美术与工程
 
 模型均为本项目离线建模脚本制作的真实 3D 网格。单位以原生场景关节及 `AnimationPlayer` 实现动作；建筑、场景道具、碰撞和界面保存为可编辑 Godot 场景。招募栏直接展示游戏内模型，使用缓存的原生 3D 视口；只有活动预览以 15 FPS 更新。
 
 - `assets/models/units/`：五兵种模型、原生关节网格与动作。
 - `assets/models/environment/`：建筑、废墟、道路、植被、营地与道具。
+- `assets/audio/`：运行音效、CC0 原音源、来源及响度记录。
 - `scenes/`：主战场、实体、界面、弹丸与粒子场景。
 - `scripts/`：RTS 操作、经济、导航、战斗、界面。
 - `tools/`：离线模型、界面与导航作者脚本。
@@ -62,8 +72,12 @@ Godot_console.exe --headless --path . -- --ui-smoke
 Godot_console.exe --headless --path . --script res://tests/combat_smoke.gd
 Godot_console.exe --headless --path . --script res://tests/battle_scenario.gd
 Godot_console.exe --headless --path . --script res://tests/navigation_audit.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/audio_runtime_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/shutdown_lifecycle.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/audio_pause_boundary.gd
+Godot_console.exe --path . --rendering-driver d3d12 --audio-driver Dummy --script res://tests/repeated_attack_test.gd
 ```
 
-整合测试覆盖经济、F12 输入、即时生产、编队、导航、死亡、建筑奖励与胜负流程。原生视口验证覆盖实际模型预览、动作出手帧和鼠标输入；环境模型另有重复面与连续镜头检查。
+本轮通过主流程 31 项、输入 24 项、重复攻击回归 116 项（D3D12）、音频运行检查 184 项、退出生命周期 49 项和同帧暂停边界 10 项。音频测试通过 Dummy 驱动捕获 Godot Master 总线，覆盖五兵种实际动作链、22 类事件和大量并发请求；该次混合峰值为 −4.24 dBFS。测试没有向系统扬声器播放，也不将数值验证称为人工试听。完整范围见 [验证记录](docs/validation.md)。
 
-最终性能验证使用 RTX 3080、1600×900、Forward+ / Vulkan：160 人行军平均约 83 FPS，混战平均约 89 FPS，混战 P95 帧耗时约 15 ms。同版本 D3D12 对照较慢，因此选择 Vulkan 为默认后端。数据来自开发机器，不代表所有设备的帧率；方法和历史数据见 [性能验证](tests/performance_review.md)。
+音效接入后，以 RTX 3080、1600×900、Forward+ / Vulkan 实际渲染复测：160 人行军平均约 88 FPS，初始 160 人混战平均约 94 FPS、P95 帧耗时约 14 ms，61 项压力检查通过。音频混音使用 Dummy 驱动运行；这些数据不代表所有设备的帧率。默认 Vulkan 来自此前后端对照，方法和阶段差异见 [性能验证](tests/performance_review.md)。

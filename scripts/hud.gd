@@ -44,6 +44,9 @@ func _ready() -> void:
 	%ResumeButton.pressed.connect(func(): game.toggle_pause())
 	%RestartButton.pressed.connect(func(): game.restart())
 	%ResultRestart.pressed.connect(func(): game.restart())
+	%SoundVolume.value_changed.connect(_on_sound_volume_changed)
+	%SoundVolume.drag_ended.connect(func(_changed: bool): game.get_node("Audio").play_ui(&"select"))
+	%SoundMute.toggled.connect(func(_value: bool): game.toggle_sound())
 	%Minimap.map_clicked.connect(func(at: Vector3, command: bool): game._on_minimap_clicked(at, command))
 	for index in range(1, 10):
 		var button: Button = get_node("Groups/Group" + str(index))
@@ -52,6 +55,17 @@ func _ready() -> void:
 func bind_game(controller: Node3D) -> void:
 	game = controller
 	%Minimap.game = controller
+	refresh_sound_settings()
+
+func refresh_sound_settings() -> void:
+	var audio: Node = game.get_node("Audio")
+	%SoundVolume.set_value_no_signal(audio.volume_percent())
+	%SoundMute.set_pressed_no_signal(audio.muted)
+	%SoundCaption.text = "音效 %d%%" % roundi(audio.volume_percent())
+
+func _on_sound_volume_changed(value: float) -> void:
+	game.get_node("Audio").set_volume_percent(value)
+	refresh_sound_settings()
 
 func _process(delta: float) -> void:
 	$ModelPreviews.set_animated((_hovered_preview if not _hovered_preview.is_empty() else _selected_preview) if visible and not get_tree().paused else "")
@@ -65,6 +79,9 @@ func _input(event: InputEvent) -> void:
 	if get_tree().paused and event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_ESCAPE or event.physical_keycode == KEY_P:
 			game.toggle_pause()
+			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_M:
+			game.toggle_sound()
 			get_viewport().set_input_as_handled()
 
 func refresh() -> void:
@@ -159,6 +176,7 @@ func toast(message: String, duration: float = 2.0) -> void:
 
 func toggle_help() -> void:
 	%HelpOverlay.visible = not %HelpOverlay.visible
+	game.get_node("Audio").play_ui(&"select")
 
 func help_visible() -> bool:
 	return %HelpOverlay.visible

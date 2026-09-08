@@ -80,9 +80,12 @@ func _impact() -> void:
 	_active = false
 	var damage_source: Node3D = _source if is_instance_valid(_source) else null
 	if _kind == "arrow":
+		var impact_kind: String = "arrow_hit"
 		if is_instance_valid(_target) and _target.alive and _target.team != _source_team:
+			if _target.is_in_group("buildings"):
+				impact_kind = _target.get_hit_effect()
 			_target.receive_damage(_damage, damage_source)
-		_game.spawn_effect(_end, "arrow_hit", Color("ead098"))
+		_game.spawn_effect(_end, impact_kind, Color("ead098"))
 	else:
 		_blast_query.transform.origin = Vector3(_end.x, 1.0, _end.z)
 		for hit: Dictionary in get_world_3d().direct_space_state.intersect_shape(_blast_query, 128):

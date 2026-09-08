@@ -1,0 +1,98 @@
+{
+  "sword_swing": [
+    "sword_swing_01.wav",
+    "sword_swing_02.wav",
+    "sword_swing_03.wav"
+  ],
+  "sword_hit": [
+    "sword_hit_01.wav",
+    "sword_hit_02.wav",
+    "sword_hit_03.wav",
+    "sword_hit_04.wav"
+  ],
+  "bow_release": [
+    "bow_release_01.wav",
+    "bow_release_02.wav",
+    "bow_release_03.wav"
+  ],
+  "arrow_hit": [
+    "arrow_hit_01.wav",
+    "arrow_hit_02.wav",
+    "arrow_hit_03.wav"
+  ],
+  "wood_hit": [
+    "wood_hit_01.wav",
+    "wood_hit_02.wav",
+    "wood_hit_03.wav"
+  ],
+  "catapult_release": [
+    "catapult_release_01.wav",
+    "catapult_release_02.wav"
+  ],
+  "stone_hit": [
+    "stone_hit_01.wav",
+    "stone_hit_02.wav",
+    "stone_hit_03.wav"
+  ],
+  "cannon_shot": [
+    "cannon_shot_01.wav",
+    "cannon_shot_02.wav"
+  ],
+  "explosion": [
+    "explosion_01.wav",
+    "explosion_02.wav"
+  ],
+  "footstep_dirt": [
+    "footstep_dirt_01.wav",
+    "footstep_dirt_02.wav",
+    "footstep_dirt_03.wav",
+    "footstep_dirt_04.wav"
+  ],
+  "horse_hoof": [
+    "horse_hoof_01.wav",
+    "horse_hoof_02.wav",
+    "horse_hoof_03.wav",
+    "horse_hoof_04.wav"
+  ],
+  "cart_wheel": [
+    "cart_wheel_01.wav",
+    "cart_wheel_02.wav",
+    "cart_wheel_03.wav"
+  ],
+  "death_fall": [
+    "death_fall_01.wav",
+    "death_fall_02.wav",
+    "death_fall_03.wav"
+  ],
+  "collapse": [
+    "collapse_01.wav",
+    "collapse_02.wav"
+  ],
+  "ui_select": [
+    "ui_select_01.wav",
+    "ui_select_02.wav"
+  ],
+  "ui_order": [
+    "ui_order_01.wav",
+    "ui_order_02.wav"
+  ],
+  "ui_recruit": [
+    "ui_recruit_01.wav",
+    "ui_recruit_02.wav"
+  ],
+  "ui_denied": [
+    "ui_denied_01.wav",
+    "ui_denied_02.wav"
+  ],
+  "coin": [
+    "coin_01.wav",
+    "coin_02.wav",
+    "coin_03.wav"
+  ],
+  "victory": [
+    "victory.wav"
+  ],
+  "defeat": [
+    "defeat.wav"
+  ]
+}

@@ -1,0 +1,34 @@
+[gd_resource type="AudioBusLayout" load_steps=3 format=3]
+
+[sub_resource type="AudioEffectHardLimiter" id="master_limiter"]
+resource_name = "Peak ceiling -1 dB"
+ceiling_db = -1.0
+pre_gain_db = 0.0
+release = 0.12
+
+[sub_resource type="AudioEffectCompressor" id="combat_compressor"]
+resource_name = "Crowd dynamics"
+threshold = -16.0
+ratio = 2.5
+attack_us = 2000.0
+release_ms = 160.0
+gain = 0.0
+mix = 0.7
+
+[resource]
+bus/0/name = &"Master"
+bus/0/volume_db = -1.411621
+bus/0/mute = false
+bus/0/effect/0/effect = SubResource("master_limiter")
+bus/0/effect/0/enabled = true
+bus/1/name = &"UI"
+bus/1/send = &"Master"
+bus/1/volume_db = 0.0
+bus/2/name = &"Combat"
+bus/2/send = &"Master"
+bus/2/volume_db = 0.0
+bus/2/effect/0/effect = SubResource("combat_compressor")
+bus/2/effect/0/enabled = true
+bus/3/name = &"Foley"
+bus/3/send = &"Master"
+bus/3/volume_db = -2.0

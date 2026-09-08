@@ -17,5 +17,15 @@ Ctrl + 数字建立/覆盖编队，Shift + 数字添加所选部队，数字召�
 B 选中大本营，G 选中全军，空格定位所选部队。
 选中大本营后右键地面设置集结点。
 F1 操作说明，Esc 暂停/继续，F11 全屏，M 静音，F10 隐藏界面。
+Esc 暂停界面提供音效音量滑块。当前版本不播放背景音乐。
+连续右键攻击同一目标不会重新开始攻击前摇；改攻其他目标仍立即响应。
+
+音效包含 54 个 WAV 变体、22 类事件，覆盖攻击、发射、命中、移动、死亡、倒塌及操作反馈。
+38 个固定声部结合距离衰减、同类限流、战斗轻压缩与总线限峰，控制大规模交战时的响度。
+原始录音来自下列 CC0 音源，并加入项目自制合成层：
+Kenney Impact Sounds：https://kenney.nl/assets/impact-sounds
+Kenney Interface Sounds：https://kenney.nl/assets/interface-sounds
+Vehicle / Jan Schupke：https://opengameart.org/content/fantasy-weapons-and-apparel-sfx-library
+完整来源与修改记录见仓库 assets/audio/CREDITS.md。
 
 源代码及更新：https://github.com/wanheng20031114/middle-ages-battle

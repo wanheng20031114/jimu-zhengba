@@ -69,24 +69,6 @@ func _run() -> void:
 	await physics_frame
 	await physics_frame
 	await physics_frame
-	if "--audio-only" in OS.get_cmdline_user_args():
-		for kind: String in ["hit", "arrow_hit", "muzzle", "stone_hit", "collapse", "spawn"]:
-			var audible: Node3D = CombatHost.EFFECT_SCENE.instantiate()
-			host.add_child(audible)
-			audible.initialize(kind)
-			var sound: AudioStreamPlayer3D = audible.get_node("Sound")
-			_check(sound.stream != null and sound.stream.get_length() > 0.1, "%s maps to an imported sound" % kind)
-			_check(sound.volume_db <= -7.0 and sound.max_distance == 100.0, "%s uses bounded volume and distance" % kind)
-			_check(audible.get_node("Lifetime").wait_time >= sound.stream.get_length() / sound.pitch_scale, "%s keeps its complete sound tail" % kind)
-			var throttled: Node3D = CombatHost.EFFECT_SCENE.instantiate()
-			host.add_child(throttled)
-			throttled.initialize(kind)
-			_check(throttled.get_node("Sound").stream == null, "%s limits simultaneous repeated sound" % kind)
-			throttled.queue_free()
-		await create_timer(3.2).timeout
-		print("COMBAT_AUDIO: ", failures.size(), " failures")
-		quit(0 if failures.is_empty() else 1)
-		return
 	if "--effects-only" in OS.get_cmdline_user_args():
 		for kind: String in ["hit", "arrow_hit", "dust", "muzzle", "explosion", "stone_hit", "collapse", "move", "attack", "spawn", "heal", "charge"]:
 			print("EFFECT: ", kind)

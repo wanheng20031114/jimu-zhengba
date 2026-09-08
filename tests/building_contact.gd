@@ -93,9 +93,7 @@ func _finish() -> void:
 	for effect: Node in game.get_node("Effects").get_children():
 		if effect is BattleProjectile:
 			effect.set_physics_process(false)
-	for player: Node in game.get_node("Audio").get_children():
-		player.stop()
-	await create_timer(3.2).timeout
+	await game.prepare_shutdown()
 	var report := FileAccess.open("res://artifacts/building_contact.json", FileAccess.WRITE)
 	report.store_string(JSON.stringify({"checks": check_count, "failures": failures}, "  "))
 	report.close()

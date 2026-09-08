@@ -144,6 +144,9 @@ label('Eyebrow','PauseOverlay/Paper','ASHEN CROWN',32,25,416,24,12,'Color(0.82,0
 label('Title','PauseOverlay/Paper','战斗已暂停',32,74,416,46,29,bold=True,horizontal_alignment='1')
 button('ResumeButton','PauseOverlay/Paper','继续战斗  [Esc]',54,169,372,44)
 button('RestartButton','PauseOverlay/Paper','重新开始',54,230,372,40)
+label('SoundCaption','PauseOverlay/Paper','音效',54,132,62,25,13,unique=True)
+s.node('SoundVolume','HSlider','PauseOverlay/Paper',**rect(119,133,216,24),min_value='0.0',max_value='100.0',step='1.0',value='85.0',unique_name_in_owner='true',focus_mode='0',tooltip_text=q('调整游戏音效音量；不播放背景音乐'))
+s.node('SoundMute','CheckButton','PauseOverlay/Paper',**rect(346,130,91,29),text=q('静音'),unique_name_in_owner='true',focus_mode='0',**{'theme_override_font_sizes/font_size':'12'})
 
 overlay('ResultOverlay')
 s.node('Paper','Panel','ResultOverlay',layout_mode='0',anchor_left='0.5',anchor_right='0.5',anchor_top='0.5',anchor_bottom='0.5',offset_left='-340',offset_top='-205',offset_right='340',offset_bottom='205')
@@ -171,6 +174,7 @@ m.node('WorldEnvironment','WorldEnvironment','.',environment='SubResource("world
 m.node('Sun','DirectionalLight3D','.',rotation_degrees='Vector3(-54,-31,0)',light_color='Color(1,0.89,0.72,1)',light_energy='1.15',shadow_enabled='true',directional_shadow_max_distance='135.0',shadow_bias='0.06',shadow_normal_bias='2.0',directional_shadow_blend_splits='true',directional_shadow_mode='2',light_angular_distance='1.6')
 m.node('CameraRig','Node3D','.',position='Vector3(-12,0,18)',script='ExtResource("camera")')
 m.node('Camera3D','Camera3D','CameraRig',position='Vector3(-12.053,42,33.115)',rotation_degrees='Vector3(-50,-20,0)',projection='1',size='31.0',near='0.1',far='220.0',current='true')
+m.node('AudioListener3D','AudioListener3D','CameraRig',position='Vector3(0,6,0)',rotation_degrees='Vector3(0,-20,0)')
 m.instance('Environment','.','environment')
 m.node('NavigationRegion3D','NavigationRegion3D','.',navigation_mesh='ExtResource("nav")')
 m.node('ClearedNavigation','Node3D','.')

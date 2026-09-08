@@ -1,2 +1,5 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# Preserve third-party originals, including the authors' license line endings.
+assets/audio/sources/** -text whitespace=-blank-at-eol

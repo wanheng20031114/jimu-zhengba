@@ -7,6 +7,7 @@ const UNIT_TYPES := ["swordsman", "archer", "knight", "catapult", "cannon"]
 const UNIT_COSTS := {"swordsman": 45, "archer": 60, "knight": 100, "catapult": 140, "cannon": 180}
 const UNIT_NAMES := {"swordsman": "剑士", "archer": "弓箭手", "knight": "骑士", "catapult": "投石车", "cannon": "加农炮"}
 const MAX_ARMY: int = 160
+const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit", "stone_chip": &"stone_chip", "arrow_hit": &"arrow_hit", "muzzle": &"cannon_shot", "explosion": &"explosion", "stone_hit": &"stone_hit", "collapse": &"collapse"}
 
 @onready var camera_rig = $CameraRig
 @onready var camera: Camera3D = $CameraRig/Camera3D
@@ -45,6 +46,8 @@ var _closing: bool = false
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
 	hud.bind_game(self)
+	for entity: Node3D in get_tree().get_nodes_in_group("entities"):
+		entity.sound_requested.connect($Audio.play_world)
 	$IncomeTimer.timeout.connect(_on_income)
 	$EnemyTimer.timeout.connect(_on_enemy_wave)
 	$IncomeTimer.start()
@@ -190,8 +193,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_Y: recruit("cannon")
 			KEY_P: toggle_pause()
 			KEY_M:
-				var muted: bool = $Audio.toggle_mute()
-				hud.toast("声音已关闭" if muted else "声音已开启", 1.5)
+				toggle_sound()
 
 func entity_at(screen: Vector2) -> Node3D:
 	var from := camera.project_ray_origin(screen)
@@ -275,6 +277,7 @@ func command_move(destination: Vector3, assault: bool = false, queued: bool = fa
 			rally_point = destination
 			$RallyMarker.global_position = destination
 			spawn_effect(destination, "move", Color("e6bd69"))
+			$Audio.play_ui(&"order")
 			hud.toast("集结点已设置", 2.0)
 		return
 	var columns := int(ceil(sqrt(float(army.size()))))
@@ -317,18 +320,21 @@ func stop_selected() -> void:
 	for unit in own_selected_units():
 		unit.stop()
 	set_attack_mode(false)
+	$Audio.play_ui(&"order")
 	hud.toast("部队停止", 1.5)
 
 func hold_selected() -> void:
 	for unit in own_selected_units():
 		unit.hold()
 	set_attack_mode(false)
+	$Audio.play_ui(&"order")
 	hud.toast("坚守阵地", 1.5)
 
 func set_attack_mode(value: bool) -> void:
 	attack_mode = value and not own_selected_units().is_empty()
 	overlay.attack_cursor = attack_mode
 	if attack_mode:
+		$Audio.play_ui(&"select")
 		hud.toast("选择攻击目标或前进位置 · 右键取消", 8.0)
 	hud.refresh()
 
@@ -357,6 +363,7 @@ func use_control_group(number: int, assign: bool = false, append: bool = false) 
 	if append:
 		var selected := own_selected_units()
 		if selected.is_empty():
+			$Audio.play_ui(&"denied")
 			hud.toast("先选择要加入编队的部队", 2.0)
 			return
 		var group: Array = control_groups.get(number, []).filter(func(entity): return is_instance_valid(entity) and entity.alive)
@@ -364,13 +371,16 @@ func use_control_group(number: int, assign: bool = false, append: bool = false) 
 			if unit not in group:
 				group.append(unit)
 		control_groups[number] = group
+		$Audio.play_ui(&"order")
 		hud.toast("已加入编队 %d · 共 %d 人" % [number, group.size()], 2.0)
 	elif assign:
 		var selected := own_selected_units()
 		if selected.is_empty():
+			$Audio.play_ui(&"denied")
 			hud.toast("先选择部队，再按 Ctrl + 数字编队", 2.5)
 			return
 		control_groups[number] = selected.duplicate()
+		$Audio.play_ui(&"order")
 		hud.toast("编队 %d · %d 名士兵" % [number, selected.size()], 2.0)
 	elif control_groups.has(number):
 		var group: Array = control_groups[number].filter(func(entity): return is_instance_valid(entity) and entity.alive)
@@ -382,6 +392,7 @@ func use_control_group(number: int, assign: bool = false, append: bool = false) 
 		_last_group = number
 		_last_group_time = now
 	else:
+		$Audio.play_ui(&"denied")
 		hud.toast("Ctrl + %d 创建编队" % number, 2.0)
 	hud.refresh()
 
@@ -389,12 +400,15 @@ func recruit(kind: String) -> bool:
 	if finished or get_tree().paused:
 		return false
 	if not headquarters.alive or headquarters not in selection:
+		$Audio.play_ui(&"denied")
 		hud.toast("选择大本营后招募部队 · 快捷键 B", 2.5)
 		return false
 	if gold < UNIT_COSTS[kind]:
+		$Audio.play_ui(&"denied")
 		hud.toast("金币不足 · 需要 %d 金币" % UNIT_COSTS[kind], 2.0)
 		return false
 	if player_count() >= MAX_ARMY:
+		$Audio.play_ui(&"denied")
 		hud.toast("军队已达 %d 人上限" % MAX_ARMY, 2.5)
 		return false
 	gold -= UNIT_COSTS[kind]
@@ -404,6 +418,7 @@ func recruit(kind: String) -> bool:
 	var target := rally_point + Vector3(randf_range(-2, 2), 0, randf_range(-2, 2))
 	unit.issue_move(target)
 	spawn_effect(at, "spawn", Color("84bfd9"))
+	$Audio.play_ui(&"recruit")
 	hud.toast(UNIT_NAMES[kind] + "已加入军队", 1.8)
 	hud.refresh()
 	return true
@@ -413,6 +428,7 @@ func spawn_unit(kind: String, faction: int, at: Vector3) -> Node3D:
 	unit.unit_type = kind
 	unit.team = faction
 	unit.position = at
+	unit.sound_requested.connect($Audio.play_world)
 	unit_container.add_child(unit)
 	return unit
 
@@ -424,6 +440,9 @@ func spawn_projectile(source: Node3D, target: Node3D, damage: float, kind: Strin
 	projectile.initialize(source, target, damage, kind)
 
 func spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE) -> void:
+	# Sound tails belong to the bounded mixer, independent of visual effect limits.
+	if EFFECT_SOUNDS.has(kind):
+		$Audio.play_world(EFFECT_SOUNDS[kind], at)
 	if effect_container.get_child_count() > 240:
 		return
 	var effect = EFFECT_SCENE.instantiate()
@@ -441,6 +460,7 @@ func on_entity_died(entity: Node3D) -> void:
 		elif entity.is_in_group("buildings"):
 			buildings_destroyed += 1
 			gold += 90
+			$Audio.play_ui(&"coin")
 			hud.toast("摧毁" + entity.display_name + " · 战利品 +90 金币", 3.0)
 	if entity == headquarters:
 		end_battle(false)
@@ -493,7 +513,16 @@ func toggle_pause() -> void:
 	if finished:
 		return
 	get_tree().paused = not get_tree().paused
+	$Audio.set_world_paused(get_tree().paused)
+	$Audio.play_ui(&"select")
 	hud.show_pause(get_tree().paused)
+
+func toggle_sound() -> void:
+	var is_muted: bool = $Audio.toggle_mute()
+	hud.refresh_sound_settings()
+	if not is_muted:
+		$Audio.play_ui(&"select")
+	hud.toast("声音已关闭" if is_muted else "声音已开启", 1.5)
 
 func end_battle(victory: bool) -> void:
 	if finished:
@@ -513,6 +542,7 @@ func end_battle(victory: bool) -> void:
 		if effect is BattleProjectile:
 			effect.queue_free()
 	hud.show_result(victory, elapsed, kills)
+	$Audio.play_ui(&"victory" if victory else &"defeat")
 
 func restart() -> void:
 	if _closing:
@@ -534,12 +564,7 @@ func prepare_shutdown() -> void:
 	for building in get_tree().get_nodes_in_group("buildings"):
 		building.set_physics_process(false)
 	for effect in effect_container.get_children():
-		if effect is BattleEffect:
-			var sound: AudioStreamPlayer3D = effect.get_node("Sound")
-			if sound.has_stream_playback():
-				retiring_playbacks.append(weakref(sound.get_stream_playback()))
-			sound.stop()
-		elif effect is BattleProjectile:
+		if effect is BattleProjectile:
 			effect.set_physics_process(false)
 	retiring_playbacks.append_array($Audio.stop_all())
 	# stop() requests an audio-thread fade and deferred main-thread deletion.

@@ -10,6 +10,7 @@ __pycache__/
 .local/
 builds/
 artifacts/*
+!artifacts/.gdignore
 !artifacts/battlefield.png
 !artifacts/integration-results.json
 tests/stress_*.png*

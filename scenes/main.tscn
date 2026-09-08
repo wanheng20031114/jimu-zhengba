@@ -104,6 +104,10 @@ near = 0.1
 far = 220.0
 current = true
 
+[node name="AudioListener3D" type="AudioListener3D" parent="CameraRig"]
+position = Vector3(0,6,0)
+rotation_degrees = Vector3(0,-20,0)
+
 [node name="Environment" parent="." instance=ExtResource("environment")]
 
 

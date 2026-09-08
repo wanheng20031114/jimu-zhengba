@@ -3,6 +3,7 @@ extends StaticBody3D
 ## Destructible fortification with an authored model and persistent rubble.
 
 signal died(entity: Node3D)
+signal sound_requested(kind: StringName, at: Vector3)
 
 const MODELS: Dictionary = {
 	"headquarters": preload("res://assets/models/environment/headquarters.tscn"),
@@ -100,6 +101,7 @@ func _physics_process(delta: float) -> void:
 				_target = entity
 	if is_instance_valid(_target) and _target.alive and _cooldown <= 0.0:
 		_cooldown = _stats.cooldown
+		sound_requested.emit(&"bow_release", get_projectile_origin())
 		_game.spawn_projectile(self, _target, _stats.damage, "arrow")
 
 func set_selected(value: bool) -> void:
@@ -114,6 +116,9 @@ func get_attack_position(from_position: Vector3) -> Vector3:
 
 func get_projectile_origin() -> Vector3:
 	return $ProjectileOrigin.global_position
+
+func get_hit_effect() -> String:
+	return "wood_hit" if building_type in ["tower", "house", "barracks"] else "stone_chip"
 
 func receive_damage(amount: float, source: Node3D = null) -> void:
 	if not alive or (is_instance_valid(source) and source.team == team):

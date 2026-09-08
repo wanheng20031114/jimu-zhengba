@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://audibility_baseline.gd" id="1"]
+
+[node name="AudibilityBaseline" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(-12.053, 42, 33.115)
+rotation_degrees = Vector3(-50, -20, 0)
+projection = 1
+size = 31.0
+current = true
+
+[node name="GroundListener" type="AudioListener3D" parent="."]
+position = Vector3(0, 6, 0)
+rotation_degrees = Vector3(-50, -20, 0)
+
+[node name="UI" type="AudioStreamPlayer" parent="."]
+volume_db = -15.0
+max_polyphony = 3
+
+[node name="WorldSound" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0, 1.1, 0)
+volume_db = -9.0
+unit_size = 28.0
+max_db = -6.0
+max_distance = 100.0
+panning_strength = 0.45

@@ -4,6 +4,7 @@ extends CharacterBody3D
 
 signal died(entity: Node3D)
 signal damaged(entity: Node3D, amount: float)
+signal sound_requested(kind: StringName, at: Vector3)
 
 const MODELS: Dictionary = {
 	"swordsman": preload("res://assets/models/units/swordsman.tscn"),
@@ -62,6 +63,7 @@ var _retaliation_time: float = 0.0
 var _corpse_meshes: Array[GeometryInstance3D] = []
 var _target_query: PhysicsShapeQueryParameters3D
 var _space_state: PhysicsDirectSpaceState3D
+var _foley_distance: float = 0.0
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var model_pivot: Node3D = $ModelPivot
@@ -91,6 +93,7 @@ func _ready() -> void:
 	_home_position = global_position
 	destination = global_position
 	_scan_time = randf_range(0.05, 0.35)
+	_foley_distance = randf_range(0.0, 0.7)
 	add_to_group("entities")
 	add_to_group("units")
 	add_to_group("friendly_units" if team == 0 else "enemy_units")
@@ -221,9 +224,17 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 	if velocity.length_squared() < 0.001:
 		velocity = Vector3.ZERO
 		return
+	var previous_position: Vector3 = global_position
 	move_and_slide()
 	if absf(global_position.y) > 0.001:
 		global_position.y = 0.0
+	# Use distance actually travelled: a unit blocked by a wall must stay quiet.
+	_foley_distance += global_position.distance_to(previous_position)
+	var stride: float = 1.65 if unit_type == "knight" else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
+	if _foley_distance >= stride:
+		_foley_distance = fmod(_foley_distance, stride)
+		var foot_sound: StringName = &"horse_hoof" if unit_type == "knight" else (&"cart_wheel" if unit_type in ["catapult", "cannon"] else &"footstep_dirt")
+		sound_requested.emit(foot_sound, global_position)
 
 func _set_navigation_target(at: Vector3) -> void:
 	at.y = 0.0
@@ -296,6 +307,8 @@ func _start_attack() -> void:
 		_game.spawn_effect(global_position + Vector3.UP * 0.2, "charge", Color("edd9a1"))
 	_charge_time = 0.0
 	_model.strike()
+	if unit_type in ["swordsman", "knight"]:
+		sound_requested.emit(&"sword_swing", global_position + Vector3.UP)
 	var windup: float = 0.22
 	match unit_type:
 		"knight": windup = 0.2
@@ -316,9 +329,13 @@ func _on_attack_windup_timeout() -> void:
 	if pose_delay > 0.0:
 		_attack_animation.advance(pose_delay + 0.000001)
 	if kind.is_empty():
+		var effect_kind: String = _strike_target.get_hit_effect() if _strike_target.is_in_group("buildings") else "hit"
+		var contact: Vector3 = _strike_target.get_attack_position(global_position) if _strike_target.is_in_group("buildings") else _strike_target.global_position
 		_strike_target.receive_damage(_strike_damage, self)
-		_game.spawn_effect(_strike_target.global_position + Vector3.UP * 1.1, "hit", Color("f5d691"))
+		_game.spawn_effect(contact + Vector3.UP * 1.1, effect_kind, Color("f5d691"))
 	else:
+		if kind != "cannon":
+			sound_requested.emit(&"bow_release" if kind == "arrow" else &"catapult_release", get_projectile_origin())
 		_game.spawn_projectile(self, _strike_target, _strike_damage, kind)
 		if kind == "cannon":
 			_game.spawn_effect(get_projectile_origin(), "muzzle", Color("ffd898"))
@@ -424,6 +441,7 @@ func _update_health_bar() -> void:
 
 func _die() -> void:
 	alive = false
+	sound_requested.emit(&"death_fall", global_position)
 	order_name = "阵亡"
 	set_selected(false)
 	health_bar.hide()

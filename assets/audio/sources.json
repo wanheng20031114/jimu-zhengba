@@ -1,0 +1,607 @@
+{
+  "packs": {
+    "kenney_impact": {
+      "author": "Kenney",
+      "title": "Impact Sounds 1.0",
+      "page": "https://kenney.nl/assets/impact-sounds",
+      "archive_url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "archive_sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
+      "archive_bytes": 800850,
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-09-08"
+    },
+    "kenney_interface": {
+      "author": "Kenney",
+      "title": "Interface Sounds 1.0",
+      "page": "https://kenney.nl/assets/interface-sounds",
+      "archive_url": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+      "archive_sha256": "f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232",
+      "archive_bytes": 834536,
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-09-08"
+    },
+    "weapons_apparel": {
+      "author": "Vehicle / Jan Schupke",
+      "title": "Fantasy Weapons and Apparel SFX Library",
+      "page": "https://opengameart.org/content/fantasy-weapons-and-apparel-sfx-library",
+      "archive_url": "https://opengameart.org/sites/default/files/weapons-apparel.zip",
+      "archive_sha256": "81cc6317f21b68f8e7f2b23a5a0f5f33c301c39ee41347307eec02201be989e5",
+      "archive_bytes": 12608099,
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-09-08"
+    }
+  },
+  "retained_originals": [
+    {
+      "path": "kenney_impact/footstep_concrete_000.ogg",
+      "sha256": "d7267e183067757c92c169de2a379abea592cfca6b39bb2e8feea15221ad79fe",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_concrete_001.ogg",
+      "sha256": "507a75eb19b897087855a3be3cf11a12d7fa37d143ad535eeebe0b8031c7325d",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_concrete_002.ogg",
+      "sha256": "b21fa546d74941196b25da8a20b7010abd8c05c4fcf93545d1f344e66a664e13",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_concrete_003.ogg",
+      "sha256": "8b513c2f0316324060b9174b8f28df6c2147418c506e6a53b77f18e149a5547b",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_concrete_004.ogg",
+      "sha256": "24dd8db2413e5b81ad181e1205c12a1c7801da5f85715d471b92a4b2f632e45e",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_grass_000.ogg",
+      "sha256": "9d49497777405d78d7cf7f2888e28277f3a23192300cfd1d79d54876b20f479f",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_grass_001.ogg",
+      "sha256": "fb28781bd22b2eefdc14077f1adf5c94d7fe9c3a130194633b55f3e0d39d9f04",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_grass_002.ogg",
+      "sha256": "73a520139f5be716a403bfe9c80e0e94d1e61d8e9de04a354b336392164b53dc",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_grass_003.ogg",
+      "sha256": "0546e1d8ab2def714425701a18bd34c5ee2794b12e858e5b595aabcf38a34137",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_wood_000.ogg",
+      "sha256": "5f1c252942a220d658121bd9417448cd19649ded9fff2ff15f6e50899373ce8e",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_wood_001.ogg",
+      "sha256": "e4f68e1c9fd55b4dc8ca89ed2bbab6f200171bc54bdc18aa96b80d8e7336f462",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_wood_002.ogg",
+      "sha256": "9ff095b05cee5eec40b081defe3f0eef7232bb16d4865ce03b9f6dbab875cfdd",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/footstep_wood_003.ogg",
+      "sha256": "2a68a083daa9eda08fed0ea5da5280dfbe0de226196c576be02f95259dd139d9",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactBell_heavy_002.ogg",
+      "sha256": "a4171ed1a4a17fb858a38de1c59b5b42e50d8f046c525706c0e3ac8671f189f5",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_heavy_001.ogg",
+      "sha256": "83554049f81f4db9209379e103c30bfa63f65c42189a03f300b045c2c82e23ae",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_heavy_002.ogg",
+      "sha256": "b914c8f1eb7c0f34bb165d7c77f4be0351f6be0660c13c53e65424e262e2c093",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_heavy_003.ogg",
+      "sha256": "b0f2ba4dabde9a87eb9c188a19d31e0c2300fd321adeba08d3b9b8aa011d7037",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_light_001.ogg",
+      "sha256": "fba69c467ddd85da7b1d82e259f936b876d9ba6a3d6f1b24bdd10468e46bfe08",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_light_002.ogg",
+      "sha256": "25a96f90a9a1f88a531e824e126f0519504625e5635e65a72e4f31611428db29",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_light_003.ogg",
+      "sha256": "92d5db6bfc672d9dc1b4f390b2900504f013187fa36335472554fafefa9050b1",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_medium_001.ogg",
+      "sha256": "e8a9eaba7c4d27422e4eeb3e6c7100d5d7dc0f83e005efc98c960adcc5265337",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_medium_002.ogg",
+      "sha256": "7e89ce2ca0dbda95ea2b78d4b50791cab35c10d20e9f5ccd45dd0b00e99ff548",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_medium_003.ogg",
+      "sha256": "2a185e2e57211d02c1bdd33b872d6b6a2fe83e6c14f4e56f426a95e717acf08e",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMetal_medium_004.ogg",
+      "sha256": "03e10f800199c7166208e41c11cf4acfac6cc265467f02357da71972bc967295",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMining_000.ogg",
+      "sha256": "36b4ea107222d073c67ca64dde26944975609202d5090b2f2021213c1a7e35cd",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMining_001.ogg",
+      "sha256": "61235a18de3f3d92118235398222dbf51d448f1be70b1c8bc962b10b86f2d9c6",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMining_002.ogg",
+      "sha256": "059558ec751115ca6b1441e00f0adc837c1a3eeb0a066b109e0fd879fc5d0b0c",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMining_003.ogg",
+      "sha256": "4237fa2cd80364ad81cd0af44f67d7497f1c5edcc7bdb02cd22be2ba4580c83d",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactMining_004.ogg",
+      "sha256": "8ca3a99d85d845751ad8ce7b40509da58263a62e48cde70e5a30b5ccef4c9a3b",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactPlank_medium_001.ogg",
+      "sha256": "d7c304319f8beac616231b62041fa8da74045b62d7155965516efb9b19303df4",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactPlank_medium_002.ogg",
+      "sha256": "f6a14da45994229676b4f29e6a35f504b5c2ec2b8166fb1a3b1aa004bc6911ef",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactSoft_heavy_001.ogg",
+      "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactSoft_heavy_002.ogg",
+      "sha256": "d130ae541951243d3f6ed963d0057450a445ffe117fbf9a084d34eb1635cb563",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactSoft_heavy_003.ogg",
+      "sha256": "d00286a2dc62ee5cb4d42bf56120e7050a855f69e655fc1294410aadd337eba3",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_heavy_000.ogg",
+      "sha256": "15ff82332f342c30e469215539e1cc57e11b221aa2cf7e11e811d313a9927f3d",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_heavy_001.ogg",
+      "sha256": "f1b07a53ac10c615fff9ba470511fdeb722b5902e1a8520759fc20ad6f546015",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_heavy_002.ogg",
+      "sha256": "ce1e06f2a05f2634c645cb72f6a1623e64bc2d92be34917430a61031fb6597d4",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_heavy_003.ogg",
+      "sha256": "af07511902b309b3f6d8f0e1fafbe93869127fb88099ebdc0aa6a00a98dc3cb0",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_heavy_004.ogg",
+      "sha256": "2c647ae6bd29c72ae2523f7e16e325d8d331b75cc99ab4f637c48a0e11c34677",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_light_000.ogg",
+      "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_light_001.ogg",
+      "sha256": "4b76bf3ccc8e60d19188f3165b778a7817786faa6887c55d9049bcbeef3b425f",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_light_002.ogg",
+      "sha256": "b183cf7a5bd783817e0e4b82af34ac6658fa1927049089dadc8b15c2ecc771dc",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_light_003.ogg",
+      "sha256": "cdfbe8af2fe7ff9ee28f337a0a989deee0f327620da456c8413644880e9d0004",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_light_004.ogg",
+      "sha256": "e10009f67ddaeb3a59a3e1129cfc1615d84ba60ab578eae07e7092ac223f099c",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_medium_001.ogg",
+      "sha256": "15271dbe8e2872dbb0ff1aeb7b12b2d2b92b7c1951c88532b9ab9158c36dfc73",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_impact/impactWood_medium_002.ogg",
+      "sha256": "3f3f1917428b828f733a963167833c707bf88296ff158e1559c57c5cb813d799",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_impact",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/click_001.ogg",
+      "sha256": "ccfb7fa0cccdd9faec0eb16033c732b1e308d139d80f799161495d58f7adcdb9",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/click_002.ogg",
+      "sha256": "adcd1f4adc35f1b41bc1b5bbefeff7aa44f2f3f0d96d3199b544140c7c1e761c",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/confirmation_001.ogg",
+      "sha256": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/confirmation_002.ogg",
+      "sha256": "33b17a9a9a2397c62b285c52c33a907fdffb476909c99e42dde603f6a7a8b12c",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/error_001.ogg",
+      "sha256": "46e67425d16339772e8d328fb36a49426c9467418686e11beeb71ff84b0f6433",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/error_002.ogg",
+      "sha256": "76810ec365f41078fd0507101da5bb7b8730fe011dde43908329fdabd8575e79",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/switch_001.ogg",
+      "sha256": "3b74efad87f1e69dbd1d05c5ad952ab90859b5a3d11da6ec5bd79b4f03b42afa",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "kenney_interface/switch_002.ogg",
+      "sha256": "6fc395be2ad1f99ce318a5d28f98fb76dbeb676d83a0b28239d8c1fb90736180",
+      "license": "CC0-1.0",
+      "source_pack": "kenney_interface",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/arrow-feathers-01.wav",
+      "sha256": "15493cd9a472a426602ab46fa27b5f012aa0b678dbf07fae0c1f68967ce96f5c",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/arrow-feathers-02.wav",
+      "sha256": "5e2974eade6ba7238642a5993114d46d10fd28912e044cacebff0b9e18c0b4e2",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/arrow-feathers-03.wav",
+      "sha256": "e55532c884b4dadc4c7fead111b6cf4f14886aad602f1778bb747dd5ade355e3",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/belt-buckle-01.wav",
+      "sha256": "e2696a53d0cccf3fa573737ad27847f42e3d06cf36e4fca1e03362c6961235ea",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/belt-buckle-02.wav",
+      "sha256": "3010680ff66c07718cea1f62898356d3978ddbf74faed7316dacd3d2d7073e9f",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/belt-buckle-03.wav",
+      "sha256": "3214f31e7a1f71a41f07145ef444b1a2f1400b89122b27c858a84eb2e41b1df9",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-jump-01.wav",
+      "sha256": "9b8b6e3ac1f0263df49c60c1e571974b421bfe12c576f26328397ee644bb3ac4",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-jump-02.wav",
+      "sha256": "abac208239b386f30daf87c52f8feef5b7d71c80f1cdffe4de86ebf1ca40fd5c",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-jump-03.wav",
+      "sha256": "10e6a8b20c225f463da1b1875c40458b8ab5bb5b383f7e1de347a3d0cc087181",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-step-01.wav",
+      "sha256": "5b0de415a95f7ad5ef4541d8142415587b2898c43ac26a45862cf14756894a06",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-step-02.wav",
+      "sha256": "923d9b9e09947dc8354b39e113f3cdb04e61dc09ecf87543e8813f408c2e60df",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-step-03.wav",
+      "sha256": "f63cc8613d927915c691257d8c12e3b62e1badd5079f503aa155f33c2d91c7e5",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/boots-leather-step-04.wav",
+      "sha256": "1924af86e3f5ca2a8515ac9c731c2eb7a7430392c645a7141a52b0dd079b977c",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-02.wav",
+      "sha256": "208b1694418d86614e3f586a751058ebc2ab04e07025921aa4dead39bdcf0006",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-03.wav",
+      "sha256": "319957fc1690cd80fa19f35683fa4bc2eb80978644d3bf28502345e9175d9e9f",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-04.wav",
+      "sha256": "6bbe6d44f10f565e3264575503a579bd7e58a151178354536cb46bd4217ccea8",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-05.wav",
+      "sha256": "e6c1f778db402d02aa20cbbb904fe4f7192fddda91d89ff70d818444a91bdc58",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-08.wav",
+      "sha256": "866895d141cd7eb159d433bf01837ead34de0c1be0809ab793a740d49eaaa092",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-09.wav",
+      "sha256": "3ae843a25a5d6b78f87da0ebfde8d6dac617b31a4536bd0f3890daa1212740c3",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/quiver-leather-squeeze-10.wav",
+      "sha256": "4fa1f9d014a8c9f2a1b6c3e1ef80dfde49b50027a3a59901c495c7dc8da3eb07",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-knife-clash-01.wav",
+      "sha256": "58072bf9c80d84a37c4cfaeb694659dad3b5c4ecd24e2f7fc1e7c2fcdc7fc325",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-knife-clash-09.wav",
+      "sha256": "cea6eb76f08defd8deeb7684ba18b8d3477f970f68a4273023ea7e21621e058c",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-knife-clash-18.wav",
+      "sha256": "0c29dc18d174b1b91d64b3b9750189a6748fa0773fafaf6865815d9ba116d28c",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-knife-clash-31.wav",
+      "sha256": "0cfde007f40388eb199898b5dfb2061cdb729f454eb17c44a9ea07c95c33251b",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-table-leg-scrape-01.wav",
+      "sha256": "81292025e19534abb435bf31eba872eeb09a220ecd40fa3e9278c11a51360d59",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-table-leg-scrape-02.wav",
+      "sha256": "b57c73119d4a455c7525a828240c541eb16685755794ec6ccea47470de47f32e",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    },
+    {
+      "path": "weapons_apparel/sword-table-leg-scrape-03.wav",
+      "sha256": "abb6e76ddedb441644c626af2e36dabfd4cbfd8ed051bf3ccd804e56e2d21de4",
+      "license": "CC0-1.0",
+      "source_pack": "weapons_apparel",
+      "modified": false
+    }
+  ],
+  "original_synthesis": "Original project-specific numerical sound design; not described as downloaded recordings"
+}
