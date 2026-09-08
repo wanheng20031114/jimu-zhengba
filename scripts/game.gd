@@ -21,6 +21,7 @@ const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit",
 
 var gold: int = 320
 var elapsed: float = 0.0
+var simulation_tick: int = 0
 var kills: int = 0
 var buildings_destroyed: int = 0
 var selection: Array[Node3D] = []
@@ -101,9 +102,15 @@ func _ready() -> void:
 		await prepare_shutdown()
 		get_tree().quit()
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	# One authoritative clock for the battle. Input only changes order intent;
+	# movement, attacks and economic work consume it on the next native fixed tick.
+	# Camera, selection feedback and portraits remain on the presentation clock.
 	if not finished:
+		simulation_tick += 1
 		elapsed += delta
+
+func _process(delta: float) -> void:
 	$RallyMarker.visible = headquarters.alive and headquarters in selection
 	_ui_accumulator += delta
 	if _ui_accumulator > 0.12:
@@ -422,6 +429,7 @@ func place_tower(point: Vector3, queued: bool = false) -> Node3D:
 	site.construction_completed.connect(_on_construction_completed)
 	gold -= TOWER_COST
 	$Buildings.add_child(site)
+	site.reset_physics_interpolation()
 	$ConstructionNavigation.refresh()
 	worker.issue_build(site, queued)
 	$Audio.play_ui(&"order")
@@ -800,8 +808,8 @@ func prepare_shutdown() -> void:
 	$EnemyTimer.stop()
 	var retiring_playbacks: Array[WeakRef] = []
 	for unit in get_tree().get_nodes_in_group("units"):
+		unit.stop()
 		unit.set_physics_process(false)
-		unit.get_node("AttackWindup").stop()
 		unit.navigation_agent.avoidance_enabled = false
 	for building in get_tree().get_nodes_in_group("buildings"):
 		building.set_physics_process(false)

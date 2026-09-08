@@ -94,10 +94,11 @@ directional_shadow_max_distance = 135.0
 shadow_bias = 0.06
 shadow_normal_bias = 2.0
 directional_shadow_blend_splits = true
-directional_shadow_mode = 2
+directional_shadow_mode = 0
 light_angular_distance = 1.6
 
 [node name="CameraRig" type="Node3D" parent="."]
+physics_interpolation_mode = 2
 position = Vector3(-16,0,21)
 script = ExtResource("camera")
 
@@ -107,7 +108,7 @@ rotation_degrees = Vector3(-45,-45,0)
 projection = 1
 size = 31.0
 near = 0.1
-far = 220.0
+far = 110.0
 current = true
 
 [node name="AudioListener3D" type="AudioListener3D" parent="CameraRig"]
@@ -144,6 +145,7 @@ navigation_mesh = ExtResource("patch_WestBarracks")
 enabled = false
 
 [node name="RallyMarker" parent="." instance=ExtResource("rally")]
+physics_interpolation_mode = 2
 position = Vector3(-10,0,24)
 
 [node name="Buildings" type="Node3D" parent="."]
@@ -466,9 +468,11 @@ rotation_degrees = Vector3(0,180,0)
 
 
 [node name="IncomeTimer" type="Timer" parent="."]
+process_callback = 0
 wait_time = 1.0
 
 [node name="EnemyTimer" type="Timer" parent="."]
+process_callback = 0
 wait_time = 100.0
 
 [node name="Atmosphere" type="CanvasLayer" parent="."]

@@ -1,0 +1,1529 @@
+{
+  "version": "0.5.0",
+  "baseline_commit": "2617aaadcd197fe1915d8461f1082b112c7bbca2",
+  "hardware": {
+    "cpu": "Intel Core i9-10900KF",
+    "gpu": "NVIDIA GeForce RTX 3080"
+  },
+  "settings": {
+    "godot": "4.6.3",
+    "backend": "Forward+ / Vulkan",
+    "resolution": [
+      1600,
+      900
+    ],
+    "vsync": false,
+    "audio_driver": "Dummy"
+  },
+  "notes": [
+    "真实渲染，未同时运行其他 Godot 渲染基准。Dummy 音频仍执行事件和混音。",
+    "04:07:48 起检测到另一个用户 3D 游戏进程。此前 tick-before / tick-gpu-dust 与此后的最终数据不能视为相同外部负载。",
+    "tick-gpu-dust 是加入共享选中圈和最终生命周期修复之前的中间版本，不是交付性能。",
+    "context-baseline 与 context-final 为同一后台程序仍运行时连续执行的旧版/当前版；后台负载不受测试控制。",
+    "混战有减员，比较时一并查看 live_units；均值改善不表示 P95/P99 全部改善。"
+  ],
+  "runs": {
+    "tick-before": {
+      "checks_passed": 61,
+      "elapsed_s": 47.515759,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.002219,
+          "fps_measured": 137.6,
+          "frame_p50_ms": 6.921,
+          "frame_p95_ms": 8.991,
+          "monitors": {
+            "draw_calls": {
+              "max": 1119.0,
+              "mean": 1100.04
+            },
+            "effects": {
+              "max": 85.0,
+              "mean": 73.56
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 221.663585662842,
+              "mean": 220.492772064209
+            },
+            "navigation_ms": {
+              "max": 1.489,
+              "mean": 1.028
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 13.388,
+              "mean": 9.1524
+            },
+            "primitives": {
+              "max": 1078180.0,
+              "mean": 1061802.08
+            },
+            "process_ms": {
+              "max": 9.425,
+              "mean": 8.5502
+            },
+            "render_objects": {
+              "max": 4168.0,
+              "mean": 4127.32
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.00092,
+          "fps_measured": 84.3333333333333,
+          "frame_p50_ms": 11.91,
+          "frame_p95_ms": 15.575,
+          "monitors": {
+            "draw_calls": {
+              "max": 1380.0,
+              "mean": 1331.83333333333
+            },
+            "effects": {
+              "max": 148.0,
+              "mean": 106.6
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 233.937782287598,
+              "mean": 231.448967997233
+            },
+            "navigation_ms": {
+              "max": 2.477,
+              "mean": 1.78203333333333
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 58.017,
+              "mean": 11.0837
+            },
+            "primitives": {
+              "max": 1558824.0,
+              "mean": 1521623.66666667
+            },
+            "process_ms": {
+              "max": 58.005,
+              "mean": 15.7209333333333
+            },
+            "render_objects": {
+              "max": 6076.0,
+              "mean": 6045.9
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.006525,
+          "fps_measured": 91.4166666666667,
+          "frame_p50_ms": 10.81,
+          "frame_p95_ms": 14.567,
+          "monitors": {
+            "draw_calls": {
+              "max": 1332.0,
+              "mean": 1274.22033898305
+            },
+            "effects": {
+              "max": 140.0,
+              "mean": 112.627118644068
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 146.35593220339
+            },
+            "memory_mb": {
+              "max": 234.765874862671,
+              "mean": 232.906627719685
+            },
+            "navigation_ms": {
+              "max": 2.14,
+              "mean": 0.962338983050848
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 9.633,
+              "mean": 7.19008474576271
+            },
+            "primitives": {
+              "max": 1467298.0,
+              "mean": 1375445.72881356
+            },
+            "process_ms": {
+              "max": 20.761,
+              "mean": 12.6265423728813
+            },
+            "render_objects": {
+              "max": 6135.0,
+              "mean": 5865.1186440678
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.001677,
+          "fps_measured": 128.333333333333,
+          "frame_p50_ms": 7.39,
+          "frame_p95_ms": 10.364,
+          "monitors": {
+            "draw_calls": {
+              "max": 1126.0,
+              "mean": 1090.13333333333
+            },
+            "effects": {
+              "max": 108.0,
+              "mean": 95.7333333333333
+            },
+            "live_units": {
+              "max": 99.0,
+              "mean": 97.4666666666667
+            },
+            "memory_mb": {
+              "max": 228.756587982178,
+              "mean": 227.374235280355
+            },
+            "navigation_ms": {
+              "max": 1.047,
+              "mean": 0.856266666666667
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 20.6,
+              "mean": 8.17773333333333
+            },
+            "primitives": {
+              "max": 1103270.0,
+              "mean": 1051658.53333333
+            },
+            "process_ms": {
+              "max": 9.811,
+              "mean": 8.56686666666667
+            },
+            "render_objects": {
+              "max": 4506.0,
+              "mean": 4368.93333333333
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "rendered": true,
+      "renderer": "forward_plus"
+    },
+    "tick-gpu-dust": {
+      "camera_far": 110.0,
+      "checks_passed": 61,
+      "elapsed_s": 47.206713,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.003436,
+          "fps_measured": 158.0,
+          "frame_p50_ms": 5.859,
+          "frame_p95_ms": 8.732,
+          "frame_p99_ms": 9.435,
+          "monitors": {
+            "draw_calls": {
+              "max": 904.0,
+              "mean": 866.96
+            },
+            "effects": {
+              "max": 12.0,
+              "mean": 5.52
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 219.055200576782,
+              "mean": 216.964214401245
+            },
+            "navigation_ms": {
+              "max": 1.143,
+              "mean": 1.01836
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 85.712,
+              "mean": 10.87076
+            },
+            "primitives": {
+              "max": 900844.0,
+              "mean": 888083.84
+            },
+            "process_ms": {
+              "max": 21.14,
+              "mean": 8.63256
+            },
+            "render_objects": {
+              "max": 3024.0,
+              "mean": 2944.96
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.000898,
+          "fps_measured": 105.333333333333,
+          "frame_p50_ms": 8.509,
+          "frame_p95_ms": 13.083,
+          "frame_p99_ms": 13.728,
+          "monitors": {
+            "draw_calls": {
+              "max": 1106.0,
+              "mean": 1092.4
+            },
+            "effects": {
+              "max": 4.0,
+              "mean": 1.83333333333333
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 225.800764083862,
+              "mean": 225.638661066691
+            },
+            "navigation_ms": {
+              "max": 1.856,
+              "mean": 1.62313333333333
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 5.389,
+              "mean": 5.01636666666667
+            },
+            "primitives": {
+              "max": 1261518.0,
+              "mean": 1251786.73333333
+            },
+            "process_ms": {
+              "max": 12.719,
+              "mean": 10.0863666666667
+            },
+            "render_objects": {
+              "max": 4023.0,
+              "mean": 4009.3
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.004586,
+          "fps_measured": 104.75,
+          "frame_p50_ms": 8.24,
+          "frame_p95_ms": 15.06,
+          "frame_p99_ms": 17.046,
+          "monitors": {
+            "draw_calls": {
+              "max": 1184.0,
+              "mean": 1121.66101694915
+            },
+            "effects": {
+              "max": 115.0,
+              "mean": 97.728813559322
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 147.084745762712
+            },
+            "memory_mb": {
+              "max": 234.776023864746,
+              "mean": 233.34243257167
+            },
+            "navigation_ms": {
+              "max": 1.679,
+              "mean": 0.910559322033897
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 112.745,
+              "mean": 11.8447627118644
+            },
+            "primitives": {
+              "max": 1280042.0,
+              "mean": 1200794.03389831
+            },
+            "process_ms": {
+              "max": 26.911,
+              "mean": 9.84835593220339
+            },
+            "render_objects": {
+              "max": 4566.0,
+              "mean": 4382.38983050847
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.003578,
+          "fps_measured": 144.666666666667,
+          "frame_p50_ms": 6.078,
+          "frame_p95_ms": 11.142,
+          "frame_p99_ms": 12.013,
+          "monitors": {
+            "draw_calls": {
+              "max": 955.0,
+              "mean": 888.0
+            },
+            "effects": {
+              "max": 62.0,
+              "mean": 46.2
+            },
+            "live_units": {
+              "max": 105.0,
+              "mean": 103.266666666667
+            },
+            "memory_mb": {
+              "max": 226.085649490356,
+              "mean": 225.315592066447
+            },
+            "navigation_ms": {
+              "max": 1.047,
+              "mean": 0.987466666666667
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 7.158,
+              "mean": 6.0584
+            },
+            "primitives": {
+              "max": 941378.0,
+              "mean": 909143.2
+            },
+            "process_ms": {
+              "max": 7.796,
+              "mean": 7.265
+            },
+            "render_objects": {
+              "max": 3433.0,
+              "mean": 3312.0
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_mode": 0,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "final-30-a": {
+      "camera_far": 110.0,
+      "checks_passed": 61,
+      "elapsed_s": 47.774747,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.007017,
+          "fps_measured": 132.4,
+          "frame_p50_ms": 6.731,
+          "frame_p95_ms": 10.772,
+          "frame_p99_ms": 13.58,
+          "monitors": {
+            "draw_calls": {
+              "max": 802.0,
+              "mean": 769.24
+            },
+            "effects": {
+              "max": 12.0,
+              "mean": 5.4
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 219.574871063232,
+              "mean": 217.13989654541
+            },
+            "navigation_ms": {
+              "max": 1.675,
+              "mean": 1.49564
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 5.441,
+              "mean": 4.61328
+            },
+            "primitives": {
+              "max": 897140.0,
+              "mean": 886981.04
+            },
+            "process_ms": {
+              "max": 56.37,
+              "mean": 19.64308
+            },
+            "render_objects": {
+              "max": 3012.0,
+              "mean": 2935.28
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.005861,
+          "fps_measured": 77.1666666666667,
+          "frame_p50_ms": 11.258,
+          "frame_p95_ms": 21.854,
+          "frame_p99_ms": 30.634,
+          "monitors": {
+            "draw_calls": {
+              "max": 956.0,
+              "mean": 938.366666666667
+            },
+            "effects": {
+              "max": 4.0,
+              "mean": 2.03333333333333
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 225.737747192383,
+              "mean": 225.578430048625
+            },
+            "navigation_ms": {
+              "max": 2.361,
+              "mean": 2.09433333333333
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 50.378,
+              "mean": 7.91106666666666
+            },
+            "primitives": {
+              "max": 1267226.0,
+              "mean": 1253511.66666667
+            },
+            "process_ms": {
+              "max": 42.655,
+              "mean": 25.2162666666667
+            },
+            "render_objects": {
+              "max": 4033.0,
+              "mean": 4011.93333333333
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.004318,
+          "fps_measured": 74.3333333333333,
+          "frame_p50_ms": 11.186,
+          "frame_p95_ms": 21.361,
+          "frame_p99_ms": 27.757,
+          "monitors": {
+            "draw_calls": {
+              "max": 1120.0,
+              "mean": 1042.06896551724
+            },
+            "effects": {
+              "max": 114.0,
+              "mean": 92.2068965517241
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 146.413793103448
+            },
+            "memory_mb": {
+              "max": 234.54461479187,
+              "mean": 232.935028405025
+            },
+            "navigation_ms": {
+              "max": 2.721,
+              "mean": 1.61208620689655
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 20.053,
+              "mean": 12.7805689655172
+            },
+            "primitives": {
+              "max": 1270860.0,
+              "mean": 1193983.65517241
+            },
+            "process_ms": {
+              "max": 24.475,
+              "mean": 17.9031896551724
+            },
+            "render_objects": {
+              "max": 4584.0,
+              "mean": 4368.72413793103
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.004052,
+          "fps_measured": 84.3333333333333,
+          "frame_p50_ms": 9.65,
+          "frame_p95_ms": 21.29,
+          "frame_p99_ms": 25.491,
+          "monitors": {
+            "draw_calls": {
+              "max": 916.0,
+              "mean": 860.2
+            },
+            "effects": {
+              "max": 70.0,
+              "mean": 53.4
+            },
+            "live_units": {
+              "max": 106.0,
+              "mean": 103.133333333333
+            },
+            "memory_mb": {
+              "max": 227.089191436768,
+              "mean": 226.313500213623
+            },
+            "navigation_ms": {
+              "max": 1.555,
+              "mean": 1.46773333333333
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 22.725,
+              "mean": 11.6370666666667
+            },
+            "primitives": {
+              "max": 958858.0,
+              "mean": 933100.533333333
+            },
+            "process_ms": {
+              "max": 24.868,
+              "mean": 21.1855333333333
+            },
+            "render_objects": {
+              "max": 3472.0,
+              "mean": 3359.86666666667
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_mode": 0,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "final-60": {
+      "camera_far": 110.0,
+      "checks_passed": 61,
+      "elapsed_s": 47.881294,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.004382,
+          "fps_measured": 94.8,
+          "frame_p50_ms": 10.087,
+          "frame_p95_ms": 17.13,
+          "frame_p99_ms": 25.191,
+          "monitors": {
+            "draw_calls": {
+              "max": 813.0,
+              "mean": 773.36
+            },
+            "effects": {
+              "max": 12.0,
+              "mean": 5.16
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 219.494209289551,
+              "mean": 217.347475280762
+            },
+            "navigation_ms": {
+              "max": 1.915,
+              "mean": 1.57204
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 17.685,
+              "mean": 6.7578
+            },
+            "primitives": {
+              "max": 900872.0,
+              "mean": 888608.56
+            },
+            "process_ms": {
+              "max": 26.886,
+              "mean": 22.21228
+            },
+            "render_objects": {
+              "max": 3018.0,
+              "mean": 2944.2
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.009511,
+          "fps_measured": 63.8333333333333,
+          "frame_p50_ms": 15.485,
+          "frame_p95_ms": 19.062,
+          "frame_p99_ms": 27.7,
+          "monitors": {
+            "draw_calls": {
+              "max": 955.0,
+              "mean": 940.241379310345
+            },
+            "effects": {
+              "max": 3.0,
+              "mean": 1.62068965517241
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 225.605991363525,
+              "mean": 225.497837987439
+            },
+            "navigation_ms": {
+              "max": 2.359,
+              "mean": 2.23493103448276
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 7.107,
+              "mean": 6.68675862068966
+            },
+            "primitives": {
+              "max": 1262902.0,
+              "mean": 1252720.96551724
+            },
+            "process_ms": {
+              "max": 31.301,
+              "mean": 19.4323793103448
+            },
+            "render_objects": {
+              "max": 4023.0,
+              "mean": 4009.96551724138
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.007983,
+          "fps_measured": 65.75,
+          "frame_p50_ms": 15.244,
+          "frame_p95_ms": 19.648,
+          "frame_p99_ms": 24.916,
+          "monitors": {
+            "draw_calls": {
+              "max": 1098.0,
+              "mean": 1041.10344827586
+            },
+            "effects": {
+              "max": 120.0,
+              "mean": 96.6206896551724
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 148.241379310345
+            },
+            "memory_mb": {
+              "max": 234.971220016479,
+              "mean": 233.261524397751
+            },
+            "navigation_ms": {
+              "max": 2.36,
+              "mean": 1.33475862068965
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 119.618,
+              "mean": 14.4911724137931
+            },
+            "primitives": {
+              "max": 1272756.0,
+              "mean": 1195511.5862069
+            },
+            "process_ms": {
+              "max": 28.814,
+              "mean": 13.9643103448276
+            },
+            "render_objects": {
+              "max": 4560.0,
+              "mean": 4384.15517241379
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.000304,
+          "fps_measured": 82.3333333333333,
+          "frame_p50_ms": 12.273,
+          "frame_p95_ms": 17.297,
+          "frame_p99_ms": 21.112,
+          "monitors": {
+            "draw_calls": {
+              "max": 902.0,
+              "mean": 860.066666666667
+            },
+            "effects": {
+              "max": 75.0,
+              "mean": 53.8
+            },
+            "live_units": {
+              "max": 103.0,
+              "mean": 97.6666666666667
+            },
+            "memory_mb": {
+              "max": 226.984407424927,
+              "mean": 226.280563227336
+            },
+            "navigation_ms": {
+              "max": 1.589,
+              "mean": 1.45753333333333
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 9.617,
+              "mean": 8.3754
+            },
+            "primitives": {
+              "max": 948260.0,
+              "mean": 928020.533333333
+            },
+            "process_ms": {
+              "max": 20.55,
+              "mean": 14.2762666666667
+            },
+            "render_objects": {
+              "max": 3480.0,
+              "mean": 3384.2
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_ticks_per_second": 60,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_mode": 0,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "final-30-b": {
+      "camera_far": 110.0,
+      "checks_passed": 61,
+      "elapsed_s": 47.502813,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.007111,
+          "fps_measured": 135.0,
+          "frame_p50_ms": 6.724,
+          "frame_p95_ms": 10.516,
+          "frame_p99_ms": 12.566,
+          "monitors": {
+            "draw_calls": {
+              "max": 796.0,
+              "mean": 768.12
+            },
+            "effects": {
+              "max": 16.0,
+              "mean": 5.96
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 219.866291046143,
+              "mean": 217.275077972412
+            },
+            "navigation_ms": {
+              "max": 1.63,
+              "mean": 1.36212
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 21.095,
+              "mean": 5.0618
+            },
+            "primitives": {
+              "max": 897436.0,
+              "mean": 887432.48
+            },
+            "process_ms": {
+              "max": 17.192,
+              "mean": 9.85312
+            },
+            "render_objects": {
+              "max": 3018.0,
+              "mean": 2939.56
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.000919,
+          "fps_measured": 91.1666666666667,
+          "frame_p50_ms": 9.823,
+          "frame_p95_ms": 15.481,
+          "frame_p99_ms": 18.185,
+          "monitors": {
+            "draw_calls": {
+              "max": 949.0,
+              "mean": 935.366666666667
+            },
+            "effects": {
+              "max": 3.0,
+              "mean": 1.33333333333333
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 225.798355102539,
+              "mean": 225.652484385173
+            },
+            "navigation_ms": {
+              "max": 4.402,
+              "mean": 2.81226666666667
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 56.486,
+              "mean": 9.08583333333333
+            },
+            "primitives": {
+              "max": 1266650.0,
+              "mean": 1251717.4
+            },
+            "process_ms": {
+              "max": 45.035,
+              "mean": 14.1553666666667
+            },
+            "render_objects": {
+              "max": 4029.0,
+              "mean": 4008.03333333333
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.001163,
+          "fps_measured": 86.8333333333333,
+          "frame_p50_ms": 9.693,
+          "frame_p95_ms": 18.305,
+          "frame_p99_ms": 20.288,
+          "monitors": {
+            "draw_calls": {
+              "max": 1140.0,
+              "mean": 1053.59322033898
+            },
+            "effects": {
+              "max": 120.0,
+              "mean": 99.2033898305085
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 146.338983050847
+            },
+            "memory_mb": {
+              "max": 234.956399917603,
+              "mean": 233.462182158131
+            },
+            "navigation_ms": {
+              "max": 1.944,
+              "mean": 1.21438983050847
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 15.109,
+              "mean": 10.8982881355932
+            },
+            "primitives": {
+              "max": 1279212.0,
+              "mean": 1195019.79661017
+            },
+            "process_ms": {
+              "max": 13.971,
+              "mean": 12.4300169491525
+            },
+            "render_objects": {
+              "max": 4579.0,
+              "mean": 4383.01694915254
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.004391,
+          "fps_measured": 113.333333333333,
+          "frame_p50_ms": 7.555,
+          "frame_p95_ms": 13.876,
+          "frame_p99_ms": 17.2,
+          "monitors": {
+            "draw_calls": {
+              "max": 927.0,
+              "mean": 877.8
+            },
+            "effects": {
+              "max": 60.0,
+              "mean": 53.1333333333333
+            },
+            "live_units": {
+              "max": 105.0,
+              "mean": 102.533333333333
+            },
+            "memory_mb": {
+              "max": 227.479976654053,
+              "mean": 226.745789591471
+            },
+            "navigation_ms": {
+              "max": 1.758,
+              "mean": 1.62666666666667
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 25.432,
+              "mean": 12.1169333333333
+            },
+            "primitives": {
+              "max": 982620.0,
+              "mean": 951358.266666667
+            },
+            "process_ms": {
+              "max": 13.438,
+              "mean": 11.8176666666667
+            },
+            "render_objects": {
+              "max": 3526.0,
+              "mean": 3426.8
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_mode": 0,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "context-baseline": {
+      "camera_far": 220.0,
+      "checks_passed": 61,
+      "elapsed_s": 48.017495,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.002335,
+          "fps_measured": 109.4,
+          "frame_p50_ms": 8.683,
+          "frame_p95_ms": 12.273,
+          "frame_p99_ms": 17.484,
+          "monitors": {
+            "draw_calls": {
+              "max": 1132.0,
+              "mean": 1096.04
+            },
+            "effects": {
+              "max": 85.0,
+              "mean": 67.36
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 222.485171318054,
+              "mean": 221.125201377869
+            },
+            "navigation_ms": {
+              "max": 1.631,
+              "mean": 1.38264
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 34.939,
+              "mean": 11.61572
+            },
+            "primitives": {
+              "max": 1077864.0,
+              "mean": 1057385.44
+            },
+            "process_ms": {
+              "max": 11.958,
+              "mean": 11.24452
+            },
+            "render_objects": {
+              "max": 4204.0,
+              "mean": 4131.32
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.003197,
+          "fps_measured": 69.5,
+          "frame_p50_ms": 14.392,
+          "frame_p95_ms": 18.061,
+          "frame_p99_ms": 19.852,
+          "monitors": {
+            "draw_calls": {
+              "max": 1386.0,
+              "mean": 1341.34482758621
+            },
+            "effects": {
+              "max": 145.0,
+              "mean": 115.172413793103
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 234.794718742371,
+              "mean": 232.866020169751
+            },
+            "navigation_ms": {
+              "max": 2.763,
+              "mean": 2.13855172413793
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 10.541,
+              "mean": 8.865
+            },
+            "primitives": {
+              "max": 1560452.0,
+              "mean": 1531700.75862069
+            },
+            "process_ms": {
+              "max": 16.802,
+              "mean": 15.0529655172414
+            },
+            "render_objects": {
+              "max": 6098.0,
+              "mean": 6064.48275862069
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.006446,
+          "fps_measured": 72.3333333333333,
+          "frame_p50_ms": 13.706,
+          "frame_p95_ms": 17.574,
+          "frame_p99_ms": 21.634,
+          "monitors": {
+            "draw_calls": {
+              "max": 1319.0,
+              "mean": 1263.93103448276
+            },
+            "effects": {
+              "max": 139.0,
+              "mean": 111.068965517241
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 146.689655172414
+            },
+            "memory_mb": {
+              "max": 235.569680213928,
+              "mean": 233.641384683806
+            },
+            "navigation_ms": {
+              "max": 2.1,
+              "mean": 1.21470689655172
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 126.768,
+              "mean": 12.0005172413793
+            },
+            "primitives": {
+              "max": 1463254.0,
+              "mean": 1369820.5862069
+            },
+            "process_ms": {
+              "max": 29.013,
+              "mean": 17.1791896551724
+            },
+            "render_objects": {
+              "max": 6144.0,
+              "mean": 5852.94827586207
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.007814,
+          "fps_measured": 88.0,
+          "frame_p50_ms": 11.483,
+          "frame_p95_ms": 15.422,
+          "frame_p99_ms": 17.967,
+          "monitors": {
+            "draw_calls": {
+              "max": 1220.0,
+              "mean": 1131.26666666667
+            },
+            "effects": {
+              "max": 113.0,
+              "mean": 95.8
+            },
+            "live_units": {
+              "max": 97.0,
+              "mean": 95.5333333333333
+            },
+            "memory_mb": {
+              "max": 229.875853538513,
+              "mean": 228.250460116069
+            },
+            "navigation_ms": {
+              "max": 1.639,
+              "mean": 1.3422
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 8.74,
+              "mean": 6.66933333333333
+            },
+            "primitives": {
+              "max": 1110404.0,
+              "mean": 1068503.86666667
+            },
+            "process_ms": {
+              "max": 15.708,
+              "mean": 13.8513333333333
+            },
+            "render_objects": {
+              "max": 4517.0,
+              "mean": 4372.53333333333
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "physics_interpolation": false,
+      "physics_ticks_per_second": 60,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_mode": 2,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "context-final": {
+      "camera_far": 110.0,
+      "checks_passed": 61,
+      "elapsed_s": 47.673508,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "phases": [
+        {
+          "duration_s": 5.004683,
+          "fps_measured": 127.0,
+          "frame_p50_ms": 7.165,
+          "frame_p95_ms": 11.298,
+          "frame_p99_ms": 13.545,
+          "monitors": {
+            "draw_calls": {
+              "max": 799.0,
+              "mean": 769.88
+            },
+            "effects": {
+              "max": 15.0,
+              "mean": 6.04
+            },
+            "live_units": {
+              "max": 100.0,
+              "mean": 100.0
+            },
+            "memory_mb": {
+              "max": 219.781398773193,
+              "mean": 217.25557510376
+            },
+            "navigation_ms": {
+              "max": 1.679,
+              "mean": 1.40968
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 5.786,
+              "mean": 4.65952
+            },
+            "primitives": {
+              "max": 896852.0,
+              "mean": 886808.88
+            },
+            "process_ms": {
+              "max": 11.131,
+              "mean": 9.7216
+            },
+            "render_objects": {
+              "max": 3013.0,
+              "mean": 2938.68
+            }
+          },
+          "name": "100_friendly_marching"
+        },
+        {
+          "duration_s": 6.007343,
+          "fps_measured": 86.5,
+          "frame_p50_ms": 9.944,
+          "frame_p95_ms": 16.434,
+          "frame_p99_ms": 23.88,
+          "monitors": {
+            "draw_calls": {
+              "max": 947.0,
+              "mean": 936.766666666667
+            },
+            "effects": {
+              "max": 5.0,
+              "mean": 1.9
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 160.0
+            },
+            "memory_mb": {
+              "max": 225.826530456543,
+              "mean": 225.585259246826
+            },
+            "navigation_ms": {
+              "max": 2.673,
+              "mean": 2.3245
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 8.232,
+              "mean": 7.1522
+            },
+            "primitives": {
+              "max": 1262250.0,
+              "mean": 1252978.33333333
+            },
+            "process_ms": {
+              "max": 42.511,
+              "mean": 22.6594
+            },
+            "render_objects": {
+              "max": 4027.0,
+              "mean": 4011.36666666667
+            }
+          },
+          "name": "160_friendly_marching"
+        },
+        {
+          "duration_s": 12.003075,
+          "fps_measured": 84.1666666666667,
+          "frame_p50_ms": 9.88,
+          "frame_p95_ms": 18.598,
+          "frame_p99_ms": 24.683,
+          "monitors": {
+            "draw_calls": {
+              "max": 1112.0,
+              "mean": 1046.50847457627
+            },
+            "effects": {
+              "max": 120.0,
+              "mean": 97.4915254237288
+            },
+            "live_units": {
+              "max": 160.0,
+              "mean": 147.64406779661
+            },
+            "memory_mb": {
+              "max": 234.782331466675,
+              "mean": 233.349246687808
+            },
+            "navigation_ms": {
+              "max": 1.815,
+              "mean": 1.17922033898305
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 15.718,
+              "mean": 11.0242203389831
+            },
+            "primitives": {
+              "max": 1290652.0,
+              "mean": 1197340.6440678
+            },
+            "process_ms": {
+              "max": 40.958,
+              "mean": 17.1859322033898
+            },
+            "render_objects": {
+              "max": 4598.0,
+              "mean": 4394.16949152542
+            }
+          },
+          "name": "160_mixed_battle"
+        },
+        {
+          "duration_s": 3.004026,
+          "fps_measured": 105.0,
+          "frame_p50_ms": 8.183,
+          "frame_p95_ms": 15.032,
+          "frame_p99_ms": 16.587,
+          "monitors": {
+            "draw_calls": {
+              "max": 918.0,
+              "mean": 855.0
+            },
+            "effects": {
+              "max": 64.0,
+              "mean": 43.3333333333333
+            },
+            "live_units": {
+              "max": 105.0,
+              "mean": 101.6
+            },
+            "memory_mb": {
+              "max": 226.435131072998,
+              "mean": 225.953241984049
+            },
+            "navigation_ms": {
+              "max": 1.598,
+              "mean": 1.5322
+            },
+            "orphans": {
+              "max": 0.0,
+              "mean": 0.0
+            },
+            "physics_ms": {
+              "max": 22.054,
+              "mean": 9.99693333333334
+            },
+            "primitives": {
+              "max": 967116.0,
+              "mean": 943539.333333333
+            },
+            "process_ms": {
+              "max": 18.539,
+              "mean": 14.4478
+            },
+            "render_objects": {
+              "max": 3488.0,
+              "mean": 3393.06666666667
+            }
+          },
+          "name": "post_target_deletion"
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_mode": 0,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    }
+  }
+}

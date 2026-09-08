@@ -390,371 +390,661 @@ position = Vector3(-20,0,33)
 rotation = Vector3(0,0.800000,0)
 scale = Vector3(0.88,0.88,0.88)
 
-[node name="SolidEnvironment" type="StaticBody3D" parent="."]
+[node name="SolidEnvironment" type="Node3D" parent="."]
+
+[node name="RockLarge00" type="StaticBody3D" parent="SolidEnvironment"]
+position = Vector3(-29.0000,1.6275,5.0000)
+rotation = Vector3(0,0.240000,0)
 collision_layer = 1
 collision_mask = 0
 
-[node name="RockLarge00" type="CollisionShape3D" parent="SolidEnvironment"]
-position = Vector3(-29.0000,1.6275,5.0000)
-rotation = Vector3(0,0.240000,0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockLarge00"]
 shape = SubResource("ObstacleShape0")
 
-[node name="RockMedium01" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium01" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-31.1000,0.9400,2.8000)
 rotation = Vector3(0,-0.300000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium01"]
 shape = SubResource("ObstacleShape1")
 
-[node name="RockLarge02" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockLarge02" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-27.0000,1.3950,-7.0000)
 rotation = Vector3(0,-0.170000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockLarge02"]
 shape = SubResource("ObstacleShape2")
 
-[node name="RockMedium03" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium03" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-29.2000,0.8500,-8.5000)
 rotation = Vector3(0,0.600000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium03"]
 shape = SubResource("ObstacleShape3")
 
-[node name="RockLarge04" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockLarge04" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(16.0000,1.4725,15.0000)
 rotation = Vector3(0,-0.430000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockLarge04"]
 shape = SubResource("ObstacleShape4")
 
-[node name="RockMedium05" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium05" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(18.5000,0.8500,15.1000)
 rotation = Vector3(0,0.190000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium05"]
 shape = SubResource("ObstacleShape5")
 
-[node name="RockLarge06" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockLarge06" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(28.0000,1.5500,23.0000)
 rotation = Vector3(0,0.100000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockLarge06"]
 shape = SubResource("ObstacleShape6")
 
-[node name="RockMedium07" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium07" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(30.3000,0.8800,24.4000)
 rotation = Vector3(0,0.510000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium07"]
 shape = SubResource("ObstacleShape7")
 
-[node name="RockLarge08" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockLarge08" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-20.0000,1.6740,-25.0000)
 rotation = Vector3(0,0.380000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockLarge08"]
 shape = SubResource("ObstacleShape8")
 
-[node name="RockMedium09" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium09" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-22.5000,0.9000,-23.5000)
 rotation = Vector3(0,-0.310000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium09"]
 shape = SubResource("ObstacleShape9")
 
-[node name="RockLarge10" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockLarge10" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(31.0000,1.4725,-32.0000)
 rotation = Vector3(0,-0.180000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockLarge10"]
 shape = SubResource("ObstacleShape10")
 
-[node name="RockMedium11" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium11" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(33.0000,0.9000,-33.0000)
 rotation = Vector3(0,0.580000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium11"]
 shape = SubResource("ObstacleShape11")
 
-[node name="RockMedium12" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium12" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-13.0000,0.9500,33.0000)
 rotation = Vector3(0,0.190000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium12"]
 shape = SubResource("ObstacleShape12")
 
-[node name="RockMedium13" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="RockMedium13" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(13.0000,0.8800,-1.0000)
 rotation = Vector3(0,0.640000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/RockMedium13"]
 shape = SubResource("ObstacleShape13")
 
-[node name="TreeOak14" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak14" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-32.0000,1.4700,9.0000)
 rotation = Vector3(0,0.300000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak14"]
 shape = SubResource("ObstacleShape14")
 
-[node name="TreePine15" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine15" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-33.0000,1.3800,4.0000)
 rotation = Vector3(0,0.800000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine15"]
 shape = SubResource("ObstacleShape15")
 
-[node name="TreePine16" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine16" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-31.0000,1.5750,-5.0000)
 rotation = Vector3(0,0.500000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine16"]
 shape = SubResource("ObstacleShape16")
 
-[node name="TreeOak17" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak17" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-27.0000,1.3800,-13.0000)
 rotation = Vector3(0,0.900000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak17"]
 shape = SubResource("ObstacleShape17")
 
-[node name="TreeOak18" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak18" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(20.0000,1.3800,19.0000)
 rotation = Vector3(0,0.400000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak18"]
 shape = SubResource("ObstacleShape18")
 
-[node name="TreePine19" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine19" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(23.0000,1.5300,21.0000)
 rotation = Vector3(0,0.700000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine19"]
 shape = SubResource("ObstacleShape19")
 
-[node name="TreePine20" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine20" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(30.0000,1.5750,28.0000)
 rotation = Vector3(0,0.200000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine20"]
 shape = SubResource("ObstacleShape20")
 
-[node name="TreeOak21" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak21" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(25.0000,1.4550,28.0000)
 rotation = Vector3(0,0.900000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak21"]
 shape = SubResource("ObstacleShape21")
 
-[node name="TreeOak22" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak22" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-16.0000,1.3650,-25.0000)
 rotation = Vector3(0,0.300000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak22"]
 shape = SubResource("ObstacleShape22")
 
-[node name="TreePine23" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine23" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-18.0000,1.5450,-29.0000)
 rotation = Vector3(0,0.800000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine23"]
 shape = SubResource("ObstacleShape23")
 
-[node name="TreePine24" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine24" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(27.0000,1.5750,-34.0000)
 rotation = Vector3(0,0.100000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine24"]
 shape = SubResource("ObstacleShape24")
 
-[node name="TreeOak25" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak25" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(33.0000,1.3500,-28.0000)
 rotation = Vector3(0,0.600000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak25"]
 shape = SubResource("ObstacleShape25")
 
-[node name="TreeOak26" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreeOak26" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-17.0000,1.3650,34.0000)
 rotation = Vector3(0,0.100000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreeOak26"]
 shape = SubResource("ObstacleShape26")
 
-[node name="TreePine27" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="TreePine27" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-20.0000,1.3200,33.0000)
 rotation = Vector3(0,0.800000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/TreePine27"]
 shape = SubResource("ObstacleShape27")
 
-[node name="BoundaryTree0" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree0" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-35.9516,1.6261,39.3921)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree0"]
 shape = SubResource("ObstacleShape28")
 
-[node name="BoundaryTree1" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree1" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-39.5365,1.3701,-36.4440)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree1"]
 shape = SubResource("ObstacleShape29")
 
-[node name="BoundaryTree2" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree2" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-37.5854,1.3913,-38.7066)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree2"]
 shape = SubResource("ObstacleShape30")
 
-[node name="BoundaryTree3" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree3" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(37.5684,1.4040,-36.7005)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree3"]
 shape = SubResource("ObstacleShape31")
 
-[node name="BoundaryTree5" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree5" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-38.6549,1.5456,-29.9330)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree5"]
 shape = SubResource("ObstacleShape32")
 
-[node name="BoundaryTree6" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree6" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-30.3773,1.2890,-39.2299)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree6"]
 shape = SubResource("ObstacleShape33")
 
-[node name="BoundaryTree7" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree7" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(38.8079,1.5949,-31.2708)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree7"]
 shape = SubResource("ObstacleShape34")
 
-[node name="BoundaryTree9" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree9" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-37.9437,1.2552,-23.4181)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree9"]
 shape = SubResource("ObstacleShape35")
 
-[node name="BoundaryTree10" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree10" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-23.8708,1.5369,-39.7509)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree10"]
 shape = SubResource("ObstacleShape36")
 
-[node name="BoundaryTree11" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree11" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(37.8667,1.3624,-22.3534)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree11"]
 shape = SubResource("ObstacleShape37")
 
-[node name="BoundaryTree12" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree12" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-15.5633,1.5485,38.0809)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree12"]
 shape = SubResource("ObstacleShape38")
 
-[node name="BoundaryTree13" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree13" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-39.7761,1.5682,-17.5083)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree13"]
 shape = SubResource("ObstacleShape39")
 
-[node name="BoundaryTree14" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree14" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-17.3797,1.2457,-38.7523)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree14"]
 shape = SubResource("ObstacleShape40")
 
-[node name="BoundaryTree15" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree15" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(39.9262,1.3558,-17.4746)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree15"]
 shape = SubResource("ObstacleShape41")
 
-[node name="BoundaryTree16" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree16" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-9.2913,1.4014,39.6454)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree16"]
 shape = SubResource("ObstacleShape42")
 
-[node name="BoundaryTree17" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree17" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-39.5720,1.4355,-10.7407)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree17"]
 shape = SubResource("ObstacleShape43")
 
-[node name="BoundaryTree18" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree18" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-10.7527,1.4834,-38.2053)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree18"]
 shape = SubResource("ObstacleShape44")
 
-[node name="BoundaryTree19" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree19" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(37.6623,1.4642,-10.7085)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree19"]
 shape = SubResource("ObstacleShape45")
 
-[node name="BoundaryTree20" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree20" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-2.1097,1.6507,39.8700)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree20"]
 shape = SubResource("ObstacleShape46")
 
-[node name="BoundaryTree21" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree21" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-37.8386,1.3102,-3.8465)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree21"]
 shape = SubResource("ObstacleShape47")
 
-[node name="BoundaryTree22" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree22" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-2.4140,1.3399,-38.0437)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree22"]
 shape = SubResource("ObstacleShape48")
 
-[node name="BoundaryTree23" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree23" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(40.0947,1.4473,-3.4199)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree23"]
 shape = SubResource("ObstacleShape49")
 
-[node name="BoundaryTree24" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree24" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(4.1416,1.2723,39.5019)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree24"]
 shape = SubResource("ObstacleShape50")
 
-[node name="BoundaryTree25" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree25" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-39.2557,1.4617,3.1158)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree25"]
 shape = SubResource("ObstacleShape51")
 
-[node name="BoundaryTree26" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree26" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(3.1623,1.4129,-38.8673)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree26"]
 shape = SubResource("ObstacleShape52")
 
-[node name="BoundaryTree27" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree27" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(38.6039,1.2932,4.4290)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree27"]
 shape = SubResource("ObstacleShape53")
 
-[node name="BoundaryTree28" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree28" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(9.9011,1.2113,38.1616)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree28"]
 shape = SubResource("ObstacleShape54")
 
-[node name="BoundaryTree29" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree29" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-37.8460,1.6607,9.5812)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree29"]
 shape = SubResource("ObstacleShape55")
 
-[node name="BoundaryTree30" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree30" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(9.8187,1.6191,-38.7095)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree30"]
 shape = SubResource("ObstacleShape56")
 
-[node name="BoundaryTree31" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree31" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(39.1569,1.5319,10.4635)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree31"]
 shape = SubResource("ObstacleShape57")
 
-[node name="BoundaryTree32" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree32" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(18.4305,1.1975,38.6884)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree32"]
 shape = SubResource("ObstacleShape58")
 
-[node name="BoundaryTree33" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree33" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-37.7626,1.2825,16.8260)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree33"]
 shape = SubResource("ObstacleShape59")
 
-[node name="BoundaryTree34" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree34" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(17.9422,1.1939,-38.1343)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree34"]
 shape = SubResource("ObstacleShape60")
 
-[node name="BoundaryTree35" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree35" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(38.9896,1.6636,18.4773)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree35"]
 shape = SubResource("ObstacleShape61")
 
-[node name="BoundaryTree36" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree36" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(23.9097,1.4675,40.0211)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree36"]
 shape = SubResource("ObstacleShape62")
 
-[node name="BoundaryTree37" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree37" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-40.1691,1.3984,24.9297)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree37"]
 shape = SubResource("ObstacleShape63")
 
-[node name="BoundaryTree39" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree39" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(37.8047,1.3943,24.9422)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree39"]
 shape = SubResource("ObstacleShape64")
 
-[node name="BoundaryTree40" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree40" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(31.8721,1.5646,37.8050)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree40"]
 shape = SubResource("ObstacleShape65")
 
-[node name="BoundaryTree41" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree41" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-40.0548,1.4077,30.5808)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree41"]
 shape = SubResource("ObstacleShape66")
 
-[node name="BoundaryTree42" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree42" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(31.2085,1.4425,-37.9910)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree42"]
 shape = SubResource("ObstacleShape67")
 
-[node name="BoundaryTree43" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree43" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(38.1743,1.5287,30.7741)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree43"]
 shape = SubResource("ObstacleShape68")
 
-[node name="BoundaryTree44" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree44" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(36.8035,1.1904,38.6617)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree44"]
 shape = SubResource("ObstacleShape69")
 
-[node name="BoundaryTree45" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree45" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(-39.5502,1.4327,37.4007)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree45"]
 shape = SubResource("ObstacleShape70")
 
-[node name="BoundaryTree46" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree46" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(36.8940,1.2643,-38.5214)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree46"]
 shape = SubResource("ObstacleShape71")
 
-[node name="BoundaryTree47" type="CollisionShape3D" parent="SolidEnvironment"]
+[node name="BoundaryTree47" type="StaticBody3D" parent="SolidEnvironment"]
 position = Vector3(39.2006,1.4491,36.9681)
 rotation = Vector3(0,0.000000,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/BoundaryTree47"]
 shape = SubResource("ObstacleShape72")

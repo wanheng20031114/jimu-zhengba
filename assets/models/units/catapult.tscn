@@ -178,8 +178,10 @@ mesh = ExtResource("8_Payload")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91, 0.89)
 
 [node name="Locomotion" type="AnimationPlayer" parent="." unique_id=1057336109]
+callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_locomotion")
 autoplay = &"idle"
 
 [node name="Attack" type="AnimationPlayer" parent="." unique_id=2003609769]
+callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_attack")

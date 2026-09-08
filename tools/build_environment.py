@@ -1247,10 +1247,13 @@ def build_environment(models):
               '[node name="NaturalObstacles" type="Node3D" parent="."]']
     for name,label,x,z,angle,scale in instances:
         lines.append(f'[node name="{label}" parent="NaturalObstacles" instance=ExtResource("{ids[name]}")]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)\nscale = Vector3({scale},{scale},{scale})')
-    lines += ['[node name="SolidEnvironment" type="StaticBody3D" parent="."]\ncollision_layer = 1\ncollision_mask = 0']
+    # Keep distant obstacles in separate broad-phase bodies. Moving each saved
+    # transform onto the body leaves its one primitive shape untransformed.
+    lines += ['[node name="SolidEnvironment" type="Node3D" parent="."]']
     for i,item in enumerate(solids):
         x,y,z=item["position"]
-        lines.append(f'[node name="{item["name"]}" type="CollisionShape3D" parent="SolidEnvironment"]\nposition = Vector3({x:.4f},{y:.4f},{z:.4f})\nrotation = Vector3(0,{item["rotation_y"]:.6f},0)\nshape = SubResource("ObstacleShape{i}")')
+        lines.append(f'[node name="{item["name"]}" type="StaticBody3D" parent="SolidEnvironment"]\nposition = Vector3({x:.4f},{y:.4f},{z:.4f})\nrotation = Vector3(0,{item["rotation_y"]:.6f},0)\ncollision_layer = 1\ncollision_mask = 0')
+        lines.append(f'[node name="CollisionShape3D" type="CollisionShape3D" parent="SolidEnvironment/{item["name"]}"]\nshape = SubResource("ObstacleShape{i}")')
     write_asset(SCENES/"environment.tscn","\n\n".join(lines)+"\n")
     write_asset(ROOT/"assets/environment_obstacles.json",json.dumps({"version":2,"bounds":[-42,-42,42,42],
                 "resource_veins":[{"name":f"GoldVein{i+1}","position":[x,0,z],"radius":2.2} for i,(x,z) in enumerate(RESOURCE_VEINS)],

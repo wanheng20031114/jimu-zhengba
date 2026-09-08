@@ -2,7 +2,47 @@
 
 使用 Godot 4.6.3、Windows x64。测试通过原生场景、物理、导航和输入管线运行；真实渲染验证使用 RTX 3080。验证不发送桌面输入。
 
-## 本轮：农民、矿脉、防御塔与军事待命 AI
+## 本轮：0.5.0 固定模拟、插值与性能
+
+默认物理频率为 30 TPS，原生插值平滑单位、关节和弹丸。镜头、框选、预览和命令反馈保留显示时钟；攻击前摇、经济 Timer 和倒地/倒塌 Tween 统一为物理时钟。持续攻击保留跨步余数；普通移动每步只推进一次导航路径。完整设计见 [模拟架构](simulation-architecture.md)。
+
+| 已完成范围 | 结果与依据 |
+| --- | --- |
+| 30/60 TPS 下实际一分钟的攻击次数、相位误差、采矿收益与闲置不积存攻击 | 46 项通过；`tests/unit_motion_timing_test.gd` |
+| 采矿/建造边界、基础收入、暂停，以及两个物理步之间的命令反馈与状态归属 | 40 项通过；`tests/fixed_step_contract_test.gd` |
+| 原生显示插值、出手挂点、真实弓手连点/转向/取消/目标删除后重新攻击 | 30/60 TPS 分别 134 项通过；`tests/physics_interpolation_visual_test.gd` |
+| 73 个独立障碍碰撞体的世界变换、形状、层、材质与保存结构 | 367 项通过；`tests/environment_collision_audit.gd` |
+| 镜头边角、最大/最小缩放、16:9/21:9/32:9 的阴影与裁剪范围 | 107 项通过；`tests/shadow_camera_audit.gd`，另有 10 张渲染画面 |
+| 共享选中圈资源、独立阵营色、尺寸/可见性及血条保持原行为 | 22 项通过；`tests/unit_selection_material_test.gd` |
+| GPU 尘土六类单位的移动、停止、撞墙、离墙、死亡与持久节点生命周期 | 195 项通过；`tests/movement_dust_test.gd`，无头验证原生状态，实际画面另查 |
+| 胜利、失败、退出同一调用内停止尘土/行走、清理工人和攻击订单，尾迹自然消散 | 58 项通过；`tests/unit_shutdown_lifecycle_test.gd`，另重跑计时 40 + 46 项通过 |
+| 农民与军事 AI、施工和导航、真实经济输入回归 | 82 + 47 + 47 项通过；六项计时及玩法测试 stderr 均为空 |
+| 原有军事模型作者资源一致性 | 360 项通过，43 个源文件逐字节一致；没有改变网格或动画关键帧 |
+| 最终 Vulkan 渲染回归：重复攻击、动作、模型肖像、经济/编队主流程、原生输入 | 116 + 39 + 80 + 32 + 24 项通过，退出码均为 0、stderr 均为空 |
+| 正式初始部队实战、五种攻击动作、三种弹丸、攻城与倒塌 | 7 项通过、8 张实战截图；`tests/battle_visual_capture.gd`，已查看近战与攻城画面 |
+
+弓箭质量按实际 BattleUnit 发射事件区分蓄力与放弦，避免把已发射的显示插值帧误判为扣弦。30 TPS 最后一次采样发射前手/弦接触误差 P95 约 0.971 cm，与作者姿态的误差量级一致；首个弹丸显示帧没有重复手持箭，未引入额外动画调度结构。
+
+实际删除目标节点的回归发现 GDScript 参数类型检查会先于有效性检查处理已释放引用；有效性检查入口改接收 Variant，沿用原来的存活与阵营条件。删除目标后单位恢复待命，随后仍能正常接令并造成伤害。
+
+```text
+Godot_console.exe --headless --path . --audio-driver Dummy --fixed-fps 120 --script res://tests/unit_motion_timing_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --fixed-fps 120 --script res://tests/fixed_step_contract_test.gd
+Godot_console.exe --path . --audio-driver Dummy --script res://tests/physics_interpolation_visual_test.gd -- --tps=30
+Godot_console.exe --path . --audio-driver Dummy --script res://tests/stress_test.gd -- --tps=30
+```
+
+最终连续性能对照中，旧版→当前版的 160 人行军为 69.5→86.5 FPS，初始 160 人混战为 72.3→84.2 FPS；两次 61 项压力检查全部通过。测试时另一个用户 3D 程序仍在运行，未关闭用户程序；混战 P95 为 17.57→18.60 ms，不能据平均值声称消除了长帧。未经筛选的运行数据、条件变化和中间版本均归档在 [本轮统计](../tests/performance_0_5_0.json) 与 [性能记录](../tests/performance_review.md)。
+
+### Windows 0.5.0 成品验证
+
+原生导入与 Windows Desktop 发布导出均退出码 0、stderr 为空，日志无错误或警告，验证脚本未进入资源包。EXE 文件版本为 `0.5.0.0`。实际运行导出的 `AshenCrown.exe --audio-driver Dummy -- --capture`，默认 Vulkan 成功加载战场、保存画面并正常退出，stderr 为空；已查看该发布版画面并更新仓库截图。
+
+ZIP 为 45,805,502 字节，逐项核对 EXE、PCK 和说明文档，压缩包与导出目录的 SHA-256 全部一致。PCK 为 11,492,596 字节，SHA-256：`44aba695b0b3a01d4ca2386ec6666f4d6255f1f7d71f7745362ba200e261397c`。本机包为 `builds/AshenCrown-Windows-x64.zip`，构建产物按规则不纳入 Git，可用 `tools/build_windows.ps1` 重建。
+
+结束前以 Win32_Process 命令核实：Godot 无头、检查、导入、压力测试、发布版截图和本轮打包辅助进程均已退出；用户其他程序保持运行。
+
+## 历史阶段：0.4.0 农民、矿脉、防御塔与军事待命 AI
 
 本轮面向 0.4.0：初始两名农民、50 金币即时招募、无限矿脉每人 3 秒结算 3 金币，提供采集与建造进度条。Shift 可混合追加移动、采矿和建造；采矿完成当前周期后执行后续队列，最后一项采矿持续循环。中断采矿不结算未完成周期，重复矿脉命令保留进度。
 

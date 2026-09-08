@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://tests/movement_dust_test.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://scenes/unit.tscn" id="2_unit"]
+
+[sub_resource type="BoxShape3D" id="Shape_ground"]
+size = Vector3(44, 0.5, 20)
+
+[sub_resource type="BoxShape3D" id="Shape_wall"]
+size = Vector3(44, 3, 0.5)
+
+[node name="MovementDustTest" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.25, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("Shape_ground")
+
+[node name="Wall" type="StaticBody3D" parent="."]
+position = Vector3(0, 1.5, 4)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall"]
+shape = SubResource("Shape_wall")
+
+[node name="Units" type="Node3D" parent="."]
+
+[node name="Swordsman" parent="Units" instance=ExtResource("2_unit")]
+position = Vector3(-15, 0, 0)
+unit_type = "swordsman"
+
+[node name="Archer" parent="Units" instance=ExtResource("2_unit")]
+position = Vector3(-9, 0, 0)
+unit_type = "archer"
+
+[node name="Knight" parent="Units" instance=ExtResource("2_unit")]
+position = Vector3(-3, 0, 0)
+unit_type = "knight"
+
+[node name="Catapult" parent="Units" instance=ExtResource("2_unit")]
+position = Vector3(3, 0, 0)
+unit_type = "catapult"
+
+[node name="Cannon" parent="Units" instance=ExtResource("2_unit")]
+position = Vector3(9, 0, 0)
+unit_type = "cannon"
+
+[node name="Farmer" parent="Units" instance=ExtResource("2_unit")]
+position = Vector3(15, 0, 0)
+unit_type = "farmer"
+
+[node name="Timeout" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timeout" to="." method="_on_timeout"]

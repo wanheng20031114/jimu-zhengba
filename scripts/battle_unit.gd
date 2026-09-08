@@ -63,7 +63,7 @@ var _strike_target: Node3D
 var _strike_damage: float = 0.0
 var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
-var _dust_time: float = 0.0
+var _raises_movement_dust: bool = false
 var _moving: bool = false
 var _move_retaliation: Node3D
 var _retaliation_time: float = 0.0
@@ -82,6 +82,7 @@ var _claimed_site: bool = false
 @onready var selection_ring: MeshInstance3D = $SelectionRing
 @onready var attack_windup: Timer = $AttackWindup
 @onready var work_bar: MeshInstance3D = $WorkBar
+@onready var movement_dust: GPUParticles3D = $MovementDust
 
 func _ready() -> void:
 	_stats = STATS[unit_type]
@@ -93,6 +94,8 @@ func _ready() -> void:
 	attack_range = _stats.range
 	attack_damage = _stats.damage
 	armor = _stats.armor
+	_raises_movement_dust = unit_type in ["knight", "catapult", "cannon"]
+	movement_dust.visible = _raises_movement_dust
 	# Keep the common picking layer; dedicated faction layers filter native queries.
 	collision_layer = 4 | (16 if team == 0 else 8)
 	var sight_shape := SphereShape3D.new()
@@ -125,18 +128,22 @@ func _ready() -> void:
 	capsule.height = maxf(radius * 1.7, 1.8)
 	$CollisionShape3D.position.y = capsule.height * 0.5
 	selection_ring.scale = Vector3.ONE * radius * 1.65
-	var ring_material: StandardMaterial3D = selection_ring.get_surface_override_material(0)
-	ring_material.albedo_color = Color("74d5f2") if team == 0 else Color("f26b52")
+	selection_ring.set_instance_shader_parameter("ring_color", Color("74d5f2") if team == 0 else Color("f26b52"))
 	health_bar.set_instance_shader_parameter("bar_color", Color("86bf54") if team == 0 else Color("d85549"))
 	health_bar.position.y = 3.45 if unit_type == "knight" else (2.8 if unit_type in ["catapult", "cannon"] else 2.45)
 	health_bar.scale.x = 1.65 if radius > 0.7 else 1.25
 	_update_health_bar()
 	set_selected(false)
+	# The unit is instantiated at its actual spawn position. Synchronize the
+	# completed hierarchy so render interpolation never blends from the origin.
+	reset_physics_interpolation()
 
 func _physics_process(delta: float) -> void:
 	if not alive:
 		return
-	_attack_cooldown = maxf(0.0, _attack_cooldown - delta)
+	# Keep the fractional tick at expiry for continuous attacks (e.g. 1.05 s
+	# at 30 physics ticks). An already-ready unit never banks idle attack time.
+	_attack_cooldown = _attack_cooldown - delta if _attack_cooldown > 0.0 else 0.0
 	_charge_cooldown = maxf(0.0, _charge_cooldown - delta)
 	_damage_bar_time = maxf(0.0, _damage_bar_time - delta)
 	_retaliation_time = maxf(0.0, _retaliation_time - delta)
@@ -156,6 +163,7 @@ func _physics_process(delta: float) -> void:
 		_scan_time = randf_range(0.3, 0.4)
 		_refresh_target()
 	var desired_velocity := Vector3.ZERO
+	var path_velocity_requested: bool = false
 	if order in [Order.GATHER, Order.BUILD]:
 		desired_velocity = _work_velocity(delta)
 	elif _valid_target(target):
@@ -163,7 +171,7 @@ func _physics_process(delta: float) -> void:
 		to_target.y = 0.0
 		if _within_attack_range(target):
 			_face_direction(to_target, delta)
-			if _attack_cooldown <= 0.0:
+			if _attack_cooldown <= 0.000001:
 				_start_attack()
 		elif order != Order.HOLD and order != Order.MOVE:
 			if _repath_time <= 0.0:
@@ -181,6 +189,7 @@ func _physics_process(delta: float) -> void:
 				if navigation_agent.is_navigation_finished() or navigation_agent.target_position.distance_squared_to(chase_destination) > 0.09:
 					_set_navigation_target(chase_destination)
 			desired_velocity = _path_velocity()
+			path_velocity_requested = true
 			if target.is_in_group("buildings") and String(_stats.projectile).is_empty() and navigation_agent.is_navigation_finished():
 				# A padded navigation mesh ends before the physical wall. Complete the
 				# last contact step through CharacterBody3D so swords can reach it.
@@ -194,22 +203,21 @@ func _physics_process(delta: float) -> void:
 			_complete_waypoint()
 		else:
 			desired_velocity = _path_velocity()
+			path_velocity_requested = true
 			if NavigationServer3D.map_get_iteration_id(navigation_agent.get_navigation_map()) > 0 and navigation_agent.is_navigation_finished():
 				_complete_waypoint()
 	elif order == Order.ATTACK:
 		_complete_waypoint()
 	# Plain movement may strike a pursuer in melee, but never chases it.
-	if order == Order.MOVE and not _valid_target(target):
+	# A completed work/attack order can enter MOVE during this tick. Ordinary
+	# MOVE already followed its path above and must not update the agent twice.
+	if order == Order.MOVE and not _valid_target(target) and not path_velocity_requested:
 		desired_velocity = _path_velocity()
 	var is_moving: bool = desired_velocity.length_squared() > 0.08
 	if is_moving:
 		_face_direction(desired_velocity, delta)
 		if unit_type == "knight" and _charge_cooldown <= 0.0:
 			_charge_time = minf(_charge_time + delta, 2.0)
-		_dust_time -= delta
-		if _dust_time <= 0.0 and unit_type in ["knight", "catapult", "cannon"]:
-			_dust_time = 0.5
-			_game.spawn_effect(global_position, "dust", Color("c6a572"))
 	else:
 		_charge_time = maxf(0.0, _charge_time - delta * 0.25)
 	if is_moving != _moving:
@@ -239,18 +247,27 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 	velocity.y = 0.0
 	if velocity.length_squared() < 0.001:
 		velocity = Vector3.ZERO
+		_set_movement_dust(false)
 		return
 	var previous_position: Vector3 = global_position
 	move_and_slide()
 	if absf(global_position.y) > 0.001:
 		global_position.y = 0.0
-	# Use distance actually travelled: a unit blocked by a wall must stay quiet.
-	_foley_distance += global_position.distance_to(previous_position)
+	# Both footsteps and dust follow actual displacement, including RVO and walls.
+	var travelled: float = global_position.distance_to(previous_position)
+	_set_movement_dust(travelled > get_physics_process_delta_time() * 0.2)
+	_foley_distance += travelled
 	var stride: float = 1.65 if unit_type == "knight" else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
 	if _foley_distance >= stride:
 		_foley_distance = fmod(_foley_distance, stride)
 		var foot_sound: StringName = &"horse_hoof" if unit_type == "knight" else (&"cart_wheel" if unit_type in ["catapult", "cannon"] else &"footstep_dirt")
 		sound_requested.emit(foot_sound, global_position)
+
+func _set_movement_dust(moving: bool) -> void:
+	var emitting: bool = _raises_movement_dust and moving
+	if movement_dust.emitting != emitting:
+		# Stop only new emission; existing particles finish in world space.
+		movement_dust.emitting = emitting
 
 func _set_navigation_target(at: Vector3) -> void:
 	at.y = 0.0
@@ -262,7 +279,8 @@ func _face_direction(direction: Vector3, delta: float) -> void:
 		if absf(angle_difference(model_pivot.rotation.y, desired_angle)) > 0.002:
 			model_pivot.rotation.y = lerp_angle(model_pivot.rotation.y, desired_angle, minf(1.0, delta * 12.0))
 
-func _valid_target(entity: Node3D) -> bool:
+func _valid_target(entity: Variant) -> bool:
+	# Freed cached targets must reach the validity guard before object-type checks.
 	return is_instance_valid(entity) and entity != self and entity.is_in_group("entities") and entity.alive and entity.team != team
 
 func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
@@ -321,7 +339,7 @@ func _refresh_target() -> void:
 func _start_attack() -> void:
 	_strike_target = target
 	_strike_damage = attack_damage
-	_attack_cooldown = _stats.cooldown
+	_attack_cooldown = float(_stats.cooldown) + minf(0.0, _attack_cooldown)
 	if unit_type == "knight" and _charge_time >= 0.95 and _charge_cooldown <= 0.0:
 		_strike_damage *= 1.85
 		_charge_cooldown = 6.0
@@ -582,6 +600,11 @@ func _finish_order() -> void:
 	_home_position = global_position
 	_scan_time = 0.0
 	attack_windup.stop()
+	# Stop presentation state synchronously: battle completion may disable
+	# physics and avoidance before another velocity callback can arrive.
+	_set_movement_dust(false)
+	_moving = false
+	_model.set_motion(false)
 	_set_navigation_target(global_position)
 	velocity = Vector3.ZERO
 	NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), Vector3.ZERO)
@@ -614,6 +637,7 @@ func _die() -> void:
 	alive = false
 	sound_requested.emit(&"death_fall", global_position)
 	order_name = "阵亡"
+	_set_movement_dust(false)
 	set_selected(false)
 	health_bar.hide()
 	attack_windup.stop()
@@ -629,7 +653,7 @@ func _die() -> void:
 	remove_from_group("entities")
 	remove_from_group("units")
 	remove_from_group("friendly_units" if team == 0 else "enemy_units")
-	var fall: Tween = create_tween().set_parallel(true)
+	var fall: Tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS).set_parallel(true)
 	fall.tween_property(model_pivot, "rotation:z", 1.35 if randf() > 0.5 else -1.35, 0.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	fall.tween_property(model_pivot, "position:y", 0.15, 0.42)
 	fall.chain().tween_interval(2.0)

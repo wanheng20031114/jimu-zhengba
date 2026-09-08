@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle_unit.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/movement_dust.tscn" id="2_dust"]
 
 [sub_resource type="CapsuleShape3D" id="Capsule_body"]
 resource_local_to_scene = true
@@ -18,12 +19,11 @@ shader = SubResource("Shader_health")
 material = SubResource("Material_health")
 size = Vector2(1, 1)
 
-[sub_resource type="StandardMaterial3D" id="Material_selection"]
-resource_local_to_scene = true
-transparency = 1
-shading_mode = 0
-albedo_color = Color(0.45, 0.83, 0.94, 0.95)
-disable_receive_shadows = true
+[sub_resource type="Shader" id="Shader_selection"]
+code = "shader_type spatial;\nrender_mode unshaded, shadows_disabled;\ninstance uniform vec4 ring_color : source_color = vec4(0.45, 0.83, 0.94, 1.0);\nvoid fragment() {\n    ALBEDO = ring_color.rgb;\n}"
+
+[sub_resource type="ShaderMaterial" id="Material_selection"]
+shader = SubResource("Shader_selection")
 
 [sub_resource type="TorusMesh" id="Mesh_selection"]
 material = SubResource("Material_selection")
@@ -43,6 +43,8 @@ position = Vector3(0, 0.9, 0)
 shape = SubResource("Capsule_body")
 
 [node name="ModelPivot" type="Node3D" parent="."]
+
+[node name="MovementDust" parent="." instance=ExtResource("2_dust")]
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.4
@@ -82,6 +84,7 @@ material_override = SubResource("Material_health")
 mesh = SubResource("Mesh_health")
 
 [node name="AttackWindup" type="Timer" parent="."]
+process_callback = 0
 one_shot = true
 
 [connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_apply_velocity"]

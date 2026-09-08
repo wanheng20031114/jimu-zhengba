@@ -11,7 +11,7 @@
 - 正式环境组合为 `scenes/environment.tscn`。无功能民居、废墟、围墙、栅栏、井、推车和补给营帐已从地图移除，换成侧翼岩石与树木；五座初始军事建筑仍由主场景管理。
 - `NaturalObstacles` 保存 14 处岩石与 14 棵侧翼树木，边界树林与地表细节合并到 `world_details.glb`。树冠不阻挡整个投影面积，树干有碰撞。
 - `Ground/CollisionShape3D` 提供 84×84 米地面，物理顶面 Y=-0.03；土色分区为同高度的连续裁切表面。石板与薄沙的可见表面不超过 Y=0.05。
-- `SolidEnvironment` 保存 73 个自然障碍的原生 BoxShape3D 碰撞。矿脉由 `scenes/resource_vein.tscn` 单独管理，环境不会重复实例化其模型或碰撞。
+- `SolidEnvironment` 是分类用 Node3D，保存 73 个独立 StaticBody3D；各物体保留一枚原生 BoxShape3D，位置和旋转设在物体上，碰撞形状保持局部单位变换，便于物理宽相位剔除远处障碍。矿脉由 `scenes/resource_vein.tscn` 单独管理，环境不会重复实例化其模型或碰撞。
 - `assets/environment_obstacles.json` 同时提供旋转盒的 `position`、`size`、`rotation_y` 与世界包围盒 `aabb_min`、`aabb_max`，不要再次旋转 AABB。标记 `resource: true` 的五项是矿脉导航与建造占地，`resource_veins` 给出主场景资源坐标。
 - `model_manifest.json` 记录实际包围盒、三角面与合并网格数量。老建筑的屋檐、旗帜和总部台阶可能超出主要墙体占地。
 

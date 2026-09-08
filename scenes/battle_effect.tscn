@@ -93,6 +93,7 @@ _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2
 point_count = 3
 
 [node name="BattleEffect" type="Node3D"]
+physics_interpolation_mode = 2
 script = ExtResource("1_script")
 
 [node name="Sparks" type="CPUParticles3D" parent="."]

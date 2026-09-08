@@ -55,10 +55,14 @@ func initialize(source: Node3D, target: Node3D, damage: float, kind: String) -> 
 	var launch_direction: Vector3 = (_end - _start) + Vector3.UP * (4.0 * _arc_height)
 	var launch_up: Vector3 = Vector3.RIGHT if absf(launch_direction.normalized().dot(Vector3.UP)) > 0.99 else Vector3.UP
 	look_at(_start + launch_direction, launch_up)
+	reset_physics_interpolation()
 	_active = true
 
 func _physics_process(delta: float) -> void:
 	if not _active:
+		# Keep the terminal pose for one tick so the renderer can finish the
+		# final interpolated segment. Damage has already been applied exactly once.
+		queue_free()
 		return
 	_elapsed += delta
 	var progress: float = minf(1.0, _elapsed / _duration)
@@ -100,4 +104,3 @@ func _impact() -> void:
 				var siege_bonus: float = 1.7 if entity.is_in_group("buildings") else 1.0
 				entity.receive_damage(_damage * falloff * siege_bonus, damage_source)
 		_game.spawn_effect(_end - Vector3.UP * 0.7, "explosion" if _kind == "cannon" else "stone_hit", Color("efbb76"))
-	queue_free()

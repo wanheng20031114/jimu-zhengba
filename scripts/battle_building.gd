@@ -112,6 +112,7 @@ func _ready() -> void:
 	construction_bar.set_instance_shader_parameter("bar_color", Color("e5b94d"))
 	_update_construction_visuals()
 	set_selected(false)
+	reset_physics_interpolation()
 
 func _physics_process(delta: float) -> void:
 	if not alive or under_construction or float(_stats.damage) <= 0.0:
@@ -266,7 +267,7 @@ func _die() -> void:
 	# unbounded, so retire their full node hierarchy after the debris settles.
 	if building_type == "defense_tower":
 		$DebrisLifetime.start()
-	var collapse: Tween = create_tween().set_parallel(true)
+	var collapse: Tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS).set_parallel(true)
 	collapse.tween_property(model_pivot, "position:y", -1.0, 1.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	collapse.tween_property(model_pivot, "scale", Vector3(1.08, 0.08, 1.08), 1.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	collapse.tween_property(model_pivot, "rotation:z", 0.11, 1.25)

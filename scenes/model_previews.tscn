@@ -37,6 +37,7 @@ ssao_intensity = 1.3
 ssao_power = 1.3
 
 [node name="ModelPreviews" type="Node"]
+physics_interpolation_mode = 2
 script = ExtResource("1_script")
 
 [node name="PreviewTick" type="Timer" parent="."]

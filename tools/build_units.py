@@ -743,8 +743,8 @@ def write_farmer_scene(s):
         emitted.add(part)
     for part in parts:emit(part)
     lines += ['[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action"]\nposition = Vector3(0,1.4,-0.6)',
-              '[node name="Locomotion" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
-              '[node name="Attack" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
+              '[node name="Locomotion" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
+              '[node name="Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
     (OUT/"farmer.tscn").write_text("\n\n".join(lines)+"\n",encoding="utf-8")
 
 
@@ -940,8 +940,8 @@ def write_scene(s):
         emitted.add(p)
     for p in parts:emit(p)
     lines.append(f'[node name="ProjectileSocket" type="Marker3D" parent="{socket_parent}"]\nposition = {vec(socket_position)}')
-    lines += ['[node name="Locomotion" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
-              '[node name="Attack" type="AnimationPlayer" parent="."]\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
+    lines += ['[node name="Locomotion" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
+              '[node name="Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
     (OUT/f"{s.name}.tscn").write_text("\n\n".join(lines)+"\n",encoding="utf-8")
 
 

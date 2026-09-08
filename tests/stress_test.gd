@@ -11,9 +11,16 @@ var phases: Array[Dictionary] = []
 var initial_usec: int
 var rendered: bool
 var finished: bool = false
+var scene_path: String = "res://scenes/main.tscn"
 
 func _initialize() -> void:
 	initial_usec = Time.get_ticks_usec()
+	# Benchmark overrides only; the game always takes its rate from project.godot.
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--tps="):
+			Engine.physics_ticks_per_second = int(argument.trim_prefix("--tps="))
+		elif argument.begins_with("--scene="):
+			scene_path = argument.trim_prefix("--scene=")
 	rendered = DisplayServer.get_name() != "headless"
 	call_deferred("_run")
 
@@ -31,9 +38,14 @@ func _run() -> void:
 		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	seed(98761)
-	change_scene_to_file("res://scenes/main.tscn")
+	change_scene_to_file(scene_path)
 	await scene_changed
 	game = current_scene
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--shadow-mode="):
+			game.get_node("Sun").directional_shadow_mode = int(argument.trim_prefix("--shadow-mode="))
+		elif argument.begins_with("--camera-far="):
+			game.camera.far = float(argument.trim_prefix("--camera-far="))
 	game.tests_running = true
 	game.camera_rig.edge_scroll = false
 	game.get_node("EnemyTimer").stop()
@@ -43,7 +55,7 @@ func _run() -> void:
 	await create_timer(0.4).timeout
 	_check(game.player_count() > 0 and game.enemy_count() > 0, "main scene spawns both armies")
 	if "--normal-load" in OS.get_cmdline_user_args():
-		await _measure("normal_14_friendly_27_enemy_idle", 5.0)
+		await _measure("normal_16_friendly_27_enemy_idle", 5.0)
 		for index: int in range(game.player_count(), 60):
 			_spawn_friendly(index)
 		game.select_army()
@@ -248,6 +260,7 @@ func _measure(label: String, seconds: float) -> void:
 	var result: Dictionary = {"name": label, "duration_s": float(Time.get_ticks_usec() - since) / 1000000.0,
 		"fps_measured": frames / seconds, "frame_p50_ms": frame_ms[int(frame_ms.size() * .5)],
 		"frame_p95_ms": frame_ms[mini(frame_ms.size() - 1, int(frame_ms.size() * .95))],
+		"frame_p99_ms": frame_ms[mini(frame_ms.size() - 1, int(frame_ms.size() * .99))],
 		"monitors": averages}
 	phases.append(result)
 	print("PHASE ", JSON.stringify(result))
@@ -257,6 +270,10 @@ func _measure(label: String, seconds: float) -> void:
 
 func _write_result() -> void:
 	var data: Dictionary = {"rendered": rendered, "renderer": RenderingServer.get_current_rendering_method(),
+		"physics_ticks_per_second": Engine.physics_ticks_per_second, "physics_interpolation": physics_interpolation,
+		"viewport_size": str(root.get_visible_rect().size),
+		"window_size": str(DisplayServer.window_get_size()) if rendered else "headless",
+		"shadow_mode": game.get_node("Sun").directional_shadow_mode, "camera_far": game.camera.far,
 		"godot": Engine.get_version_info().string, "elapsed_s": float(Time.get_ticks_usec() - initial_usec) / 1000000.0,
 		"checks_passed": checks.size(), "failures": failures, "phases": phases}
 	var prefix: String = "stress_normal_" if "--normal-load" in OS.get_cmdline_user_args() else "stress_"
