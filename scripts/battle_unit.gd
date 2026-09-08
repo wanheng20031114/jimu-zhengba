@@ -358,9 +358,14 @@ func _begin_move(at: Vector3, attack_move: bool) -> void:
 func issue_attack(entity: Node3D) -> void:
 	if not alive or not _valid_target(entity):
 		return
+	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
 	waypoint_queue.clear()
 	order = Order.ATTACK
 	order_name = "攻击目标"
+	# Repeated focus fire replaces queued orders without canceling the current strike.
+	# This also promotes an automatic engagement to an explicit attack on that target.
+	if same_attack:
+		return
 	target = entity
 	_repath_time = 0.0
 	attack_windup.stop()
