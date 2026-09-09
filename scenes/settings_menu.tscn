@@ -1,0 +1,1042 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/game_settings.gd" id="1_settings"]
+
+[ext_resource type="Script" path="res://scripts/settings_menu.gd" id="2_menu"]
+
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="3_theme"]
+
+[node name="Settings" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+script = ExtResource("1_settings")
+
+[node name="DisplayRevertTimer" type="Timer" parent="."]
+process_mode = 3
+one_shot = true
+ignore_time_scale = true
+
+[node name="Menu" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 0
+script = ExtResource("2_menu")
+theme = ExtResource("3_theme")
+
+[node name="Shade" type="ColorRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025,0.023,0.017,0.80)
+mouse_filter = 0
+
+[node name="Center" type="CenterContainer" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Menu/Center"]
+layout_mode = 2
+custom_minimum_size = Vector2(980,650)
+
+[node name="Layout" type="VBoxContainer" parent="Menu/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Heading" type="HBoxContainer" parent="Menu/Center/Panel/Layout"]
+layout_mode = 2
+
+[node name="Brand" type="Label" parent="Menu/Center/Panel/Layout/Heading"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "灰烬王国  /  设置"
+theme_override_font_sizes/font_size = 29
+
+[node name="Close" type="Button" parent="Menu/Center/Panel/Layout/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52,42)
+text = "×"
+
+[node name="Divider" type="HSeparator" parent="Menu/Center/Panel/Layout"]
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="Menu/Center/Panel/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="Categories" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(175,0)
+theme_override_constants/separation = 7
+
+[node name="Graphics" type="Button" parent="Menu/Center/Panel/Layout/Body/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,48)
+toggle_mode = true
+text = "显示"
+alignment = 0
+
+[node name="Audio" type="Button" parent="Menu/Center/Panel/Layout/Body/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,48)
+toggle_mode = true
+text = "声音"
+alignment = 0
+
+[node name="Controls" type="Button" parent="Menu/Center/Panel/Layout/Body/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,48)
+toggle_mode = true
+text = "镜头与操作"
+alignment = 0
+
+[node name="Hotkeys" type="Button" parent="Menu/Center/Panel/Layout/Body/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,48)
+toggle_mode = true
+text = "热键"
+alignment = 0
+
+[node name="Content" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="SectionTitle" type="Label" parent="Menu/Center/Panel/Layout/Body/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "显示"
+theme_override_font_sizes/font_size = 24
+
+[node name="SectionHint" type="Label" parent="Menu/Center/Panel/Layout/Body/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "显示与帧数"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.64,0.59,0.49,1)
+
+[node name="Pages" type="MarginContainer" parent="Menu/Center/Panel/Layout/Body/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(660,330)
+
+[node name="Graphics" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Audio" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Controls" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="WindowModeRow" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,46)
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/WindowModeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "显示模式"
+theme_override_font_sizes/font_size = 18
+
+[node name="WindowMode" type="OptionButton" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/WindowModeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(270,40)
+
+
+[node name="ResolutionRow" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,46)
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/ResolutionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "分辨率"
+theme_override_font_sizes/font_size = 18
+
+[node name="Resolution" type="OptionButton" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/ResolutionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(270,40)
+
+
+[node name="VsyncRow" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,46)
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/VsyncRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "垂直同步"
+theme_override_font_sizes/font_size = 18
+
+[node name="Vsync" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/VsyncRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(270,40)
+toggle_mode = true
+text = "开启"
+
+[node name="FrameLimitRow" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,46)
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/FrameLimitRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "帧数上限"
+theme_override_font_sizes/font_size = 18
+
+[node name="FrameLimit" type="OptionButton" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics/FrameLimitRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(270,40)
+
+
+[node name="Tip" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Graphics"]
+layout_mode = 2
+text = "开启垂直同步时，帧率同时受显示器刷新率限制。
+显示模式与分辨率变更会提供 15 秒确认时间。"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.64,0.59,0.49,1)
+
+[node name="VolumeRow" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Heading" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio/VolumeRow"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio/VolumeRow/Heading"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "音效音量"
+theme_override_font_sizes/font_size = 18
+
+[node name="VolumeValue" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio/VolumeRow/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+theme_override_colors/font_color = Color(0.89,0.72,0.39,1)
+
+[node name="Volume" type="HSlider" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio/VolumeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0,28)
+min_value = 0
+max_value = 100
+step = 1
+value = 80
+
+[node name="MuteRow" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,46)
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio/MuteRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "声音"
+theme_override_font_sizes/font_size = 18
+
+[node name="Mute" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Audio/MuteRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(270,40)
+toggle_mode = true
+text = "声音开启"
+
+[node name="CameraSpeedRow" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Heading" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/CameraSpeedRow"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/CameraSpeedRow/Heading"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "镜头移动速度"
+theme_override_font_sizes/font_size = 18
+
+[node name="CameraValue" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/CameraSpeedRow/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+theme_override_colors/font_color = Color(0.89,0.72,0.39,1)
+
+[node name="CameraSpeed" type="HSlider" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/CameraSpeedRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0,28)
+min_value = 0.25
+max_value = 3
+step = 0.05
+value = 1
+
+[node name="ZoomSpeedRow" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Heading" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/ZoomSpeedRow"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/ZoomSpeedRow/Heading"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "滚轮缩放速度"
+theme_override_font_sizes/font_size = 18
+
+[node name="ZoomValue" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/ZoomSpeedRow/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+theme_override_colors/font_color = Color(0.89,0.72,0.39,1)
+
+[node name="ZoomSpeed" type="HSlider" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/ZoomSpeedRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0,28)
+min_value = 0.25
+max_value = 3
+step = 0.05
+value = 1
+
+[node name="EdgeScrollRow" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,46)
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/EdgeScrollRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "鼠标边缘移动"
+theme_override_font_sizes/font_size = 18
+
+[node name="EdgeScroll" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls/EdgeScrollRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(270,40)
+toggle_mode = true
+text = "开启"
+
+[node name="Tip" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Controls"]
+layout_mode = 2
+text = "窗口模式下，鼠标越过窗口边界仍会移动镜头。
+按住鼠标中键也可拖动视角。"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.64,0.59,0.49,1)
+
+[node name="Hotkeys" type="ScrollContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+follow_focus = true
+
+[node name="HotkeyRows" type="VBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="rts_attack_move" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_attack_move"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_attack_move"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "攻击前进"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_attack_move"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_stop" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_stop"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_stop"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "停止"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_stop"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_hold" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_hold"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_hold"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "坚守"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_hold"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_select_base" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_select_base"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_select_base"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "选择大本营"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_select_base"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_select_army" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_select_army"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_select_army"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "选择全部战斗单位"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_select_army"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_focus" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_focus"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_focus"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "聚焦所选对象"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_focus"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_slot_1" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_slot_1"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_1"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "第一项生产 / 建造 / 研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_1"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_slot_2" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_slot_2"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "第二项生产 / 建造 / 研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_2"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_slot_3" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_slot_3"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_3"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "第三项生产 / 建造 / 研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_3"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_slot_4" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_slot_4"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_4"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "第四项生产 / 建造 / 研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_4"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_slot_5" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_slot_5"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_5"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "第五项生产 / 建造 / 研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_5"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_slot_6" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_slot_6"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_6"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "第六项生产 / 建造 / 研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_slot_6"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_build_tower" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_build_tower"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_build_tower"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "放置防御塔"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_build_tower"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_destroy" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_destroy"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_destroy"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "删除所选己方资产"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_destroy"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_pause" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_pause"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pause"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "暂停 / 继续"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pause"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_help" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_help"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_help"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "操作帮助"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_help"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_photo" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_photo"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_photo"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "隐藏 / 显示界面"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_photo"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_fullscreen" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_fullscreen"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_fullscreen"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "切换全屏"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_fullscreen"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_mute" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_mute"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_mute"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "静音"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_mute"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_idle_worker" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_idle_worker"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_idle_worker"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "选择空闲农民"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_idle_worker"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_cycle_buildings" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_cycle_buildings"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_cycle_buildings"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "切换编队中的建筑"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_cycle_buildings"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group1" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group1"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group1"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 1"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group1"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group2" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group2"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 2"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group2"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group3" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group3"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group3"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 3"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group3"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group4" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group4"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group4"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 4"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group4"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group5" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group5"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group5"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 5"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group5"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group6" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group6"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group6"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 6"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group6"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group7" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group7"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group7"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 7"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group7"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group8" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group8"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group8"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 8"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group8"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_group9" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_group9"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group9"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "编队 9"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_group9"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_pan_left" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_pan_left"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_left"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "镜头向左"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_left"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_pan_right" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_pan_right"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_right"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "镜头向右"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_right"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_pan_up" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_pan_up"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_up"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "镜头向前"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_up"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="rts_pan_down" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_pan_down"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_down"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "镜头向后"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pan_down"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="Status" type="Label" parent="Menu/Center/Panel/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+text = ""
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.89,0.72,0.39,1)
+
+[node name="Divider2" type="HSeparator" parent="Menu/Center/Panel/Layout"]
+layout_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="Menu/Center/Panel/Layout"]
+layout_mode = 2
+
+[node name="RestoreDefaults" type="Button" parent="Menu/Center/Panel/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(155,44)
+text = "恢复默认"
+
+[node name="Spacer" type="Control" parent="Menu/Center/Panel/Layout/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Cancel" type="Button" parent="Menu/Center/Panel/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(115,44)
+text = "取消"
+
+[node name="Apply" type="Button" parent="Menu/Center/Panel/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(115,44)
+text = "应用"
+
+[node name="Done" type="Button" parent="Menu/Center/Panel/Layout/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(145,44)
+text = "完成"
+
+[node name="DisplayConfirm" type="Control" parent="Menu"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 0
+
+[node name="Shade" type="ColorRect" parent="Menu/DisplayConfirm"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025,0.023,0.017,0.86)
+mouse_filter = 0
+
+[node name="Center" type="CenterContainer" parent="Menu/DisplayConfirm"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+
+[node name="Panel" type="PanelContainer" parent="Menu/DisplayConfirm/Center"]
+layout_mode = 2
+custom_minimum_size = Vector2(520,220)
+
+[node name="Content" type="VBoxContainer" parent="Menu/DisplayConfirm/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="DisplayCountdown" type="Label" parent="Menu/DisplayConfirm/Center/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "是否保留当前显示设置？"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 23
+
+[node name="Actions" type="HBoxContainer" parent="Menu/DisplayConfirm/Center/Panel/Content"]
+layout_mode = 2
+
+[node name="RevertDisplay" type="Button" parent="Menu/DisplayConfirm/Center/Panel/Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "恢复原设置"
+
+[node name="KeepDisplay" type="Button" parent="Menu/DisplayConfirm/Center/Panel/Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "保留设置"

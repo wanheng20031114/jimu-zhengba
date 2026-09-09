@@ -6,7 +6,7 @@
 script = ExtResource("1_definition")
 id = &"farmer"
 name = "农民"
-description = "在矿脉旁每3秒采集3金币，并建造军事与经济建筑。"
+description = "驻留矿脉直接采集金币，并建造军事与经济建筑。"
 hp = 75
 damage = 8
 melee_armor = 0

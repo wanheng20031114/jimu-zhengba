@@ -4,6 +4,7 @@ extends Node3D
 @export var minimum_zoom: float = 16.0
 @export var maximum_zoom: float = 62.0
 @onready var camera: Camera3D = $Camera3D
+@onready var settings: GameSettings = get_node("/root/Session/Settings")
 var destination: Vector3
 var zoom_target: float = 37.0
 var dragging: bool = false
@@ -14,12 +15,12 @@ func _ready() -> void:
 	zoom_target = camera.size
 
 func _process(delta: float) -> void:
-	if get_tree().paused:
+	if get_tree().paused or settings.is_open() or get_parent()._local_menu or get_parent().hud.help_visible():
 		return
 	var direction := Vector3.ZERO
-	direction.x = float(Input.is_physical_key_pressed(KEY_RIGHT)) - float(Input.is_physical_key_pressed(KEY_LEFT))
-	direction.z = float(Input.is_physical_key_pressed(KEY_DOWN)) - float(Input.is_physical_key_pressed(KEY_UP))
-	if edge_scroll and not dragging and DisplayServer.window_is_focused():
+	direction.x = Input.get_axis("rts_pan_left", "rts_pan_right")
+	direction.z = Input.get_axis("rts_pan_up", "rts_pan_down")
+	if edge_scroll and settings.edge_scroll_enabled and not dragging and DisplayServer.window_is_focused():
 		# Native window pixels include letterbox margins; viewport coordinates do not.
 		var local_mouse := Vector2(DisplayServer.mouse_get_position() - DisplayServer.window_get_position())
 		var window_size := Vector2(DisplayServer.window_get_size())
@@ -28,7 +29,7 @@ func _process(delta: float) -> void:
 	if direction.length_squared() > 0.0:
 		var right := camera.global_basis.x
 		var down := Vector3(camera.global_basis.z.x, 0.0, camera.global_basis.z.z).normalized()
-		destination += (right * direction.x + down * direction.z).normalized() * pan_speed * (zoom_target / 37.0) * delta
+		destination += (right * direction.x + down * direction.z).normalized() * pan_speed * settings.camera_speed * (zoom_target / 37.0) * delta
 	clamp_destination()
 	position = position.lerp(destination, 1.0 - exp(-12.0 * delta))
 	camera.size = lerpf(camera.size, zoom_target, 1.0 - exp(-13.0 * delta))
@@ -37,8 +38,8 @@ func clamp_destination() -> void:
 	destination = get_parent().clamp_to_map(destination)
 
 func edge_direction(mouse: Vector2, window_size: Vector2) -> Vector2:
-	if mouse.x < 0.0 or mouse.y < 0.0 or mouse.x > window_size.x or mouse.y > window_size.y:
-		return Vector2.ZERO
+	# The focused window keeps scrolling when the pointer crosses its border.
+	# Global desktop coordinates above remain available outside the client area.
 	var edge_width := clampf(window_size.y / 75.0, 10.0, 20.0)
 	return Vector2(float(mouse.x >= window_size.x - edge_width) - float(mouse.x <= edge_width), float(mouse.y >= window_size.y - edge_width) - float(mouse.y <= edge_width))
 
@@ -49,14 +50,14 @@ func focus_at(world: Vector3, instant: bool = false) -> void:
 		position = destination
 
 func zoom_by(amount: float) -> void:
-	zoom_target = clampf(zoom_target + amount, minimum_zoom, maximum_zoom)
+	zoom_target = clampf(zoom_target + amount * settings.zoom_speed, minimum_zoom, maximum_zoom)
 
 func drag_by(relative: Vector2) -> void:
 	var world_per_pixel := camera.size / get_viewport().get_visible_rect().size.y
 	var right := camera.global_basis.x
 	var down := Vector3(camera.global_basis.z.x, 0.0, camera.global_basis.z.z).normalized()
 	var vertical_factor := absf(sin(camera.rotation.x))
-	destination -= (right * relative.x + down * relative.y / vertical_factor) * world_per_pixel
+	destination -= (right * relative.x + down * relative.y / vertical_factor) * world_per_pixel * settings.camera_speed
 	clamp_destination()
 
 func world_at(screen: Vector2) -> Vector3:

@@ -1,4 +1,7 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=26 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
+[ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="game"]
 
@@ -132,6 +135,10 @@ visible = false
 [node name="FogOfWar" parent="." instance=ExtResource("fog")]
 
 [node name="Effects" type="Node3D" parent="."]
+
+[node name="ContextCursor" parent="." instance=ExtResource("context_cursor")]
+
+[node name="OrderPlanOverlay" parent="." instance=ExtResource("order_plan")]
 
 [node name="EffectPool" parent="." instance=ExtResource("effect_pool")]
 

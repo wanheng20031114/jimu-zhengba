@@ -17,6 +17,8 @@ var previous_physics_frame: int = 0
 var began_usec: int = 0
 var short_check: bool = false
 var probe: Node
+var configured_fps_limit: int = 0
+var configured_vsync: int = -1
 
 func _initialize() -> void:
 	Engine.time_scale = 1.0
@@ -40,14 +42,26 @@ func _run() -> void:
 	if not rendered and not short_check:
 		await _finish()
 		return
-	if rendered:
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
-		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
-		DisplayServer.window_set_size(Vector2i(1600, 900))
 	seed(940712)
 	change_scene_to_file("res://scenes/main.tscn")
 	await scene_changed
 	game = current_scene
+	while not game._match_ready:
+		await process_frame
+	# GameSettings restores the user's cap during autoload initialization, after
+	# this SceneTree's _initialize(). Override only this benchmark process once
+	# scene startup has completed; never save or mutate the user's preferences.
+	await physics_frame
+	await physics_frame
+	configured_fps_limit = Engine.max_fps
+	configured_vsync = DisplayServer.window_get_vsync_mode() if rendered else -1
+	Engine.max_fps = 0
+	if rendered:
+		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		DisplayServer.window_set_size(Vector2i(1600, 900))
+	_check(Engine.max_fps == 0, "benchmark explicitly removes the restored settings frame cap after startup")
+	_check(not rendered or DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_DISABLED, "benchmark disables vsync after all settings startup hooks")
 	probe = PROFILE_PROBE.instantiate()
 	game.add_child(probe)
 	game.tests_running = true
@@ -88,6 +102,7 @@ func _populate(composition: String) -> void:
 		player.farmers = 0
 		player.military_supply = 0
 		player.reserved_farmers = 0
+		player.reserved_military_supply = 0
 	var first_alliance: int = game.get_player(0).alliance_id
 	var nav_map: RID = game.get_world_3d().navigation_map
 	for player: PlayerState in game.players:
@@ -130,6 +145,7 @@ func _order_march() -> void:
 		game.move_formation(army, Vector3(0, 0, sign_z * 32.0), false, false)
 
 func _measure(label: String, seconds: float) -> void:
+	_check(Engine.max_fps == 0, "phase begins with an uncapped benchmark process")
 	var frame_ms: Array[float] = []
 	var physics_ms: Array[float] = []
 	var navigation_ms: Array[float] = []
@@ -168,6 +184,8 @@ func _measure(label: String, seconds: float) -> void:
 				"projectiles": game.effect_container.get_child_count(),
 				"pooled_effects": game.get_node("EffectPool").active_count()})
 	var duration_s: float = (Time.get_ticks_usec() - since) / 1000000.0
+	_check(Engine.max_fps == 0, "phase remained uncapped during measurement")
+	_check(DisplayServer.get_name() == "headless" or DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_DISABLED, "phase remained independent of display vsync")
 	var frame_stats: Dictionary = _distribution(frame_ms)
 	var logic_samples: Array[float] = probe.end_sample()
 	var physics_stats: Dictionary = _distribution(logic_samples)
@@ -203,6 +221,10 @@ func _write_report() -> void:
 	var report: Dictionary = {"mode": mode, "rendered": rendered, "harness_check_only": short_check,
 		"godot": Engine.get_version_info().string, "renderer": RenderingServer.get_current_rendering_method(),
 		"physics_ticks_per_second": Engine.physics_ticks_per_second, "window_size": str(DisplayServer.window_get_size()) if rendered else "headless",
+		"restored_settings_fps_limit_before_benchmark_override": configured_fps_limit,
+		"restored_settings_vsync_before_benchmark_override": configured_vsync,
+		"benchmark_fps_limit": Engine.max_fps,
+		"benchmark_vsync": DisplayServer.window_get_vsync_mode() if rendered else -1,
 		"viewport_size": str(root.get_visible_rect().size), "physics_interpolation": physics_interpolation,
 		"msaa_3d": ProjectSettings.get_setting("rendering/anti_aliasing/quality/msaa_3d"),
 		"taa": ProjectSettings.get_setting("rendering/anti_aliasing/quality/use_taa"),

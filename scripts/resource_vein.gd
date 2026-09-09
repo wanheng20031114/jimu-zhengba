@@ -9,7 +9,8 @@ const alliance_id: int = -1
 const CAPACITY: int = 6
 const alive: bool = true
 const display_name: String = "黄金矿脉"
-const order_name: String = "每位农民每3秒采集3金币 · 无需运输"
+var order_name: String:
+	get: return "每位农民每%.1f秒采集%d金币 · 无需运输" % [BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
 var selected: bool = false
 var entity_id: int = 0
 var _miners: Array[WeakRef] = []

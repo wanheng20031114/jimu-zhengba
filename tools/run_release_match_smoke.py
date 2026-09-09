@@ -71,7 +71,7 @@ def main() -> int:
         not timed_out and process.returncode == 0 and stderr_clean and isinstance(result, dict)
         and result.get("ok") is True and result.get("finished") is True
         and result.get("observed_step_valid") is True and result.get("winner") in (0, 1)
-        and result.get("checks", 0) >= 13 and result.get("failures") == []
+        and result.get("checks", 0) >= 22 and result.get("failures") == []
         and (bool(args.project) or result.get("source_editor_feature") is False)
         and "SCRIPT ERROR:" not in stdout_text and "ERROR:" not in stdout_text
     )

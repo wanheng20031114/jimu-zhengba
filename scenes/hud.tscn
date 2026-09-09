@@ -636,7 +636,7 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 8
 offset_top = 4
-offset_right = 30
+offset_right = 78
 offset_bottom = 24
 text = "Q"
 mouse_filter = 2
@@ -694,9 +694,9 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 8
 offset_top = 4
-offset_right = 30
+offset_right = 78
 offset_bottom = 24
-text = "E"
+text = "W"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 10
@@ -752,9 +752,9 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 8
 offset_top = 4
-offset_right = 30
+offset_right = 78
 offset_bottom = 24
-text = "R"
+text = "E"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 10
@@ -810,9 +810,9 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 8
 offset_top = 4
-offset_right = 30
+offset_right = 78
 offset_bottom = 24
-text = "T"
+text = "R"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 10
@@ -868,9 +868,9 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 8
 offset_top = 4
-offset_right = 30
+offset_right = 78
 offset_bottom = 24
-text = "Y"
+text = "T"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 10
@@ -926,9 +926,9 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 8
 offset_top = 4
-offset_right = 30
+offset_right = 78
 offset_bottom = 24
-text = "U"
+text = "Y"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 10
@@ -1326,7 +1326,7 @@ offset_left = 34
 offset_top = 118
 offset_right = 684
 offset_bottom = 148
-text = "摧毁敌队全部军事建筑。每人上限：60 军事单位、10 农民（含训练）。"
+text = "摧毁敌队全部军事建筑。每人上限：60 军事人口、10 农民（含训练）。"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 14
@@ -1337,7 +1337,7 @@ offset_left = 38
 offset_top = 169
 offset_right = 283
 offset_bottom = 500
-text = "左键 / 框选 / 双击\nShift + 左键 / 右键\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl + 1—9 / Shift + 1—9\n1—9 / 双按数字\n屏幕边缘 / 中键 / 方向键\n滚轮 / 空格\nB / F2（或 G）/ .\n农民 / 生产建筑\n学院\nDelete / Ctrl + Delete\nEsc / P\nF12 / F10 / F11 / M"
+text = "左键 / 框选 / 双击\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl / Shift + 编队键\n编队键 / 双按 / Tab\n窗口边缘 / 中键 / 镜头方向键\n滚轮 / Space\nB / F2、G / .\nQ / W / E / R / T / Y\nV\nDelete\nEsc / F5、P\n训练与研究队列 / 设置\nF12 / F10 / F11 / M"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 13
@@ -1350,7 +1350,7 @@ offset_left = 283
 offset_top = 169
 offset_right = 700
 offset_bottom = 500
-text = "选择部队 / 框选 / 选择视野内同类\n追加选择 / 追加移动、采矿或建造任务\n移动、攻击或集结 / 排队执行指令\n攻击前进 / 停止 / 原地坚守\n建立或覆盖编队 / 追加所选部队\n召回编队 / 镜头定位\n移动镜头，移至四角可斜向移动\n缩放 / 定位所选部队\n大本营 / 全部军事单位 / 空闲农民\n选中后使用下方建造或生产面板\n研究全军攻防升级；农民不受军事科技影响\n取消工地 / 拆除完工防御塔（无退款）\n菜单（联机不暂停）/ 房主暂停或继续对局\n单机金币 +100 / 隐藏界面 / 全屏 / 静音"
+text = "选择单位或建筑 / 框选 / 同类选择（Shift 追加）\n移动、攻击、采矿、施工、集结 / 排队执行\n攻击前进 / 停止 / 坚守；Shift 可追加坚守\n覆盖编队 / 追加，单位与建筑均可编入\n召回编队 / 定位 / 切换选中建筑类别\n平移镜头；窗口外仍可边缘移动，可在设置关闭\n缩放 / 定位所选对象\n大本营 / 全部战斗单位 / 空闲农民\n当前面板从左至右生产、建造或研究\n农民快速放置防御塔（Shift 连续建造）\n销毁所选己方单位或建筑，完工资产无退款\n菜单含设置 / 暂停或继续（联机仅房主）\n点击格子取消退款 / 热键均可在设置中修改\n单机金币 +100 / 隐藏界面 / 全屏 / 静音"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 13
@@ -1362,7 +1362,7 @@ offset_left = 36
 offset_top = 508
 offset_right = 706
 offset_bottom = 546
-text = "大本营训练农民 10 秒 · 兵营 / 军工厂即时出兵 · 训练/研究队列：点击取消，全额退款\n每矿 6 个采集位置 · 每人每 3 秒 +3 金币 · Shift 可连续指派建造与采矿"
+text = "训练：农民 10秒、剑士 6秒、弓手 8秒、骑士 10秒、攻城器 20秒 · 队列可取消退款\n每矿 6 个位置 · 每人每 3 秒 +4 金币 · 科技总加成 +1 / +2 / +4，农民和建筑不享受"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 11
@@ -1396,9 +1396,9 @@ anchor_right = 0.5
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = -240
-offset_top = -160
+offset_top = -240
 offset_right = 240
-offset_bottom = 160
+offset_bottom = 240
 
 [node name="Eyebrow" type="Label" parent="PauseOverlay/Paper"]
 layout_mode = 0
@@ -1426,24 +1426,47 @@ theme_override_font_sizes/font_size = 29
 theme_override_fonts/font = SubResource("bold")
 horizontal_alignment = 1
 
-[node name="ResumeButton" type="Button" parent="PauseOverlay/Paper"]
+[node name="Actions" type="VBoxContainer" parent="PauseOverlay/Paper"]
 layout_mode = 0
 offset_left = 54
 offset_top = 169
 offset_right = 426
-offset_bottom = 213
+offset_bottom = 449
+theme_override_constants/separation = 10
+
+[node name="ResumeButton" type="Button" parent="PauseOverlay/Paper/Actions"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
 text = "继续战斗  [Esc]"
 unique_name_in_owner = true
 focus_mode = 0
 
-[node name="RestartButton" type="Button" parent="PauseOverlay/Paper"]
-layout_mode = 0
-offset_left = 54
-offset_top = 230
-offset_right = 426
-offset_bottom = 270
+[node name="SettingsButton" type="Button" parent="PauseOverlay/Paper/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "设置"
+focus_mode = 0
+
+[node name="RestartButton" type="Button" parent="PauseOverlay/Paper/Actions"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 text = "重新开始"
 unique_name_in_owner = true
+focus_mode = 0
+
+[node name="MenuButton" type="Button" parent="PauseOverlay/Paper/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "返回主菜单"
+focus_mode = 0
+
+[node name="ExitButton" type="Button" parent="PauseOverlay/Paper/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "退出游戏"
 focus_mode = 0
 
 [node name="SoundCaption" type="Label" parent="PauseOverlay/Paper"]
@@ -1548,10 +1571,20 @@ horizontal_alignment = 1
 
 [node name="ResultRestart" type="Button" parent="ResultOverlay/Paper"]
 layout_mode = 0
-offset_left = 216
+offset_left = 84
 offset_top = 323
-offset_right = 464
+offset_right = 326
 offset_bottom = 367
 text = "再次出征"
 unique_name_in_owner = true
+focus_mode = 0
+
+[node name="ResultMenu" type="Button" parent="ResultOverlay/Paper"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 354
+offset_top = 323
+offset_right = 596
+offset_bottom = 367
+text = "返回主菜单"
 focus_mode = 0

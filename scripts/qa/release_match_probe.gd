@@ -178,6 +178,20 @@ func _diagnostics() -> Dictionary:
 
 func _inspect_catalogue() -> Dictionary:
 	var result: Dictionary = {}
+	var economy_fields := {"passive_gold_per_second": 1, "mining_seconds": 3.0, "mining_gold": 4}
+	var fresh_economy: EconomyDefinition = ResourceLoader.load("res://data/economy.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
+	result.economy = {"cached": {}, "fresh": {}, "resource_path": BalanceCatalog.ECONOMY.resource_path}
+	for field: String in economy_fields:
+		result.economy.cached[field] = BalanceCatalog.ECONOMY.get(field)
+		result.economy.fresh[field] = fresh_economy.get(field)
+		check(result.economy.cached[field] == economy_fields[field] and result.economy.fresh[field] == economy_fields[field], "catalogue_economy_" + field)
+	result.training_seconds = {}
+	var training := {"farmer": 10.0, "swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0}
+	for kind: String in training:
+		var fresh_unit: UnitDefinition = ResourceLoader.load("res://data/units/%s.tres" % kind, "", ResourceLoader.CACHE_MODE_IGNORE)
+		var cached_seconds: float = BalanceCatalog.unit(kind).training_seconds
+		result.training_seconds[kind] = {"cached": cached_seconds, "fresh": fresh_unit.training_seconds}
+		check(cached_seconds == training[kind] and fresh_unit.training_seconds == training[kind], "catalogue_training_seconds_" + kind)
 	for kind: String in ["headquarters", "barracks", "factory"]:
 		var path: String = "res://data/buildings/%s.tres" % kind
 		var cached: BuildingDefinition = BalanceCatalog.BUILDINGS[kind]

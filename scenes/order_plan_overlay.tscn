@@ -1,0 +1,68 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/order_plan_overlay.gd" id="script"]
+
+[sub_resource type="StandardMaterial3D" id="pole_material"]
+shading_mode = 0
+albedo_color = Color(0.22, 0.19, 0.14, 1)
+
+[sub_resource type="StandardMaterial3D" id="color_material"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+cull_mode = 2
+
+[sub_resource type="CylinderMesh" id="pole_mesh"]
+material = SubResource("pole_material")
+top_radius = 0.026
+bottom_radius = 0.026
+height = 0.98
+radial_segments = 4
+rings = 0
+
+[sub_resource type="BoxMesh" id="flag_mesh"]
+material = SubResource("color_material")
+size = Vector3(0.62, 0.34, 0.025)
+
+[sub_resource type="BoxMesh" id="line_mesh"]
+material = SubResource("color_material")
+size = Vector3(0.045, 0.015, 1)
+
+[sub_resource type="MultiMesh" id="poles"]
+resource_local_to_scene = true
+transform_format = 1
+mesh = SubResource("pole_mesh")
+visible_instance_count = 0
+
+[sub_resource type="MultiMesh" id="flags"]
+resource_local_to_scene = true
+transform_format = 1
+use_colors = true
+mesh = SubResource("flag_mesh")
+visible_instance_count = 0
+
+[sub_resource type="MultiMesh" id="lines"]
+resource_local_to_scene = true
+transform_format = 1
+use_colors = true
+mesh = SubResource("line_mesh")
+visible_instance_count = 0
+
+[node name="OrderPlanOverlay" type="Node3D"]
+physics_interpolation_mode = 2
+script = ExtResource("script")
+
+[node name="Poles" type="MultiMeshInstance3D" parent="."]
+multimesh = SubResource("poles")
+cast_shadow = 0
+extra_cull_margin = 160.0
+
+[node name="Flags" type="MultiMeshInstance3D" parent="."]
+multimesh = SubResource("flags")
+cast_shadow = 0
+extra_cull_margin = 160.0
+
+[node name="Lines" type="MultiMeshInstance3D" parent="."]
+multimesh = SubResource("lines")
+cast_shadow = 0
+extra_cull_margin = 160.0

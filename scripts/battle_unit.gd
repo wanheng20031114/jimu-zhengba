@@ -19,8 +19,6 @@ const MODELS: Dictionary = {
 const STATS: Dictionary = BalanceCatalog.UNITS
 
 enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
-const GATHER_SECONDS: float = 3.0
-const GATHER_GOLD: int = 3
 const MAX_QUEUED_ORDERS: int = 64
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
@@ -484,13 +482,13 @@ func _work_velocity(delta: float) -> Vector3:
 			return Vector3.ZERO
 	_set_working(true)
 	if order == Order.GATHER:
-		order_name = "采集黄金 · +3 / 3秒"
+		order_name = "采集黄金 · +%d / %.1f秒" % [BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds]
 		_work_seconds += delta
-		work_progress = minf(_work_seconds / GATHER_SECONDS, 1.0)
-		if _work_seconds + 0.000001 >= GATHER_SECONDS:
-			_work_seconds -= GATHER_SECONDS
-			work_progress = maxf(0.0, _work_seconds / GATHER_SECONDS)
-			gathered.emit(self, GATHER_GOLD)
+		work_progress = minf(_work_seconds / BalanceCatalog.ECONOMY.mining_seconds, 1.0)
+		if _work_seconds + 0.000001 >= BalanceCatalog.ECONOMY.mining_seconds:
+			_work_seconds -= BalanceCatalog.ECONOMY.mining_seconds
+			work_progress = maxf(0.0, _work_seconds / BalanceCatalog.ECONOMY.mining_seconds)
+			gathered.emit(self, BalanceCatalog.ECONOMY.mining_gold)
 			# A queued order follows this completed cycle; the last mining order
 			# continues indefinitely without transporting resources to a depot.
 			if not waypoint_queue.is_empty():

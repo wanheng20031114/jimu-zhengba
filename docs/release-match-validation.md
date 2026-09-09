@@ -22,7 +22,13 @@ python tools/run_release_match_smoke.py 'C:/Program Files/Godot/Godot_console.ex
 
 成功需要自然胜利、唯一存活队伍的军事建筑、真实伤害与阵亡、双方采矿收入、付费基础军队和已完工兵营。最多模拟 20 分钟，超时判失败。结束时先执行正式 `prepare_shutdown()`，释放对局，再打印唯一的 `MATCH_SMOKE_RESULT` JSON 并返回退出码 0。
 
+当前0.7验收还会读取实际PCK中的经济和训练 Resource：自然收入每秒1金币、每名矿工每3秒4金币，农民/剑士/弓手/骑士/投石车/加农炮分别训练10/6/8/10/20/20秒。缓存与 `CACHE_MODE_IGNORE` 独立加载值一起写入 `catalogue_probe`，并执行9项一致性检查；加上原有13项对局检查，共22项。最终 `simulated_seconds` 直接取正式 `game.elapsed`，`wall_seconds` 单独记录实际运行时间，首次伤害来自每模拟秒一次的观察采样，不冒充逐命中精确时间。
+
 外部 runner 保存 stdout、stderr 和 JSON，要求退出码 0、stderr 为空、完整结果满足契约；实际 EXE 还要求无 `editor` 特性。它记录子进程 PID，并在超时或中断时仅终止自己启动的进程。源码通过不能代替发布 EXE 通过，应保留两组日志。此项验收也不代替多人中继、断线重连、显示布局或性能测试。
+
+## 0.6 历史验收记录
+
+以下结果使用该阶段的即时军事生产及每3秒采3金币规则，不代表0.7当前训练与经济。最终0.7 EXE需要另行运行并保留独立报告。
 
 源码验收记录（2026-09-09）：Godot 4.6.3，原生无头、10 倍速，13/13 通过；模拟 657.07 秒自然胜利，剩余建筑为 4 / 0。观察到 457 次伤害变化、74 名军事单位阵亡，双方采矿分别为 4593 / 2778 金币；逐步 delta 检查通过。runner 与 Godot 均退出码 0，stderr 为 0 字节，PID 31016 已命令核实退出。原始结果及日志在 `artifacts/source-match.json`、`artifacts/source-match.stdout.log`、`artifacts/source-match.stderr.log`。此记录仅证明源码验收；发布 EXE 需导出后单独执行上述命令。
 

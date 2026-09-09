@@ -47,6 +47,9 @@ var _native_samples: Array[Dictionary] = []
 var _native_sample_at: int = 0
 var _load_report: Dictionary = {}
 var _load_routes: Dictionary = {}
+var _saw_private_queue_plan := false
+var _saw_private_research_queue := false
+var _saw_reserved_population := false
 
 func _initialize() -> void:
 	Engine.max_fps = 60
@@ -154,6 +157,8 @@ func host_steps() -> void:
 	var bases: Dictionary = {}
 	var starts: Dictionary = {}
 	var destinations: Dictionary = {}
+	var barracks: Dictionary = {}
+	var academies: Dictionary = {}
 	for player: PlayerState in game.players:
 		player.gold = 900 + player.owner_id * 10
 		var base: BattleBuilding = game.owned_entities(player.owner_id, "buildings")[0]
@@ -166,8 +171,21 @@ func host_steps() -> void:
 		starts[str(player.owner_id)] = data(at)
 		var destination: Vector3 = NavigationServer3D.map_get_closest_point(game.get_world_3d().navigation_map, at.move_toward(Vector3.ZERO, 4.0))
 		destinations[str(player.owner_id)] = data(destination)
+		if player.owner_id != 0:
+			# Scenario setup supplies completed buildings. Every queued job below
+			# still pays the real price and waits the unmodified simulation time.
+			for kind: String in ["barracks", "academy"]:
+				var location: Vector3 = game.find_build_location(player.owner_id, kind, base.global_position)
+				check(location.is_finite(), "legal_test_" + kind + "_" + str(player.owner_id))
+				if not location.is_finite():
+					return
+				var production: BattleBuilding = game.spawn_building(kind, player.owner_id, location)
+				(barracks if kind == "barracks" else academies)[str(player.owner_id)] = production.entity_id
+				game.get_node("ConstructionNavigation").refresh()
+				await physics_frame
+				await physics_frame
 	game.get_player(0).gold = 9001
-	_published = {"actors": actors, "bases": bases, "starts": starts, "destinations": destinations}
+	_published = {"actors": actors, "bases": bases, "starts": starts, "destinations": destinations, "barracks": barracks, "academies": academies}
 	publish("orders")
 	check(await until(func(): return all_phase("orders"), 15.0), "three_clients_submit_real_game_orders")
 	await seconds(2.0)
@@ -181,6 +199,15 @@ func host_steps() -> void:
 	check(game.get_player(2).gold < 2000, "client_gold_fields_cannot_change_authority")
 	var own_base: BattleBuilding = game.entities_by_id[int(bases["2"])]
 	check(own_base.production.training.size() == 1 or game.get_player(2).farmers == 4, "client_training_crossed_command_validator")
+	publish("queues")
+	check(await until(func(): return all_phase("queues"), 12.0), "clients_observe_paid_training_and_research_queues")
+	for target_owner in range(1, 4):
+		var building: BattleBuilding = game.entities_by_id[int(barracks[str(target_owner)])]
+		var academy: BattleBuilding = game.entities_by_id[int(academies[str(target_owner)])]
+		check(building.production.training.size() == 2 and game.get_player(target_owner).reserved_military_supply == 2, "host_reserves_two_training_population_" + str(target_owner))
+		check(academy.production.research_queue.size() == 2, "host_research_queue_from_remote_commands_" + str(target_owner))
+		check(game.get_player(target_owner).military_supply == 1, "military_training_is_not_instant_" + str(target_owner))
+	check(await until(func(): return [1, 2, 3].all(func(id): return game.get_player(id).military_supply == 3 and game.get_player(id).reserved_military_supply == 0), 16.0), "two_sequential_six_second_training_jobs_really_complete")
 	if _steady_seconds > 0:
 		publish("steady")
 		check(await until(func(): return all_phase("steady"), 10.0), "all_clients_enter_continuous_network_observation")
@@ -224,6 +251,11 @@ func host_steps() -> void:
 	check(await until(func(): return attacker.order == BattleUnit.Order.ATTACK and attacker.target == victim, 5.0), "explicit_remote_attack_reaches_host_order")
 	attacker.set_physics_process(true)
 	check(await until(func(): return not victim.alive or victim.hp < initial_hp, 6.0), "remote_attack_applies_authoritative_damage")
+	# Research deliberately spans the real guest/host disconnect exercises.
+	# There is no timer mutation or simulation acceleration in this suite.
+	check(await until(func(): return [1, 2, 3].all(func(id): return game.get_player(id).attack_level == 1 and game.get_player(id).defense_level == 1), 48.0), "research_queue_completes_in_order_across_reconnections")
+	publish("queues_done")
+	check(await until(func(): return all_phase("queues_done"), 12.0), "all_clients_receive_finished_research_and_population")
 	await seconds(0.6)
 	for client_owner in range(1, 4):
 		var report := owner_status(client_owner)
@@ -259,6 +291,8 @@ func client_steps() -> void:
 			check(game.bots.is_empty(), "client_never_instantiates_authoritative_bot_ai")
 			check(get_nodes_in_group("units").all(func(unit): return not unit.is_physics_processing() and not unit.navigation_agent.avoidance_enabled), "actual_client_units_never_run_physics_or_rvo")
 			check(_transport_states.count("reconnecting") == (1 if owner == 3 else 0), "client_has_only_planned_transport_interruption")
+			check(_saw_private_queue_plan, "own_shift_plan_crossed_real_transport")
+			check(_saw_private_research_queue and _saw_reserved_population, "private_research_and_population_crossed_real_transport")
 			return
 		if stage == previous:
 			status()
@@ -305,6 +339,7 @@ func client_steps() -> void:
 				var id := int(directive.actors[str(owner)])
 				check(await until(func(): return game.entities_by_id.has(id), 10.0), "own_military_replica_arrives")
 				game.submit_local({"kind": "move", "units": [id], "at": directive.destinations[str(owner)], "owner": (owner + 1) % 4, "test_marker": "one_move_owner_%d" % owner})
+				game.submit_local({"kind": "move", "units": [id], "at": data(vec(directive.destinations[str(owner)]).move_toward(Vector3.ZERO, 5.0)), "queued": true})
 				if owner == 1:
 					# Conflicting own-unit order with the same transport sequence. The
 					# relay must drop it before the host Game sees the payload.
@@ -319,6 +354,20 @@ func client_steps() -> void:
 					game.submit_local({"kind": "recruit", "target": int(directive.bases[str(owner)]), "unit_type": "farmer", "gold": 999999, "owner": 0})
 					relay._send({"op": "event", "match": relay._match.match_id, "to": 0, "payload": {"kind": "grant_gold", "amount": 999999}}, NetworkProtocol.EVENT_CHANNEL)
 					check(await until(func(): return "host_only" in errors, 5.0), "guest_cannot_forge_authoritative_event")
+				phase = stage
+			"queues":
+				var barracks_id: int = int(directive.barracks[str(owner)])
+				var academy_id: int = int(directive.academies[str(owner)])
+				check(await until(func(): return game.entities_by_id.has(barracks_id) and game.entities_by_id.has(academy_id), 10.0), "own_production_buildings_arrive")
+				for index in 2:
+					game.submit_local({"kind": "recruit", "target": barracks_id, "unit_type": "swordsman"})
+				for upgrade: String in ["attack_1", "defense_1"]:
+					game.submit_local({"kind": "research", "target": academy_id, "upgrade": upgrade})
+				check(await until(func(): return game.entities_by_id[barracks_id].production.training.size() == 2 and game.entities_by_id[academy_id].production.research_queue.size() == 2 and game.get_player(owner).reserved_military_supply == 2, 5.0), "owner_receives_two_training_and_two_research_jobs")
+				check(game.get_player(owner).military_supply == 1, "client_sees_reservation_before_spawn")
+				phase = stage
+			"queues_done":
+				check(await until(func(): return game.get_player(owner).attack_level == 1 and game.get_player(owner).defense_level == 1 and game.get_player(owner).reserved_military_supply == 0 and game.entities_by_id[int(directive.academies[str(owner)])].production.research_queue.is_empty(), 10.0), "completed_research_and_reservations_replicate")
 				phase = stage
 			"guest_drop":
 				if owner == 3:
@@ -388,9 +437,16 @@ func _snapshot(snapshot: Dictionary) -> void:
 	for player: Dictionary in snapshot.get("players", []):
 		if player.has("private") and int(player.owner_id) != relay.owner_id:
 			check(false, "snapshot_leaked_other_player_economy")
+		if int(player.owner_id) == relay.owner_id and int(player.get("private", {}).get("reserved_supply", 0)) == 2:
+			_saw_reserved_population = true
 	for entity: Dictionary in snapshot.get("entities", []):
-		if int(entity.owner) != relay.owner_id and (entity.has("production") or entity.has("rally") or entity.has("queued_count")):
+		if int(entity.owner) != relay.owner_id and (entity.has("production") or entity.has("rally") or entity.has("queued_count") or entity.has("plan")):
 			check(false, "snapshot_leaked_other_player_orders")
+		if int(entity.owner) == relay.owner_id:
+			if entity.has("plan") and int(entity.get("queued_count", 0)) > 0 and entity.plan.size() >= 2:
+				_saw_private_queue_plan = true
+			if entity.has("production") and entity.production.research_queue.size() == 2:
+				_saw_private_research_queue = true
 	if phase in ["orders", "steady"] and relay.owner_id == 1:
 		var enemy_id := int(_published.get("actors", {}).get("2", -1))
 		for entity: Dictionary in snapshot.get("entities", []):

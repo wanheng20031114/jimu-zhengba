@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="EconomyDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/economy_definition.gd" id="1_economy"]
+
+[resource]
+script = ExtResource("1_economy")
+passive_gold_per_second = 1
+mining_seconds = 3.0
+mining_gold = 4

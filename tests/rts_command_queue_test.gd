@@ -129,7 +129,7 @@ func _orders() -> void:
 	worker.queue_move(worker.destination + Vector3(3, 0, 0))
 	var gold: int = game.get_player(0).gold
 	worker._work_velocity(3.0)
-	check(game.get_player(0).gold == gold + 3 and worker.order == BattleUnit.Order.MOVE, "mining_finishes_one_paid_cycle_then_queued_move")
+	check(game.get_player(0).gold == gold + BalanceCatalog.ECONOMY.mining_gold and worker.order == BattleUnit.Order.MOVE, "mining_finishes_one_paid_cycle_then_queued_move")
 	check(mine.occupied_slots() == occupied and not worker._claimed_mine, "queued_move_releases_mine_immediately")
 	var site := building("defense_tower", 0, Vector3(-10, 0, 10), true)
 	worker.issue_build(site, true)

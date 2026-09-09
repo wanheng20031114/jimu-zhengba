@@ -11,9 +11,11 @@ var _next_sound_ms: Dictionary = {}
 var _last_variant: Dictionary = {}
 var _listener: AudioListener3D
 var _world_paused: bool = false
+@onready var settings: GameSettings = get_node("/root/Session/Settings")
 
 func _ready() -> void:
 	muted = AudioServer.is_bus_mute(0)
+	settings.changed.connect(_sync_preferences)
 	_listener = get_parent().get_node("CameraRig/AudioListener3D")
 	_listener.make_current()
 	for branch: StringName in [&"UI", &"Combat", &"Foley"]:
@@ -110,11 +112,13 @@ func volume_percent() -> float:
 	return db_to_linear(AudioServer.get_bus_volume_db(0)) * 100.0
 
 func set_volume_percent(value: float) -> void:
-	AudioServer.set_bus_volume_db(0, linear_to_db(maxf(value / 100.0, 0.0001)))
+	settings.set_volume_percent(value)
 	if value > 0.0 and muted:
 		toggle_mute()
 
 func toggle_mute() -> bool:
-	muted = not muted
-	AudioServer.set_bus_mute(0, muted)
+	settings.set_muted(not settings.muted)
 	return muted
+
+func _sync_preferences() -> void:
+	muted = settings.muted

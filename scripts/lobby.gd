@@ -16,7 +16,6 @@ var mode: String = "1v1"
 var room: Dictionary = {}
 var _pending_request: bool = false
 var _transitioning: bool = false
-var _previous_max_fps: int = 0
 var _entrance: Tween
 var _panel_reveal: Tween
 var _endpoint_port: int = 24571
@@ -28,8 +27,6 @@ var _endpoint_port: int = 24571
 @onready var rows: VBoxContainer = %Slots
 
 func _ready() -> void:
-	_previous_max_fps = Engine.max_fps
-	Engine.max_fps = 60
 	get_tree().auto_accept_quit = true
 	var arguments: PackedStringArray = OS.get_cmdline_user_args()
 	if "--lobby-capture" not in arguments:
@@ -116,6 +113,13 @@ func _on_open_multiplayer() -> void:
 		%Nickname.grab_focus()
 
 func _on_close_multiplayer() -> void:
+	if not room.is_empty() or _pending_request:
+		relay.leave_room()
+		relay.disconnect_relay()
+		room.clear()
+		_pending_request = false
+		%RequestTimeout.stop()
+		_show_setup()
 	%OnlinePanel.hide()
 	%Multiplayer.grab_focus()
 
@@ -226,7 +230,7 @@ func _on_room_changed(value: Dictionary) -> void:
 	%OnlinePanel.show()
 	set_mode(room.mode)
 	%InviteCode.text = room.code
-	%RoomMode.text = room.mode + "   /   " + MODE_INFO[room.mode][0]
+	%RoomMode.text = room.mode + "   /   " + MAPS[room.mode].display_name
 	_set_message("")
 	for owner: int in 4:
 		var row: HBoxContainer = rows.get_child(owner)
@@ -337,5 +341,19 @@ func _save_preferences() -> void:
 	preferences.set_value("lobby", "address", %ServerAddress.text.strip_edges())
 	preferences.save(PREFERENCES_PATH)
 
-func _exit_tree() -> void:
-	Engine.max_fps = _previous_max_fps
+func _on_settings() -> void:
+	session.settings.open_menu()
+
+func _on_quit_game() -> void:
+	if _transitioning: return
+	_transitioning = true
+	_save_preferences()
+	relay.leave_room()
+	relay.disconnect_relay()
+	get_tree().quit()
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not event is InputEventKey or not event.pressed or event.echo or session.settings.is_open(): return
+	if event.keycode == KEY_ESCAPE and %OnlinePanel.visible:
+		_on_close_multiplayer()
+		get_viewport().set_input_as_handled()

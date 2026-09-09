@@ -1,0 +1,141 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/attack.svg" id="attack"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/gather.svg" id="gather"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/build.svg" id="build"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/rally_gather.svg" id="rally_gather"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/move.svg" id="move"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/rally.svg" id="rally"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/cursors/forbidden.svg" id="forbidden"]
+
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="theme"]
+
+[node name="CursorPalette" type="HBoxContainer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -650.0
+offset_top = 160.0
+offset_right = -28.0
+offset_bottom = 245.0
+theme = ExtResource("theme")
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="attack" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="attack"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("attack")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="attack"]
+text = "攻击"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+
+[node name="gather" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="gather"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("gather")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="gather"]
+text = "采矿"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+
+[node name="build" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="build"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("build")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="build"]
+text = "施工"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+
+[node name="rally_gather" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="rally_gather"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("rally_gather")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="rally_gather"]
+text = "采矿集结"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+
+[node name="move" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="move"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("move")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="move"]
+text = "移动"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+
+[node name="rally" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="rally"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("rally")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="rally"]
+text = "集结"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+
+[node name="forbidden" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(68, 0)
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="forbidden"]
+custom_minimum_size = Vector2(48, 48)
+texture = ExtResource("forbidden")
+stretch_mode = 4
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="forbidden"]
+text = "禁止"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2

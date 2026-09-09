@@ -131,6 +131,7 @@ func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 			state["order"] = int(unit.order)
 			state["order_name"] = unit.order_name
 			state["queued_count"] = unit.waypoint_queue.size()
+			state["plan"] = UnitOrderPlan.build(unit, game)
 	else:
 		var building := entity as BattleBuilding
 		state.merge({"category": "building", "kind": building.building_type,
@@ -381,6 +382,7 @@ func _apply_entity(entity: Node3D, state: Dictionary) -> void:
 		if entity.owner_id == game.local_owner_id:
 			entity.order = int(state.order)
 			entity.set_meta("replica_queue_count", int(state.queued_count))
+			entity.set_meta("replica_order_plan", state.plan.duplicate(true))
 		entity.work_progress = float(state.work)
 		entity.work_bar.visible = bool(state.working)
 		entity.work_bar.set_instance_shader_parameter("health", float(state.work))
@@ -487,6 +489,8 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			return false
 		if float(state.hp) > float(state.max_hp):
 			return false
+		if state.has("plan") and (state.get("category") != "unit" or int(state.owner) != game.local_owner_id):
+			return false
 		if state.get("category") == "unit":
 			if not state.get("kind") in BalanceCatalog.UNITS or not state.get("moving") is bool or not state.get("working") is bool:
 				return false
@@ -498,6 +502,9 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 				return false
 			if int(state.owner) == game.local_owner_id and not NetworkProtocol.integer(state.get("queued_count"), 0, 2147483647):
 				return false
+			if int(state.owner) == game.local_owner_id:
+				if not UnitOrderPlan.valid(state.get("plan")):
+					return false
 		elif state.get("category") == "building":
 			if not state.get("kind") in BalanceCatalog.BUILDINGS or not state.get("construction") is bool or not _number(state.get("progress"), 0, 1) or not _vector(state.get("rotation")):
 				return false

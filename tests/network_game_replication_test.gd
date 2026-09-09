@@ -44,6 +44,8 @@ func _run() -> void:
 	own.hp = 111
 	own._moving = true
 	own.waypoint_queue.append({"kind": "move", "position": Vector3(20, 0, 20), "attack_move": false})
+	own.order = BattleUnit.Order.ATTACK
+	own.target = enemy
 	own.model_pivot.rotation.y = deg_to_rad(175)
 	own._model.strike()
 	own._attack_animation.seek(0.1, true, true)
@@ -64,6 +66,8 @@ func _run() -> void:
 	check(not snapshot.players[1].has("private") and not snapshot.players[2].has("private"), "ally_enemy_economy_private")
 	check(not _state(snapshot, ally_building.entity_id).has("production"), "ally_research_private")
 	check(not _state(snapshot, enemy_building.entity_id).has("rally"), "enemy_orders_private")
+	check(not _state(snapshot, ally.entity_id).has("plan") and not _state(snapshot, enemy.entity_id).has("plan"), "allied_and_enemy_unit_plans_private")
+	check(_state(snapshot, own.entity_id).plan == [{"kind": "attack", "at": [4.0, 0.0, 2.0]}, {"kind": "move", "at": [20.0, 0.0, 20.0]}], "own_visible_attack_and_following_move_plan")
 	check(_state(snapshot, own_building.entity_id).production.training.size() == 1, "own_training_sent")
 	check(snapshot.fog.memories.size() == 1, "fog_memory_uses_last_seen_payload")
 	var bytes := NetworkProtocol.encode({"op": "snapshot", "payload": snapshot})
@@ -85,6 +89,7 @@ func _run() -> void:
 	var remote: BattleUnit = client.entities_by_id[own.entity_id]
 	check(remote.unit_type == "knight" and remote.owner_id == 0, "stable_identity_and_type")
 	check(remote.get_meta("replica_queue_count") == 1 and remote.waypoint_queue.is_empty(), "own_queue_count_without_executable_orders")
+	check(remote.get_meta("replica_order_plan") == _state(snapshot, own.entity_id).plan, "plan_is_display_metadata_not_executable_orders")
 	check(is_equal_approx(remote.hp, 111.0), "health_applied")
 	check(not remote.is_physics_processing() and not remote.navigation_agent.avoidance_enabled, "no_client_simulation_or_rvo")
 	check(remote.physics_interpolation_mode == Node.PHYSICS_INTERPOLATION_MODE_OFF, "no_double_interpolation")
@@ -138,10 +143,31 @@ func _run() -> void:
 	invalid.players[1]["private"] = invalid.players[0].private
 	receiver.receive_snapshot(invalid)
 	check(receiver.last_received_tick == 2, "unexpected_other_player_private_state_rejected")
+	for bad_plan: Variant in [null, "move", [{"kind": "attack", "at": [NAN, 0, 0]}], [{"kind": "move", "at": [5000, 0, 0]}], [{"kind": "unknown", "at": [1, 0, 1]}], [{"kind": "build", "at": [0, 0, 0], "entity": 5}], [{"kind": "move", "at": [0, 0]}]]:
+		invalid = second.duplicate(true)
+		invalid.tick = 4
+		_state(invalid, own.entity_id)["plan"] = bad_plan
+		receiver.receive_snapshot(invalid)
+		check(receiver.last_received_tick == 2, "malformed_private_plan_rejected")
+	invalid = second.duplicate(true)
+	invalid.tick = 4
+	_state(invalid, ally.entity_id)["plan"] = []
+	receiver.receive_snapshot(invalid)
+	check(receiver.last_received_tick == 2, "unexpected_ally_plan_rejected")
+	invalid = second.duplicate(true)
+	invalid.tick = 4
+	_state(invalid, enemy_building.entity_id)["plan"] = []
+	receiver.receive_snapshot(invalid)
+	check(receiver.last_received_tick == 2, "unexpected_building_plan_rejected")
+	var excessive: Array = []
+	for index in 10:
+		excessive.append({"kind": "move", "at": [index, 0, 0]})
+	check(not UnitOrderPlan.valid(excessive), "plan_payload_strictly_bounded")
 	host.visible_ids.clear()
 	host.simulation_tick = 4
 	host.elapsed = 4.0 / 30.0
 	var third := sender.build_snapshot(0)
+	check(_state(third, own.entity_id).plan[0] == {"kind": "unknown"}, "lost_enemy_plan_never_contains_live_location")
 	receiver.receive_snapshot(third)
 	receiver._playback_time = host.elapsed
 	receiver.render(0.0)

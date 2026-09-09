@@ -17,6 +17,7 @@ const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit",
 var headquarters: BattleBuilding
 @onready var unit_container: Node3D = $Units
 @onready var effect_container: Node3D = $Effects
+@onready var settings: GameSettings = get_node("/root/Session/Settings")
 
 var players: Array[PlayerState] = [PlayerState.new(0, 0), PlayerState.new(1, 1)]
 var local_owner_id: int = 0
@@ -181,8 +182,11 @@ func _process(delta: float) -> void:
 				$BuildingPreview.set_valid(placement_error(at).is_empty())
 
 func _input(event: InputEvent) -> void:
+	if settings.is_open():
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.physical_keycode in [KEY_P, KEY_F5] and not finished:
+		var key: Key = settings.resolve_key(event)
+		if key == KEY_F5 and not finished:
 			request_match_pause() if online else toggle_pause()
 			get_viewport().set_input_as_handled()
 			return
@@ -190,18 +194,17 @@ func _input(event: InputEvent) -> void:
 			debug_add_gold()
 			get_viewport().set_input_as_handled()
 			return
-		if event.physical_keycode == KEY_F1:
+		if key == KEY_F1:
 			hud.toggle_help()
 			get_viewport().set_input_as_handled()
 			return
-		if event.physical_keycode == KEY_F10:
+		if key == KEY_F10:
 			photo_mode = not photo_mode
 			hud.visible = not photo_mode
 			get_viewport().set_input_as_handled()
 			return
-		if event.physical_keycode == KEY_F11:
-			var mode: DisplayServer.WindowMode = DisplayServer.window_get_mode()
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if mode == DisplayServer.WINDOW_MODE_FULLSCREEN else DisplayServer.WINDOW_MODE_FULLSCREEN)
+		if key == KEY_F11:
+			settings.toggle_fullscreen()
 			get_viewport().set_input_as_handled()
 			return
 		if event.physical_keycode == KEY_ESCAPE:
@@ -232,7 +235,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if get_tree().paused or finished or _local_menu:
+	if get_tree().paused or finished or _local_menu or settings.is_open():
 		return
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -270,7 +273,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			else:
 				command_move(camera_rig.world_at(event.position), false, event.shift_pressed)
 	if event is InputEventKey and event.pressed and not event.echo:
-		var key: Key = event.physical_keycode
+		var key: Key = settings.resolve_key(event)
 		if key >= KEY_1 and key <= KEY_9:
 			use_control_group(key - KEY_0, event.ctrl_pressed, event.shift_pressed)
 			return
@@ -282,12 +285,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_G, KEY_F2: select_army()
 			KEY_SPACE: focus_selection()
 			KEY_TAB: cycle_production_group()
-			KEY_Q: recruit("swordsman")
-			KEY_E: recruit("archer")
-			KEY_R: recruit("knight")
-			KEY_T: recruit("catapult")
-			KEY_Y: recruit("cannon")
-			KEY_U: recruit("farmer")
+			KEY_Q: hud.trigger_action_slot(0)
+			KEY_W: hud.trigger_action_slot(1)
+			KEY_E: hud.trigger_action_slot(2)
+			KEY_R: hud.trigger_action_slot(3)
+			KEY_T: hud.trigger_action_slot(4)
+			KEY_Y: hud.trigger_action_slot(5)
 			KEY_V: set_build_mode(not build_mode)
 			KEY_DELETE: destroy_selected()
 			KEY_PERIOD: select_idle_worker()
@@ -470,9 +473,18 @@ func placement_error(at: Vector3, owner: int = -1, kind: String = "") -> String:
 		return "请在战场范围内建造"
 	if not can_see_position(owner, at):
 		return "请先侦察这片区域"
-	if not $ConstructionNavigation.walkable_footprint(at, definition.size):
-		return "这里空间不足 · 请避开矿脉与道路边缘"
-	_placement_query.shape.size = definition.size + Vector3(0.4, 0, 0.4)
+	# Newly placed sites must reserve their true footprint immediately, including
+	# several build commands within one authority tick before physics publishes.
+	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
+		if not building.alive:
+			continue
+		var combined_half: Vector3 = (definition.size + building.get_combat_definition().size) * 0.5
+		var offset: Vector3 = building.global_position - at
+		if absf(offset.x) < combined_half.x - 0.005 and absf(offset.z) < combined_half.z - 0.005:
+			return "这里已有建筑或工地"
+	# Building placement uses the actual collision footprint. Navigation padding
+	# belongs to unit movement and must not be applied twice between buildings.
+	_placement_query.shape.size = definition.size - Vector3(0.01, 0, 0.01)
 	_placement_query.transform.origin = at + Vector3(0, definition.size.y * 0.5, 0)
 	if not get_world_3d().direct_space_state.intersect_shape(_placement_query, 1).is_empty():
 		return "这里有单位或障碍物"
@@ -636,24 +648,39 @@ func find_recruit_position(kind: String, building: BattleBuilding = null) -> Vec
 	if building == null:
 		building = headquarters
 	var query := PhysicsShapeQueryParameters3D.new()
-	var shape := SphereShape3D.new()
-	shape.radius = BalanceCatalog.unit(kind).radius + 0.1
+	var shape := CapsuleShape3D.new()
+	shape.radius = BalanceCatalog.unit(kind).radius * 0.85 + 0.05
+	shape.height = maxf(shape.radius * 2.0, 1.8)
 	query.shape = shape
 	query.collision_mask = 6 | 128
 	var world := get_world_3d()
 	if NavigationServer3D.map_get_iteration_id(world.navigation_map) == 0:
 		return Vector3.INF
 	var half: Vector3 = building.get_combat_definition().size * 0.5
-	for ring in [1.4, 2.6, 4.0]:
-		for index in range(32):
-			var angle: float = float(index) * TAU / 32.0
-			var at: Vector3 = building.global_position + Vector3(sin(angle) * (half.x + ring), 0, cos(angle) * (half.z + ring))
+	var rally_direction: Vector3 = building.rally_point - building.global_position
+	if rally_direction.length_squared() < 0.0001:
+		rally_direction = Vector3.FORWARD
+	var preferred_angle: float = atan2(rally_direction.x, rally_direction.z)
+	var clearance: float = maxf(BalanceCatalog.unit(kind).radius + 0.1, ConstructionNavigation.NAV_PADDING + 0.05)
+	for index in range(32):
+		# Search the rally ray first, then alternate the nearest directions
+		# around the complete perimeter, including the opposite building side.
+		var step: int = (index + 1) / 2
+		var angle: float = preferred_angle + float(step if index % 2 == 1 else -step) * TAU / 32.0
+		var direction := Vector3(sin(angle), 0, cos(angle))
+		for extra_distance: float in [0.0, 0.75, 1.5, 2.5]:
+			var padded_half := half + Vector3.ONE * (clearance + extra_distance)
+			var distance_x: float = padded_half.x / absf(direction.x) if absf(direction.x) > 0.00001 else INF
+			var distance_z: float = padded_half.z / absf(direction.z) if absf(direction.z) > 0.00001 else INF
+			var at: Vector3 = building.global_position + direction * minf(distance_x, distance_z)
+			if at.distance_squared_to(clamp_to_map(at)) > 0.0001:
+				continue
 			if not $ConstructionNavigation.contains_walkable_point(at):
 				continue
 			var closest := NavigationServer3D.map_get_closest_point(world.navigation_map, at)
 			if Vector2(closest.x-at.x, closest.z-at.z).length_squared() > 0.04:
 				continue
-			query.transform.origin = at + Vector3.UP * maxf(shape.radius, 0.9)
+			query.transform.origin = at + Vector3.UP * shape.height * 0.5
 			if world.direct_space_state.intersect_shape(query, 1).is_empty():
 				return at
 	return Vector3.INF
@@ -713,7 +740,7 @@ func on_entity_died(entity: Node3D) -> void:
 func _on_income() -> void:
 	if not finished and is_authority:
 		for player: PlayerState in players:
-			player.gold += 1
+			player.gold += BalanceCatalog.ECONOMY.passive_gold_per_second
 
 func debug_add_gold() -> void:
 	if online:
@@ -751,6 +778,29 @@ func toggle_pause() -> void:
 		$Audio.set_world_paused(get_tree().paused)
 		hud.show_pause(get_tree().paused)
 	$Audio.play_ui(&"select")
+
+func open_settings() -> void:
+	dragging = false
+	camera_rig.dragging = false
+	overlay.box_visible = false
+	settings.open_menu()
+
+func return_to_menu() -> void:
+	if _closing:
+		return
+	_closing = true
+	get_tree().paused = false
+	await prepare_shutdown()
+	Session.back_to_lobby()
+
+func quit_game() -> void:
+	if _closing:
+		return
+	_closing = true
+	get_tree().paused = false
+	await prepare_shutdown()
+	Session.relay.disconnect_relay()
+	get_tree().quit()
 
 func toggle_sound() -> void:
 	var is_muted: bool = $Audio.toggle_mute()

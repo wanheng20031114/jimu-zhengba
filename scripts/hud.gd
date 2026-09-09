@@ -66,7 +66,11 @@ func _ready() -> void:
 	%PauseButton.pressed.connect(func(): game.toggle_pause())
 	%ResumeButton.pressed.connect(func(): game.toggle_pause())
 	%RestartButton.pressed.connect(func(): game.restart())
+	%SettingsButton.pressed.connect(func(): game.open_settings())
+	%MenuButton.pressed.connect(func(): game.return_to_menu())
+	%ExitButton.pressed.connect(func(): game.quit_game())
 	%ResultRestart.pressed.connect(func(): game.restart())
+	%ResultMenu.pressed.connect(func(): game.return_to_menu())
 	%SoundVolume.value_changed.connect(_on_sound_volume_changed)
 	%SoundVolume.drag_ended.connect(func(_changed: bool): game.get_node("Audio").play_ui(&"select"))
 	%SoundMute.toggled.connect(func(_value: bool): game.toggle_sound())
@@ -79,6 +83,9 @@ func bind_game(controller: Node3D) -> void:
 	game = controller
 	%Minimap.game = controller
 	refresh_sound_settings()
+	game.settings.changed.connect(refresh_sound_settings)
+	game.settings.changed.connect(refresh_hotkey_labels)
+	refresh_hotkey_labels()
 
 func refresh_sound_settings() -> void:
 	var audio: Node = game.get_node("Audio")
@@ -90,6 +97,43 @@ func _on_sound_volume_changed(value: float) -> void:
 	game.get_node("Audio").set_volume_percent(value)
 	refresh_sound_settings()
 
+func refresh_hotkey_labels() -> void:
+	%AttackButton.text = "攻击前进  " + game.settings.hotkey_text("rts_attack_move")
+	%StopButton.text = "停止  " + game.settings.hotkey_text("rts_stop")
+	%HoldButton.text = "坚守  " + game.settings.hotkey_text("rts_hold")
+	%BaseButton.text = "大本营  " + game.settings.hotkey_text("rts_select_base")
+	%ArmyButton.text = "选择全部军队  " + game.settings.hotkey_text("rts_select_army")
+	%BuildButton.text = "建造防御塔  [" + game.settings.hotkey_text("rts_build_tower") + "]"
+	%CancelSiteButton.text = "取消施工  [" + game.settings.hotkey_text("rts_destroy") + "]"
+	%IdleWorkerButton.text = "空闲农民  [" + game.settings.hotkey_text("rts_idle_worker") + "]"
+	%HelpButton.tooltip_text = "战地手册  [" + game.settings.hotkey_text("rts_help") + "]"
+	%PauseButton.tooltip_text = "战场菜单 / 设置  [Esc] · 暂停  [" + game.settings.hotkey_text("rts_pause") + "]"
+	%SoundMute.tooltip_text = "静音  [" + game.settings.hotkey_text("rts_mute") + "]"
+	$BottomHint.text = "框选部队    右键移动 / 攻击    中键拖动视角    滚轮缩放    %s 操作说明" % game.settings.hotkey_text("rts_help")
+	$Groups/GroupHint.text = "Ctrl + 编队键  建队    Shift + 编队键  追加"
+	var group_keys: Array[String] = []
+	for index in range(1, 10):
+		group_keys.append(game.settings.hotkey_text("rts_group%d" % index))
+	$Groups/GroupHint.tooltip_text = "编队键：" + " · ".join(group_keys) + "\n单位与建筑均可编队；双按编队键定位镜头"
+	var slot_keys: Array[String] = []
+	for index in range(1, 7):
+		slot_keys.append(game.settings.hotkey_text("rts_slot_%d" % index))
+	var help_keys: Array[String] = [
+		"左键 / 框选 / 双击", "右键 / Shift + 右键",
+		"%s + 左键 / %s / %s" % [game.settings.hotkey_text("rts_attack_move"), game.settings.hotkey_text("rts_stop"), game.settings.hotkey_text("rts_hold")],
+		"Ctrl / Shift + 编队键", "编队键 / 双按 / " + game.settings.hotkey_text("rts_cycle_buildings"),
+		"窗口边缘 / 中键 / 镜头方向键", "滚轮 / " + game.settings.hotkey_text("rts_focus"),
+		"%s / %s / %s" % [game.settings.hotkey_text("rts_select_base"), game.settings.hotkey_text("rts_select_army"), game.settings.hotkey_text("rts_idle_worker")],
+		" / ".join(slot_keys), game.settings.hotkey_text("rts_build_tower"), game.settings.hotkey_text("rts_destroy"),
+		"Esc / " + game.settings.hotkey_text("rts_pause"), "训练与研究队列 / 设置",
+		"F12 / %s / %s / %s" % [game.settings.hotkey_text("rts_photo"), game.settings.hotkey_text("rts_fullscreen"), game.settings.hotkey_text("rts_mute")],
+	]
+	$HelpOverlay/Paper/Keys.text = "\n".join(help_keys)
+	$HelpOverlay/Paper/Economy.text = "训练：农民 %s秒、剑士 %s秒、弓手 %s秒、骑士 %s秒、攻城器 %s秒 · 队列可取消退款\n每矿 %d 个位置 · 每人每 %s 秒 +%d 金币 · 科技总加成 +1 / +2 / +4，农民和建筑不享受" % [BalanceCatalog.unit("farmer").training_seconds, BalanceCatalog.unit("swordsman").training_seconds, BalanceCatalog.unit("archer").training_seconds, BalanceCatalog.unit("knight").training_seconds, BalanceCatalog.unit("catapult").training_seconds, ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
+	# Initial binding precedes match setup; subsequent preference changes refresh the panel.
+	if game._match_ready:
+		refresh()
+
 func _process(delta: float) -> void:
 	$ModelPreviews.set_animated((_hovered_preview if not _hovered_preview.is_empty() else _selected_preview) if visible and not get_tree().paused else "")
 	if _toast_remaining > 0.0:
@@ -99,15 +143,21 @@ func _process(delta: float) -> void:
 		toast_label.modulate.a = 0.0
 
 func _input(event: InputEvent) -> void:
+	if not is_instance_valid(game) or game.settings.is_open():
+		return
 	if get_tree().paused and event is InputEventKey and event.pressed and not event.echo:
-		if event.physical_keycode == KEY_ESCAPE or event.physical_keycode == KEY_P:
-			if game.online and event.physical_keycode == KEY_P:
+		var key: Key = game.settings.resolve_key(event)
+		if event.physical_keycode == KEY_ESCAPE or key == KEY_F5:
+			if game.online and key == KEY_F5:
 				game.request_match_pause()
 			else:
 				game.toggle_pause()
 			get_viewport().set_input_as_handled()
-		elif event.physical_keycode == KEY_M:
+		elif key == KEY_M:
 			game.toggle_sound()
+			get_viewport().set_input_as_handled()
+		elif key == KEY_F11:
+			game.settings.toggle_fullscreen()
 			get_viewport().set_input_as_handled()
 
 func refresh() -> void:
@@ -154,7 +204,7 @@ func refresh() -> void:
 			_selected_preview = "gold_vein"
 			selected_role.text = "中立资源 · 金矿"
 			selected_role.modulate = Color("e5c76b")
-			selected_stats.text = "采集位置 %d / 6\n每人每 3 秒 +3 金币" % entity.occupied_slots()
+			selected_stats.text = "采集位置 %d / %d\n每人每 %s 秒 +%d 金币" % [entity.occupied_slots(), ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
 		else:
 			hp_bar.max_value = entity.max_hp
 			hp_bar.value = entity.hp
@@ -170,7 +220,7 @@ func refresh() -> void:
 			selected_stats.text = "%s攻 %d · 近甲 %d / 远甲 %d\n%s" % ["" if own_unit else "基础 ", definition.damage + attack_bonus, definition.melee_armor + defense_bonus, definition.ranged_armor + defense_bonus, entity.order_name]
 			if entity.unit_type == "farmer":
 				var queued_orders: int = int(entity.get_meta("replica_queue_count", 0)) if game.online and not game.is_authority else entity.waypoint_queue.size()
-				selected_stats.text = "采矿 +3 / 3秒 · 建筑面板\n%s%s" % [entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
+				selected_stats.text = "采矿 +%d / %s秒 · 建筑面板\n%s%s" % [BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds, entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
 		elif entity.is_in_group("buildings"):
 			var portrait_kind: String = entity.building_type if entity.building_type in portraits else "headquarters"
 			selected_portrait.texture = portraits[portrait_kind]
@@ -205,7 +255,7 @@ func refresh() -> void:
 		var production_focus: BattleBuilding = game.selected_production()
 		var first = production_focus if production_focus != null else game.selection[0]
 		if production_focus != null:
-			selected_role.text = "生产：%s · Tab 切换类别" % production_focus.display_name
+			selected_role.text = "生产：%s · %s 切换类别" % [production_focus.display_name, game.settings.hotkey_text("rts_cycle_buildings")]
 		_selected_preview = first.building_type if first is BattleBuilding else first.unit_type
 		selected_portrait.texture = portraits[_selected_preview]
 		hp_bar.visible = true
@@ -225,9 +275,17 @@ func refresh() -> void:
 				if is_instance_valid(unit) and unit.alive:
 					count += 1
 		var button: Button = get_node("Groups/Group" + str(index))
-		button.text = str(index) + ("  ·  " + str(count) if count > 0 else "")
+		var group_key: String = game.settings.hotkey_text("rts_group%d" % index)
+		button.text = group_key + ("  ·  " + str(count) if count > 0 else "")
 		button.modulate.a = 1.0 if count > 0 else 0.48
-		button.tooltip_text = "编队 %d · %d 个单位或建筑\nCtrl + %d 覆盖 · Shift + %d 追加\n按 %d 召回 · 双按定位" % [index, count, index, index, index]
+		button.tooltip_text = "编队 %d · %d 个单位或建筑\nCtrl + %s 覆盖 · Shift + %s 追加\n按 %s 召回 · 双按定位" % [index, count, group_key, group_key, group_key]
+
+func trigger_action_slot(index: int) -> void:
+	if index < 0 or index >= _actions.size() or buttons[index].disabled or not buttons[index].visible:
+		return
+	# Slots buy or place the action currently displayed; never bind demolition to Q.
+	if _actions[index].kind in ["build", "recruit", "research"]:
+		_on_recruit(index)
 
 func _on_recruit(index: int) -> void:
 	if index >= _actions.size():
@@ -256,7 +314,7 @@ func _refresh_actions() -> void:
 		if not building.is_constructed:
 			_actions.append({"kind": "cancel_site", "id": "", "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还未完成部分的费用"})
 		elif building.building_type == "defense_tower":
-			_actions.append({"kind": "demolish", "id": "", "portrait": "defense_tower", "name": "拆除防御塔", "cost": 0, "hint": "Delete · 不返还金币"})
+			_actions.append({"kind": "demolish", "id": "", "portrait": "defense_tower", "name": "拆除防御塔", "cost": 0, "hint": game.settings.hotkey_text("rts_destroy") + " · 不返还金币"})
 		elif building.building_type == "academy":
 			var player: PlayerState = game.get_player(game.local_owner_id)
 			for track: String in ["attack", "defense"]:
@@ -278,8 +336,11 @@ func _refresh_actions() -> void:
 		button.get_node("Portrait").texture = portraits[action.portrait]
 		button.get_node("Name").text = action.name
 		button.get_node("Cost").text = "◈ %d" % action.cost if action.cost > 0 else ("无退款" if action.kind == "demolish" else "退款")
-		button.get_node("Hotkey").text = ""
+		var hotkey: String = game.settings.hotkey_text("rts_slot_%d" % (index + 1)) if action.kind in ["build", "recruit", "research"] else ""
+		button.get_node("Hotkey").text = hotkey
 		button.tooltip_text = action.name + " · " + action.hint
+		if not hotkey.is_empty():
+			button.tooltip_text += "\n快捷键：" + hotkey
 		button.disabled = game.finished or game.gold < action.cost
 		if action.kind in ["recruit", "research"]:
 			var error := _queue_action_error(action)
@@ -398,8 +459,10 @@ func help_visible() -> bool:
 
 func show_pause(value: bool) -> void:
 	$PauseOverlay/Paper/Title.text = "战场菜单" if game.online else "战斗已暂停"
-	$PauseOverlay/Paper/Eyebrow.text = ("全局已暂停 · 房主按 P 继续" if get_tree().paused else "联机菜单 · 打开菜单不会暂停对局") if game.online else "ASHEN CROWN"
+	$PauseOverlay/Paper/Eyebrow.text = ("全局已暂停 · 房主按 %s 继续" % game.settings.hotkey_text("rts_pause") if get_tree().paused else "联机菜单 · 打开菜单不会暂停对局") if game.online else "ASHEN CROWN"
 	%RestartButton.text = "返回大厅" if game.online else "重新开始"
+	%RestartButton.visible = not game.online
+	%ResumeButton.text = "返回战场  [Esc]" if game.online else "继续战斗  [Esc / %s]" % game.settings.key_label(KEY_F5)
 	%PauseOverlay.visible = value
 
 func show_result(victory: bool, duration: float, defeated: int) -> void:

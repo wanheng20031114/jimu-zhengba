@@ -154,7 +154,7 @@ func _run() -> void:
 		var size_pixels := Vector2(actual)
 		for point: Vector2 in [Vector2(1, actual.y * .5), Vector2(actual.x - 1, actual.y * .5), Vector2(actual.x * .5, 1), Vector2(actual.x * .5, actual.y - 1)]:
 			check(game.camera_rig.edge_direction(point, size_pixels).length() == 1.0, "edge scroll uses actual client edge " + str(point))
-		check(game.camera_rig.edge_direction(Vector2(-1, 1), size_pixels) == Vector2.ZERO, "outside client cannot scroll")
+		check(game.camera_rig.edge_direction(Vector2(-1, 1), size_pixels) == Vector2(-1, -1), "outside client keeps scrolling toward the crossed corner")
 		if content.position.y > 20:
 			check(game.camera_rig.edge_direction(Vector2(actual.x * .5, content.position.y + 1), size_pixels) == Vector2.ZERO, "inner top content boundary is not physical window edge")
 		if content.position.x > 20:

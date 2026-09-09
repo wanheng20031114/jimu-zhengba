@@ -3,6 +3,7 @@ extends Node
 var config: Dictionary = {}
 var online: bool = false
 @onready var relay: RelayClient = $RelayClient
+@onready var settings: GameSettings = $Settings
 
 func _ready() -> void:
 	if "--network-smoke" in OS.get_cmdline_user_args():

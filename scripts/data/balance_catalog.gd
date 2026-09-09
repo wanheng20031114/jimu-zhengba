@@ -1,6 +1,7 @@
 class_name BalanceCatalog
 extends RefCounted
 ## One source of truth for recruitment, tooltips, combat, construction and research.
+const ECONOMY: EconomyDefinition = preload("res://data/economy.tres")
 
 const UNITS: Dictionary = {
 	"swordsman": preload("res://data/units/swordsman.tres"),
@@ -39,4 +40,3 @@ static func building(kind: StringName) -> BuildingDefinition:
 
 static func upgrade(id: StringName) -> UpgradeDefinition:
 	return UPGRADES[id]
-
