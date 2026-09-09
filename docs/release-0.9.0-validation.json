@@ -1,0 +1,483 @@
+{
+  "title": "积木争霸 0.9.0 交付验收",
+  "build": "0.9.0",
+  "protocol": 8,
+  "recorded_at": "2026-09-10T07:10:52.737969+08:00",
+  "implementation_commit": "b762d4369beb652df39fc3e178fdc0bf83806935",
+  "public_repository": "https://github.com/wanheng20031114/jimu-zhengba",
+  "package": {
+    "file": "builds/积木争霸-0.9.0-Windows-x64.zip",
+    "bytes": 69075153,
+    "sha256": "b08e3cbe467bec12dc944508a847775374c77b75af47dd9adcad7e7c70542932",
+    "entries": [
+      "windows/积木争霸.exe",
+      "windows/积木争霸.pck",
+      "windows/START_HERE.txt",
+      "windows/collect_diagnostics.ps1",
+      "windows/COLLECT_DIAGNOSTICS.cmd"
+    ],
+    "utf8_entry_names": true,
+    "matches_unzipped_deliverables": true,
+    "executable_product_name": "积木争霸",
+    "executable_version": "0.9.0.0"
+  },
+  "manifest": {
+    "resources": 93,
+    "sha256": "f6e8d88a67204961cb7ce4ae8a64436cd16213b91fd3652960e86ba2f52ced4a"
+  },
+  "validation": {
+    "map_layout": {
+      "checks": 3,
+      "failures": []
+    },
+    "native_maps": {
+      "checks": 2720,
+      "failures": []
+    },
+    "native_menu_and_codex": {
+      "checks": 175,
+      "failures": [],
+      "rendered": true,
+      "small_window": "1024x576",
+      "desktop": "1600x900"
+    },
+    "preference_migration": {
+      "checks": 16,
+      "failures": []
+    },
+    "relay_readiness_and_rollback": {
+      "checks": 13,
+      "failures": []
+    },
+    "release_log_persistence": {
+      "checks": 11,
+      "failures": []
+    },
+    "network": {
+      "report": "../report/network-0.9.0.json",
+      "checks": 1660,
+      "failures": []
+    }
+  },
+  "public_release_probes": [
+    {
+      "passed": true,
+      "summary": {
+        "build": "0.9.0",
+        "catalogue_files": 93,
+        "catalogue_only": false,
+        "checks": 182,
+        "content_hash": "f6e8d88a67204961cb7ce4ae8a64436cd16213b91fd3652960e86ba2f52ced4a",
+        "error_codes": [],
+        "exported_template": true,
+        "failures": [],
+        "handshake_msec": 553,
+        "protocol": 8,
+        "resource_value_checks": 68
+      },
+      "room_mode": "4v4",
+      "empty_slots": "5,6",
+      "resource_value_audit_present": true,
+      "stderr_empty": true,
+      "log_directory": "release-a2836fcd"
+    },
+    {
+      "passed": true,
+      "summary": {
+        "build": "0.9.0",
+        "catalogue_files": 93,
+        "catalogue_only": false,
+        "checks": 182,
+        "content_hash": "f6e8d88a67204961cb7ce4ae8a64436cd16213b91fd3652960e86ba2f52ced4a",
+        "error_codes": [],
+        "exported_template": true,
+        "failures": [],
+        "handshake_msec": 539,
+        "protocol": 8,
+        "resource_value_checks": 68
+      },
+      "room_mode": "ffa",
+      "empty_slots": "",
+      "resource_value_audit_present": true,
+      "stderr_empty": true,
+      "log_directory": "release-06a7001c"
+    }
+  ],
+  "packaged_matches": {
+    "4v2": {
+      "ok": true,
+      "build": "0.9.0",
+      "checks": 54,
+      "failures": [],
+      "mode": "4v4",
+      "empty_slots": [
+        5,
+        6
+      ],
+      "finished": true,
+      "winner": 0,
+      "simulated_seconds": 367.466666666743,
+      "wall_seconds": 48.499,
+      "first_damage": 61.0333333333324,
+      "damage_events": 1009,
+      "military_deaths": 75,
+      "observed_step_valid": true,
+      "source_editor_feature": false,
+      "speed": 10,
+      "step_seconds": 0.0333333333333333,
+      "produced": [
+        {
+          "archer": 10,
+          "cannon": 2,
+          "catapult": 1,
+          "farmer": 12,
+          "knight": 7,
+          "swordsman": 14
+        },
+        {
+          "archer": 8,
+          "cannon": 2,
+          "catapult": 1,
+          "farmer": 12,
+          "knight": 8,
+          "swordsman": 13
+        },
+        {
+          "archer": 13,
+          "cannon": 2,
+          "catapult": 2,
+          "farmer": 12,
+          "knight": 6,
+          "swordsman": 12
+        },
+        {
+          "archer": 11,
+          "cannon": 2,
+          "catapult": 1,
+          "farmer": 12,
+          "knight": 5,
+          "swordsman": 10
+        },
+        {
+          "archer": 5,
+          "catapult": 1,
+          "farmer": 14,
+          "knight": 6,
+          "swordsman": 8
+        },
+        {},
+        {},
+        {
+          "archer": 9,
+          "farmer": 11,
+          "knight": 6,
+          "swordsman": 13
+        }
+      ],
+      "completed": [
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {},
+        {},
+        {
+          "barracks": 1,
+          "defense_tower": 1,
+          "headquarters": 1
+        }
+      ],
+      "process_exit_code": 0,
+      "stderr_clean": true,
+      "child_exited": true
+    },
+    "ffa8": {
+      "ok": true,
+      "build": "0.9.0",
+      "checks": 62,
+      "failures": [],
+      "mode": "ffa",
+      "empty_slots": [],
+      "finished": true,
+      "winner": 5,
+      "simulated_seconds": 886.399999999851,
+      "wall_seconds": 120.597,
+      "first_damage": 49.0333333333331,
+      "damage_events": 3874,
+      "military_deaths": 444,
+      "observed_step_valid": true,
+      "source_editor_feature": false,
+      "speed": 10,
+      "step_seconds": 0.0333333333333333,
+      "produced": [
+        {
+          "archer": 6,
+          "cannon": 1,
+          "catapult": 1,
+          "farmer": 11,
+          "knight": 9,
+          "swordsman": 8
+        },
+        {
+          "archer": 27,
+          "cannon": 6,
+          "catapult": 4,
+          "farmer": 13,
+          "knight": 31,
+          "swordsman": 37
+        },
+        {
+          "archer": 9,
+          "cannon": 1,
+          "farmer": 9,
+          "knight": 7,
+          "swordsman": 7
+        },
+        {
+          "archer": 17,
+          "cannon": 4,
+          "catapult": 1,
+          "farmer": 13,
+          "knight": 17,
+          "swordsman": 31
+        },
+        {
+          "archer": 10,
+          "catapult": 1,
+          "farmer": 12,
+          "knight": 12,
+          "swordsman": 13
+        },
+        {
+          "archer": 25,
+          "cannon": 6,
+          "catapult": 5,
+          "farmer": 13,
+          "knight": 32,
+          "swordsman": 43
+        },
+        {
+          "archer": 10,
+          "farmer": 8,
+          "knight": 11,
+          "swordsman": 18
+        },
+        {
+          "archer": 21,
+          "cannon": 3,
+          "catapult": 1,
+          "farmer": 12,
+          "knight": 21,
+          "swordsman": 32
+        }
+      ],
+      "completed": [
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 2
+        }
+      ],
+      "process_exit_code": 0,
+      "stderr_clean": true,
+      "child_exited": true
+    }
+  },
+  "production_relay": {
+    "ok": true,
+    "server": "shanghai",
+    "release": "6fad90dfc2bf38b3",
+    "services": {
+      "jimu-zhengba-relay.service": {
+        "MainPID": "282610",
+        "NRestarts": "0",
+        "Id": "jimu-zhengba-relay.service",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "ashen-crown-relay.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "Id": "ashen-crown-relay.service",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "bot-jump-relay.service": {
+        "MainPID": "270544",
+        "NRestarts": "0",
+        "Id": "bot-jump-relay.service",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      }
+    },
+    "udp_listeners": [
+      {
+        "port": 24570,
+        "pids": [
+          270544
+        ]
+      },
+      {
+        "port": 24571,
+        "pids": [
+          282610
+        ]
+      }
+    ],
+    "manifest_sha256": "f6e8d88a67204961cb7ce4ae8a64436cd16213b91fd3652960e86ba2f52ced4a",
+    "matches_local_manifest": true
+  },
+  "performance": {
+    "report": "../report/eight-player-performance-0.9.0.json",
+    "sha256": "5606441a7e35f2c4e98d76631d5729a886e70e443786f54402778e95904b1b1b",
+    "benchmark_completed": true,
+    "stable_60_fps_met": false,
+    "full_population_30_tps_met": false,
+    "phases": [
+      {
+        "name": "standard_192_military_80_workers",
+        "starting_units": 272,
+        "ending_units": 272,
+        "measured_fps": 81.5454026347559,
+        "observed_tps": 29.9799274392485,
+        "frame_ms": {
+          "max": 49.092,
+          "mean": 12.2631029411765,
+          "p50": 6.536,
+          "p95": 40.946,
+          "p99": 44.172,
+          "samples": 1224
+        },
+        "physics_logic_ms": {
+          "max": 14.705,
+          "mean": 9.29133777777778,
+          "p50": 8.958,
+          "p95": 12.007,
+          "p99": 13.448,
+          "samples": 450
+        }
+      },
+      {
+        "name": "maximum_800_military_96_workers",
+        "starting_units": 896,
+        "ending_units": 896,
+        "measured_fps": 1.93955092155176,
+        "observed_tps": 15.5164073724141,
+        "frame_ms": {
+          "max": 550.667,
+          "mean": 515.5811,
+          "p50": 522.573,
+          "p95": 545.735,
+          "p99": 549.317,
+          "samples": 30
+        },
+        "physics_logic_ms": {
+          "max": 56.94,
+          "mean": 41.0808666666667,
+          "p50": 40.657,
+          "p95": 49.034,
+          "p99": 51.64,
+          "samples": 240
+        }
+      }
+    ]
+  },
+  "cleanup": {
+    "status": "helpers_stopped_345_intermediates_retained_due_to_approval_rejection",
+    "final_godot_validation_helpers": 0,
+    "user_editor_preserved": 33896,
+    "root_owned_intermediate_files_deleted": 19,
+    "blocked_network_files_retained": 326,
+    "blocked_network_size_mib_approx": 6.14,
+    "automatic_approval_reason": "blocked by policy",
+    "blocked_operation_retried": false,
+    "production_service_intentionally_running": "jimu-zhengba-relay.service",
+    "blocked_ui_intermediates_retained": 19,
+    "blocked_files_retained_total": 345
+  }
+}

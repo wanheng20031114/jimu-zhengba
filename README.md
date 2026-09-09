@@ -10,7 +10,7 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/积木争霸-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
-当前版本 **0.9.0**，协议 **8**：统一更名为“积木争霸”，加入 4v4、八人乱战、允许空位开局、全新主菜单和实时模型图鉴。详见 [本版交付记录](docs/release-0.9.0.md)；战斗与经济沿用 [0.8.2 数值审查](report/balance-0.8.2.md)。联机双方和中继必须使用相同版本。
+当前版本 **0.9.0**，协议 **8**，上海中继已同步上线：统一更名为“积木争霸”，加入 4v4、八人乱战、允许空位开局、全新主菜单和实时模型图鉴。详见 [本版交付记录](docs/release-0.9.0.md)；战斗与经济沿用 [0.8.2 数值审查](report/balance-0.8.2.md)。联机双方和中继必须使用相同版本。
 
 异常后可运行发布包内 `COLLECT_DIAGNOSTICS.cmd`，在“文档/积木争霸-诊断”生成本地诊断ZIP；不会自动上传或修改设置。已复现问题、修复与诊断范围见 [稳定性调查](docs/crash-investigation-0.7.3.md)。
 
@@ -69,6 +69,8 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 单位、建筑、科技、地图由 `data/` 原生 Resource 定义。模型、场景、界面均可编辑；生产按钮展示游戏内3D模型，活动预览15FPS更新。单位原生 `AnimationPlayer`、`NavigationAgent3D` 与物理插值保留动作细节。声音使用有界原生声部、分类增益和总线压缩，无BGM；录音许可与生成记录见 [音效来源](assets/audio/CREDITS.md)。
 
 ## 验证与重建
+
+0.9.0 八客户端与完整 Bot 对局验证通过，但**八人满人口性能尚未达标**：272 单位平均 81.55 FPS、显示帧 P95 40.946 ms；896 单位平均 1.94 FPS、实际 15.52 TPS。不能将平均帧率视为稳定 60 FPS。实测条件、原始结果和具体改进建议见 [八人性能审查](report/eight-player-performance-review-0.9.0.md)。
 
 以本轮测试为准，旧0.5战役测试保留作历史参考，不适用于已移除的四楼战役规则。
 
