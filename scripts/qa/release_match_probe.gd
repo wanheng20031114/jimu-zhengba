@@ -55,6 +55,13 @@ func _run() -> void:
 	check(game.players.size() == 2 and game.bots.size() == 2, "two_standard_bots_loaded_from_session")
 	for player: PlayerState in game.players:
 		check(player.gold == 320 and player.farmers == 3 and player.military_supply == 0, "owner_%d_approved_starting_economy" % player.owner_id)
+		var towers: Array = game.owned_entities(player.owner_id, "buildings").filter(func(building): return building.building_type == "defense_tower")
+		check(towers.size() == 1, "owner_%d_starts_with_exactly_one_free_tower" % player.owner_id)
+		if towers.size() == 1:
+			var marker: Marker3D = game.map_instance.get_node("SpawnPoints/Player%d" % player.owner_id)
+			check(towers[0].is_constructed and towers[0].hp == 1000 and towers[0].max_hp == 1000
+				and towers[0].global_position.is_equal_approx(game.map_instance.to_global(marker.get_meta("starting_tower_position"))),
+				"owner_%d_starting_tower_is_complete_at_authored_mine_position" % player.owner_id)
 	started_at = Time.get_ticks_msec()
 	var next_observation: float = 0.0
 	var next_progress: float = 0.0

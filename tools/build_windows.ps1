@@ -15,5 +15,21 @@ Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/windows-readme.txt') -Desti
 foreach ($supportFile in @('collect_diagnostics.ps1', 'COLLECT_DIAGNOSTICS.cmd')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $supportFile) -Destination (Join-Path $buildRoot $supportFile) -Force
 }
-Compress-Archive -LiteralPath $buildRoot -DestinationPath $archive -Force
+# Godot or Windows may retain a replaced executable as an .exe~*.TMP file.
+# Publish only the five deliverables while preserving the windows/ directory.
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$packageStream = [System.IO.File]::Open($archive, [System.IO.FileMode]::Create)
+try {
+    $packageZip = [System.IO.Compression.ZipArchive]::new($packageStream, [System.IO.Compression.ZipArchiveMode]::Create, $true)
+    try {
+        foreach ($packageName in @('AshenCrown.exe', 'AshenCrown.pck', 'START_HERE.txt', 'collect_diagnostics.ps1', 'COLLECT_DIAGNOSTICS.cmd')) {
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($packageZip, (Join-Path $buildRoot $packageName), ('windows/' + $packageName), [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+        }
+    } finally {
+        $packageZip.Dispose()
+    }
+} finally {
+    $packageStream.Dispose()
+}
 Get-Item -LiteralPath $executable, $archive | Select-Object FullName, Length

@@ -131,6 +131,14 @@ func _run() -> void:
 	check(game.players.size() == 4 and game.match_config.mode == "2v2", "actual_four_player_map")
 	if owner != 0:
 		check(await until(func(): return snapshots >= 2 and game.owned_entities(owner, "buildings").size() >= 1, 15.0), "first_authoritative_world_arrives")
+	var starting_towers: Array = game.owned_entities(owner, "buildings").filter(func(building): return building.building_type == "defense_tower")
+	check(starting_towers.size() == 1, "authoritative_start_gives_each_client_one_owned_tower_without_duplicates")
+	if starting_towers.size() == 1:
+		var marker: Marker3D = game.map_instance.get_node("SpawnPoints/Player%d" % owner)
+		check(starting_towers[0].is_constructed and starting_towers[0].hp == 1000 and starting_towers[0].max_hp == 1000
+			and starting_towers[0].alliance_id == game.get_player(owner).alliance_id
+			and starting_towers[0].global_position.is_equal_approx(game.map_instance.to_global(marker.get_meta("starting_tower_position"))),
+			"client_starting_tower_matches_completed_health_alliance_and_authored_position")
 	phase = "world_ready"
 	status(true)
 	if owner == 0:

@@ -2141,24 +2141,28 @@ position = Vector3(-44,0,30)
 rotation = Vector3(0,2.169215,0)
 metadata/alliance_id = 0
 metadata/player_id = 0
+metadata/starting_tower_position = Vector3(-52,0,7)
 
 [node name="Player1" type="Marker3D" parent="SpawnPoints"]
 position = Vector3(-44,0,-2)
 rotation = Vector3(0,1.525373,0)
 metadata/alliance_id = 0
 metadata/player_id = 1
+metadata/starting_tower_position = Vector3(-52,0,-25)
 
 [node name="Player2" type="Marker3D" parent="SpawnPoints"]
 position = Vector3(44,0,-30)
 rotation = Vector3(0,-0.972377,0)
 metadata/alliance_id = 1
 metadata/player_id = 2
+metadata/starting_tower_position = Vector3(52,0,-7)
 
 [node name="Player3" type="Marker3D" parent="SpawnPoints"]
 position = Vector3(44,0,2)
 rotation = Vector3(0,-1.616220,0)
 metadata/alliance_id = 1
 metadata/player_id = 3
+metadata/starting_tower_position = Vector3(52,0,25)
 
 [node name="Resources" type="Node3D" parent="."]
 

@@ -1,0 +1,256 @@
+{
+  "build": "0.7.8",
+  "protocol": 4,
+  "packaged_before_game_tests": true,
+  "native_tests": {
+    "runs": [
+      {
+        "checks": 96,
+        "failures": [],
+        "mode": "1v1",
+        "navigation_wait_ticks": 2,
+        "exit_code": 0,
+        "timed_out": false,
+        "process_id": 44440,
+        "stderr_bytes": 0,
+        "engine_errors": [],
+        "logs": [
+          ".local\\release-078\\starting-tower-1v1.stdout.log",
+          ".local\\release-078\\starting-tower-1v1.stderr.log",
+          ".local\\release-078\\starting-tower-1v1.engine.log"
+        ]
+      },
+      {
+        "checks": 189,
+        "failures": [],
+        "mode": "2v2",
+        "navigation_wait_ticks": 4,
+        "exit_code": 0,
+        "timed_out": false,
+        "process_id": 44224,
+        "stderr_bytes": 0,
+        "engine_errors": [],
+        "logs": [
+          ".local\\release-078\\starting-tower-2v2.stdout.log",
+          ".local\\release-078\\starting-tower-2v2.stderr.log",
+          ".local\\release-078\\starting-tower-2v2.engine.log"
+        ]
+      }
+    ],
+    "static_geometry": {
+      "source": "authored collision footprint polygons and one-metre native navigation mesh cells",
+      "starting_tower_positions": {
+        "1v1": [
+          [
+            -26,
+            0,
+            10
+          ],
+          [
+            26,
+            0,
+            -10
+          ]
+        ],
+        "2v2": [
+          [
+            -52,
+            0,
+            7
+          ],
+          [
+            -52,
+            0,
+            -25
+          ],
+          [
+            52,
+            0,
+            -7
+          ],
+          [
+            52,
+            0,
+            25
+          ]
+        ]
+      },
+      "connected_mining_slots": 36,
+      "minimum_rock_tree_body_clearance": 1.176,
+      "minimum_road_clearance": 2.0,
+      "minimum_mining_slot_tower_body_clearance": 2.331,
+      "existing_rock_tree_and_navigation_resources_unchanged": true
+    },
+    "first_attempt": {
+      "report": ".local/release-078/native-results-first-attempt.json",
+      "map_iteration_attempt": ".local/release-078/native-results-map-iteration-attempt.json",
+      "reason": "Thread completion and first map iteration alone did not ensure asynchronous replacement navigation was usable. Fixture now waits at most 300 physics frames for all real production exits, matching the existing skirmish test contract; no production code changed."
+    },
+    "temporary_artifacts": [
+      ".local/release-078/run_starting_tower.py",
+      ".local/release-078/native-results.json",
+      ".local/release-078/native-results-first-attempt.json",
+      ".local/release-078/native-results-map-iteration-attempt.json",
+      ".local\\release-078\\starting-tower-1v1.stdout.log",
+      ".local\\release-078\\starting-tower-1v1.stderr.log",
+      ".local\\release-078\\starting-tower-1v1.engine.log",
+      ".local\\release-078\\starting-tower-2v2.stdout.log",
+      ".local\\release-078\\starting-tower-2v2.stderr.log",
+      ".local\\release-078\\starting-tower-2v2.engine.log",
+      ".local\\release-078\\starting-tower-1v1.stdout.log.first-attempt",
+      ".local\\release-078\\starting-tower-1v1.stderr.log.first-attempt",
+      ".local\\release-078\\starting-tower-1v1.engine.log.first-attempt",
+      ".local\\release-078\\starting-tower-2v2.stdout.log.first-attempt",
+      ".local\\release-078\\starting-tower-2v2.stderr.log.first-attempt",
+      ".local\\release-078\\starting-tower-2v2.engine.log.first-attempt"
+    ],
+    "process_cleanup": {
+      "verified": true,
+      "owned_pids": [
+        42868,
+        43080,
+        43380,
+        43264,
+        44440,
+        44224
+      ],
+      "remaining_owned_processes": 0,
+      "method": "Get-CimInstance Win32_Process; exact owned PID and starting_tower_test/run_starting_tower command matching; parent and player processes untouched"
+    }
+  },
+  "four_clients": {
+    "target": "local",
+    "checks": 215,
+    "peers": [
+      {
+        "owner": 0,
+        "checks": 97,
+        "failures": []
+      },
+      {
+        "owner": 1,
+        "checks": 53,
+        "failures": []
+      },
+      {
+        "owner": 2,
+        "checks": 32,
+        "failures": []
+      },
+      {
+        "owner": 3,
+        "checks": 33,
+        "failures": []
+      }
+    ],
+    "failures": [],
+    "stderr_empty": true
+  },
+  "actual_exe_complete_match": {
+    "checks": 26,
+    "failures": [],
+    "simulated_seconds": 373.866666666748,
+    "first_damage": 48.0333333333332,
+    "damage_events": 288,
+    "military_deaths": 40,
+    "winner": 0,
+    "time_scale": 10,
+    "exit_code": 0,
+    "stderr_clean": true
+  },
+  "actual_exe_public_room_probe": {
+    "passed": false,
+    "summary": {
+      "build": "0.7.8",
+      "catalogue_files": 44,
+      "checks": 109,
+      "content_hash": "a061ebcc79fbc21da2ee4ce60697e3e69e7574659e619a61b062d0d90fec8964",
+      "error_codes": [
+        "capacity"
+      ],
+      "exported_template": true,
+      "failures": [
+        "temporary_room_created"
+      ],
+      "handshake_msec": 553,
+      "protocol": 4,
+      "resource_value_checks": 57
+    },
+    "resource_value_audit_present": false,
+    "stderr_empty": true,
+    "log_directory": "release-f02b6fa3"
+  },
+  "deployment": {
+    "release": "4718d6dd20d13aed",
+    "version": "0.7.8",
+    "protocol": 4,
+    "services": {
+      "bot-jump-relay.service": {
+        "MainPID": "270544",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "ashen-crown-relay.service": {
+        "MainPID": "281632",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "files_match": {
+      "scripts/network/network_protocol.gd": true,
+      "data/content_manifest.json": true,
+      "server/relay_server.gd": true
+    },
+    "udp_listeners": {
+      "24570": true,
+      "24571": true
+    }
+  },
+  "visual_captures": [
+    {
+      "mode": "1v1",
+      "pid": 27156,
+      "exit_code": 0,
+      "stderr_empty": true,
+      "capture": "artifacts/starting-tower-1v1.png"
+    },
+    {
+      "mode": "2v2",
+      "pid": 8216,
+      "exit_code": 0,
+      "stderr_empty": true,
+      "capture": "artifacts/starting-tower-2v2.png"
+    }
+  ],
+  "archive_entries": [
+    "windows/AshenCrown.exe",
+    "windows/AshenCrown.pck",
+    "windows/START_HERE.txt",
+    "windows/collect_diagnostics.ps1",
+    "windows/COLLECT_DIAGNOSTICS.cmd"
+  ],
+  "files": [
+    {
+      "path": "builds/windows/AshenCrown.exe",
+      "bytes": 104588800,
+      "sha256": "bd6ae64d635197c47e6692187b55bbae410f68504583daa8d97e5dc7297990ea"
+    },
+    {
+      "path": "builds/windows/AshenCrown.pck",
+      "bytes": 20202220,
+      "sha256": "0b9dbaa38b796060e335e16bc8a66e12ff93d0576cbadba324f3a76db5d547db"
+    },
+    {
+      "path": "builds/AshenCrown-Windows-x64.zip",
+      "bytes": 51694025,
+      "sha256": "df5b441084b7bfe151facb960ed1ce10f6ae019bb8d1da859f5a5c3ae2152123"
+    }
+  ],
+  "cleanup_exception": {
+    "path": "builds/windows/AshenCrown.exe~RF7135e44.TMP",
+    "bytes": 104588800,
+    "reason": "Automatic approval review rejected deletion: blocked by policy. Excluded from final ZIP and Git."
+  }
+}

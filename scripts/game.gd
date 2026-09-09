@@ -6,7 +6,6 @@ const EFFECT_SCENE: PackedScene = preload("res://scenes/battle_effect.tscn")
 const BUILDING_SCENE: PackedScene = preload("res://scenes/building.tscn")
 const UNIT_TYPES := ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]
 const UNIT_NAMES := {"swordsman": "剑士", "archer": "弓箭手", "knight": "骑士", "catapult": "投石车", "cannon": "加农炮", "farmer": "农民"}
-const TOWER_COST := 100
 const MAX_ARMY: int = 160
 const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit", "stone_chip": &"stone_chip", "arrow_hit": &"arrow_hit", "muzzle": &"cannon_shot", "explosion": &"explosion", "stone_hit": &"stone_hit", "collapse": &"collapse"}
 
@@ -1114,8 +1113,12 @@ func _setup_match() -> void:
 		camera_rig.focus_at(map_instance.get_node("SpawnPoints/Player%d" % local_owner_id).global_position, true)
 		return
 	for player: PlayerState in players:
-		var at: Vector3 = map_instance.get_node("SpawnPoints/Player%d" % player.owner_id).global_position
+		var spawn: Marker3D = map_instance.get_node("SpawnPoints/Player%d" % player.owner_id)
+		var at: Vector3 = spawn.global_position
 		var base := spawn_building("headquarters", player.owner_id, at)
+		# Maps author a clear tower site beside each player's left starting mine.
+		# Only the authority creates opening assets; clients receive normal replicas.
+		spawn_building("defense_tower", player.owner_id, map_instance.to_global(spawn.get_meta("starting_tower_position")))
 		var mine := nearest_mine(at)
 		base.production.rally_mine = mine
 		base.rally_point = mine.global_position

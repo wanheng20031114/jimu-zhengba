@@ -283,12 +283,14 @@ def native_model(model, destination: str, limit: float | None = None, shadow=Tru
 
 MAP_DEFINITIONS=[
     {"id":"amber_crossroads_1v1","title":"琥珀十字路","size":[96,96],"spawns":[[-32,32,0],[32,-32,1]],
+     "starting_towers":[[-26,10],[26,-10]],
      "mines":[[-32,16],[-16,32],[-10,-8],[32,-16],[16,-32],[10,8]],
      "roads":[{"width":12,"points":[[-32,32],[0,0],[32,-32]]},
               {"width":8,"points":[[-32,32],[-42,16],[-40,-20],[-8,-42],[16,-42],[32,-32]]},
               {"width":8,"points":[[32,-32],[42,-16],[40,20],[8,42],[-16,42],[-32,32]]}]},
     {"id":"twin_valleys_2v2","title":"双谷盟约","size":[128,112],
      "spawns":[[-44,30,0],[-44,-2,0],[44,-30,1],[44,2,1]],
+     "starting_towers":[[-52,7],[-52,-25],[52,-7],[52,25]],
      "mines":[[-53,15],[-53,-17],[53,-15],[53,17],[-26,12],[-22,-21],[26,-12],[22,21],[-4,28],[4,-28]],
      "roads":[{"width":12,"points":[[-44,30],[0,16],[44,2]]},
               {"width":12,"points":[[-44,-2],[0,-16],[44,-30]]},
@@ -371,7 +373,8 @@ def natural_layout(definition):
     safe_roads=road_union(definition,1.35)
     bases=[Point(s[:2]).buffer(11.5) for s in definition["spawns"]]
     mines=[Point(p).buffer(5.1) for p in definition["mines"]]
-    reserved=unary_union([safe_roads,*bases,*mines])
+    towers=[box(x-3.15,z-3.15,x+3.15,z+3.15) for x,z in definition["starting_towers"]]
+    reserved=unary_union([safe_roads,*bases,*mines,*towers])
     models={"rock_large":art.natural_rock(True),"rock_medium":art.natural_rock(False),"tree_oak":art.oak_tree(),"tree_pine":art.pine_tree()}
     collisions={kind:collision_geometry(kind,model) for kind,model in models.items()}
     placements=[]; occupied=[]
@@ -493,7 +496,8 @@ def write_map(definition,obstacles,nav):
     lines.append('[node name="SpawnPoints" type="Node3D" parent="."]')
     for i,(x,z,alliance) in enumerate(definition["spawns"]):
         angle=math.atan2(-x,-z)
-        lines.append(f'[node name="Player{i}" type="Marker3D" parent="SpawnPoints"]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)\nmetadata/alliance_id = {alliance}\nmetadata/player_id = {i}')
+        tower_x,tower_z=definition["starting_towers"][i]
+        lines.append(f'[node name="Player{i}" type="Marker3D" parent="SpawnPoints"]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)\nmetadata/alliance_id = {alliance}\nmetadata/player_id = {i}\nmetadata/starting_tower_position = Vector3({tower_x},0,{tower_z})')
     lines.append('[node name="Resources" type="Node3D" parent="."]')
     for i,(x,z) in enumerate(definition["mines"]):
         lines.append(f'[node name="GoldVein{i}" parent="Resources" instance=ExtResource("4_mine")]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{0 if x<0 else math.pi:.6f},0)')
