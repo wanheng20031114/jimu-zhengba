@@ -37,6 +37,10 @@ debug_gold={
 3d_physics/layer_2="Buildings"
 3d_physics/layer_3="Units"
 
+[navigation]
+
+3d/default_cell_height=0.2
+
 [physics]
 
 common/physics_ticks_per_second=30

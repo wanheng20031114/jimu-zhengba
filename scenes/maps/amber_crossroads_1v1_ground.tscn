@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/amber_crossroads_1v1_ground_stone.res" id="1_h5diy"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/amber_crossroads_1v1_ground_earth.res" id="2_umllr"]
+
+[node name="AmberCrossroads1v1Ground" type="Node3D" unique_id=1683682364]
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=2128424132]
+cast_shadow = 0
+mesh = ExtResource("1_h5diy")
+
+[node name="Earth" type="MeshInstance3D" parent="." unique_id=60525537]
+cast_shadow = 0
+mesh = ExtResource("2_umllr")

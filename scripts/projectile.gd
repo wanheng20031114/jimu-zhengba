@@ -50,6 +50,7 @@ func initialize(source: Node3D, target: Node3D, payload: DamagePayload, kind: St
 			_duration = clampf(distance / 25.0, 0.15, 0.85)
 			_arc_height = 0.13
 	global_position = _start
+	visible = _game.can_see_position(_game.local_owner_id, global_position)
 	var launch_direction: Vector3 = (_end - _start) + Vector3.UP * (4.0 * _arc_height)
 	var launch_up: Vector3 = Vector3.RIGHT if absf(launch_direction.normalized().dot(Vector3.UP)) > 0.99 else Vector3.UP
 	look_at(_start + launch_direction, launch_up)
@@ -69,6 +70,8 @@ func _physics_process(delta: float) -> void:
 	var last_position: Vector3 = global_position
 	global_position = _start.lerp(_end, progress)
 	global_position.y += 4.0 * _arc_height * progress * (1.0 - progress)
+	# Presentation follows local vision while the authoritative shot keeps flying and resolving.
+	visible = _game.can_see_position(_game.local_owner_id, global_position)
 	var flight_direction: Vector3 = global_position - last_position
 	if flight_direction.length_squared() > 0.0001:
 		look_at(global_position + flight_direction.normalized(), Vector3.UP)

@@ -34,9 +34,7 @@ func _process(delta: float) -> void:
 	camera.size = lerpf(camera.size, zoom_target, 1.0 - exp(-13.0 * delta))
 
 func clamp_destination() -> void:
-	destination.x = clampf(destination.x, -35.0, 35.0)
-	destination.z = clampf(destination.z, -34.0, 35.0)
-	destination.y = 0.0
+	destination = get_parent().clamp_to_map(destination)
 
 func edge_direction(mouse: Vector2, window_size: Vector2) -> Vector2:
 	if mouse.x < 0.0 or mouse.y < 0.0 or mouse.x > window_size.x or mouse.y > window_size.y:
@@ -66,4 +64,4 @@ func world_at(screen: Vector2) -> Vector3:
 	var point = ground.intersects_ray(camera.project_ray_origin(screen), camera.project_ray_normal(screen))
 	if point == null:
 		return Vector3.ZERO
-	return Vector3(clampf(point.x, -40.0, 40.0), 0.0, clampf(point.z, -40.0, 40.0))
+	return get_parent().clamp_to_map(point)

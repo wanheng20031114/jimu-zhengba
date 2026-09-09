@@ -1,0 +1,98 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://tests/skirmish_maps_gallery.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/player_barracks.tscn" id="2_barracks"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/factory.tscn" id="3_factory"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/academy.tscn" id="4_academy"]
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.51,0.405,0.255,1)
+roughness = 0.93
+
+[sub_resource type="PlaneMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector2(80,80)
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMaterial"]
+sky_top_color = Color(0.32,0.41,0.48,1)
+sky_horizon_color = Color(0.81,0.73,0.55,1)
+ground_bottom_color = Color(0.29,0.25,0.19,1)
+ground_horizon_color = Color(0.8,0.72,0.53,1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMaterial")
+
+[sub_resource type="Environment" id="World"]
+background_mode = 1
+background_color = Color(0.30,0.265,0.20,1)
+sky = SubResource("Sky")
+ambient_light_source = 3
+ambient_light_color = Color(0.76,0.81,0.85,1)
+ambient_light_energy = 0.62
+reflected_light_source = 2
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 1.7
+ssao_intensity = 1.8
+ssao_power = 1.5
+ssil_enabled = true
+ssil_radius = 3.0
+ssil_intensity = 0.4
+adjustment_enabled = true
+adjustment_contrast = 1.06
+adjustment_saturation = 0.93
+
+[sub_resource type="SystemFont" id="LabelFont"]
+font_names = PackedStringArray("Microsoft YaHei UI")
+
+[node name="SkirmishGallery" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("World")
+
+[node name="Key" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-54,-31,0)
+light_color = Color(1,0.89,0.72,1)
+light_energy = 1.15
+shadow_enabled = true
+directional_shadow_max_distance = 240.0
+shadow_bias = 0.06
+shadow_normal_bias = 2.0
+directional_shadow_blend_splits = true
+directional_shadow_mode = 0
+light_angular_distance = 1.6
+
+[node name="Camera3D" type="Camera3D" parent="."]
+projection = 1
+size = 17.5
+near = 0.1
+far = 300.0
+current = true
+
+[node name="Models" type="Node3D" parent="."]
+
+[node name="Barracks" parent="Models" instance=ExtResource("2_barracks")]
+position = Vector3(-6,0,6)
+
+[node name="Factory" parent="Models" instance=ExtResource("3_factory")]
+
+[node name="Academy" parent="Models" instance=ExtResource("4_academy")]
+position = Vector3(6,0,-6)
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0,-0.035,0)
+mesh = SubResource("FloorMesh")
+cast_shadow = 0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Title" type="Label" parent="CanvasLayer"]
+offset_left = 42.0
+offset_top = 32.0
+offset_right = 1200.0
+offset_bottom = 89.0
+theme_override_colors/font_color = Color(0.93,0.88,0.75,1)
+theme_override_fonts/font = SubResource("LabelFont")
+theme_override_font_sizes/font_size = 29
+text = "灰烬王国   /   兵营 · 军工厂 · 学院"

@@ -1,0 +1,1127 @@
+[gd_scene load_steps=94 format=3]
+
+[ext_resource type="NavigationMesh" path="res://scenes/maps/amber_crossroads_1v1_navigation.tres" id="1_nav"]
+
+[ext_resource type="PackedScene" path="res://scenes/maps/amber_crossroads_1v1_ground.tscn" id="2_ground"]
+
+[ext_resource type="PackedScene" path="res://scenes/maps/amber_crossroads_1v1_nature.tscn" id="3_nature"]
+
+[ext_resource type="PackedScene" path="res://scenes/resource_vein.tscn" id="4_mine"]
+
+[sub_resource type="BoxShape3D" id="Floor"]
+size = Vector3(96,1,96)
+
+[sub_resource type="BoxShape3D" id="Shape0"]
+size = Vector3(0.905986,2.954303,0.905986)
+
+[sub_resource type="BoxShape3D" id="Shape1"]
+size = Vector3(0.905986,2.954303,0.905986)
+
+[sub_resource type="BoxShape3D" id="Shape2"]
+size = Vector3(0.638897,2.738130,0.638897)
+
+[sub_resource type="BoxShape3D" id="Shape3"]
+size = Vector3(0.638897,2.738130,0.638897)
+
+[sub_resource type="BoxShape3D" id="Shape4"]
+size = Vector3(0.640125,2.743392,0.640125)
+
+[sub_resource type="BoxShape3D" id="Shape5"]
+size = Vector3(0.640125,2.743392,0.640125)
+
+[sub_resource type="BoxShape3D" id="Shape6"]
+size = Vector3(0.881412,2.874169,0.881412)
+
+[sub_resource type="BoxShape3D" id="Shape7"]
+size = Vector3(0.881412,2.874169,0.881412)
+
+[sub_resource type="BoxShape3D" id="Shape8"]
+size = Vector3(0.686538,2.942307,0.686538)
+
+[sub_resource type="BoxShape3D" id="Shape9"]
+size = Vector3(0.686538,2.942307,0.686538)
+
+[sub_resource type="BoxShape3D" id="Shape10"]
+size = Vector3(0.722901,3.098145,0.722901)
+
+[sub_resource type="BoxShape3D" id="Shape11"]
+size = Vector3(0.722901,3.098145,0.722901)
+
+[sub_resource type="BoxShape3D" id="Shape12"]
+size = Vector3(0.796045,2.595798,0.796045)
+
+[sub_resource type="BoxShape3D" id="Shape13"]
+size = Vector3(0.796045,2.595798,0.796045)
+
+[sub_resource type="BoxShape3D" id="Shape14"]
+size = Vector3(0.701492,3.006395,0.701492)
+
+[sub_resource type="BoxShape3D" id="Shape15"]
+size = Vector3(0.701492,3.006395,0.701492)
+
+[sub_resource type="BoxShape3D" id="Shape16"]
+size = Vector3(0.621965,2.665566,0.621965)
+
+[sub_resource type="BoxShape3D" id="Shape17"]
+size = Vector3(0.621965,2.665566,0.621965)
+
+[sub_resource type="BoxShape3D" id="Shape18"]
+size = Vector3(0.784431,2.557928,0.784431)
+
+[sub_resource type="BoxShape3D" id="Shape19"]
+size = Vector3(0.784431,2.557928,0.784431)
+
+[sub_resource type="BoxShape3D" id="Shape20"]
+size = Vector3(0.570202,2.443724,0.570202)
+
+[sub_resource type="BoxShape3D" id="Shape21"]
+size = Vector3(0.570202,2.443724,0.570202)
+
+[sub_resource type="BoxShape3D" id="Shape22"]
+size = Vector3(2.611317,2.008705,2.320054)
+
+[sub_resource type="BoxShape3D" id="Shape23"]
+size = Vector3(2.611317,2.008705,2.320054)
+
+[sub_resource type="BoxShape3D" id="Shape24"]
+size = Vector3(0.808530,2.636511,0.808530)
+
+[sub_resource type="BoxShape3D" id="Shape25"]
+size = Vector3(0.808530,2.636511,0.808530)
+
+[sub_resource type="BoxShape3D" id="Shape26"]
+size = Vector3(0.616280,2.641200,0.616280)
+
+[sub_resource type="BoxShape3D" id="Shape27"]
+size = Vector3(0.616280,2.641200,0.616280)
+
+[sub_resource type="BoxShape3D" id="Shape28"]
+size = Vector3(0.663960,2.845543,0.663960)
+
+[sub_resource type="BoxShape3D" id="Shape29"]
+size = Vector3(0.663960,2.845543,0.663960)
+
+[sub_resource type="BoxShape3D" id="Shape30"]
+size = Vector3(0.604473,2.590597,0.604473)
+
+[sub_resource type="BoxShape3D" id="Shape31"]
+size = Vector3(0.604473,2.590597,0.604473)
+
+[sub_resource type="BoxShape3D" id="Shape32"]
+size = Vector3(0.927347,3.023956,0.927347)
+
+[sub_resource type="BoxShape3D" id="Shape33"]
+size = Vector3(0.927347,3.023956,0.927347)
+
+[sub_resource type="BoxShape3D" id="Shape34"]
+size = Vector3(0.681201,2.919432,0.681201)
+
+[sub_resource type="BoxShape3D" id="Shape35"]
+size = Vector3(0.681201,2.919432,0.681201)
+
+[sub_resource type="BoxShape3D" id="Shape36"]
+size = Vector3(0.706340,3.027173,0.706340)
+
+[sub_resource type="BoxShape3D" id="Shape37"]
+size = Vector3(0.706340,3.027173,0.706340)
+
+[sub_resource type="BoxShape3D" id="Shape38"]
+size = Vector3(3.928297,3.006845,3.491820)
+
+[sub_resource type="BoxShape3D" id="Shape39"]
+size = Vector3(3.928297,3.006845,3.491820)
+
+[sub_resource type="BoxShape3D" id="Shape40"]
+size = Vector3(0.618156,2.649242,0.618156)
+
+[sub_resource type="BoxShape3D" id="Shape41"]
+size = Vector3(0.618156,2.649242,0.618156)
+
+[sub_resource type="BoxShape3D" id="Shape42"]
+size = Vector3(0.841701,2.744679,0.841701)
+
+[sub_resource type="BoxShape3D" id="Shape43"]
+size = Vector3(0.841701,2.744679,0.841701)
+
+[sub_resource type="BoxShape3D" id="Shape44"]
+size = Vector3(0.564232,2.418138,0.564232)
+
+[sub_resource type="BoxShape3D" id="Shape45"]
+size = Vector3(0.564232,2.418138,0.564232)
+
+[sub_resource type="BoxShape3D" id="Shape46"]
+size = Vector3(2.543811,1.956777,2.260078)
+
+[sub_resource type="BoxShape3D" id="Shape47"]
+size = Vector3(2.543811,1.956777,2.260078)
+
+[sub_resource type="BoxShape3D" id="Shape48"]
+size = Vector3(0.672143,2.880614,0.672143)
+
+[sub_resource type="BoxShape3D" id="Shape49"]
+size = Vector3(0.672143,2.880614,0.672143)
+
+[sub_resource type="BoxShape3D" id="Shape50"]
+size = Vector3(0.642812,2.754907,0.642812)
+
+[sub_resource type="BoxShape3D" id="Shape51"]
+size = Vector3(0.642812,2.754907,0.642812)
+
+[sub_resource type="BoxShape3D" id="Shape52"]
+size = Vector3(0.614844,2.635046,0.614844)
+
+[sub_resource type="BoxShape3D" id="Shape53"]
+size = Vector3(0.614844,2.635046,0.614844)
+
+[sub_resource type="BoxShape3D" id="Shape54"]
+size = Vector3(0.793713,2.588196,0.793713)
+
+[sub_resource type="BoxShape3D" id="Shape55"]
+size = Vector3(0.793713,2.588196,0.793713)
+
+[sub_resource type="BoxShape3D" id="Shape56"]
+size = Vector3(2.071909,1.593776,1.840811)
+
+[sub_resource type="BoxShape3D" id="Shape57"]
+size = Vector3(2.071909,1.593776,1.840811)
+
+[sub_resource type="BoxShape3D" id="Shape58"]
+size = Vector3(1.811274,1.393287,1.609247)
+
+[sub_resource type="BoxShape3D" id="Shape59"]
+size = Vector3(1.811274,1.393287,1.609247)
+
+[sub_resource type="BoxShape3D" id="Shape60"]
+size = Vector3(2.314802,1.780617,2.056612)
+
+[sub_resource type="BoxShape3D" id="Shape61"]
+size = Vector3(2.314802,1.780617,2.056612)
+
+[sub_resource type="BoxShape3D" id="Shape62"]
+size = Vector3(2.213924,1.703018,1.966986)
+
+[sub_resource type="BoxShape3D" id="Shape63"]
+size = Vector3(2.213924,1.703018,1.966986)
+
+[sub_resource type="BoxShape3D" id="Shape64"]
+size = Vector3(2.060006,1.584620,1.830236)
+
+[sub_resource type="BoxShape3D" id="Shape65"]
+size = Vector3(2.060006,1.584620,1.830236)
+
+[sub_resource type="BoxShape3D" id="Shape66"]
+size = Vector3(1.759121,1.353170,1.562911)
+
+[sub_resource type="BoxShape3D" id="Shape67"]
+size = Vector3(1.759121,1.353170,1.562911)
+
+[sub_resource type="BoxShape3D" id="Shape68"]
+size = Vector3(2.223353,1.710272,1.975364)
+
+[sub_resource type="BoxShape3D" id="Shape69"]
+size = Vector3(2.223353,1.710272,1.975364)
+
+[sub_resource type="BoxShape3D" id="Shape70"]
+size = Vector3(1.974116,1.518551,1.753926)
+
+[sub_resource type="BoxShape3D" id="Shape71"]
+size = Vector3(1.974116,1.518551,1.753926)
+
+[sub_resource type="BoxShape3D" id="Shape72"]
+size = Vector3(1.914170,1.472439,1.700667)
+
+[sub_resource type="BoxShape3D" id="Shape73"]
+size = Vector3(1.914170,1.472439,1.700667)
+
+[sub_resource type="BoxShape3D" id="Shape74"]
+size = Vector3(1.866772,1.435978,1.658555)
+
+[sub_resource type="BoxShape3D" id="Shape75"]
+size = Vector3(1.866772,1.435978,1.658555)
+
+[sub_resource type="BoxShape3D" id="Shape76"]
+size = Vector3(1.703674,1.310519,1.513649)
+
+[sub_resource type="BoxShape3D" id="Shape77"]
+size = Vector3(1.703674,1.310519,1.513649)
+
+[sub_resource type="BoxShape3D" id="Shape78"]
+size = Vector3(2.218242,1.706340,1.970822)
+
+[sub_resource type="BoxShape3D" id="Shape79"]
+size = Vector3(2.218242,1.706340,1.970822)
+
+[sub_resource type="BoxShape3D" id="Shape80"]
+size = Vector3(2.360484,1.815757,2.097199)
+
+[sub_resource type="BoxShape3D" id="Shape81"]
+size = Vector3(2.360484,1.815757,2.097199)
+
+[sub_resource type="BoxShape3D" id="Shape82"]
+size = Vector3(1.671783,1.285987,1.485315)
+
+[sub_resource type="BoxShape3D" id="Shape83"]
+size = Vector3(1.671783,1.285987,1.485315)
+
+[sub_resource type="BoxShape3D" id="Shape84"]
+size = Vector3(2.275909,1.750700,2.022058)
+
+[sub_resource type="BoxShape3D" id="Shape85"]
+size = Vector3(2.275909,1.750700,2.022058)
+
+[sub_resource type="BoxShape3D" id="Shape86"]
+size = Vector3(2.292257,1.763275,2.036582)
+
+[sub_resource type="BoxShape3D" id="Shape87"]
+size = Vector3(2.292257,1.763275,2.036582)
+
+[node name="AmberCrossroads1V1" type="Node3D"]
+metadata/map_id = "amber_crossroads_1v1"
+metadata/map_size = Vector2(96,96)
+metadata/map_title = "琥珀十字路"
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = ExtResource("1_nav")
+use_edge_connections = false
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="GroundVisual" parent="Environment" instance=ExtResource("2_ground")]
+
+[node name="NaturalScenery" parent="Environment" instance=ExtResource("3_nature")]
+
+[node name="Ground" type="StaticBody3D" parent="Environment"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]
+position = Vector3(0,-0.53,0)
+shape = SubResource("Floor")
+
+[node name="NaturalObstacles" type="Node3D" parent="Environment"]
+
+[node name="tree_oak_000" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-43.728947,1.477152,-44.272267)
+rotation = Vector3(0,3.753098,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_000"]
+shape = SubResource("Shape0")
+
+[node name="tree_oak_001" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(43.728947,1.477152,44.272267)
+rotation = Vector3(0,6.894691,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_001"]
+shape = SubResource("Shape1")
+
+[node name="tree_pine_002" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-38.731947,1.369065,-44.465705)
+rotation = Vector3(0,3.846856,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_002"]
+shape = SubResource("Shape2")
+
+[node name="tree_pine_003" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(38.731947,1.369065,44.465705)
+rotation = Vector3(0,6.988449,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_003"]
+shape = SubResource("Shape3")
+
+[node name="tree_pine_004" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-34.442073,1.371696,-44.531155)
+rotation = Vector3(0,0.667894,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_004"]
+shape = SubResource("Shape4")
+
+[node name="tree_pine_005" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(34.442073,1.371696,44.531155)
+rotation = Vector3(0,3.809487,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_005"]
+shape = SubResource("Shape5")
+
+[node name="tree_oak_006" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-28.789481,1.437085,-43.007709)
+rotation = Vector3(0,5.121039,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_006"]
+shape = SubResource("Shape6")
+
+[node name="tree_oak_007" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(28.789481,1.437085,43.007709)
+rotation = Vector3(0,8.262632,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_007"]
+shape = SubResource("Shape7")
+
+[node name="tree_pine_008" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-23.633315,1.471153,-43.246872)
+rotation = Vector3(0,5.702271,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_008"]
+shape = SubResource("Shape8")
+
+[node name="tree_pine_009" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(23.633315,1.471153,43.246872)
+rotation = Vector3(0,8.843864,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_009"]
+shape = SubResource("Shape9")
+
+[node name="tree_pine_010" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-19.314421,1.549073,-43.346328)
+rotation = Vector3(0,5.017663,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_010"]
+shape = SubResource("Shape10")
+
+[node name="tree_pine_011" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(19.314421,1.549073,43.346328)
+rotation = Vector3(0,8.159256,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_011"]
+shape = SubResource("Shape11")
+
+[node name="tree_oak_012" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-44.614655,1.297899,-39.068694)
+rotation = Vector3(0,1.318617,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_012"]
+shape = SubResource("Shape12")
+
+[node name="tree_oak_013" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(44.614655,1.297899,39.068694)
+rotation = Vector3(0,4.460210,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_013"]
+shape = SubResource("Shape13")
+
+[node name="tree_pine_014" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-38.069548,1.503197,-38.060346)
+rotation = Vector3(0,0.450373,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_014"]
+shape = SubResource("Shape14")
+
+[node name="tree_pine_015" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(38.069548,1.503197,38.060346)
+rotation = Vector3(0,3.591966,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_015"]
+shape = SubResource("Shape15")
+
+[node name="tree_pine_016" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-33.393511,1.332783,-39.190542)
+rotation = Vector3(0,1.010638,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_016"]
+shape = SubResource("Shape16")
+
+[node name="tree_pine_017" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(33.393511,1.332783,39.190542)
+rotation = Vector3(0,4.152230,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_017"]
+shape = SubResource("Shape17")
+
+[node name="tree_oak_018" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-44.162751,1.278964,-33.289252)
+rotation = Vector3(0,2.453137,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_018"]
+shape = SubResource("Shape18")
+
+[node name="tree_oak_019" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(44.162751,1.278964,33.289252)
+rotation = Vector3(0,5.594729,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_019"]
+shape = SubResource("Shape19")
+
+[node name="tree_pine_020" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-39.813822,1.221862,-34.432650)
+rotation = Vector3(0,4.904853,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_020"]
+shape = SubResource("Shape20")
+
+[node name="tree_pine_021" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(39.813822,1.221862,34.432650)
+rotation = Vector3(0,8.046446,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_021"]
+shape = SubResource("Shape21")
+
+[node name="rock_medium_022" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-33.970655,1.004353,-34.376647)
+rotation = Vector3(0,4.518432,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_022"]
+shape = SubResource("Shape22")
+
+[node name="rock_medium_023" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(33.970655,1.004353,34.376647)
+rotation = Vector3(0,7.660024,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_023"]
+shape = SubResource("Shape23")
+
+[node name="tree_oak_024" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-43.871499,1.318255,-27.882898)
+rotation = Vector3(0,5.532991,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_024"]
+shape = SubResource("Shape24")
+
+[node name="tree_oak_025" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(43.871499,1.318255,27.882898)
+rotation = Vector3(0,8.674584,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_025"]
+shape = SubResource("Shape25")
+
+[node name="tree_pine_026" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-12.958583,1.320600,-28.499470)
+rotation = Vector3(0,4.184768,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_026"]
+shape = SubResource("Shape26")
+
+[node name="tree_pine_027" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(12.958583,1.320600,28.499470)
+rotation = Vector3(0,7.326361,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_027"]
+shape = SubResource("Shape27")
+
+[node name="tree_pine_028" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-8.846187,1.422772,-22.951651)
+rotation = Vector3(0,0.362206,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_028"]
+shape = SubResource("Shape28")
+
+[node name="tree_pine_029" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(8.846187,1.422772,22.951651)
+rotation = Vector3(0,3.503799,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_029"]
+shape = SubResource("Shape29")
+
+[node name="tree_pine_030" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-23.558195,1.295298,-18.510280)
+rotation = Vector3(0,1.648175,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_030"]
+shape = SubResource("Shape30")
+
+[node name="tree_pine_031" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(23.558195,1.295298,18.510280)
+rotation = Vector3(0,4.789768,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_031"]
+shape = SubResource("Shape31")
+
+[node name="tree_oak_032" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-2.736199,1.511978,-18.221009)
+rotation = Vector3(0,3.291717,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_032"]
+shape = SubResource("Shape32")
+
+[node name="tree_oak_033" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(2.736199,1.511978,18.221009)
+rotation = Vector3(0,6.433309,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_033"]
+shape = SubResource("Shape33")
+
+[node name="tree_pine_034" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-14.298944,1.459716,-13.698465)
+rotation = Vector3(0,2.441218,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_034"]
+shape = SubResource("Shape34")
+
+[node name="tree_pine_035" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(14.298944,1.459716,13.698465)
+rotation = Vector3(0,5.582811,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_035"]
+shape = SubResource("Shape35")
+
+[node name="tree_pine_036" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-28.385715,1.513587,-7.789379)
+rotation = Vector3(0,4.512683,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_036"]
+shape = SubResource("Shape36")
+
+[node name="tree_pine_037" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(28.385715,1.513587,7.789379)
+rotation = Vector3(0,7.654276,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_037"]
+shape = SubResource("Shape37")
+
+[node name="rock_large_038" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-23.201836,1.503422,-8.944757)
+rotation = Vector3(0,0.533585,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_large_038"]
+shape = SubResource("Shape38")
+
+[node name="rock_large_039" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(23.201836,1.503422,8.944757)
+rotation = Vector3(0,3.675178,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_large_039"]
+shape = SubResource("Shape39")
+
+[node name="tree_pine_040" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-28.322385,1.324621,-2.396732)
+rotation = Vector3(0,2.560811,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_040"]
+shape = SubResource("Shape40")
+
+[node name="tree_pine_041" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(28.322385,1.324621,2.396732)
+rotation = Vector3(0,5.702404,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_041"]
+shape = SubResource("Shape41")
+
+[node name="tree_oak_042" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-23.664698,1.372339,-3.628983)
+rotation = Vector3(0,2.166338,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_042"]
+shape = SubResource("Shape42")
+
+[node name="tree_oak_043" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(23.664698,1.372339,3.628983)
+rotation = Vector3(0,5.307930,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_043"]
+shape = SubResource("Shape43")
+
+[node name="tree_pine_044" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-18.278770,1.209069,-2.932749)
+rotation = Vector3(0,1.567391,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_044"]
+shape = SubResource("Shape44")
+
+[node name="tree_pine_045" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(18.278770,1.209069,2.932749)
+rotation = Vector3(0,4.708984,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_045"]
+shape = SubResource("Shape45")
+
+[node name="rock_medium_046" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-33.899178,0.978389,1.026019)
+rotation = Vector3(0,2.207336,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_046"]
+shape = SubResource("Shape46")
+
+[node name="rock_medium_047" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(33.899178,0.978389,-1.026019)
+rotation = Vector3(0,5.348928,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_047"]
+shape = SubResource("Shape47")
+
+[node name="tree_pine_048" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-22.850003,1.440307,1.689137)
+rotation = Vector3(0,1.294508,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_048"]
+shape = SubResource("Shape48")
+
+[node name="tree_pine_049" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(22.850003,1.440307,-1.689137)
+rotation = Vector3(0,4.436101,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_049"]
+shape = SubResource("Shape49")
+
+[node name="tree_pine_050" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-33.181023,1.377454,7.068773)
+rotation = Vector3(0,4.638780,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_050"]
+shape = SubResource("Shape50")
+
+[node name="tree_pine_051" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(33.181023,1.377454,-7.068773)
+rotation = Vector3(0,7.780373,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_051"]
+shape = SubResource("Shape51")
+
+[node name="tree_pine_052" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-43.990206,1.317523,37.583652)
+rotation = Vector3(0,1.318547,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_052"]
+shape = SubResource("Shape52")
+
+[node name="tree_pine_053" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(43.990206,1.317523,-37.583652)
+rotation = Vector3(0,4.460140,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_pine_053"]
+shape = SubResource("Shape53")
+
+[node name="tree_oak_054" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-43.990340,1.294098,42.307294)
+rotation = Vector3(0,0.005828,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_054"]
+shape = SubResource("Shape54")
+
+[node name="tree_oak_055" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(43.990340,1.294098,-42.307294)
+rotation = Vector3(0,3.147421,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/tree_oak_055"]
+shape = SubResource("Shape55")
+
+[node name="rock_medium_056" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-30.717401,0.796888,-36.040449)
+rotation = Vector3(0,0.316185,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_056"]
+shape = SubResource("Shape56")
+
+[node name="rock_medium_057" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(30.717401,0.796888,36.040449)
+rotation = Vector3(0,3.457778,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_057"]
+shape = SubResource("Shape57")
+
+[node name="rock_medium_058" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-5.147489,0.696644,28.538519)
+rotation = Vector3(0,3.292262,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_058"]
+shape = SubResource("Shape58")
+
+[node name="rock_medium_059" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(5.147489,0.696644,-28.538519)
+rotation = Vector3(0,6.433854,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_059"]
+shape = SubResource("Shape59")
+
+[node name="rock_medium_060" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-28.314204,0.890308,-14.695500)
+rotation = Vector3(0,3.371707,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_060"]
+shape = SubResource("Shape60")
+
+[node name="rock_medium_061" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(28.314204,0.890308,14.695500)
+rotation = Vector3(0,6.513300,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_061"]
+shape = SubResource("Shape61")
+
+[node name="rock_medium_062" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-19.577370,0.851509,0.139305)
+rotation = Vector3(0,3.743512,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_062"]
+shape = SubResource("Shape62")
+
+[node name="rock_medium_063" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(19.577370,0.851509,-0.139305)
+rotation = Vector3(0,6.885105,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_063"]
+shape = SubResource("Shape63")
+
+[node name="rock_medium_064" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-16.019595,0.792310,-0.154933)
+rotation = Vector3(0,4.153060,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_064"]
+shape = SubResource("Shape64")
+
+[node name="rock_medium_065" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(16.019595,0.792310,0.154933)
+rotation = Vector3(0,7.294653,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_065"]
+shape = SubResource("Shape65")
+
+[node name="rock_medium_066" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-19.382957,0.676585,-15.415478)
+rotation = Vector3(0,2.038885,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_066"]
+shape = SubResource("Shape66")
+
+[node name="rock_medium_067" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(19.382957,0.676585,15.415478)
+rotation = Vector3(0,5.180478,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_067"]
+shape = SubResource("Shape67")
+
+[node name="rock_medium_068" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-6.460722,0.855136,-30.877713)
+rotation = Vector3(0,2.301178,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_068"]
+shape = SubResource("Shape68")
+
+[node name="rock_medium_069" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(6.460722,0.855136,30.877713)
+rotation = Vector3(0,5.442770,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_069"]
+shape = SubResource("Shape69")
+
+[node name="rock_medium_070" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-18.674320,0.759275,5.320392)
+rotation = Vector3(0,4.907401,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_070"]
+shape = SubResource("Shape70")
+
+[node name="rock_medium_071" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(18.674320,0.759275,-5.320392)
+rotation = Vector3(0,8.048994,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_071"]
+shape = SubResource("Shape71")
+
+[node name="rock_medium_072" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-6.291343,0.736219,34.248614)
+rotation = Vector3(0,1.813728,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_072"]
+shape = SubResource("Shape72")
+
+[node name="rock_medium_073" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(6.291343,0.736219,-34.248614)
+rotation = Vector3(0,4.955320,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_073"]
+shape = SubResource("Shape73")
+
+[node name="rock_medium_074" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-27.605480,0.717989,3.043932)
+rotation = Vector3(0,3.490978,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_074"]
+shape = SubResource("Shape74")
+
+[node name="rock_medium_075" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(27.605480,0.717989,-3.043932)
+rotation = Vector3(0,6.632570,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_075"]
+shape = SubResource("Shape75")
+
+[node name="rock_medium_076" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-12.523936,0.655259,-22.714149)
+rotation = Vector3(0,0.160083,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_076"]
+shape = SubResource("Shape76")
+
+[node name="rock_medium_077" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(12.523936,0.655259,22.714149)
+rotation = Vector3(0,3.301676,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_077"]
+shape = SubResource("Shape77")
+
+[node name="rock_medium_078" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-2.643915,0.853170,-28.221809)
+rotation = Vector3(0,2.301434,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_078"]
+shape = SubResource("Shape78")
+
+[node name="rock_medium_079" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(2.643915,0.853170,28.221809)
+rotation = Vector3(0,5.443026,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_079"]
+shape = SubResource("Shape79")
+
+[node name="rock_medium_080" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-31.940371,0.907879,-10.028890)
+rotation = Vector3(0,3.669643,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_080"]
+shape = SubResource("Shape80")
+
+[node name="rock_medium_081" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(31.940371,0.907879,10.028890)
+rotation = Vector3(0,6.811236,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_081"]
+shape = SubResource("Shape81")
+
+[node name="rock_medium_082" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-3.088660,0.642994,16.579381)
+rotation = Vector3(0,5.930630,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_082"]
+shape = SubResource("Shape82")
+
+[node name="rock_medium_083" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(3.088660,0.642994,-16.579381)
+rotation = Vector3(0,9.072223,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_083"]
+shape = SubResource("Shape83")
+
+[node name="rock_medium_084" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-10.555910,0.875350,26.022085)
+rotation = Vector3(0,6.271518,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_084"]
+shape = SubResource("Shape84")
+
+[node name="rock_medium_085" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(10.555910,0.875350,-26.022085)
+rotation = Vector3(0,9.413111,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_085"]
+shape = SubResource("Shape85")
+
+[node name="rock_medium_086" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(-33.263748,0.881637,-15.740589)
+rotation = Vector3(0,3.638811,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_086"]
+shape = SubResource("Shape86")
+
+[node name="rock_medium_087" type="StaticBody3D" parent="Environment/NaturalObstacles"]
+position = Vector3(33.263748,0.881637,15.740589)
+rotation = Vector3(0,6.780404,0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/rock_medium_087"]
+shape = SubResource("Shape87")
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="Player0" type="Marker3D" parent="SpawnPoints"]
+position = Vector3(-32,0,32)
+rotation = Vector3(0,2.356194,0)
+metadata/alliance_id = 0
+metadata/player_id = 0
+
+[node name="Player1" type="Marker3D" parent="SpawnPoints"]
+position = Vector3(32,0,-32)
+rotation = Vector3(0,-0.785398,0)
+metadata/alliance_id = 1
+metadata/player_id = 1
+
+[node name="Resources" type="Node3D" parent="."]
+
+[node name="GoldVein0" parent="Resources" instance=ExtResource("4_mine")]
+position = Vector3(-32,0,16)
+
+[node name="GoldVein1" parent="Resources" instance=ExtResource("4_mine")]
+position = Vector3(-16,0,32)
+
+[node name="GoldVein2" parent="Resources" instance=ExtResource("4_mine")]
+position = Vector3(-10,0,-8)
+
+[node name="GoldVein3" parent="Resources" instance=ExtResource("4_mine")]
+position = Vector3(32,0,-16)
+
+[node name="GoldVein4" parent="Resources" instance=ExtResource("4_mine")]
+position = Vector3(16,0,-32)
+
+[node name="GoldVein5" parent="Resources" instance=ExtResource("4_mine")]
+position = Vector3(10,0,8)

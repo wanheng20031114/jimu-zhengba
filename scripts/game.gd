@@ -14,7 +14,7 @@ const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit",
 @onready var camera: Camera3D = $CameraRig/Camera3D
 @onready var hud = $HUD/Interface
 @onready var overlay = $HUD/SelectionOverlay
-@onready var headquarters = $Buildings/Headquarters
+var headquarters: BattleBuilding
 @onready var unit_container: Node3D = $Units
 @onready var effect_container: Node3D = $Effects
 
@@ -61,15 +61,20 @@ var _idle_worker_index: int = 0
 var build_kind: String = "defense_tower"
 var command_bus: MatchCommands
 var _outgoing_sequences: Dictionary = {}
+var map_instance: Node3D
+var map_definition: MapDefinition
+var match_config: Dictionary = {}
+var bots: Dictionary = {}
+var _fog_ready: bool = false
+var _match_ready: bool = false
+var _victory_timer: float = 0.0
+var _revealed_alliances: Array[int] = []
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
 	command_bus = MatchCommands.new(self)
 	hud.bind_game(self)
-	for entity: Node3D in get_tree().get_nodes_in_group("entities"):
-		entity.sound_requested.connect($Audio.play_world)
-		if entity.is_in_group("units"):
-			entity.gathered.connect(_on_gathered)
+	_setup_match()
 	var footprint := BoxShape3D.new()
 	footprint.size = Vector3(4.4, 5.0, 4.4)
 	_placement_query = PhysicsShapeQueryParameters3D.new()
@@ -77,13 +82,17 @@ func _ready() -> void:
 	_placement_query.collision_mask = 6 | 128
 	$ConstructionNavigation.refresh()
 	$IncomeTimer.timeout.connect(_on_income)
-	$EnemyTimer.timeout.connect(_on_enemy_wave)
+	
 	$IncomeTimer.start()
-	$EnemyTimer.start()
+
 	select_entities([headquarters])
-	hud.toast("集结军队，夺回沙石镇", 5.0)
+	hud.toast("建立兵营，集结军队 · 摧毁敌队全部军事建筑", 5.0)
 	hud.refresh()
 	game_started = true
+	$FogOfWar.configure(self, map_size)
+	_fog_ready = true
+	$FogOfWar.apply_visibility(local_owner_id)
+	_match_ready = true
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	# Authored defenders keep their native IDLE order and engage approaching enemies.
@@ -118,12 +127,21 @@ func _physics_process(delta: float) -> void:
 	# movement, attacks and economic work consume it on the next native fixed tick.
 	# Camera, selection feedback and portraits remain on the presentation clock.
 	if not finished and is_authority:
+		$FogOfWar.tick(delta)
 		command_bus.tick()
+		for bot: SkirmishBot in bots.values():
+			bot.tick(delta)
+		_victory_timer += delta
+		if _victory_timer >= 0.5:
+			_victory_timer = 0
+			check_victory()
 		simulation_tick += 1
 		elapsed += delta
 
 func _process(delta: float) -> void:
 	$RallyMarker.visible = is_instance_valid(headquarters) and headquarters.alive and headquarters in selection
+	if _fog_ready:
+		$FogOfWar.apply_visibility(local_owner_id)
 	_ui_accumulator += delta
 	if _ui_accumulator > 0.12:
 		_ui_accumulator = 0.0
@@ -261,12 +279,12 @@ func entity_at(screen: Vector2) -> Node3D:
 	var from := camera.project_ray_origin(screen)
 	var ray := PhysicsRayQueryParameters3D.create(from, from + camera.project_ray_normal(screen) * 200.0, 6 | 128)
 	var hit := get_world_3d().direct_space_state.intersect_ray(ray)
-	if not hit.is_empty() and (hit.collider.is_in_group("entities") or hit.collider.is_in_group("resource_veins")) and hit.collider.alive:
+	if not hit.is_empty() and (hit.collider.is_in_group("entities") or hit.collider.is_in_group("resource_veins")) and hit.collider.alive and can_see_entity(local_owner_id, hit.collider):
 		return hit.collider
 	var closest: Node3D = null
 	var best_distance: float = 28.0
 	for entity in get_tree().get_nodes_in_group("units"):
-		if not entity.alive or camera.is_position_behind(entity.global_position):
+		if not entity.alive or not can_see_entity(local_owner_id, entity) or camera.is_position_behind(entity.global_position):
 			continue
 		var position_2d := camera.unproject_position(entity.global_position + Vector3.UP)
 		var distance := position_2d.distance_to(screen)
@@ -331,7 +349,7 @@ func select_entities(entities: Array, additive: bool = false, toggle: bool = fal
 		$Audio.play_ui("select")
 
 func _prune_selection() -> void:
-	selection = selection.filter(func(entity): return is_instance_valid(entity) and entity.alive)
+	selection = selection.filter(func(entity): return is_instance_valid(entity) and entity.alive and can_see_entity(local_owner_id, entity))
 
 func own_selected_units() -> Array[Node3D]:
 	var result: Array[Node3D] = []
@@ -588,13 +606,14 @@ func find_recruit_position(kind: String, building: BattleBuilding = null) -> Vec
 				return at
 	return Vector3.INF
 
-func spawn_unit(kind: String, faction: int, at: Vector3) -> Node3D:
+func spawn_unit(kind: String, faction: int, at: Vector3, id: int = 0) -> Node3D:
 	var unit: Node3D = UNIT_SCENE.instantiate()
 	unit.unit_type = kind
+	unit.entity_id = id
 	unit.owner_id = faction
 	unit.alliance_id = get_player(faction).alliance_id
 	unit.position = at
-	unit.sound_requested.connect($Audio.play_world)
+	unit.sound_requested.connect(play_world_sound)
 	unit.gathered.connect(_on_gathered)
 	unit_container.add_child(unit)
 	return unit
@@ -607,9 +626,11 @@ func spawn_projectile(source: Node3D, target: Node3D, damage: DamagePayload, kin
 	projectile.initialize(source, target, damage, kind)
 
 func spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE) -> void:
+	if not can_see_position(local_owner_id, at):
+		return
 	# Sound tails belong to the bounded mixer, independent of visual effect limits.
 	if EFFECT_SOUNDS.has(kind):
-		$Audio.play_world(EFFECT_SOUNDS[kind], at)
+		play_world_sound(EFFECT_SOUNDS[kind], at)
 	if effect_container.get_child_count() > 240:
 		return
 	var effect = EFFECT_SCENE.instantiate()
@@ -619,29 +640,21 @@ func spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE) -> void
 
 func on_entity_died(entity: Node3D) -> void:
 	selection.erase(entity)
+	if not is_authority:
+		return
 	if entity is BattleUnit:
 		var player := get_player(entity.owner_id)
 		if entity.unit_type == "farmer":
 			player.farmers -= 1
 		else:
 			player.military_supply -= BalanceCatalog.unit(entity.unit_type).supply
-	if entity.is_in_group("buildings"):
-		var authored_patch: NavigationRegion3D = get_node_or_null("ClearedNavigation/" + str(entity.name))
-		if authored_patch != null:
-			authored_patch.enabled = true
-		$ConstructionNavigation.refresh()
-	if entity.alliance_id != get_player(local_owner_id).alliance_id:
-		if entity.is_in_group("units"):
+		if entity.alliance_id != get_player(local_owner_id).alliance_id:
 			kills += 1
-		elif entity.is_in_group("buildings"):
+	else:
+		$ConstructionNavigation.refresh()
+		if entity.alliance_id != get_player(local_owner_id).alliance_id:
 			buildings_destroyed += 1
-			gold += 90
-			$Audio.play_ui(&"coin")
-			hud.toast("摧毁" + entity.display_name + " · 战利品 +90 金币", 3.0)
-	if entity == headquarters:
-		end_battle(false)
-	elif buildings_destroyed >= 4 and not tests_running:
-		end_battle(true)
+	entities_by_id.erase(entity.entity_id)
 	hud.refresh()
 
 func _on_income() -> void:
@@ -656,21 +669,7 @@ func debug_add_gold() -> void:
 	hud.refresh()
 
 func _on_enemy_wave() -> void:
-	if finished or tests_running:
-		return
-	var barracks: Array = get_tree().get_nodes_in_group("buildings").filter(func(b): return b.alive and b.team == 1 and b.building_type == "barracks")
-	if barracks.is_empty():
-		return
-	_enemy_wave += 1
-	for barrack in barracks:
-		for index in range(3 + mini(_enemy_wave, 3)):
-			var kind: String = "archer" if index % 3 == 0 else "swordsman"
-			if _enemy_wave > 2 and index == 1:
-				kind = "knight"
-			var unit := spawn_unit(kind, 1, barrack.global_position + Vector3(index - 2, 0, 5.5))
-			unit.issue_move(headquarters.global_position + Vector3(0, 0, -7), true)
-	hud.toast("敌方援军正在集结 · 摧毁兵营以切断增援", 4.0)
-	$EnemyTimer.wait_time = 65.0
+	pass
 
 func player_count() -> int:
 	var count := 0
@@ -681,8 +680,8 @@ func player_count() -> int:
 
 func enemy_count() -> int:
 	var count := 0
-	for unit in get_tree().get_nodes_in_group("units"):
-		if unit.alive and unit.team == 1:
+	for unit: BattleUnit in get_tree().get_nodes_in_group("units"):
+		if unit.alive and unit.alliance_id != get_player(local_owner_id).alliance_id and can_see_entity(local_owner_id, unit):
 			count += 1
 	return count
 
@@ -773,6 +772,8 @@ func register_entity(entity: Node3D) -> void:
 		entity.entity_id = _next_entity_id
 		_next_entity_id += 1
 	entities_by_id[entity.entity_id] = entity
+	if _fog_ready:
+		$FogOfWar.apply_entity_visibility(local_owner_id, entity)
 	if entity is BattleUnit and is_authority:
 		var player := get_player(entity.owner_id)
 		if entity.unit_type == "farmer":
@@ -783,11 +784,11 @@ func register_entity(entity: Node3D) -> void:
 func are_hostile(a: Node3D, b: Node3D) -> bool:
 	return a.alliance_id != b.alliance_id
 
-func can_see_entity(_owner: int, _entity: Node3D) -> bool:
-	return true
+func can_see_entity(owner: int, entity: Node3D) -> bool:
+	return $FogOfWar.entity_visible(owner, entity) if _fog_ready else entity.alliance_id == get_player(owner).alliance_id
 
-func can_see_position(_owner: int, _at: Vector3) -> bool:
-	return true
+func can_see_position(owner: int, at: Vector3) -> bool:
+	return $FogOfWar.position_visible(owner, at) if _fog_ready else true
 
 func clamp_to_map(at: Vector3) -> Vector3:
 	return Vector3(clampf(at.x, -map_size.x * 0.5 + 2, map_size.x * 0.5 - 2), 0,
@@ -843,14 +844,15 @@ func create_site(owner: int, kind: String, at: Vector3, workers: Array, queued: 
 	$ConstructionNavigation.refresh()
 	return {"ok": true, "entity_id": site.entity_id}
 
-func spawn_building(kind: String, owner: int, at: Vector3, construction: bool = false) -> BattleBuilding:
+func spawn_building(kind: String, owner: int, at: Vector3, construction: bool = false, id: int = 0) -> BattleBuilding:
 	var site: BattleBuilding = BUILDING_SCENE.instantiate()
 	site.building_type = kind
+	site.entity_id = id
 	site.owner_id = owner
 	site.team = get_player(owner).alliance_id
 	site.under_construction = construction
 	site.position = at
-	site.sound_requested.connect($Audio.play_world)
+	site.sound_requested.connect(play_world_sound)
 	site.construction_completed.connect(_on_construction_completed)
 	$Buildings.add_child(site)
 	if owner == local_owner_id and kind == "headquarters":
@@ -900,3 +902,59 @@ func find_build_location(owner: int, kind: String, near: Vector3) -> Vector3:
 			if placement_error(at, owner, kind).is_empty():
 				return at
 	return Vector3.INF
+
+func _setup_match() -> void:
+	var mode := "2v2" if "--2v2" in OS.get_cmdline_user_args() else "1v1"
+	if match_config.is_empty():
+		match_config = {"mode": mode, "players": []}
+		for owner in range(4 if mode == "2v2" else 2):
+			match_config.players.append({"owner_id": owner, "team_id": owner / 2 if mode == "2v2" else owner, "controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
+	players.clear()
+	for slot: Dictionary in match_config.players:
+		var player := PlayerState.new(int(slot.owner_id), int(slot.team_id))
+		player.controller = slot.controller
+		player.display_name = slot.name
+		players.append(player)
+	var map_id: String = "twin_valleys_2v2" if match_config.mode == "2v2" else "amber_crossroads_1v1"
+	map_definition = load("res://data/maps/%s.tres" % map_id)
+	map_size = map_definition.size
+	map_instance = map_definition.scene.instantiate()
+	$MapContainer.add_child(map_instance)
+	if not is_authority:
+		return
+	for player: PlayerState in players:
+		var at: Vector3 = map_instance.get_node("SpawnPoints/Player%d" % player.owner_id).global_position
+		var base := spawn_building("headquarters", player.owner_id, at)
+		var mine := nearest_mine(at)
+		base.production.rally_mine = mine
+		base.rally_point = at.move_toward(Vector3.ZERO, 9)
+		for index in range(3):
+			var direction: Vector3 = (mine.global_position - at).normalized()
+			var worker: BattleUnit = spawn_unit("farmer", player.owner_id, at + direction * 7 + Vector3(direction.z, 0, -direction.x) * (index - 1) * 1.7)
+			worker.issue_gather(mine)
+		if player.controller == "bot":
+			bots[player.owner_id] = SkirmishBot.new(self, player.owner_id)
+	camera_rig.focus_at(headquarters.position.move_toward(Vector3.ZERO, 5), true)
+
+func check_victory() -> void:
+	if finished or not _match_ready or not is_authority or tests_running:
+		return
+	var counts := [0, 0]
+	var cores := [0, 0]
+	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
+		if not building.alive:
+			continue
+		counts[building.alliance_id] += 1
+		if building.is_constructed and building.building_type in ["headquarters", "barracks", "factory"]:
+			cores[building.alliance_id] += 1
+	for alliance in range(2):
+		if cores[alliance] == 0 and alliance not in _revealed_alliances:
+			_revealed_alliances.append(alliance)
+			$FogOfWar.reveal_alliance_buildings(alliance)
+		if counts[alliance] == 0:
+			end_battle(alliance != get_player(local_owner_id).alliance_id)
+			return
+
+func play_world_sound(kind: StringName, at: Vector3) -> void:
+	if can_see_position(local_owner_id, at):
+		$Audio.play_world(kind, at)

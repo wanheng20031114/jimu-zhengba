@@ -17,9 +17,7 @@ func _cache_sources() -> void:
 	if not _sources.is_empty():
 		return
 	var game: Node = get_parent()
-	var regions: Array[NavigationRegion3D] = [game.get_node("NavigationRegion3D")]
-	for region: NavigationRegion3D in game.get_node("ClearedNavigation").get_children():
-		regions.append(region)
+	var regions: Array[NavigationRegion3D] = [game.map_instance.get_node("NavigationRegion3D")]
 	for region: NavigationRegion3D in regions:
 		var source: NavigationMesh = region.navigation_mesh
 		var vertices: PackedVector3Array = source.get_vertices()

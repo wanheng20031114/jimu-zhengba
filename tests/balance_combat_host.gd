@@ -2,6 +2,8 @@ extends Node3D
 ## Minimal authoritative fixture; all entities and projectiles use production scenes.
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
 var is_authority: bool = true
+var local_owner_id: int = 0
+var finished: bool = false
 var players: Array[PlayerState] = [PlayerState.new(0, 0), PlayerState.new(1, 1), PlayerState.new(2, 0), PlayerState.new(3, 1)]
 var hidden_entities: Dictionary = {}
 var next_id: int = 1
@@ -20,6 +22,9 @@ func are_hostile(a: Node3D, b: Node3D) -> bool:
 
 func can_see_entity(_owner: int, entity: Node3D) -> bool:
 	return not hidden_entities.has(entity.entity_id)
+
+func can_see_position(_owner: int, _at: Vector3) -> bool:
+	return true
 
 func clamp_to_map(at: Vector3) -> Vector3:
 	return Vector3(clampf(at.x, -40.0, 40.0), 0.0, clampf(at.z, -40.0, 40.0))

@@ -13,6 +13,7 @@ const order_name: String = "每位农民每3秒采集3金币 · 无需运输"
 var selected: bool = false
 var entity_id: int = 0
 var _miners: Array[WeakRef] = []
+var _remote_occupancy: int = -1
 
 func _ready() -> void:
 	add_to_group("resource_veins")
@@ -48,12 +49,17 @@ func release(worker: Node3D) -> void:
 			_miners[slot] = null
 
 func occupied_slots() -> int:
+	if _remote_occupancy >= 0:
+		return _remote_occupancy
 	var count := 0
 	for reference: WeakRef in _miners:
 		var miner: Node3D = reference.get_ref() if reference != null else null
 		if is_instance_valid(miner) and miner.alive:
 			count += 1
 	return count
+
+func set_remote_occupancy(value: int) -> void:
+	_remote_occupancy = clampi(value, 0, CAPACITY)
 
 func _slot_position(slot: int) -> Vector3:
 	return $GatherSlots.get_child(slot).global_position

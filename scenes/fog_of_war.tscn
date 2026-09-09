@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/fog_of_war.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/shaders/fog_of_war.gdshader" id="2_fog_shader"]
+
+[sub_resource type="ShaderMaterial" id="Material_fog"]
+resource_local_to_scene = true
+shader = ExtResource("2_fog_shader")
+
+[sub_resource type="PlaneMesh" id="Mesh_fog"]
+resource_local_to_scene = true
+size = Vector2(128, 112)
+
+[sub_resource type="Shader" id="Shader_memory"]
+code = "shader_type spatial;\nrender_mode cull_disabled;\ninstance uniform float memory_construction_height = 1000000.0;\nvarying float sculpture_height;\nvoid vertex() { sculpture_height = VERTEX.y; }\nvoid fragment() {\nif (sculpture_height > memory_construction_height) { discard; }\nALBEDO = COLOR.rgb * vec3(0.33, 0.35, 0.38);\nROUGHNESS = 1.0;\n}\n"
+
+[sub_resource type="ShaderMaterial" id="Material_memory"]
+shader = SubResource("Shader_memory")
+
+[node name="FogOfWar" type="Node3D"]
+physics_interpolation_mode = 2
+script = ExtResource("1_script")
+memory_material = SubResource("Material_memory")
+
+[node name="Overlay" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.13, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_fog")
+material_override = SubResource("Material_fog")
+
+[node name="Memory" type="Node3D" parent="."]

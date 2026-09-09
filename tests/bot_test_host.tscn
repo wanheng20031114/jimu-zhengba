@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/bot_test_host.gd" id="1_host"]
+
+[node name="BotTestHost" type="Node3D"]
+script = ExtResource("1_host")
+
+[node name="Units" type="Node3D" parent="."]
+
+[node name="Buildings" type="Node3D" parent="."]
+
+[node name="Resources" type="Node3D" parent="."]
+

@@ -1,0 +1,58 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://tests/fog_test_host.gd" id="1_host"]
+[ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="2_fog"]
+
+[sub_resource type="NavigationMesh" id="Navigation_test"]
+vertices = PackedVector3Array(-64, 0, -56, -64, 0, 56, 64, 0, 56, 64, 0, -56)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+
+[sub_resource type="PlaneMesh" id="Mesh_ground"]
+size = Vector2(128, 112)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.52, 0.40, 0.24, 1)
+roughness = 1.0
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+background_color = Color(0.04, 0.05, 0.07, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.9, 0.87, 0.8, 1)
+ambient_light_energy = 0.8
+
+[node name="FogTestHost" type="Node3D"]
+script = ExtResource("1_host")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("Navigation_test")
+
+[node name="Units" type="Node3D" parent="."]
+
+[node name="Buildings" type="Node3D" parent="."]
+
+[node name="Resources" type="Node3D" parent="."]
+
+[node name="Effects" type="Node3D" parent="."]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_ground")
+material_override = SubResource("Material_ground")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_test")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -40, 0)
+light_energy = 1.1
+shadow_enabled = false
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 75, 75)
+rotation_degrees = Vector3(-45, 0, 0)
+projection = 1
+size = 90.0
+far = 200.0
+current = true
+
+[node name="FogOfWar" parent="." instance=ExtResource("2_fog")]

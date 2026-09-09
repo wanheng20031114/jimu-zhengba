@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/twin_valleys_2v2_nature_timber.res" id="1_citnr"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/twin_valleys_2v2_nature_foliage.res" id="2_70jbm"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/twin_valleys_2v2_nature_stone.res" id="3_jvqvo"]
+
+[node name="TwinValleys2v2Nature" type="Node3D" unique_id=852298919]
+
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=757859492]
+mesh = ExtResource("1_citnr")
+
+[node name="Foliage" type="MeshInstance3D" parent="." unique_id=716420560]
+mesh = ExtResource("2_70jbm")
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=1560713366]
+mesh = ExtResource("3_jvqvo")
