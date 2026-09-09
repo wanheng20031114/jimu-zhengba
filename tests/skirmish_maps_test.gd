@@ -120,7 +120,10 @@ func _check_map(map_id: String) -> void:
 				all_slots_clear = false
 			var nearest: Vector3 = NavigationServer3D.map_get_closest_point(map_rid, slot.global_position)
 			var path: PackedVector3Array = native_path(map_rid, start, slot.global_position)
-			if nearest.distance_to(slot.global_position) > 0.50 or path.is_empty() or path[-1].distance_to(slot.global_position) > 0.50:
+			query.transform.origin = nearest + Vector3.UP * 0.7
+			query.motion = slot.global_position - nearest
+			var sweep: PackedFloat32Array = host.get_world_3d().direct_space_state.cast_motion(query)
+			if nearest.distance_to(slot.global_position) >= ResourceVein.MAX_CONTACT_APPROACH or path.is_empty() or path[-1].distance_to(slot.global_position) >= ResourceVein.MAX_CONTACT_APPROACH or sweep[0] < 1.0:
 				all_slots_reachable = false
 				print("SLOT_PATH_DIAGNOSTIC ", mine.name, "/", slot.name, " size=", path.size(), " target=", slot.global_position, " nearest=", nearest, " last=", Vector3.INF if path.is_empty() else path[-1])
 		check(all_slots_clear, map_id + "/" + mine.name + " all six miners fit without hitting natural obstacles")

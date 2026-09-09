@@ -125,5 +125,5 @@ func _impact() -> void:
 			separation.y = 0.0
 			var distance: float = maxf(0.0, separation.length() - (0.0 if building else entity.radius))
 			if distance <= _blast_radius:
-				entity.receive_hit(_payload, damage_source, DamageResolver.stone_falloff(distance))
+				entity.receive_hit(_payload, damage_source)
 		_game.spawn_effect(_end - Vector3.UP * 0.7, "stone_hit", Color("efbb76"))

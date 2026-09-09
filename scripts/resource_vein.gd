@@ -7,6 +7,8 @@ const team: int = -1
 const owner_id: int = -1
 const alliance_id: int = -1
 const CAPACITY: int = 6
+const WORK_REACH: float = 0.16
+const MAX_CONTACT_APPROACH: float = 1.25
 const alive: bool = true
 const display_name: String = "黄金矿脉"
 var order_name: String:
@@ -63,6 +65,9 @@ func set_remote_occupancy(value: int) -> void:
 	_remote_occupancy = clampi(value, 0, CAPACITY)
 
 func _slot_position(slot: int) -> Vector3:
+	# Authored contact points follow the real stone hull, not the larger shared
+	# military navigation clearance. Workers finish the short approach with
+	# CharacterBody3D collision before their mining animation can start.
 	return $GatherSlots.get_child(slot).global_position
 
 func get_work_position(from_position: Vector3, worker: Node3D = null) -> Vector3:

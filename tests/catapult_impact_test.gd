@@ -8,6 +8,7 @@ var checks: int = 0
 var failures: Array[String] = []
 var case_entities: Array[Node3D] = []
 var damage_samples: Array[Dictionary] = []
+var uniform_splash_samples: Array[Dictionary] = []
 
 func _initialize() -> void:
 	Engine.max_fps = 120
@@ -32,7 +33,7 @@ func _run() -> void:
 		_freeze(building)
 	_check(game.players.map(func(p): return p.alliance_id) == [0, 0, 1, 1], "real 2v2 has four owners and two alliances")
 	var definition := BalanceCatalog.unit("catapult")
-	_check(definition.damage == 35 and definition.bonuses == {&"infantry": 45, &"archer": 15, &"building": 50} and definition.range == 13,
+	_check(definition.damage == 18 and definition.bonuses == {&"infantry": 6, &"building": 50} and definition.range == 13,
 		"production catapult matches approved damage and range")
 	for legacy: bool in [true, false]:
 		for owner in 4:
@@ -45,7 +46,8 @@ func _run() -> void:
 	game.queue_free()
 	await process_frame
 	await process_frame
-	print("CATAPULT_IMPACT_RESULTS " + JSON.stringify({"checks": checks, "failures": failures, "samples": damage_samples}))
+	print("CATAPULT_IMPACT_RESULTS " + JSON.stringify({"build_id": NetworkProtocol.BUILD_ID, "checks": checks, "failures": failures, "samples": damage_samples,
+		"uniform_splash_samples": uniform_splash_samples}))
 	quit(0 if failures.is_empty() else 1)
 
 func _freeze(entity: Node3D) -> void:
@@ -93,11 +95,11 @@ func _target_batch(owner: int, legacy: bool) -> void:
 		if index < 10:
 			kind = BUILDINGS[index % 5]
 			target = _building(kind, defender, at, index >= 5)
-			expected = 60.0 if legacy else 75.0
+			expected = 60.0 if legacy else 58.0
 		else:
 			kind = ["catapult", "cannon", "swordsman", "archer"][index - 10]
 			target = _unit(kind, defender, at)
-			expected = [16.0, 14.0, 37.0, 20.0][index - 10] if legacy else [31.0, 29.0, 79.0, 50.0][index - 10]
+			expected = [16.0, 14.0, 38.0, 17.0][index - 10] if legacy else [14.0, 12.0, 24.0, 15.0][index - 10]
 		var source := _unit("catapult", owner, at + Vector3(-10, 0, 0))
 		pending.append({"source": source, "target": target, "before": target.hp, "expected": expected,
 			"kind": kind, "site": index >= 5 and index < 10})
@@ -119,6 +121,10 @@ func _target_batch(owner: int, legacy: bool) -> void:
 func _edge_and_allies() -> void:
 	var source := _unit("catapult", 0, Vector3(-12, 0, 0))
 	var center := _unit("archer", 2, Vector3.ZERO)
+	var inner := _unit("archer", 2, Vector3(1.5, 0, 0))
+	var archer_edge := _unit("archer", 2, Vector3(0, 0, 3.35))
+	var archer_outside := _unit("archer", 2, Vector3(-3.6, 0, 0))
+	var archer_friendly := _unit("archer", 1, Vector3(-1, 0, 0))
 	var friendly_unit := _unit("catapult", 1, Vector3(0, 0, 1))
 	var friendly_building := _building("headquarters", 1, Vector3.ZERO)
 	# Stay 0.05 inside the boundary so float32 world positions cannot round an
@@ -135,10 +141,29 @@ func _edge_and_allies() -> void:
 	_check(is_equal_approx(Vector2(point.x, point.z).length(), 3.0), "rotated large building footprint touches blast edge despite distant center")
 	_fire(source, center)
 	await create_timer(2.5, true, true).timeout
-	_check(center.hp == 10 and center.alive, "stone center leaves an archer at ten health through native impact")
-	_check(is_equal_approx(edge.hp, edge.max_hp - 13.9861111),
-		"outer siege at footprint distance 2.95 takes 13.9861 after falloff and armor (actual %.6f)" % (edge.max_hp - edge.hp))
-	_check(is_equal_approx(building.hp, building.max_hp - 32.5), "rotated factory receives edge splash at footprint instead of center")
+	var measured: Array[Dictionary] = [
+		{"label": "center", "entity": center, "target": "archer", "expected": 15.0},
+		{"label": "inner", "entity": inner, "target": "archer", "expected": 15.0},
+		{"label": "edge", "entity": archer_edge, "target": "archer", "expected": 15.0},
+		{"label": "outside", "entity": archer_outside, "target": "archer", "expected": 0.0},
+		{"label": "friendly", "entity": archer_friendly, "target": "archer", "expected": 0.0},
+		{"label": "edge_siege", "entity": edge, "target": "catapult", "expected": 14.0},
+		{"label": "edge_building", "entity": building, "target": "factory", "expected": 58.0},
+	]
+	for sample: Dictionary in measured:
+		var entity: Node3D = sample.entity
+		var contact: Vector3 = entity.get_attack_position(Vector3.UP) if entity is BattleBuilding else entity.global_position
+		var footprint_distance: float = Vector2(contact.x, contact.z).length()
+		if entity is BattleUnit:
+			footprint_distance = maxf(0.0, footprint_distance - entity.radius)
+		var actual: float = entity.max_hp - entity.hp
+		uniform_splash_samples.append({"label": sample.label, "target": sample.target,
+			"footprint_distance": footprint_distance, "actual": actual, "expected": sample.expected})
+		_check(is_equal_approx(actual, sample.expected), "measured uniform native splash " + sample.label)
+	_check(center.hp == 45 and center.alive, "stone center leaves an archer at forty-five health")
+	_check(is_equal_approx(edge.hp, edge.max_hp - 14.0),
+		"outer siege at footprint distance 2.95 takes full fourteen damage without falloff (actual %.6f)" % (edge.max_hp - edge.hp))
+	_check(is_equal_approx(building.hp, building.max_hp - 58.0), "rotated factory receives full edge splash at footprint instead of center")
 	_check(outside.hp == outside.max_hp, "siege outside true three-meter footprint radius takes no damage")
 	_check(friendly_unit.hp == friendly_unit.max_hp and friendly_building.hp == friendly_building.max_hp,
 		"different allied owner unit and building both reject splash")
@@ -155,12 +180,12 @@ func _source_death() -> void:
 	source.queue_free()
 	game.get_player(3).attack_level = 3
 	await create_timer(2.5, true, true).timeout
-	_check(target.hp == target.max_hp - 76, "freed attacker retains launch +1 snapshot and building bonus on landing")
+	_check(target.hp == target.max_hp - 59, "freed attacker retains launch +1 snapshot and building bonus on landing")
 	game.get_player(3).attack_level = 0
 	await _clear_case()
 
 func _native_attack_release() -> void:
-	var expected_damage: Dictionary = {"factory": 75.0, "catapult": 31.0, "cannon": 29.0, "swordsman": 79.0, "archer": 50.0}
+	var expected_damage: Dictionary = {"factory": 58.0, "catapult": 14.0, "cannon": 12.0, "swordsman": 24.0, "archer": 15.0}
 	for kind: String in expected_damage:
 		var source := _unit("catapult", 0, Vector3(-12, 0, 0))
 		var target: Node3D = _building(kind, 2, Vector3.ZERO) if kind == "factory" else _unit(kind, 2, Vector3.ZERO)

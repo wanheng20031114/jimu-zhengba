@@ -132,10 +132,16 @@ func refresh_hotkey_labels() -> void:
 	]
 	$HelpOverlay/Paper/Keys.text = "\n".join(help_keys)
 	var workforce := BalanceCatalog.upgrade(&"workforce_1")
-	$HelpOverlay/Paper/Economy.text = "训练（秒）：农民%s / 剑士%s / 弓手%s / 骑士%s / 攻城%s · 每矿%d位 · 每人%s秒+%d金\n学院研究：军队攻防+1/+2/+4，攻城近甲固定0；%d金/%d秒扩农民10→12 · 队列可取消退款" % [BalanceCatalog.unit("farmer").training_seconds, BalanceCatalog.unit("swordsman").training_seconds, BalanceCatalog.unit("archer").training_seconds, BalanceCatalog.unit("knight").training_seconds, BalanceCatalog.unit("catapult").training_seconds, ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold, workforce.cost, workforce.research_seconds]
+	$HelpOverlay/Paper/Economy.text = "训练（秒）：农民%s / 剑士%s / 弓手%s / 骑士%s / 攻城%s · 每矿%d位 · 每人%s秒+%d金\n学院研究：攻击%s，防御%s，攻城近甲固定0；%d金/%d秒扩农民10→12 · 队列可取消退款" % [BalanceCatalog.unit("farmer").training_seconds, BalanceCatalog.unit("swordsman").training_seconds, BalanceCatalog.unit("archer").training_seconds, BalanceCatalog.unit("knight").training_seconds, BalanceCatalog.unit("catapult").training_seconds, ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold, _upgrade_bonus_text("attack"), _upgrade_bonus_text("defense"), workforce.cost, workforce.research_seconds]
 	# Initial binding precedes match setup; subsequent preference changes refresh the panel.
 	if game._match_ready:
 		refresh()
+
+func _upgrade_bonus_text(track: String) -> String:
+	var values: PackedStringArray = []
+	for level in range(1, 4):
+		values.append("+%d" % BalanceCatalog.upgrade("%s_%d" % [track, level]).total_bonus)
+	return "/".join(values)
 
 func _process(delta: float) -> void:
 	$ModelPreviews.set_animated((_hovered_preview if not _hovered_preview.is_empty() else _selected_preview) if visible and not get_tree().paused else "")

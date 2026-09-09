@@ -20,7 +20,7 @@ python tools/run_release_match_smoke.py 'C:/Program Files/Godot/Godot_console.ex
 
 快速模式同时将 `Engine.time_scale` 设为 10、物理频率设为 300 TPS，仍保持每次模拟更新为 1/30 秒，并逐步检查实际差值。它缩短验收等待时间，不是性能基准；不要与性能采样同时运行。[Godot Engine 官方文档](https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-property-time-scale)
 
-成功需要自然胜利、唯一存活队伍的军事建筑、真实伤害与阵亡、双方采矿收入、付费基础军队和已完工兵营。最多模拟 20 分钟，超时判失败。结束时先执行正式 `prepare_shutdown()`，释放对局，再打印唯一的 `MATCH_SMOKE_RESULT` JSON 并返回退出码 0。
+成功需要自然胜利、唯一存活队伍的军事建筑、真实伤害与阵亡、双方采矿收入、付费基础军队和已完工兵营。0.8.1 起观察窗口最多模拟 30 分钟（旧版 20 分钟），超时判失败；测试上限不改变实际对局胜负规则。结束时先执行正式 `prepare_shutdown()`，释放对局，再打印唯一的 `MATCH_SMOKE_RESULT` JSON 并返回退出码 0。
 
 当前0.7验收还会读取实际PCK中的经济和训练 Resource：自然收入每秒1金币、每名矿工每3秒4金币，农民/剑士/弓手/骑士/投石车/加农炮分别训练10/6/8/10/20/20秒。缓存与 `CACHE_MODE_IGNORE` 独立加载值一起写入 `catalogue_probe`，并执行9项一致性检查；加上原有13项对局检查，共22项。最终 `simulated_seconds` 直接取正式 `game.elapsed`，`wall_seconds` 单独记录实际运行时间，首次伤害来自每模拟秒一次的观察采样，不冒充逐命中精确时间。
 

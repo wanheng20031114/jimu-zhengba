@@ -111,8 +111,11 @@ func _check_map(map_id: String) -> void:
 			check(space.intersect_shape(query, 1).is_empty(), map_id + "_" + str(mine.name) + "_" + str(slot.name) + "_worker_fits_native_geometry")
 			var closest: Vector3 = NavigationServer3D.map_get_closest_point(map_rid, slot.global_position)
 			var path: PackedVector3Array = _path(map_rid, origin, slot.global_position)
-			var accessible: bool = closest.distance_to(slot.global_position) < 0.21 and not path.is_empty() and path[-1].distance_to(slot.global_position) < 0.21
-			check(accessible, map_id + "_" + str(mine.name) + "_" + str(slot.name) + "_reachable_without_navigation_snapping")
+			query.transform.origin = closest + Vector3.UP * 0.7
+			query.motion = slot.global_position - closest
+			var sweep: PackedFloat32Array = space.cast_motion(query)
+			var accessible: bool = closest.distance_to(slot.global_position) < ResourceVein.MAX_CONTACT_APPROACH and not path.is_empty() and path[-1].distance_to(slot.global_position) < ResourceVein.MAX_CONTACT_APPROACH and sweep[0] == 1.0
+			check(accessible, map_id + "_" + str(mine.name) + "_" + str(slot.name) + "_reachable_via_native_route_and_collision_safe_contact")
 			if not accessible:
 				print("MINING_PATH_DIAGNOSTIC ", map_id, " ", mine.name, "/", slot.name, " target=", slot.global_position, " nearest=", closest)
 	metrics.append({"map": map_id, "mines": layout.mines.size(), "obstacles": layout.obstacles.size(), "source_polygons": source.get_polygon_count(), "compact_polygons": region.navigation_mesh.get_polygon_count(), "compact_ms": elapsed_ms})

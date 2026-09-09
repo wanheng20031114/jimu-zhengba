@@ -1,0 +1,136 @@
+extends SceneTree
+## Read-only audit of the same resources and resolver used by live combat.
+## Run through generate_balance_report.py; this fixture does not create a match.
+
+const BUILDING_IDS: Array[StringName] = [&"headquarters", &"barracks", &"factory", &"academy", &"defense_tower"]
+const LEVELS := 4
+
+func _initialize() -> void:
+	_export.call_deferred()
+
+func _export() -> void:
+	var args := OS.get_cmdline_user_args()
+	if args.size() < 1 or args.size() > 2:
+		printerr("Expected an absolute output JSON path and optional baseline resource directory.")
+		quit(2)
+		return
+	var unit_data: Array[Dictionary] = []
+	var building_data: Array[Dictionary] = []
+	var upgrades: Array[Dictionary] = []
+	var attack_bonuses: Array[int] = []
+	var defense_bonuses: Array[int] = []
+	for level: int in range(LEVELS):
+		var state := PlayerState.new(0, 0)
+		state.attack_level = level
+		state.defense_level = level
+		attack_bonuses.append(state.get_attack_bonus())
+		defense_bonuses.append(state.get_defense_bonus())
+	for id: String in BalanceCatalog.UNITS:
+		var unit := BalanceCatalog.unit(id)
+		var data := _combat_data(unit)
+		data.merge({"cost": unit.cost, "supply": unit.supply, "military": unit.military,
+			"speed": unit.speed, "min_range": unit.min_range, "sight": unit.sight,
+			"training_seconds": unit.training_seconds, "production_building": unit.production_building})
+		unit_data.append(data)
+	for id: StringName in BUILDING_IDS:
+		var building := BalanceCatalog.building(id)
+		var data := _combat_data(building)
+		data.merge({"cost": building.cost, "build_seconds": building.build_seconds})
+		building_data.append(data)
+	for id: String in BalanceCatalog.UPGRADES:
+		var upgrade := BalanceCatalog.upgrade(id)
+		upgrades.append({"id": upgrade.id, "name": upgrade.name, "track": upgrade.track,
+			"level": upgrade.level, "cost": upgrade.cost, "research_seconds": upgrade.research_seconds,
+			"total_bonus": upgrade.total_bonus})
+	var matchups: Array[Dictionary] = []
+	var building_matchups: Array[Dictionary] = []
+	var defense_matchups: Array[Dictionary] = []
+	for attacker_id: String in BalanceCatalog.UNITS:
+		var attacker := BalanceCatalog.unit(attacker_id)
+		for defender_id: String in BalanceCatalog.UNITS:
+			var defender := BalanceCatalog.unit(defender_id)
+			for attack_level: int in range(LEVELS):
+				for defense_level: int in range(LEVELS):
+					matchups.append(_matchup(attacker, defender, attack_level, defense_level,
+						attack_bonuses[attack_level] if attacker.military else 0,
+						defense_bonuses[defense_level] if defender.military else 0))
+		for building_id: StringName in BUILDING_IDS:
+			for attack_level: int in range(LEVELS):
+				building_matchups.append(_matchup(attacker, BalanceCatalog.building(building_id), attack_level, 0,
+					attack_bonuses[attack_level] if attacker.military else 0, 0))
+	for building_id: StringName in BUILDING_IDS:
+		var building := BalanceCatalog.building(building_id)
+		if building.damage <= 0:
+			continue
+		for defender_id: String in BalanceCatalog.UNITS:
+			var defender := BalanceCatalog.unit(defender_id)
+			for defense_level: int in range(LEVELS):
+				defense_matchups.append(_matchup(building, defender, 0, defense_level, 0,
+					defense_bonuses[defense_level] if defender.military else 0))
+	var report := {"schema_version": 1, "build_id": NetworkProtocol.BUILD_ID,
+		"source": "BalanceCatalog + PlayerState + DamageResolver (Godot)",
+		"units": unit_data, "buildings": building_data, "upgrades": upgrades,
+		"attack_bonuses": attack_bonuses, "defense_bonuses": defense_bonuses,
+		"matchups": matchups, "building_matchups": building_matchups,
+		"defense_matchups": defense_matchups}
+	if args.size() == 2:
+		var baseline_units: Array[UnitDefinition] = []
+		var baseline_resolver: Script = load(args[1].path_join("historical_damage_resolver.gd"))
+		var baseline_unit_data: Array[Dictionary] = []
+		var baseline_matchups: Array[Dictionary] = []
+		for id: String in BalanceCatalog.UNITS:
+			var definition: UnitDefinition = load(args[1].path_join(id + ".tres"))
+			baseline_units.append(definition)
+			baseline_unit_data.append(_combat_data(definition))
+		for attacker: UnitDefinition in baseline_units:
+			for defender: UnitDefinition in baseline_units:
+				var payload: DamagePayload = baseline_resolver.snapshot(attacker, 0, 0, 0)
+				var damage: float = baseline_resolver.resolve(payload, defender)
+				baseline_matchups.append(_damage_row(attacker, defender, 0, 0, 0, 0, damage,
+					baseline_resolver.armor_for_channel(defender, attacker.damage_channel, 0)))
+		var baseline_upgrade_bonuses: Dictionary = {}
+		for track: String in ["attack", "defense"]:
+			var bonuses: Array[int] = [0]
+			for level: int in range(1, 4):
+				var upgrade: UpgradeDefinition = load(args[1].path_join("%s_%d.tres" % [track, level]))
+				bonuses.append(upgrade.total_bonus)
+			baseline_upgrade_bonuses[track] = bonuses
+		report["baseline"] = {"build_id": "0.8.0", "units": baseline_unit_data, "matchups": baseline_matchups,
+			"upgrade_bonuses": baseline_upgrade_bonuses}
+	var file := FileAccess.open(args[0], FileAccess.WRITE)
+	if file == null:
+		printerr("Cannot write balance export: ", FileAccess.get_open_error())
+		quit(2)
+		return
+	file.store_string(JSON.stringify(report, "  "))
+	file.close()
+	print("BALANCE_REPORT_EXPORT ", matchups.size(), " unit + ", building_matchups.size(), " siege + ", defense_matchups.size(), " defense rows")
+	quit(0)
+
+func _combat_data(definition: CombatDefinition) -> Dictionary:
+	return {"id": definition.id, "name": definition.name, "description": definition.description,
+		"hp": definition.hp, "damage": definition.damage, "melee_armor": definition.melee_armor,
+		"ranged_armor": definition.ranged_armor, "melee_defense_upgrades": definition.melee_defense_upgrades,
+		"damage_channel": "melee" if definition.damage_channel == CombatDefinition.DamageChannel.MELEE else "ranged",
+		"combat_class": definition.combat_class, "bonuses": definition.bonuses,
+		"range": definition.range, "cooldown": definition.cooldown,
+		"resource_path": definition.resource_path}
+
+func _matchup(attacker: CombatDefinition, defender: CombatDefinition, attack_level: int, defense_level: int,
+		attack_bonus: int, defense_bonus: int) -> Dictionary:
+	var payload := DamageResolver.snapshot(attacker, attack_bonus, 0, 0)
+	var damage := DamageResolver.resolve(payload, defender, defense_bonus)
+	return _damage_row(attacker, defender, attack_level, defense_level, attack_bonus, defense_bonus,
+		damage, DamageResolver.armor_for_channel(defender, attacker.damage_channel, defense_bonus))
+
+func _damage_row(attacker: CombatDefinition, defender: CombatDefinition, attack_level: int, defense_level: int,
+		attack_bonus: int, defense_bonus: int, damage: float, armor: float) -> Dictionary:
+	var hits := ceili(defender.hp / damage)
+	return {"attacker": attacker.id, "defender": defender.id,
+		"attack_level": attack_level, "defense_level": defense_level,
+		"attack_bonus": attack_bonus, "defense_bonus": defense_bonus,
+		"applied_armor": armor,
+		"damage": damage, "target_hp": defender.hp, "hits": hits,
+		"seconds_after_first_hit": (hits - 1) * attacker.cooldown,
+		"damage_per_second": damage / attacker.cooldown,
+		"remaining_after_penultimate_hit": defender.hp - (hits - 1) * damage}

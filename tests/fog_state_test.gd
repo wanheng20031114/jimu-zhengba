@@ -1,5 +1,5 @@
 extends SceneTree
-## Actual unit/building models validate vision, frozen memory and network roundtrips.
+## Actual models validate vision, ghost-free scouting and network roundtrips.
 const UNIT: PackedScene = preload("res://scenes/unit.tscn")
 const BUILDING: PackedScene = preload("res://scenes/building.tscn")
 const MINE: PackedScene = preload("res://scenes/resource_vein.tscn")
@@ -18,6 +18,12 @@ func _check(ok: bool, label: String) -> void:
 	if not ok:
 		failures.append(label)
 		printerr("FAIL ", label)
+
+func _check_enemy_tint(building: Node3D, label: String) -> void:
+	var meshes: Array[Node] = building._model.find_children("*", "MeshInstance3D", true, false)
+	var expected: Color = FactionPalette.model_color(FactionPalette.ENEMY)
+	_check(not meshes.is_empty() and meshes.all(func(mesh: MeshInstance3D) -> bool:
+		return mesh.get_instance_shader_parameter("team_color") == expected), label)
 
 func _unit(kind: String, owner: int, at: Vector3) -> Node3D:
 	var unit: Node3D = UNIT.instantiate()
@@ -70,7 +76,7 @@ func _run() -> void:
 	fog.apply_visibility(0)
 	_check(fog.cell_state(0, old) == 1 and not fog.position_visible(0, old), "departed scout leaves remembered terrain without current vision")
 	_check(mine.visible and not fog.entity_visible(0, mine), "known mine model persists without claiming current visibility")
-	await _building_memory_case(scout)
+	await _no_ghost_case(scout)
 	await _snapshot_case()
 	_projectile_visibility_case(scout, enemy)
 	fog.reveal_alliance_buildings(1)
@@ -83,12 +89,14 @@ func _run() -> void:
 	var revealed_site: Node3D = _building("academy", 1, Vector3(54, 0, 45), 0.2)
 	var revealed_id: int = revealed_site.entity_id
 	fog.tick(0.2)
-	_check(fog.last_seen_buildings(0).has(revealed_id), "permanent reveal records newly built sites outside unit vision")
+	fog.apply_visibility(0)
+	_check(revealed_site.visible, "permanent reveal displays newly built sites outside unit vision")
 	revealed_site.queue_free()
 	await process_frame
 	await process_frame
 	fog.tick(0.2)
-	_check(not fog.last_seen_buildings(0).has(revealed_id), "destroyed permanently exposed buildings do not leave false minimap memories")
+	fog.apply_visibility(0)
+	_check(not fog._display_nodes.has(revealed_id), "destroyed permanently exposed buildings leave no display references")
 	var rev: int = fog.revision
 	for tick: int in range(5): fog.tick(1.0 / 30.0)
 	_check(fog.revision == rev, "fog does not refresh above five Hz")
@@ -109,65 +117,61 @@ func _run() -> void:
 	print("FOG_STATE ", checks, " checks; ", failures.size(), " failures")
 	quit(0 if failures.is_empty() else 1)
 
-func _building_memory_case(scout: Node3D) -> void:
+func _no_ghost_case(scout: Node3D) -> void:
 	var factory: Node3D = _building("factory", 1, Vector3(32, 0, 20), 0.35)
+	var defender: Node3D = _unit("knight", 1, Vector3(30, 0, 20))
 	factory.hp = 600
 	scout.position = Vector3(20, 0, 20)
 	fog.tick(0.2)
 	fog.apply_visibility(0)
-	_check(factory.visible and fog.entity_visible(0, factory), "approaching scout discovers an enemy factory site")
-	var id: int = factory.entity_id
-	var first: Dictionary = fog.last_seen_buildings(0)[id]
-	_check(first.construction_progress == 0.35 and not first.has("hp") and not first.has("max_hp"), "observation stores construction pose without health data")
-	_check(fog.last_seen_buildings(2)[id] == first, "allied owners share the same building observation")
+	_check(factory.visible and defender.visible, "approaching scout discovers live enemy building and troop")
+	_check_enemy_tint(factory, "enemy factory receives red faction tint when first revealed")
+	_check(fog.entity_visible(2, factory) and fog.entity_visible(2, defender), "allied owners share current entity visibility")
+	var building_id: int = factory.entity_id
+	var unit_id: int = defender.entity_id
 	factory.set_selected(true)
+	defender.set_selected(true)
 	scout.position = Vector3(-35, 0, 24)
 	fog.tick(0.2)
 	fog.apply_visibility(0)
-	_check(not factory.visible and not factory.selected and not factory.health_bar.is_visible_in_tree(), "hidden building also hides its health bar and selection")
-	_check(fog._memory_nodes.has(id), "out-of-vision building has a separate remembered model")
-	var memory: Node3D = fog._memory_nodes[id]
-	var scale_before: Vector3 = memory.scale
+	_check(not factory.visible and not defender.visible, "losing vision immediately hides both enemy categories")
+	_check(not factory.selected and not defender.selected and not factory.health_bar.is_visible_in_tree(), "hidden enemies also lose selection and health bars")
+	_check(not fog.has_node("Memory") and fog.find_children("Remembered_*", "Node3D", true, false).is_empty(), "fog scene has no remembered model hierarchy")
+	_check(not fog.snapshot_for(0).has("buildings"), "fog sends no hidden building records or remembered poses")
 	factory.construction_progress = 0.9
 	factory.hp = 1700
 	factory._update_construction_visuals()
+	defender.position += Vector3(1, 0, 1)
 	fog.tick(0.2)
 	fog.apply_visibility(0)
-	_check(fog.last_seen_buildings(0)[id] == first and memory.scale == scale_before, "hidden construction and health changes never update remembered model")
-	_check(memory.get_script() == null and memory.process_mode == Node.PROCESS_MODE_DISABLED, "remembered model is script-free and process-disabled")
-	var collision_count: int = 0
-	var simulation_count: int = 0
-	for node: Node in memory.find_children("*", "Node", true, false):
-		if node is CollisionObject3D or node is CollisionShape3D: collision_count += 1
-		if node is AnimationPlayer or node is AudioStreamPlayer3D or node is GPUParticles3D or node is CPUParticles3D: simulation_count += 1
-	_check(collision_count == 0 and simulation_count == 0, "remembered models contain no collision, animation, sound or particles")
-	_check(memory.find_children("*", "MeshInstance3D", true, false).all(func(mesh: MeshInstance3D) -> bool: return mesh.material_override == fog.memory_material), "frozen memory uses a time-independent shared material")
-	var saved: Dictionary = fog.last_seen_buildings(0)
-	saved[id]["construction_progress"] = 0.99
-	_check(fog.last_seen_buildings(0)[id].construction_progress == 0.35, "external minimap snapshots cannot mutate internal fog memory")
+	_check(not factory.visible and not defender.visible, "hidden construction and movement never create a silhouette")
+	_check_enemy_tint(factory, "hidden live building retains enemy tint without default-blue recoloring")
 	scout.position = Vector3(20, 0, 20)
 	fog.tick(0.2)
 	fog.apply_visibility(0)
-	_check(factory.visible and not fog._memory_nodes.has(id) and fog.last_seen_buildings(0)[id].construction_progress == 0.9, "rescouting replaces memory with the current live model")
+	_check(factory.visible and defender.visible and factory.construction_progress == 0.9, "rescouting displays only current live models")
+	_check_enemy_tint(factory, "rescouted enemy factory still uses red faction tint")
 	scout.position = Vector3(-35, 0, 24)
 	fog.tick(0.2)
 	fog.apply_visibility(0)
 	factory.queue_free()
+	defender.queue_free()
 	await process_frame
 	await process_frame
 	fog.tick(0.2)
 	fog.apply_visibility(0)
-	_check(fog.last_seen_buildings(0).has(id), "unobserved destruction does not erase remembered buildings")
+	_check(not fog._display_nodes.has(building_id) and not fog._display_nodes.has(unit_id), "hidden destruction releases both weak display references")
 	scout.position = Vector3(20, 0, 20)
 	fog.tick(0.2)
 	fog.apply_visibility(0)
-	_check(not fog.last_seen_buildings(0).has(id) and not fog._memory_nodes.has(id), "seeing the empty site removes obsolete building memory")
+	_check(fog.position_visible(0, Vector3(30, 0, 20)) and fog.get_child_count() == 1, "walking onto destroyed site sees empty terrain with no stale model")
 	scout.position = Vector3(-35, 0, 24)
 	fog.tick(0.2)
 
 func _snapshot_case() -> void:
-	# Capture a hidden building so network restoration exercises static memory creation.
+	# Observe then leave a building; network fog must contain no remembered entity.
 	var enemy_academy: Node3D = _building("academy", 1, Vector3(3, 0, -25), 0.45)
+	_check_enemy_tint(enemy_academy, "enemy academy roof and flags receive red tint before fog handling")
 	var scout: Node3D = _unit("archer", 0, Vector3(0, 0, -25))
 	fog.tick(0.2)
 	scout.position = Vector3(-40, 0, -25)
@@ -176,21 +180,21 @@ func _snapshot_case() -> void:
 	_check(packet.cells is String and packet.cells.length() == 4780, "3584 cell states serialize into one bounded base64 value")
 	var serialized: String = JSON.stringify(packet)
 	var decoded: Dictionary = JSON.parse_string(serialized)
-	_check(not serialized.contains("\"hp\"") and not serialized.contains("\"max_hp\""), "wire fog packet contains no building health")
+	_check(not serialized.contains("\"hp\"") and not serialized.contains("\"max_hp\"") and not decoded.has("buildings"), "wire fog packet contains no hidden entity identity, pose or health")
 	if "--capture" in OS.get_cmdline_user_args():
 		fog.apply_visibility(0)
 		await process_frame
 		await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://artifacts/fog_memory_visual.png")
-		print("FOG_MEMORY_CAPTURE artifacts/fog_memory_visual.png")
+		root.get_texture().get_image().save_png("res://artifacts/fog_no_ghost_visual.png")
+		print("FOG_NO_GHOST_CAPTURE artifacts/fog_no_ghost_visual.png")
 	host.is_authority = false
 	var client: Node3D = FOG.instantiate()
 	host.add_child(client)
 	client.configure(host, Vector2(128, 112))
 	_check(client.apply_snapshot(decoded), "client accepts a primitive JSON fog snapshot")
 	client.apply_visibility(0)
-	_check(client._memory_nodes.has(enemy_academy.entity_id), "client snapshot restores a frozen remembered academy without hidden live state")
+	_check(not enemy_academy.visible and client.get_child_count() == 1, "client snapshot restores explored terrain without enemy silhouettes")
 	for x: int in range(-62, 63, 8):
 		for z: int in range(-54, 55, 8):
 			var at := Vector3(x, 0, z)
@@ -212,22 +216,21 @@ func _snapshot_case() -> void:
 	_check(not client.apply_snapshot({}), "missing fog fields are rejected without script errors")
 	malformed = decoded.duplicate(true)
 	malformed.revision += 1
-	malformed.buildings = ["invalid"]
-	_check(not client.apply_snapshot(malformed), "non-dictionary building memories are rejected")
-	malformed.buildings = [{}]
-	_check(not client.apply_snapshot(malformed), "missing building-memory fields are rejected")
+	malformed["buildings"] = [{"id": 500, "kind": "academy", "hp": 777}]
+	_check(not client.apply_snapshot(malformed), "obsolete entity-memory wire field is rejected")
 	malformed = decoded.duplicate(true)
 	malformed.revision += 1
 	malformed.owner_id = 999
 	_check(not client.apply_snapshot(malformed), "unrecognized recipient owners are rejected before lookup")
 	malformed = decoded.duplicate(true)
 	malformed.revision += 1
-	malformed.buildings[0].position = [0, 0, 100000]
-	_check(not client.apply_snapshot(malformed), "out-of-map building memories are rejected")
+	malformed.revealed_building_alliances = [0]
+	_check(not client.apply_snapshot(malformed), "truncated alliance reveal mask is rejected")
 	malformed = decoded.duplicate(true)
 	malformed.revision += 1
-	malformed.buildings[0].hp = 777
-	_check(client.apply_snapshot(malformed) and not client.last_seen_buildings(0).values()[0].has("hp"), "unrecognized live-health fields never enter client memories")
+	malformed.revealed_building_alliances = [0, 2]
+	_check(not client.apply_snapshot(malformed), "invalid alliance reveal flag is rejected")
+	_check(client.revision == current_revision, "rejected packets leave accepted fog revision unchanged")
 	client.queue_free()
 	await process_frame
 	await process_frame
@@ -243,8 +246,9 @@ func _projectile_visibility_case(source: Node3D, target: Node3D) -> void:
 	projectile._physics_process(projectile._duration * 0.65)
 	_check(not projectile.visible and projectile._active, "projectile disappears into fog without stopping its authoritative flight")
 	var hp_before: float = target.hp
+	var expected_damage: float = DamageResolver.resolve(payload, target.get_combat_definition())
 	projectile._physics_process(projectile._duration)
-	_check(not projectile.visible and target.hp == hp_before - 8, "hidden homing arrow still resolves its original 8 cavalry damage once")
+	_check(not projectile.visible and target.hp == hp_before - expected_damage, "hidden homing arrow still resolves original authoritative damage once")
 	projectile.queue_free()
 
 func _check_circle_cells() -> void:

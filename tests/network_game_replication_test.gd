@@ -70,7 +70,7 @@ func _run() -> void:
 	check(not _state(snapshot, ally.entity_id).has("plan") and not _state(snapshot, enemy.entity_id).has("plan"), "allied_and_enemy_unit_plans_private")
 	check(_state(snapshot, own.entity_id).plan == [{"kind": "attack", "at": [4.0, 0.0, 2.0]}, {"kind": "move", "at": [20.0, 0.0, 20.0]}], "own_visible_attack_and_following_move_plan")
 	check(_state(snapshot, own_building.entity_id).production.training.size() == 1, "own_training_sent")
-	check(snapshot.fog.memories.size() == 1, "fog_memory_uses_last_seen_payload")
+	check(not snapshot.fog.has("memories") and not snapshot.fog.has("buildings"), "fog_has_no_enemy_memory_payload")
 	var bytes := NetworkProtocol.encode({"op": "snapshot", "payload": snapshot})
 	check(not bytes.is_empty(), "actual_scene_state_is_safe_primitive")
 	snapshot = NetworkProtocol.decode(bytes).payload
@@ -190,7 +190,17 @@ func _run() -> void:
 	host.elapsed = 4.0 / 30.0
 	var third := sender.build_snapshot(0)
 	check(_state(third, own.entity_id).plan[0] == {"kind": "unknown"}, "lost_enemy_plan_never_contains_live_location")
+	var disappearing_unit: BattleUnit = client.entities_by_id[enemy.entity_id]
+	var disappearing_building: BattleBuilding = client.entities_by_id[enemy_building.entity_id]
+	disappearing_unit.set_selected(true)
+	disappearing_building.set_selected(true)
 	receiver.receive_snapshot(third)
+	check(not client.entities_by_id.has(enemy.entity_id) and not client.entities_by_id.has(enemy_building.entity_id), "absence_removes_replica_on_receipt_before_interpolation")
+	check(not disappearing_unit.visible and not disappearing_building.visible and not disappearing_unit.selected and not disappearing_building.selected, "same_frame_absence_hides_models_and_selection")
+	check(disappearing_unit.collision_layer == 0 and disappearing_building.collision_layer == 0, "same_frame_absence_cannot_be_picked")
+	check(receiver._frames.all(func(frame): return not frame.index.has(enemy.entity_id) and not frame.index.has(enemy_building.entity_id)), "older_interpolation_frames_cannot_resurrect_removed_entities")
+	receiver.render(0.0)
+	check(not client.entities_by_id.has(enemy.entity_id) and not client.entities_by_id.has(enemy_building.entity_id), "rendering_buffered_pose_never_restores_a_ghost")
 	receiver._playback_time = host.elapsed
 	receiver.render(0.0)
 	check(client.get_player(0).workforce_level == 1 and client.get_player(0).get_worker_limit() == 12,
@@ -200,7 +210,7 @@ func _run() -> void:
 	check(not client.entities_by_id.has(enemy.entity_id) and not client.entities_by_id.has(enemy_building.entity_id), "lost_visibility_removes_live_enemy_state")
 	check(client.entities_by_id.has(ally.entity_id), "allies_remain_without_local_vision")
 	check(client.deaths == 0 and client.effects == 0, "visibility_loss_never_calls_death_effects")
-	check(client.get_node("FogOfWar").last_applied.memories.size() == 1, "memory_survives_live_entity_removal")
+	check(not client.get_node("FogOfWar").last_applied.has("memories"), "live_entity_removal_leaves_no_memory")
 	await process_frame
 	host.visible_ids.assign([enemy.entity_id])
 	host.simulation_tick = 6

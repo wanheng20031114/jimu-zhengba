@@ -6,9 +6,9 @@
 script = ExtResource("1_definition")
 id = &"cannon"
 name = "加农炮"
-description = "远程单体重炮，对建筑附加伤害；生命较低、近战无甲，与箭塔交火需掩护。"
+description = "远程单体重炮，对建筑附加伤害；耐久较高但近战无甲，需要前排阻挡包围。"
 hp = 200
-damage = 86
+damage = 46
 melee_armor = 0
 melee_defense_upgrades = false
 ranged_armor = 6

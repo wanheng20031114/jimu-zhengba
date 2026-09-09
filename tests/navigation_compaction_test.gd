@@ -137,7 +137,7 @@ func _run() -> void:
 	for mine: ResourceVein in get_nodes_in_group("resource_veins"):
 		for slot: Marker3D in mine.get_node("GatherSlots").get_children():
 			var path := query(start, slot.global_position)
-			check(not path.is_empty() and path[-1].distance_to(slot.global_position) < 0.1, "all six mine work positions remain natively reachable")
+			check(not path.is_empty() and path[-1].distance_to(slot.global_position) < ResourceVein.MAX_CONTACT_APPROACH, "all six mine work positions remain reachable with a short collision-safe contact step")
 	var at: Vector3 = game.find_build_location(0, "defense_tower", game.headquarters.position + Vector3(10, 0, 0))
 	check(at.is_finite(), "dynamic tower fixture has a legal building position")
 	var tower: BattleBuilding = game.spawn_building("defense_tower", 0, at, true)

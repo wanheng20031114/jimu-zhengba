@@ -168,6 +168,16 @@ func receive_snapshot(snapshot: Dictionary) -> void:
 	var by_id: Dictionary = {}
 	for state: Dictionary in snapshot.entities:
 		by_id[int(state.id)] = state
+	# Visibility and removal use the newest complete authority set immediately.
+	# Interpolation is only for live poses: an older buffered frame must never
+	# resurrect a dead enemy or leave a frozen silhouette after losing sight.
+	for id: int in _replicas.keys():
+		if not by_id.has(id):
+			_remove_replica(id)
+	for buffered: Dictionary in _frames:
+		for id: int in buffered.index.keys():
+			if not by_id.has(id):
+				buffered.index.erase(id)
 	_frames.append({"time": float(snapshot.time), "data": snapshot, "index": by_id})
 	if _frames.size() == 1:
 		_playback_time = float(snapshot.time) - INTERPOLATION_SECONDS

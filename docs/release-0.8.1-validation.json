@@ -1,0 +1,297 @@
+{
+  "build": "0.8.1",
+  "protocol": 6,
+  "generated_utc": "2026-09-09T21:55:41.070030+00:00",
+  "server": {
+    "build": "0.8.0",
+    "reference_commit": "179839062b985a82c0c2ec3365ca945e11b0a77b",
+    "checked_utc": "2026-09-09T21:54:35.309230+00:00",
+    "active": true,
+    "matching_preserved_release": true,
+    "service": {
+      "MainPID": "281904",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running"
+    },
+    "files_match": {
+      "scripts/network/network_protocol.gd": true,
+      "server/relay_server.gd": true,
+      "server/relay_main.gd": true,
+      "data/content_manifest.json": true
+    },
+    "restarted_this_task": false
+  },
+  "package": {
+    "path": "builds/AshenCrown-0.8.1-Windows-x64.zip",
+    "bytes": 63466746,
+    "sha256": "a3aa39aa12eebee0a2eefbbcf51c07e6c1923bc6c39ceb32618ebcb4a1922a28",
+    "pck_sha256": "2debef1d6d414e8f5cb8541016678b01731b2cea5cceb840e9d1897d247df7af",
+    "zip_crc_ok": true,
+    "entries": [
+      "windows/AshenCrown.exe",
+      "windows/AshenCrown.pck",
+      "windows/START_HERE.txt",
+      "windows/collect_diagnostics.ps1",
+      "windows/COLLECT_DIAGNOSTICS.cmd"
+    ],
+    "current_0_8_0_zip_preserved": true
+  },
+  "catalogue_probe": {
+    "passed": true,
+    "summary": {
+      "build": "0.8.1",
+      "catalogue_files": 77,
+      "catalogue_only": true,
+      "checks": 139,
+      "content_hash": "e853241b9e3bb043986c9fa3357694169570a2ec1e41dd892c29dfb5bc1d6ee2",
+      "error_codes": [],
+      "exported_template": true,
+      "failures": [],
+      "handshake_msec": -1,
+      "protocol": 6,
+      "resource_value_checks": 57
+    },
+    "resource_value_audit_present": true,
+    "stderr_empty": true,
+    "log_directory": "release-268a6009"
+  },
+  "static_balance": {
+    "checks": 2529,
+    "failures": [],
+    "unit_tech_pairs": 576,
+    "building_target_pairs": 120,
+    "building_defense_pairs": 48
+  },
+  "focused_tests": [
+    {
+      "test": "balance-matrix",
+      "checks": 1072,
+      "failures": [],
+      "exit": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.656
+    },
+    {
+      "test": "balance-combat",
+      "checks": 68,
+      "failures": [],
+      "exit": 0,
+      "timed_out": false,
+      "elapsed_seconds": 32.672
+    },
+    {
+      "test": "catapult-impact",
+      "checks": 255,
+      "failures": [],
+      "exit": 0,
+      "timed_out": false,
+      "elapsed_seconds": 43.734
+    },
+    {
+      "test": "multi-alliance",
+      "checks": 214,
+      "failures": [],
+      "exit": 0,
+      "timed_out": false,
+      "elapsed_seconds": 5.937
+    },
+    {
+      "test": "mining_contact_test",
+      "checks": 192,
+      "failures": [],
+      "log_sha256": "c279f1f93bba102784e80305486713e277d3fdb898f25a16ce60bf4d0a8060ae"
+    },
+    {
+      "test": "fog_state_test",
+      "checks": 274,
+      "failures": [],
+      "log_sha256": "3d1fee9cbf1f4ae0de1735755c3aae0fde46f02996db11cf83d88761b655bfb7"
+    },
+    {
+      "test": "fog_no_ghost_match_test",
+      "checks": 48,
+      "failures": [],
+      "log_sha256": "665ea6aaa06f6b4f334237086711c7bbde59d1cb78fe0d823eb037576b216fef"
+    },
+    {
+      "test": "skirmish_maps_test",
+      "checks": 106,
+      "failures": [],
+      "log_sha256": "245d25056f837321dd9ca2beaa05c4715ab6f17c6cd32f66ca895e495d1a3066"
+    },
+    {
+      "test": "six_player_maps_test",
+      "checks": 1522,
+      "failures": [],
+      "log_sha256": "9cae6fe99d7f5fa5e7ce6758e6b6a40ee89db70e06f6e422eb1b56884c502bca"
+    },
+    {
+      "test": "starting_tower_test",
+      "checks": 96,
+      "failures": [],
+      "log_sha256": "f6418b3de3bf1be26de0cf5b5138c152a01d9a202b233d3301e5261c9f390327"
+    },
+    {
+      "test": "starting_tower_test-ffa",
+      "checks": 279,
+      "failures": [],
+      "log_sha256": "d8d3916ee23f14ff89f838d29aa9d93a68d3807f4c24eff06060406bb88f05ea"
+    },
+    {
+      "test": "navigation_compaction_test",
+      "checks": 619,
+      "failures": [],
+      "log_sha256": "bc2e721e1f263c8e972aece618b8ec8907db88922ea01e944ae72cbf535aa4cc"
+    },
+    {
+      "test": "network_game_replication_test",
+      "checks": 102,
+      "failures": [],
+      "log_sha256": "452d059533e6ad2147c7f5e46c83d118f09540f2296d8b85d728305907baab43"
+    },
+    {
+      "test": "network_six_player_codec_test",
+      "checks": 11,
+      "failures": [],
+      "log_sha256": "8461ebf79ed048cbef25b0f18b4d1036f820f2b4583f7f37825aaedf5dee7259"
+    }
+  ],
+  "production_and_research": [
+    {
+      "name": "production_rules_test",
+      "exit_code": 0,
+      "timeout": false,
+      "pid": 42908,
+      "seconds": 2.67,
+      "stderr_empty": true,
+      "result_lines": [
+        "PRODUCTION_RULES_RESULT 37 checks, 0 failures"
+      ]
+    },
+    {
+      "name": "timed_production_research_test",
+      "exit_code": 0,
+      "timeout": false,
+      "pid": 33964,
+      "seconds": 2.28,
+      "stderr_empty": true,
+      "result_lines": [
+        "TIMED_PRODUCTION_RESEARCH_RESULTS {\"checks\":117,\"failures\":[]}"
+      ]
+    },
+    {
+      "name": "workforce_upgrade_test",
+      "exit_code": 0,
+      "timeout": false,
+      "pid": 42392,
+      "seconds": 1.81,
+      "stderr_empty": true,
+      "result_lines": [
+        "WORKFORCE_UPGRADE_RESULTS {\"checks\":63,\"failures\":[]}"
+      ]
+    }
+  ],
+  "six_clients": [
+    {
+      "mode": "2v2v2",
+      "target": "local",
+      "checks": 140,
+      "peers": 6,
+      "failures": []
+    },
+    {
+      "mode": "2v2v2",
+      "target": "impaired",
+      "checks": 140,
+      "peers": 6,
+      "failures": [],
+      "impairment": {
+        "profile": {
+          "seed": 24571,
+          "link_rtt_ms": 150,
+          "link_rtt_jitter_bound_ms": 40,
+          "datagram_loss_probability": 0.04,
+          "extra_reorder_probability": 0.08,
+          "extra_reorder_delay_ms": 90
+        },
+        "totals": {
+          "received": 5088,
+          "bytes": 3238090,
+          "dropped": 206,
+          "dropped_bytes": 125013,
+          "delivered": 4882,
+          "delivered_bytes": 3113077,
+          "closed_flow_bytes": 0,
+          "reorder_injected": 370,
+          "out_of_order_deliveries": 1510,
+          "actual_loss_percent": 4.049,
+          "received_bytes_per_second": 130831.919,
+          "delivered_bytes_per_second": 125780.889
+        },
+        "byte_accounting_balanced": true,
+        "pending_discarded_at_cleanup": 0
+      }
+    }
+  ],
+  "final_packaged_match": {
+    "checks": 26,
+    "failures": [],
+    "simulated_seconds": 988.266666666425,
+    "first_damage": 48.0333333333332,
+    "winner": 1,
+    "military_deaths": 209,
+    "damage_events": 1428,
+    "remaining_buildings": [
+      0,
+      5
+    ],
+    "wall_seconds": 98.636,
+    "observed_step_valid": true
+  },
+  "match_exit_code": 0,
+  "match_stderr_empty": true,
+  "earlier_match_observations": [
+    {
+      "simulated_seconds": 1200.0333,
+      "completed": false,
+      "cause": "Original 1200-second observation ceiling; ongoing combat, 293 military deaths, no engine failure."
+    },
+    {
+      "simulated_seconds": 625.0667,
+      "completed": true,
+      "stage": "Before final diagonal mining approach fix."
+    }
+  ],
+  "mining_visual": {
+    "path": "report/mining-contact-0.8.1.png",
+    "sha256": "843293bb53d561eb17355f88b4dfa723bde08216f13186d4498fe1357c7f426f",
+    "checks": 49,
+    "renderer": "Forward+",
+    "gpu": "RTX 3080"
+  },
+  "limits": [
+    "No new graphical FPS benchmark; headless match FPS is not a rendering performance claim.",
+    "Historical unit_motion_timing_test fixture lacks current game interfaces and fails; its code was left unchanged. Real main-scene mining checks cover 30 and 60 TPS.",
+    "Production relay remains version 0.8.0 protocol 5. New version multiplayer was verified only against isolated local protocol 6 relay, never occupying the production room."
+  ],
+  "user_configuration_preserved": [
+    "default_bus_layout.tres",
+    "project.godot",
+    "export_presets.cfg (except intended version fields)"
+  ],
+  "cleanup": {
+    "verified_headless_and_probe_processes": 0,
+    "normal_editor_preserved": true,
+    "intermediate_text_files_removed": 185,
+    "retained_outputs": [
+      "report/balance-0.8.1.md",
+      "report/balance-0.8.1.json",
+      "report/mining-contact-0.8.1.png",
+      "docs/release-0.8.1-validation.json",
+      "builds/AshenCrown-0.8.1-Windows-x64.zip",
+      "builds/windows-0.8.1"
+    ],
+    "prior_playable_version_preserved": true
+  }
+}

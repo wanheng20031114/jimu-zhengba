@@ -246,10 +246,10 @@ func get_hit_effect() -> String:
 func get_combat_definition() -> CombatDefinition:
 	return _stats
 
-func receive_hit(payload: DamagePayload, source: Node3D = null, falloff: float = 1.0) -> void:
+func receive_hit(payload: DamagePayload, source: Node3D = null) -> void:
 	if payload.alliance_id == alliance_id:
 		return
-	receive_damage(DamageResolver.resolve(payload, _stats, 0, falloff), source)
+	receive_damage(DamageResolver.resolve(payload, _stats, 0), source)
 
 func receive_damage(amount: float, source: Node3D = null) -> void:
 	if not alive or (is_instance_valid(source) and source.alliance_id == alliance_id):

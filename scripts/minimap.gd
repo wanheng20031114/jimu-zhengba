@@ -33,10 +33,6 @@ func _draw() -> void:
 		if fog.explored(game.local_owner_id, mine.position):
 			var at := _map(mine.position)
 			draw_colored_polygon(PackedVector2Array([at + Vector2(0,-3), at + Vector2(3,0), at + Vector2(0,3), at + Vector2(-3,0)]), Color("efc75b"))
-	for memory: Dictionary in fog.last_seen_buildings(game.local_owner_id).values():
-		var position_data: Array = memory.position
-		var at := _map(Vector3(position_data[0], 0, position_data[2]))
-		draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), Color("785242"))
 	for entity: Node3D in get_tree().get_nodes_in_group("entities"):
 		if not entity.alive or not game.can_see_entity(game.local_owner_id, entity):
 			continue

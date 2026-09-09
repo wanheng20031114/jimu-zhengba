@@ -89,7 +89,7 @@ func _run() -> void:
 			stone.initialize(source, target, DamageResolver.snapshot(BalanceCatalog.unit("catapult"), 0, attacker, attacker), "stone")
 			stone.set_physics_process(false)
 			stone._impact()
-			check(is_equal_approx(target.hp, 21.0), "native_stone_%d_hits_alliance_%d" % [attacker, defender])
+			check(is_equal_approx(target.hp, 76.0), "native_stone_%d_hits_alliance_%d" % [attacker, defender])
 			check(friendly.hp == friendly.max_hp, "native_stone_%d_preserves_own_units_%d" % [attacker, defender])
 			stone.queue_free()
 			_discard(source)

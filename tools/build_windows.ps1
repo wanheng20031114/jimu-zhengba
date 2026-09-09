@@ -1,10 +1,19 @@
-param([string]$GodotPath = 'C:/Program Files/Godot/Godot_console.exe', [switch]$PackOnly)
+param(
+    [string]$GodotPath = 'C:/Program Files/Godot/Godot_console.exe',
+    [switch]$PackOnly,
+    [ValidatePattern('^$|^[0-9]+\.[0-9]+\.[0-9]+$')][string]$VersionedOutput = ''
+)
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$buildRoot = Join-Path $projectRoot 'builds/windows'
+$buildRoot = Join-Path $projectRoot ('builds/windows' + $(if ($VersionedOutput) { '-' + $VersionedOutput } else { '' }))
 $executable = Join-Path $buildRoot 'AshenCrown.exe'
-$archive = Join-Path $projectRoot 'builds/AshenCrown-Windows-x64.zip'
+$archive = Join-Path $projectRoot ('builds/AshenCrown-' + $(if ($VersionedOutput) { $VersionedOutput + '-' } else { '' }) + 'Windows-x64.zip')
+if ($VersionedOutput) {
+    $presetText = Get-Content -LiteralPath (Join-Path $projectRoot 'export_presets.cfg') -Raw -Encoding UTF8
+    $presetVersion = [regex]::Match($presetText, '(?m)^application/file_version="([^"]+)"').Groups[1].Value
+    if ($presetVersion -ne ($VersionedOutput + '.0')) { throw 'Versioned output must match the configured Windows release version.' }
+}
 
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 $exportLog = Join-Path $projectRoot '.local/windows-export.engine.log'

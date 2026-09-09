@@ -63,7 +63,7 @@ func _run() -> void:
 	await _stone_blast()
 	await _siege_melee_vulnerability()
 	await _knight_siege_hits()
-	await _cannon_mirror_two_shots()
+	await _cannon_mirror_five_shots()
 	await _minimum_ranges()
 	await _mining_slots()
 	await _client_authority()
@@ -89,11 +89,11 @@ func _melee_and_vision() -> void:
 	for repeat: int in range(20):
 		sword.issue_attack(knight)
 	await _wait(0.35)
-	_check(knight.hp == 62, "twenty repeated commands preserve one 58-damage strike")
-	for strike: int in range(2, 4):
+	_check(knight.hp == 100, "twenty repeated commands preserve one twenty-damage strike")
+	for strike: int in range(2, 7):
 		sword._start_attack()
 		await _wait(0.35)
-		_check(knight.hp == maxf(0, 120 - strike * 58) and knight.alive == (strike < 3), "native sword strike " + str(strike) + " leaves four, then zero cavalry health")
+		_check(knight.hp == maxf(0, 120 - strike * 20) and knight.alive == (strike < 6), "native sword strike " + str(strike) + " defeats cavalry on the sixth compact-damage hit")
 	var packet: DamagePayload = DamageResolver.snapshot(sword.get_combat_definition(), 0, 0, 0)
 	ally.receive_hit(packet, sword)
 	_check(ally.hp == ally.max_hp, "friendly receive_hit rejects allied owner damage")
@@ -104,9 +104,9 @@ func _melee_and_vision() -> void:
 	charging_knight.issue_attack(archer)
 	charging_knight._start_attack()
 	await _wait(0.3)
-	_check(archer.hp == 30, "visual cavalry charge does not multiply the 30-damage anti-archer strike")
+	_check(archer.hp == 50, "visual cavalry charge does not multiply the ten-damage anti-archer strike")
 	charging_knight.set_physics_process(true)
-	_check(await _until(func(): return not archer.alive, 1.6), "two native cavalry strikes defeat a full-health archer")
+	_check(await _until(func(): return not archer.alive, 7.0), "six native cavalry strikes defeat a full-health archer")
 	await _clear()
 
 func _cannon_snapshot() -> void:
@@ -120,7 +120,7 @@ func _cannon_snapshot() -> void:
 	host.get_player(0).attack_level = 3
 	host.get_player(1).defense_level = 2
 	await _wait(1.0)
-	_check(catapult.hp == 79, "source freed after launch still deals launch attack +1 versus current defense +2")
+	_check(catapult.hp == 119, "source freed after launch deals the captured attack +1 versus current defense +2")
 	_check(neighbor.hp == neighbor.max_hp, "cannon explosion does not splash a neighboring archer")
 	_check(host.get_node("Effects").get_child_count() == 0, "completed projectile frees itself after the interpolation tail")
 	await _clear()
@@ -143,9 +143,9 @@ func _stone_blast() -> void:
 	await physics_frame
 	await _wait(1.6)
 	_check(center.hp == 100, "stone fixed impact point can be dodged")
-	_check(core.hp == 10 and core.alive, "one stone core deals fifty damage and leaves an archer at ten health")
-	_check(core_sword.hp == 21 and core_sword.alive, "the same stone deals seventy-nine damage and leaves a swordsman at twenty-one health")
-	_check(is_equal_approx(edge.hp, 29.4444444), "stone outer annulus attenuates the archer bonus with base attack")
+	_check(core.hp == 45 and core.alive, "one stone deals fifteen damage to an archer")
+	_check(core_sword.hp == 76 and core_sword.alive, "the same stone deals twenty-four damage to a swordsman")
+	_check(edge.hp == core.hp, "stone outer edge deals the same damage as its center with no falloff")
 	_check(outside.hp == 60 and ally.hp == 60, "stone leaves out-of-radius and allied units unharmed")
 	_check(impact_point == Vector3(0, 1, -9), "stone initial landing point is fixed to commanded ground")
 	await _clear()
@@ -158,17 +158,17 @@ func _siege_melee_vulnerability() -> void:
 		host.get_player(1).defense_level = 3
 		var melee := DamageResolver.snapshot(sword.get_combat_definition(), 0, 0, 0)
 		siege.receive_hit(melee, sword)
-		_check(siege.hp == siege.max_hp - 20, kind + " native melee receive_hit ignores defense III")
+		_check(siege.hp == siege.max_hp - 4, kind + " native melee receive_hit ignores defense III")
 		var before: float = siege.hp
 		var ranged := DamageResolver.snapshot(archer.get_combat_definition(), 0, 0, 0)
 		siege.receive_hit(ranged, archer)
-		_check(before - siege.hp == (4 if kind == "catapult" else 2), kind + " native ranged receive_hit retains defense III")
+		_check(before - siege.hp == (2 if kind == "catapult" else 1), kind + " native ranged receive_hit retains defense III")
 		siege.hp = siege.max_hp
 		var hits: int = 0
 		while siege.alive:
 			siege.receive_hit(melee, sword)
 			hits += 1
-		_check(hits == (8 if kind == "catapult" else 10), kind + " lower health and zero melee armor preserve eight or ten sword hits even with defense III")
+		_check(hits == (40 if kind == "catapult" else 50), kind + " compact sword attack and zero melee armor need forty or fifty hits even with defense III")
 		await _clear()
 
 func _knight_siege_hits() -> void:
@@ -176,20 +176,21 @@ func _knight_siege_hits() -> void:
 		var knight: BattleUnit = _spawn("knight", 0, Vector3.ZERO)
 		var target: BattleUnit = _spawn(kind, 1, Vector3(2, 0, 0))
 		knight.issue_attack(target)
-		for strike in range(1, 5):
+		var needed: int = 8 if kind == "catapult" else 10
+		for strike in range(1, needed + 1):
 			knight._start_attack()
 			await _wait(0.3)
-			_check(target.hp == maxf(0, target.max_hp - strike * 50) and target.alive == (strike < 4), kind + " native cavalry strike " + str(strike) + " applies fifty damage and defeats on fourth")
+			_check(target.hp == maxf(0, target.max_hp - strike * 20) and target.alive == (strike < needed), kind + " native cavalry strike " + str(strike) + " retains twenty anti-siege damage")
 		await _clear()
 
-func _cannon_mirror_two_shots() -> void:
+func _cannon_mirror_five_shots() -> void:
 	var cannon: BattleUnit = _spawn("cannon", 0, Vector3.ZERO)
 	var target: BattleUnit = _spawn("cannon", 1, Vector3(0, 0, -10))
-	for shot in range(1, 3):
+	for shot in range(1, 6):
 		host.spawn_projectile(cannon, target, DamageResolver.snapshot(cannon.get_combat_definition(), 0, 0, 0), "cannon")
 		await _wait(1.0)
-		_check(target.hp == 200 - shot * 80 and target.alive, "native cannon mirror shot " + str(shot) + " deals eighty damage")
-	_check(target.hp == 40 and is_equal_approx(target.hp / target.max_hp, 0.2), "two real cannon projectiles leave twenty percent health")
+		_check(target.hp == 200 - shot * 40 and target.alive == (shot < 5), "native cannon mirror shot " + str(shot) + " deals forty damage and fifth shot destroys")
+	_check(target.hp == 0 and not target.alive, "five real cannon projectiles destroy a full-health cannon")
 	await _clear()
 
 func _minimum_ranges() -> void:

@@ -1,0 +1,20 @@
+{
+  "build": "0.8.0",
+  "reference_commit": "179839062b985a82c0c2ec3365ca945e11b0a77b",
+  "checked_utc": "2026-09-09T21:54:35.309230+00:00",
+  "active": true,
+  "matching_preserved_release": true,
+  "service": {
+    "MainPID": "281904",
+    "NRestarts": "0",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "files_match": {
+    "scripts/network/network_protocol.gd": true,
+    "server/relay_server.gd": true,
+    "server/relay_main.gd": true,
+    "data/content_manifest.json": true
+  },
+  "restarted_this_task": false
+}

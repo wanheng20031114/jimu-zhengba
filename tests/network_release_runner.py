@@ -15,6 +15,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("executable", type=Path)
     parser.add_argument("--source", action="store_true", help="Run the same Session entry in an editor engine before exporting")
+    parser.add_argument("--catalogue-only", action="store_true", help="Audit packaged content without connecting to or occupying the production relay")
     args = parser.parse_args()
     executable = args.executable.resolve(strict=True)
     directory = ROOT / ".local/network" / ("release-" + uuid.uuid4().hex[:8])
@@ -23,6 +24,8 @@ def main() -> int:
     if args.source:
         command.extend(("--path", str(ROOT)))
     command.extend(("--", "--network-smoke"))
+    if args.catalogue_only:
+        command.append("--catalogue-only")
     with (directory / "stdout.log").open("wb") as out, (directory / "stderr.log").open("wb") as err:
         process = subprocess.Popen(command, cwd=executable.parent, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
         try:
@@ -44,6 +47,9 @@ def main() -> int:
     value_audit_present = summary is not None and summary.get("resource_value_checks") == 57 and summary.get("checks", 0) >= 116
     if summary is not None:
         success = success and summary["exported_template"] != args.source and value_audit_present
+        success = success and summary.get("catalogue_only", False) == args.catalogue_only
+        if args.catalogue_only:
+            success = success and summary.get("handshake_msec") == -1
     report = {"passed": success, "summary": summary, "resource_value_audit_present": value_audit_present, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
     (directory / "summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print("NETWORK_RELEASE_RESULTS " + json.dumps(report, ensure_ascii=False))

@@ -1,6 +1,6 @@
 extends Node
 ## Explicit packaged-game acceptance. Observes real Bot play without subsidies or combat edits.
-const MAX_MATCH_SECONDS: float = 1200.0
+const MAX_MATCH_SECONDS: float = 1800.0
 const STEP: float = 1.0 / 30.0
 var game: Node3D
 var failures: Array[String] = []

@@ -127,11 +127,14 @@ func _geometry_and_paths(owner: int) -> void:
 		var at: Vector3 = slot.global_position
 		query.transform.origin = at + Vector3.UP
 		check(space.intersect_shape(query, 1).is_empty(), "owner_%d_%s_worker_body_has_physical_clearance" % [owner, slot.name])
-		check(navigation.contains_walkable_point(at), "owner_%d_%s_remains_logically_walkable" % [owner, slot.name])
 		var closest: Vector3 = NavigationServer3D.map_get_closest_point(nav_map, at)
-		check(closest.distance_to(at) < 0.21, "owner_%d_%s_remains_on_published_native_navigation" % [owner, slot.name])
+		query.transform.origin = closest + Vector3.UP
+		query.motion = at - closest
+		var sweep: PackedFloat32Array = space.cast_motion(query)
+		check(sweep[0] == 1.0, "owner_%d_%s_has_collision_safe_final_mining_approach" % [owner, slot.name])
+		check(closest.distance_to(at) < ResourceVein.MAX_CONTACT_APPROACH, "owner_%d_%s_is_within_contact_distance_of_native_navigation" % [owner, slot.name])
 		var path: PackedVector3Array = NavigationServer3D.map_get_path(nav_map, exit, at, true)
-		check(path.size() >= 2 and path[-1].distance_to(at) < 0.21, "owner_%d_%s_has_a_native_path_from_headquarters_exit" % [owner, slot.name])
+		check(path.size() >= 2 and path[-1].distance_to(at) < ResourceVein.MAX_CONTACT_APPROACH, "owner_%d_%s_has_a_native_path_from_headquarters_exit" % [owner, slot.name])
 		check(tower.get_attack_position(at).distance_to(at) <= tower.get_combat_definition().range, "owner_%d_%s_is_covered_by_opening_tower_range" % [owner, slot.name])
 
 func _auto_defense(owner: int) -> void:
@@ -163,7 +166,8 @@ func _auto_defense(owner: int) -> void:
 		if enemy.hp < enemy.max_hp:
 			break
 		await physics_frame
-	check(enemy.hp == enemy.max_hp - 26.0 and ally.hp == ally.max_hp, "owner_%d_real_tower_arrow_hits_enemy_only" % owner)
+	var damage: float = DamageResolver.resolve(DamageResolver.snapshot(tower.get_combat_definition(), 0, owner, tower.alliance_id), enemy.get_combat_definition())
+	check(enemy.hp == enemy.max_hp - damage and ally.hp == ally.max_hp, "owner_%d_real_tower_arrow_hits_enemy_only" % owner)
 	enemy.receive_damage(enemy.hp)
 	ally.receive_damage(ally.hp)
 	await physics_frame

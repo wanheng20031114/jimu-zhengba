@@ -450,7 +450,7 @@ func _work_velocity(delta: float) -> Vector3:
 		_repath_time = 0.6
 		_update_work_destination()
 	var contact: Vector3 = destination if order == Order.GATHER else work_target.get_attack_position(global_position)
-	var reach: float = 0.65 if order == Order.GATHER else 1.85
+	var reach: float = ResourceVein.WORK_REACH if order == Order.GATHER else 1.85
 	var distance: Vector3 = contact - global_position
 	distance.y = 0.0
 	if distance.length_squared() > reach * reach:
@@ -462,7 +462,18 @@ func _work_velocity(delta: float) -> Vector3:
 			_repath_time = 0.6
 			_update_work_destination()
 		var approach_velocity: Vector3 = _path_velocity()
-		if _path_budget.is_finished(self) and distance.length_squared() <= pow(reach + 1.25, 2.0):
+		var reached_approach: bool = _path_budget.is_finished(self)
+		if order == Order.GATHER and not _path_budget.has_pending(self) and not _path_budget.is_blocked(self):
+			# A contact just outside the shared navigation mesh may be within the
+			# agent's target tolerance while its last path waypoint remains short
+			# of that contact. Hand over at the actual final waypoint, so the
+			# path follower's 10 cm stop band cannot strand a miner 24 cm away.
+			# These native const getters do not issue another path query.
+			var path: PackedVector3Array = navigation_agent.get_current_navigation_path()
+			reached_approach = reached_approach or (not path.is_empty()
+				and navigation_agent.get_current_navigation_path_index() >= path.size() - 1
+				and global_position.distance_squared_to(path[-1]) <= pow(navigation_agent.path_desired_distance, 2.0))
+		if reached_approach and distance.length_squared() <= pow(reach + ResourceVein.MAX_CONTACT_APPROACH, 2.0):
 			# The baked clearance band can end just outside a worker's reach.
 			# CharacterBody3D supplies the final collision-safe contact step.
 			approach_velocity = distance.normalized() * speed
@@ -659,11 +670,11 @@ func _finish_order() -> void:
 func get_combat_definition() -> CombatDefinition:
 	return _stats
 
-func receive_hit(payload: DamagePayload, source: Node3D = null, falloff: float = 1.0) -> void:
+func receive_hit(payload: DamagePayload, source: Node3D = null) -> void:
 	if not alive or payload.alliance_id == alliance_id:
 		return
 	var defense_bonus: float = _game.get_player(owner_id).get_defense_bonus() if _stats.military else 0.0
-	_apply_damage(DamageResolver.resolve(payload, _stats, defense_bonus, falloff), source)
+	_apply_damage(DamageResolver.resolve(payload, _stats, defense_bonus), source)
 
 func receive_damage(amount: float, source: Node3D = null) -> void:
 	# Explicit direct damage for scenario scripts and debugging. Combat uses receive_hit.

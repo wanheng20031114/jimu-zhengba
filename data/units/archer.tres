@@ -6,11 +6,11 @@
 script = ExtResource("1_definition")
 id = &"archer"
 name = "弓箭手"
-description = "远程齐射支援前排，对重甲伤害较低，需要保护并避免骑兵突袭。"
+description = "远程齐射压制无远甲剑士，自带远程护甲；需要保持距离并防范重甲骑兵突袭。"
 hp = 60
-damage = 12
+damage = 9
 melee_armor = 0
-ranged_armor = 0
+ranged_armor = 3
 damage_channel = 1
 combat_class = &"archer"
 bonuses = {}

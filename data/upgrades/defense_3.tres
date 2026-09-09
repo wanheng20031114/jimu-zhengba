@@ -10,5 +10,4 @@ track = &"defense"
 level = 3
 cost = 600
 research_seconds = 60.0
-total_bonus = 4
-
+total_bonus = 3

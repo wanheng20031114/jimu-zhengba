@@ -2,8 +2,8 @@ class_name NetworkProtocol
 extends RefCounted
 ## Explicit JSON primitives only: never decode network bytes into Godot objects.
 
-const VERSION: int = 5
-const BUILD_ID: String = "0.8.0"
+const VERSION: int = 6
+const BUILD_ID: String = "0.8.1"
 const TLS_NAME: String = "ashen-crown-relay"
 const PORT: int = 24571
 const CONTROL_CHANNEL: int = 0

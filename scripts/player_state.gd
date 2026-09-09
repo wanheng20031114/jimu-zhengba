@@ -4,7 +4,6 @@ extends RefCounted
 
 const WORKER_LIMIT := 10
 const SUPPLY_LIMIT := 60
-const TECH_BONUSES := [0, 1, 2, 4]
 
 var owner_id: int
 var alliance_id: int
@@ -30,10 +29,10 @@ func _init(owner: int = 0, alliance: int = 0) -> void:
 	display_name = "指挥官 %d" % (owner + 1)
 
 func get_attack_bonus() -> int:
-	return TECH_BONUSES[attack_level]
+	return BalanceCatalog.upgrade("attack_%d" % attack_level).total_bonus if attack_level > 0 else 0
 
 func get_defense_bonus() -> int:
-	return TECH_BONUSES[defense_level]
+	return BalanceCatalog.upgrade("defense_%d" % defense_level).total_bonus if defense_level > 0 else 0
 
 func can_reserve_farmer() -> bool:
 	return farmers + reserved_farmers < get_worker_limit()

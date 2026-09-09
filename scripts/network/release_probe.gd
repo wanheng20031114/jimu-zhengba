@@ -14,6 +14,7 @@ var received_finish: bool = false
 var catalog_files: int = 0
 var resource_value_checks: int = 0
 var handshake_msec: int = -1
+var catalogue_only: bool = false
 
 func _ready() -> void:
 	_run.call_deferred()
@@ -23,6 +24,7 @@ func _run() -> void:
 		check(false, "explicit_probe_flag_required")
 		await finish()
 		return
+	catalogue_only = "--catalogue-only" in OS.get_cmdline_user_args()
 	relay.error_received.connect(func(code: String, _message: String): errors.append(code))
 	relay.match_started.connect(func(config: Dictionary): received_config = config)
 	relay.event_received.connect(func(event: Dictionary):
@@ -41,7 +43,7 @@ func _run() -> void:
 	var endpoint := read_dictionary(ENDPOINT_PATH)
 	check(endpoint.get("address") is String and not endpoint.get("address", "").is_empty() and NetworkProtocol.integer(endpoint.get("port"), 1, 65535), "packaged_public_endpoint_exists")
 	check(relay.content_hash.length() == 64 and relay.content_hash == FileAccess.get_sha256(MANIFEST_PATH), "packaged_manifest_fingerprint_loaded")
-	if not failures.is_empty():
+	if catalogue_only or not failures.is_empty():
 		await finish()
 		return
 	var began := Time.get_ticks_msec()
@@ -79,47 +81,50 @@ func validate_resource_values() -> void:
 	var began := checks
 	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "archer", "knight"],
 		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
+	var defensive_damage := {"headquarters": 10, "enemy_keep": 10, "defense_tower": 14, "tower": 14}
 	for kind: String in production:
 		var building := BalanceCatalog.building(kind)
 		check(Array(building.produces) == production[kind], "packaged_production_members_" + kind)
-		check(building.id == StringName(kind) and building.hp >= 1000.0 and building.melee_armor == 10.0 and building.ranged_armor == 10.0,
+		check(building.id == StringName(kind) and building.hp >= 1000.0 and building.melee_armor == 10.0 and building.ranged_armor == 10.0 and building.damage == defensive_damage.get(kind, 0),
 			"packaged_building_combat_values_" + kind)
 	for kind: String in BalanceCatalog.UNITS:
 		var unit := BalanceCatalog.unit(kind)
 		check(unit.id == StringName(kind) and unit.hp > 0.0 and is_finite(unit.hp) and unit.cost > 0 and unit.speed > 0.0
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
-	check(not farmer.military and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0, "packaged_farmer_training_contract")
+	check(not farmer.military and farmer.hp == 150 and farmer.damage == 3 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0, "packaged_farmer_health_and_training_contract")
 	var training_seconds := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
-	for pair: Array in [["knight", "archer", 2], ["knight", "swordsman", 6], ["swordsman", "knight", 3],
-		["swordsman", "archer", 3], ["archer", "knight", 15], ["archer", "swordsman", 10]]:
+	for pair: Array in [["knight", "archer", 6], ["knight", "swordsman", 20], ["swordsman", "knight", 6],
+		["swordsman", "archer", 15], ["archer", "knight", 40], ["archer", "swordsman", 12]]:
 		var defender := BalanceCatalog.unit(pair[1])
 		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
 		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
 	var archer := BalanceCatalog.unit("archer")
 	var swordsman := BalanceCatalog.unit("swordsman")
-	check(archer.damage == 12 and archer.bonuses.is_empty() and archer.sight == 13
-		and swordsman.ranged_armor == 1 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
-		and swordsman.damage == 20 and swordsman.bonuses == {&"cavalry": 40},
+	check(archer.damage == 9 and archer.hp == 60 and archer.ranged_armor == 3 and archer.bonuses.is_empty() and archer.sight == 13
+		and swordsman.ranged_armor == 0 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
+		and swordsman.damage == 4 and swordsman.bonuses == {&"cavalry": 18},
 		"packaged_archer_values_and_swordsman_anti_cavalry_bonus")
 	check(BalanceCatalog.unit("knight").sight == 15 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
-	check(knight.cost == 80 and knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.damage == 19
-		and knight.bonuses == {&"archer": 11, &"siege": 31}, "packaged_knight_price_ranged_armor_and_class_bonuses")
+	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 6 and knight.melee_armor == 2 and knight.damage == 7
+		and knight.bonuses == {&"archer": 3, &"siege": 13}, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")
-	check(catapult.range == 13 and catapult.damage == 35
-		and catapult.bonuses == {&"infantry": 45, &"archer": 15, &"building": 50}
+	check(catapult.range == 13 and catapult.damage == 18
+		and catapult.bonuses == {&"infantry": 6, &"building": 50}
 		and catapult.cost == 200 and catapult.hp == 160 and catapult.cooldown == 3 and catapult.min_range == 3,
 		"packaged_catapult_reach_damage_and_class_bonuses")
 	var stone := DamageResolver.snapshot(catapult, 0, 0, 0)
-	check(DamageResolver.resolve(stone, swordsman) == 79 and DamageResolver.resolve(stone, archer) == 50,
-		"packaged_catapult_core_leaves_swordsman_twenty_one_and_archer_ten_health")
+	check(DamageResolver.resolve(stone, swordsman) == 24 and DamageResolver.resolve(stone, archer) == 15
+		and ceili(swordsman.hp / 24.0) == 5 and ceili(archer.hp / 15.0) == 4,
+		"packaged_catapult_needs_five_swordsman_hits_and_four_archer_hits")
 	var cannon := BalanceCatalog.unit("cannon")
-	check(cannon.damage == 86 and cannon.bonuses == {&"building": 150}, "packaged_cannon_base_damage_and_building_only_bonus")
+	check(cannon.damage == 46 and cannon.bonuses == {&"building": 150}, "packaged_cannon_base_damage_and_building_only_bonus")
 	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
-	check(cannon_damage == 80 and is_equal_approx((cannon.hp - 2 * cannon_damage) / cannon.hp, 0.2), "packaged_cannon_two_mirror_hits_leave_twenty_percent")
+	check(cannon_damage == 40 and ceili(cannon.hp / cannon_damage) == 5
+		and is_equal_approx((cannon.hp - 4 * cannon_damage) / cannon.hp, 0.2), "packaged_cannon_five_mirror_hits_to_destroy")
 	check(cannon.hp == 200 and cannon.cost == 250 and cannon.range == 14 and cannon.min_range == 2.5
 		and is_equal_approx(cannon.cooldown, 3.2), "packaged_cannon_health_price_and_reach")
 	var defense_tower := BalanceCatalog.building("defense_tower")
@@ -128,16 +133,17 @@ func validate_resource_values() -> void:
 		"packaged_tower_price_health_time_and_siege_reach_relationship")
 	for siege: UnitDefinition in [catapult, cannon]:
 		check(siege.melee_armor == 0 and not siege.melee_defense_upgrades
-			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.MELEE, 4) == 0
-			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.RANGED, 4) == siege.ranged_armor + 4,
+			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.MELEE, 3) == 0
+			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.RANGED, 3) == siege.ranged_armor + 3,
 			"packaged_" + String(siege.id) + "_zero_melee_armor_after_defense_research")
 		var knight_damage := DamageResolver.resolve(DamageResolver.snapshot(knight, 0, 0, 0), siege)
-		check(knight_damage == 50 and ceili(siege.hp / knight_damage) == 4,
-			"packaged_knight_four_hits_against_" + String(siege.id))
+		check(knight_damage == 20 and ceili(siege.hp / knight_damage) == (8 if siege.id == &"catapult" else 10),
+			"packaged_knight_extended_hits_against_" + String(siege.id))
+	var technology_bonuses := {"attack": [1, 2, 4], "defense": [1, 2, 3]}
 	for track: String in ["attack", "defense"]:
 		for level in range(1, 4):
 			var upgrade := BalanceCatalog.upgrade(track + "_" + str(level))
-			check(upgrade.track == StringName(track) and upgrade.level == level and upgrade.total_bonus == [1, 2, 4][level - 1],
+			check(upgrade.track == StringName(track) and upgrade.level == level and upgrade.total_bonus == technology_bonuses[track][level - 1],
 				"packaged_upgrade_values_" + track + "_" + str(level))
 	var workforce := BalanceCatalog.upgrade("workforce_1")
 	check(workforce.track == &"workforce" and workforce.level == 1 and workforce.cost == 125
@@ -174,5 +180,5 @@ func finish() -> void:
 	print("NETWORK_RELEASE_PROBE " + JSON.stringify({"checks": checks, "failures": failures,
 		"error_codes": errors, "build": NetworkProtocol.BUILD_ID, "protocol": NetworkProtocol.VERSION,
 		"content_hash": NetworkProtocol.content_hash(), "catalogue_files": catalog_files, "resource_value_checks": resource_value_checks,
-		"exported_template": not OS.has_feature("editor"), "handshake_msec": handshake_msec}))
+		"exported_template": not OS.has_feature("editor"), "catalogue_only": catalogue_only, "handshake_msec": handshake_msec}))
 	get_tree().quit(0 if failures.is_empty() else 1)
