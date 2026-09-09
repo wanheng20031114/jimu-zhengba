@@ -93,7 +93,7 @@ func validate_resource_values() -> void:
 	var training_seconds := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
-	for pair: Array in [["knight", "archer", 2], ["knight", "swordsman", 6], ["swordsman", "knight", 4],
+	for pair: Array in [["knight", "archer", 2], ["knight", "swordsman", 6], ["swordsman", "knight", 3],
 		["swordsman", "archer", 3], ["archer", "knight", 15], ["archer", "swordsman", 10]]:
 		var defender := BalanceCatalog.unit(pair[1])
 		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
@@ -102,7 +102,7 @@ func validate_resource_values() -> void:
 	var swordsman := BalanceCatalog.unit("swordsman")
 	check(archer.damage == 12 and archer.bonuses.is_empty() and archer.sight == 13
 		and swordsman.ranged_armor == 1 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
-		and swordsman.damage == 20 and swordsman.bonuses == {&"cavalry": 20},
+		and swordsman.damage == 20 and swordsman.bonuses == {&"cavalry": 40},
 		"packaged_archer_values_and_swordsman_anti_cavalry_bonus")
 	check(BalanceCatalog.unit("knight").sight == 15 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
@@ -118,8 +118,10 @@ func validate_resource_values() -> void:
 	check(cannon_damage == 80 and is_equal_approx((cannon.hp - 2 * cannon_damage) / cannon.hp, 0.2), "packaged_cannon_two_mirror_hits_leave_twenty_percent")
 	check(cannon.hp == 200 and cannon.cost == 250 and cannon.range == 14 and cannon.min_range == 2.5
 		and is_equal_approx(cannon.cooldown, 3.2), "packaged_cannon_health_price_and_reach")
-	check(BalanceCatalog.building("defense_tower").range == cannon.range and catapult.range == cannon.range - 1,
-		"packaged_tower_cannon_catapult_reach_relationship")
+	var defense_tower := BalanceCatalog.building("defense_tower")
+	check(defense_tower.cost == 150 and defense_tower.hp == 1000 and defense_tower.build_seconds == 20
+		and defense_tower.range == cannon.range and catapult.range == cannon.range - 1,
+		"packaged_tower_price_health_time_and_siege_reach_relationship")
 	for siege: UnitDefinition in [catapult, cannon]:
 		check(siege.melee_armor == 0 and not siege.melee_defense_upgrades
 			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.MELEE, 4) == 0

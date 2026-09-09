@@ -1,0 +1,169 @@
+{
+  "build": "0.7.6",
+  "protocol": 4,
+  "packaged_and_delivered_before_tests": true,
+  "swordsman": {
+    "base_damage": 20,
+    "cavalry_bonus": 40,
+    "unupgraded_damage_vs_knight": 58,
+    "successive_knight_hp": [
+      62,
+      4,
+      0
+    ]
+  },
+  "defense_tower": {
+    "cost": 150,
+    "hp": 1000,
+    "build_seconds": 20
+  },
+  "native_tests": {
+    "results": [
+      {
+        "test": "balance_matrix_test",
+        "pid": 4396,
+        "exit_code": 0,
+        "process_exited": true,
+        "timed_out": false,
+        "elapsed_seconds": 0.687,
+        "stderr_bytes": 0,
+        "error_count": 0,
+        "checks": 958,
+        "failures": 0,
+        "stdout": ".local\\release-076\\balance_matrix_test.stdout.log",
+        "stderr": ".local\\release-076\\balance_matrix_test.stderr.log",
+        "engine_log": ".local\\release-076\\balance_matrix_test.engine.log"
+      },
+      {
+        "test": "balance_combat_test",
+        "pid": 36328,
+        "exit_code": 0,
+        "process_exited": true,
+        "timed_out": false,
+        "elapsed_seconds": 20.765,
+        "stderr_bytes": 0,
+        "error_count": 0,
+        "checks": 51,
+        "failures": 0,
+        "stdout": ".local\\release-076\\balance_combat_test.stdout.log",
+        "stderr": ".local\\release-076\\balance_combat_test.stderr.log",
+        "engine_log": ".local\\release-076\\balance_combat_test.engine.log"
+      },
+      {
+        "test": "bot_strategy_test",
+        "pid": 34364,
+        "exit_code": 0,
+        "process_exited": true,
+        "timed_out": false,
+        "elapsed_seconds": 0.969,
+        "stderr_bytes": 0,
+        "error_count": 0,
+        "checks": 140,
+        "failures": 0,
+        "stdout": ".local\\release-076\\bot_strategy_test.stdout.log",
+        "stderr": ".local\\release-076\\bot_strategy_test.stderr.log",
+        "engine_log": ".local\\release-076\\bot_strategy_test.engine.log"
+      },
+      {
+        "test": "rts_command_queue_test",
+        "pid": 28460,
+        "exit_code": 0,
+        "process_exited": true,
+        "timed_out": false,
+        "elapsed_seconds": 1.891,
+        "stderr_bytes": 0,
+        "error_count": 0,
+        "checks": 100,
+        "failures": 0,
+        "stdout": ".local\\release-076\\rts_command_queue_test.stdout.log",
+        "stderr": ".local\\release-076\\rts_command_queue_test.stderr.log",
+        "engine_log": ".local\\release-076\\rts_command_queue_test.engine.log"
+      },
+      {
+        "test": "economy_input_test",
+        "pid": 20944,
+        "exit_code": 1,
+        "process_exited": true,
+        "timed_out": false,
+        "elapsed_seconds": 1.703,
+        "stderr_bytes": 0,
+        "error_count": 1,
+        "checks": 1,
+        "failures": 1,
+        "stdout": ".local\\release-076\\economy_input_test.stdout.log",
+        "stderr": ".local\\release-076\\economy_input_test.stderr.log",
+        "engine_log": ".local\\release-076\\economy_input_test.engine.log",
+        "known_outdated_fixture": "The historical economy-input fixture still expects U to instantly recruit a farmer, the old Recruit5 node, and three gold per gather cycle. Current gameplay uses Q and ten-second worker training. It exits at its first obsolete U assertion before tower placement. Tower cost, timed construction, health, cancellation, refund and Shift order scenarios pass in rts_command_queue_test."
+      }
+    ],
+    "all_passed": false,
+    "process_verification": {
+      "method": "Get-CimInstance Win32_Process filtered Godot/AshenCrown executables",
+      "remaining_validation_processes": 0,
+      "preserved_editor_pid": 33896
+    }
+  },
+  "actual_exe_public_room_probe": {
+    "passed": true,
+    "summary": {
+      "build": "0.7.6",
+      "catalogue_files": 44,
+      "checks": 115,
+      "content_hash": "d7373d5ed9674fa038595a698289a6360c45d7fe2f2fd5ce9d6b70fdf7e92c5c",
+      "error_codes": [],
+      "exported_template": true,
+      "failures": [],
+      "handshake_msec": 539,
+      "protocol": 4,
+      "resource_value_checks": 56
+    },
+    "resource_value_audit_present": true,
+    "stderr_empty": true,
+    "log_directory": "release-376baa0d"
+  },
+  "deployment": {
+    "release": "c8621b7ac2956669",
+    "version": "0.7.6",
+    "protocol": 4,
+    "services": {
+      "bot-jump-relay.service": {
+        "MainPID": "270544",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "ashen-crown-relay.service": {
+        "MainPID": "281063",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "files_match": {
+      "scripts/network/network_protocol.gd": true,
+      "data/content_manifest.json": true,
+      "server/relay_server.gd": true
+    },
+    "udp_listeners": {
+      "24570": true,
+      "24571": true
+    }
+  },
+  "files": [
+    {
+      "path": "builds/windows/AshenCrown.exe",
+      "bytes": 104588800,
+      "sha256": "389ce82d8425a5826e93943eb4636b4938bc5d9107c088baaa1ac9bf665ca4c3"
+    },
+    {
+      "path": "builds/windows/AshenCrown.pck",
+      "bytes": 20168452,
+      "sha256": "b7088c1f93674b7b70ba0719828fa1d8137a009f1fdbce6bec4415d2b94d256a"
+    },
+    {
+      "path": "builds/AshenCrown-Windows-x64.zip",
+      "bytes": 51688844,
+      "sha256": "15ebe096d262154ce1baed89411115b9e46158eb5a6c0b51d0bbc0195669877f"
+    }
+  ]
+}

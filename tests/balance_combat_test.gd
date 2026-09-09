@@ -89,11 +89,11 @@ func _melee_and_vision() -> void:
 	for repeat: int in range(20):
 		sword.issue_attack(knight)
 	await _wait(0.35)
-	_check(knight.hp == 82, "twenty repeated commands preserve one 38-damage strike")
-	for strike: int in range(2, 5):
+	_check(knight.hp == 62, "twenty repeated commands preserve one 58-damage strike")
+	for strike: int in range(2, 4):
 		sword._start_attack()
 		await _wait(0.35)
-		_check(knight.hp == maxf(0, 120 - strike * 38) and knight.alive == (strike < 4), "native sword strike " + str(strike) + " leaves 44, 6, then zero cavalry health")
+		_check(knight.hp == maxf(0, 120 - strike * 58) and knight.alive == (strike < 3), "native sword strike " + str(strike) + " leaves four, then zero cavalry health")
 	var packet: DamagePayload = DamageResolver.snapshot(sword.get_combat_definition(), 0, 0, 0)
 	ally.receive_hit(packet, sword)
 	_check(ally.hp == ally.max_hp, "friendly receive_hit rejects allied owner damage")

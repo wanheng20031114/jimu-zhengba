@@ -3,7 +3,7 @@ extends SceneTree
 
 const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult", &"cannon", &"farmer"]
 const EXPECTED_DAMAGE: Array = [
-	[18, 20, 38, 20, 20, 20],
+	[18, 20, 58, 20, 20, 20],
 	[11, 12, 8, 8, 6, 12],
 	[17, 30, 17, 50, 50, 19],
 	[34, 35, 31, 31, 29, 35],
@@ -11,7 +11,7 @@ const EXPECTED_DAMAGE: Array = [
 	[6, 8, 6, 8, 8, 8],
 ]
 const EXPECTED_HITS: Array = [
-	[6, 3, 4, 8, 10, 4], [10, 5, 15, 20, 34, 7],
+	[6, 3, 3, 8, 10, 4], [10, 5, 15, 20, 34, 7],
 	[6, 2, 8, 4, 4, 4], [3, 2, 4, 6, 7, 3],
 	[2, 1, 2, 2, 3, 1], [17, 8, 20, 20, 25, 10],
 ]
@@ -127,4 +127,5 @@ func _test_production_data() -> void:
 		if definition.military:
 			var training: Dictionary = {&"swordsman": 6.0, &"archer": 8.0, &"knight": 10.0, &"catapult": 20.0, &"cannon": 20.0}
 			_check(definition.training_seconds == training[kind], str(kind) + " timed military production")
-	_check(BalanceCatalog.building(&"defense_tower").cost == 175 and BalanceCatalog.building(&"defense_tower").build_seconds == 20, "tower costs one-hundred-seventy-five gold and takes twenty seconds")
+	var tower := BalanceCatalog.building(&"defense_tower")
+	_check(tower.cost == 150 and tower.hp == 1000 and tower.build_seconds == 20, "tower costs one-hundred-fifty gold, has one thousand health and takes twenty seconds")

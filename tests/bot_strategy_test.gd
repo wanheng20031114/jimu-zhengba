@@ -124,15 +124,15 @@ func _defense_tower_budget_case() -> void:
 	for index in range(3):
 		var intruder: Node3D = host.add_unit("knight", 1, Vector3(-25, 0, index))
 		host.visibility[intruder.entity_id] = true
-	host.players[0].gold = 174
+	host.players[0].gold = 149
 	var bot: RefCounted = BOT.new(host, 0)
 	bot.tick(1.0)
-	_check(not host.commands.any(func(c: Dictionary) -> bool: return c.kind == "build" and c.building_type == "defense_tower"), "emergency tower cannot be built with only 174 gold")
-	_check(host.players[0].gold == 174 and host.total_spent == 0, "emergency tower saves all 175 gold instead of spending the shortfall on units")
-	host.players[0].gold = 175
+	_check(not host.commands.any(func(c: Dictionary) -> bool: return c.kind == "build" and c.building_type == "defense_tower"), "emergency tower cannot be built with only 149 gold")
+	_check(host.players[0].gold == 149 and host.total_spent == 0, "emergency tower saves all 150 gold instead of spending the shortfall on units")
+	host.players[0].gold = 150
 	bot.tick(1.0)
 	_check(host.commands.any(func(c: Dictionary) -> bool: return c.kind == "build" and c.building_type == "defense_tower")
-		and host.total_spent == 175 and host.players[0].gold == 0, "emergency tower is commissioned immediately when 175 gold is available")
+		and host.total_spent == 150 and host.players[0].gold == 0, "emergency tower is commissioned immediately when 150 gold is available")
 
 func _retreat_and_ally_case() -> void:
 	await _fresh()

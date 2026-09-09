@@ -1,10 +1,10 @@
 {
-  "build": "0.7.5",
+  "build": "0.7.6",
   "protocol": 4,
   "files": {
     "data/buildings/academy.tres": "f868bc59ee251b7885d2499e81db0b2135c752b063e841ec3a7d97003e69f45e",
     "data/buildings/barracks.tres": "4a13370285e021173dd8c8325b3c8a239a9c9f974f9682f2827ef71eccfd3c83",
-    "data/buildings/defense_tower.tres": "d3d83632ac2ecd9f3990a5ffa732329647b9106f8af317e310bb0825edd1a2c0",
+    "data/buildings/defense_tower.tres": "c05b75968e7bf2363a998b8c2b7e439dc60294a6a77f06797e19f2ee7e83fce3",
     "data/buildings/enemy_keep.tres": "f0b55c7393d5b68202119130c87065a9c67f0137613f4437ead95dc0a84a915e",
     "data/buildings/factory.tres": "f18f588bf650968bbfee22a04c10d07ea58288993951173cfeffee638a08c272",
     "data/buildings/headquarters.tres": "c07a151931b516da64b0e5a2f2193ee936b0f876485913bea698cd855c2d8d35",
@@ -18,7 +18,7 @@
     "data/units/catapult.tres": "e10e9e5c83dd489a536419363a3f47173d0fcd1f1bb547f0c250c90abfd09d60",
     "data/units/farmer.tres": "d33bcdfa6b7fb71aa253a333eaf80068750b6f61df5a3130bb1386858782dc7b",
     "data/units/knight.tres": "f7606384c5b1bdf520733877d47ff72896b697b8d55f10dd5e3b7ec4c4aaf843",
-    "data/units/swordsman.tres": "1eb3ada425ab63fb92fea7efec5ab6aa3f8a0feea8318c4912118892f17c1e91",
+    "data/units/swordsman.tres": "08e8ef080969d38c8fffc762b6b6778a1d53d0ffcb47b936a678575172557565",
     "data/upgrades/attack_1.tres": "b1135a7f5c80d1a65ab4df8501adc2759c7dee71afccba6d13cbeeebabca884c",
     "data/upgrades/attack_2.tres": "79f08f587246485cf3326364db7ffdd81fe69c2156d0796582bb07c5926f4e6a",
     "data/upgrades/attack_3.tres": "df1ae4da6efa9aa7756d01f49d10712abeb99840a9fda02cf82e1ce77a9f967b",
