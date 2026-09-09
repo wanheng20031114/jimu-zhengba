@@ -7,22 +7,22 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/environment/factory_earth.res" id="5_vub7a"]
 [ext_resource type="ArrayMesh" path="res://assets/models/environment/factory_fabric.res" id="6_s0ojr"]
 
-[node name="Factory" type="Node3D" unique_id=786356314]
+[node name="Factory" type="Node3D" unique_id=779383867]
 
-[node name="Stone" type="MeshInstance3D" parent="." unique_id=824416937]
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=524954154]
 mesh = ExtResource("1_j6rcy")
 
-[node name="Timber" type="MeshInstance3D" parent="." unique_id=1403920158]
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=2075344575]
 mesh = ExtResource("2_gn15r")
 
-[node name="Metal" type="MeshInstance3D" parent="." unique_id=428404219]
+[node name="Metal" type="MeshInstance3D" parent="." unique_id=647361227]
 mesh = ExtResource("3_ad5yl")
 
-[node name="Roof" type="MeshInstance3D" parent="." unique_id=1610502167]
+[node name="Roof" type="MeshInstance3D" parent="." unique_id=868735521]
 mesh = ExtResource("4_3hshu")
 
-[node name="Earth" type="MeshInstance3D" parent="." unique_id=1823356207]
+[node name="Earth" type="MeshInstance3D" parent="." unique_id=111692827]
 mesh = ExtResource("5_vub7a")
 
-[node name="Fabric" type="MeshInstance3D" parent="." unique_id=1944923476]
+[node name="Fabric" type="MeshInstance3D" parent="." unique_id=220529047]
 mesh = ExtResource("6_s0ojr")

@@ -23,11 +23,14 @@ func reset_effect() -> void:
 	_tweens.clear()
 	for particles: CPUParticles3D in [$Sparks, $Dust, $Debris]:
 		particles.emitting = false
-		particles.restart()
-		particles.emitting = false
+		# Restart emits a fresh burst even when emitting is disabled afterwards.
+		# Hide old particles; only the requested emitter is restarted below.
+		particles.hide()
 	$Sparks.direction = _spark_defaults.direction
 	$Sparks.initial_velocity_min = _spark_defaults.min
 	$Sparks.initial_velocity_max = _spark_defaults.max
+	$Sparks.amount = 8
+	$Dust.amount = 12
 	$Dust.scale = Vector3.ONE
 	$Debris.scale = Vector3.ONE
 	for visual: MeshInstance3D in [$Flash, $Ring, $Direction]:
@@ -43,12 +46,14 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 	match kind:
 		"hit", "arrow_hit", "wood_hit", "stone_chip":
 			$Sparks.amount = 7 if kind == "hit" else 3
+			$Sparks.show()
 			$Sparks.restart()
 			$Sparks.emitting = true
 			duration = 0.8
 		"dust":
 			$Dust.amount = 5
 			$Dust.scale = Vector3.ONE * 0.4
+			$Dust.show()
 			$Dust.restart()
 			$Dust.emitting = true
 			duration = 1.5
@@ -56,9 +61,12 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 			$Flash.show()
 			$Flash.scale = Vector3.ONE * 0.8
 			$Sparks.amount = 10
+			$Sparks.show()
 			$Sparks.restart()
 			$Sparks.emitting = true
 			$Dust.scale = Vector3.ONE * 0.55
+			$Dust.amount = 6
+			$Dust.show()
 			$Dust.restart()
 			$Dust.emitting = true
 			var flash: Tween = _new_tween()
@@ -68,15 +76,18 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 			var size: float = 2.5 if kind == "collapse" else 1.0
 			$Dust.scale = Vector3.ONE * size
 			$Dust.amount = 24 if kind == "collapse" else 16
+			$Dust.show()
 			$Dust.restart()
 			$Dust.emitting = true
 			$Debris.scale = Vector3.ONE * size
+			$Debris.show()
 			$Debris.restart()
 			$Debris.emitting = true
 			_show_ring(Color(0.69, 0.52, 0.31, 0.65), 2.8 * size, 0.7)
 			if kind == "explosion":
 				$Flash.show()
 				$Sparks.amount = 18
+				$Sparks.show()
 				$Sparks.restart()
 				$Sparks.emitting = true
 				var flash: Tween = _new_tween()
@@ -95,18 +106,20 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 			$Sparks.initial_velocity_min = 0.6
 			$Sparks.initial_velocity_max = 1.8
 			$Sparks.color = Color("e6dba5")
+			$Sparks.show()
 			$Sparks.restart()
 			$Sparks.emitting = true
 			duration = 1.1
 		"charge":
 			_show_ring(Color("eed6a0"), 2.2, 0.5)
 			$Sparks.amount = 14
+			$Sparks.show()
 			$Sparks.restart()
 			$Sparks.emitting = true
 			duration = 0.8
 		_:
-			$Dust.restart()
-			$Dust.emitting = true
+			push_error("Unknown battle effect: " + kind)
+			duration = 0.01
 	$Lifetime.start(duration)
 
 func _show_ring(color: Color, end_size: float, duration: float) -> void:

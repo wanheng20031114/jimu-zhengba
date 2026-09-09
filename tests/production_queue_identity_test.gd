@@ -107,7 +107,7 @@ func _run() -> void:
 	var legacy := snapshot.duplicate(true)
 	for item: Dictionary in legacy.production.training:
 		item.erase("job_id")
-	check(replication._valid_production(legacy), "existing_0_6_snapshot_without_job_ids_valid")
+	check(not replication._valid_production(legacy), "identityless_snapshot_rejected_by_current_protocol")
 	var invalid := snapshot.duplicate(true)
 	invalid.production.training[1].job_id = invalid.production.training[0].job_id
 	check(not replication._valid_production(invalid), "duplicate_job_ids_rejected")

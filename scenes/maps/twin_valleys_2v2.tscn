@@ -11,461 +11,735 @@
 [sub_resource type="BoxShape3D" id="Floor"]
 size = Vector3(128,1,112)
 
-[sub_resource type="BoxShape3D" id="Shape0"]
-size = Vector3(0.866931,2.826948,0.866931)
-
-[sub_resource type="BoxShape3D" id="Shape1"]
-size = Vector3(0.866931,2.826948,0.866931)
-
-[sub_resource type="BoxShape3D" id="Shape2"]
-size = Vector3(0.591153,2.533511,0.591153)
-
-[sub_resource type="BoxShape3D" id="Shape3"]
-size = Vector3(0.591153,2.533511,0.591153)
-
-[sub_resource type="BoxShape3D" id="Shape4"]
-size = Vector3(0.605096,2.593268,0.605096)
-
-[sub_resource type="BoxShape3D" id="Shape5"]
-size = Vector3(0.605096,2.593268,0.605096)
-
-[sub_resource type="BoxShape3D" id="Shape6"]
-size = Vector3(0.790777,2.578621,0.790777)
-
-[sub_resource type="BoxShape3D" id="Shape7"]
-size = Vector3(0.790777,2.578621,0.790777)
-
-[sub_resource type="BoxShape3D" id="Shape8"]
-size = Vector3(0.655168,2.807862,0.655168)
-
-[sub_resource type="BoxShape3D" id="Shape9"]
-size = Vector3(0.655168,2.807862,0.655168)
-
-[sub_resource type="BoxShape3D" id="Shape10"]
-size = Vector3(0.646701,2.771576,0.646701)
-
-[sub_resource type="BoxShape3D" id="Shape11"]
-size = Vector3(0.646701,2.771576,0.646701)
-
-[sub_resource type="BoxShape3D" id="Shape12"]
-size = Vector3(0.806506,2.629912,0.806506)
-
-[sub_resource type="BoxShape3D" id="Shape13"]
-size = Vector3(0.806506,2.629912,0.806506)
-
-[sub_resource type="BoxShape3D" id="Shape14"]
-size = Vector3(0.694443,2.976184,0.694443)
-
-[sub_resource type="BoxShape3D" id="Shape15"]
-size = Vector3(0.694443,2.976184,0.694443)
-
-[sub_resource type="BoxShape3D" id="Shape16"]
-size = Vector3(0.569962,2.442694,0.569962)
-
-[sub_resource type="BoxShape3D" id="Shape17"]
-size = Vector3(0.569962,2.442694,0.569962)
-
-[sub_resource type="BoxShape3D" id="Shape18"]
-size = Vector3(0.710466,3.044853,0.710466)
-
-[sub_resource type="BoxShape3D" id="Shape19"]
-size = Vector3(0.710466,3.044853,0.710466)
-
-[sub_resource type="BoxShape3D" id="Shape20"]
-size = Vector3(0.586994,2.515687,0.586994)
-
-[sub_resource type="BoxShape3D" id="Shape21"]
-size = Vector3(0.586994,2.515687,0.586994)
-
-[sub_resource type="BoxShape3D" id="Shape22"]
-size = Vector3(0.745578,2.431233,0.745578)
-
-[sub_resource type="BoxShape3D" id="Shape23"]
-size = Vector3(0.745578,2.431233,0.745578)
-
-[sub_resource type="BoxShape3D" id="Shape24"]
-size = Vector3(0.608349,2.607212,0.608349)
-
-[sub_resource type="BoxShape3D" id="Shape25"]
-size = Vector3(0.608349,2.607212,0.608349)
-
-[sub_resource type="BoxShape3D" id="Shape26"]
-size = Vector3(0.785192,2.560410,0.785192)
-
-[sub_resource type="BoxShape3D" id="Shape27"]
-size = Vector3(0.785192,2.560410,0.785192)
-
-[sub_resource type="BoxShape3D" id="Shape28"]
-size = Vector3(0.613481,2.629204,0.613481)
-
-[sub_resource type="BoxShape3D" id="Shape29"]
-size = Vector3(0.613481,2.629204,0.613481)
-
-[sub_resource type="BoxShape3D" id="Shape30"]
-size = Vector3(0.695227,2.979544,0.695227)
-
-[sub_resource type="BoxShape3D" id="Shape31"]
-size = Vector3(0.695227,2.979544,0.695227)
-
-[sub_resource type="BoxShape3D" id="Shape32"]
-size = Vector3(0.913044,2.977317,0.913044)
-
-[sub_resource type="BoxShape3D" id="Shape33"]
-size = Vector3(0.913044,2.977317,0.913044)
-
-[sub_resource type="BoxShape3D" id="Shape34"]
-size = Vector3(0.587957,2.519817,0.587957)
-
-[sub_resource type="BoxShape3D" id="Shape35"]
-size = Vector3(0.587957,2.519817,0.587957)
-
-[sub_resource type="BoxShape3D" id="Shape36"]
-size = Vector3(0.694525,2.976535,0.694525)
-
-[sub_resource type="BoxShape3D" id="Shape37"]
-size = Vector3(0.694525,2.976535,0.694525)
-
-[sub_resource type="BoxShape3D" id="Shape38"]
-size = Vector3(0.788966,2.572716,0.788966)
-
-[sub_resource type="BoxShape3D" id="Shape39"]
-size = Vector3(0.788966,2.572716,0.788966)
-
-[sub_resource type="BoxShape3D" id="Shape40"]
-size = Vector3(0.662338,2.838593,0.662338)
-
-[sub_resource type="BoxShape3D" id="Shape41"]
-size = Vector3(0.662338,2.838593,0.662338)
-
-[sub_resource type="BoxShape3D" id="Shape42"]
-size = Vector3(3.858038,2.953066,3.429367)
-
-[sub_resource type="BoxShape3D" id="Shape43"]
-size = Vector3(3.858038,2.953066,3.429367)
-
-[sub_resource type="BoxShape3D" id="Shape44"]
-size = Vector3(0.821529,2.678899,0.821529)
-
-[sub_resource type="BoxShape3D" id="Shape45"]
-size = Vector3(0.821529,2.678899,0.821529)
-
-[sub_resource type="BoxShape3D" id="Shape46"]
-size = Vector3(0.915435,2.985113,0.915435)
-
-[sub_resource type="BoxShape3D" id="Shape47"]
-size = Vector3(0.915435,2.985113,0.915435)
-
-[sub_resource type="BoxShape3D" id="Shape48"]
-size = Vector3(0.698146,2.992053,0.698146)
-
-[sub_resource type="BoxShape3D" id="Shape49"]
-size = Vector3(0.698146,2.992053,0.698146)
-
-[sub_resource type="BoxShape3D" id="Shape50"]
-size = Vector3(2.344760,1.803661,2.083229)
-
-[sub_resource type="BoxShape3D" id="Shape51"]
-size = Vector3(2.344760,1.803661,2.083229)
-
-[sub_resource type="BoxShape3D" id="Shape52"]
-size = Vector3(0.630125,2.700535,0.630125)
-
-[sub_resource type="BoxShape3D" id="Shape53"]
-size = Vector3(0.630125,2.700535,0.630125)
-
-[sub_resource type="BoxShape3D" id="Shape54"]
-size = Vector3(0.954400,3.112175,0.954400)
-
-[sub_resource type="BoxShape3D" id="Shape55"]
-size = Vector3(0.954400,3.112175,0.954400)
-
-[sub_resource type="BoxShape3D" id="Shape56"]
-size = Vector3(0.712009,3.051469,0.712009)
-
-[sub_resource type="BoxShape3D" id="Shape57"]
-size = Vector3(0.712009,3.051469,0.712009)
-
-[sub_resource type="BoxShape3D" id="Shape58"]
-size = Vector3(2.572587,1.978913,2.285645)
-
-[sub_resource type="BoxShape3D" id="Shape59"]
-size = Vector3(2.572587,1.978913,2.285645)
-
-[sub_resource type="BoxShape3D" id="Shape60"]
-size = Vector3(0.624742,2.677464,0.624742)
-
-[sub_resource type="BoxShape3D" id="Shape61"]
-size = Vector3(0.624742,2.677464,0.624742)
-
-[sub_resource type="BoxShape3D" id="Shape62"]
-size = Vector3(0.846287,2.759631,0.846287)
-
-[sub_resource type="BoxShape3D" id="Shape63"]
-size = Vector3(0.846287,2.759631,0.846287)
-
-[sub_resource type="BoxShape3D" id="Shape64"]
-size = Vector3(0.684793,2.934825,0.684793)
-
-[sub_resource type="BoxShape3D" id="Shape65"]
-size = Vector3(0.684793,2.934825,0.684793)
-
-[sub_resource type="BoxShape3D" id="Shape66"]
-size = Vector3(0.651917,2.793928,0.651917)
-
-[sub_resource type="BoxShape3D" id="Shape67"]
-size = Vector3(0.651917,2.793928,0.651917)
-
-[sub_resource type="BoxShape3D" id="Shape68"]
-size = Vector3(0.628486,2.693510,0.628486)
-
-[sub_resource type="BoxShape3D" id="Shape69"]
-size = Vector3(0.628486,2.693510,0.628486)
-
-[sub_resource type="BoxShape3D" id="Shape70"]
-size = Vector3(0.715471,3.066303,0.715471)
-
-[sub_resource type="BoxShape3D" id="Shape71"]
-size = Vector3(0.715471,3.066303,0.715471)
-
-[sub_resource type="BoxShape3D" id="Shape72"]
-size = Vector3(0.577760,2.476115,0.577760)
-
-[sub_resource type="BoxShape3D" id="Shape73"]
-size = Vector3(0.577760,2.476115,0.577760)
-
-[sub_resource type="BoxShape3D" id="Shape74"]
-size = Vector3(0.751071,2.449146,0.751071)
-
-[sub_resource type="BoxShape3D" id="Shape75"]
-size = Vector3(0.751071,2.449146,0.751071)
-
-[sub_resource type="BoxShape3D" id="Shape76"]
-size = Vector3(0.943608,3.076982,0.943608)
-
-[sub_resource type="BoxShape3D" id="Shape77"]
-size = Vector3(0.943608,3.076982,0.943608)
-
-[sub_resource type="BoxShape3D" id="Shape78"]
-size = Vector3(0.567463,2.431983,0.567463)
-
-[sub_resource type="BoxShape3D" id="Shape79"]
-size = Vector3(0.567463,2.431983,0.567463)
-
-[sub_resource type="BoxShape3D" id="Shape80"]
-size = Vector3(0.940192,3.065842,0.940192)
-
-[sub_resource type="BoxShape3D" id="Shape81"]
-size = Vector3(0.940192,3.065842,0.940192)
-
-[sub_resource type="BoxShape3D" id="Shape82"]
-size = Vector3(0.577126,2.473398,0.577126)
-
-[sub_resource type="BoxShape3D" id="Shape83"]
-size = Vector3(0.577126,2.473398,0.577126)
-
-[sub_resource type="BoxShape3D" id="Shape84"]
-size = Vector3(0.928283,3.027011,0.928283)
-
-[sub_resource type="BoxShape3D" id="Shape85"]
-size = Vector3(0.928283,3.027011,0.928283)
-
-[sub_resource type="BoxShape3D" id="Shape86"]
-size = Vector3(0.716714,3.071632,0.716714)
-
-[sub_resource type="BoxShape3D" id="Shape87"]
-size = Vector3(0.716714,3.071632,0.716714)
-
-[sub_resource type="BoxShape3D" id="Shape88"]
-size = Vector3(0.688759,2.951823,0.688759)
-
-[sub_resource type="BoxShape3D" id="Shape89"]
-size = Vector3(0.688759,2.951823,0.688759)
-
-[sub_resource type="BoxShape3D" id="Shape90"]
-size = Vector3(0.883338,2.880451,0.883338)
-
-[sub_resource type="BoxShape3D" id="Shape91"]
-size = Vector3(0.883338,2.880451,0.883338)
-
-[sub_resource type="BoxShape3D" id="Shape92"]
-size = Vector3(0.743105,2.423169,0.743105)
-
-[sub_resource type="BoxShape3D" id="Shape93"]
-size = Vector3(0.743105,2.423169,0.743105)
-
-[sub_resource type="BoxShape3D" id="Shape94"]
-size = Vector3(0.653754,2.801801,0.653754)
-
-[sub_resource type="BoxShape3D" id="Shape95"]
-size = Vector3(0.653754,2.801801,0.653754)
-
-[sub_resource type="BoxShape3D" id="Shape96"]
-size = Vector3(0.700011,3.000047,0.700011)
-
-[sub_resource type="BoxShape3D" id="Shape97"]
-size = Vector3(0.700011,3.000047,0.700011)
-
-[sub_resource type="BoxShape3D" id="Shape98"]
-size = Vector3(0.613479,2.629196,0.613479)
-
-[sub_resource type="BoxShape3D" id="Shape99"]
-size = Vector3(0.613479,2.629196,0.613479)
-
-[sub_resource type="BoxShape3D" id="Shape100"]
-size = Vector3(0.819273,2.671543,0.819273)
-
-[sub_resource type="BoxShape3D" id="Shape101"]
-size = Vector3(0.819273,2.671543,0.819273)
-
-[sub_resource type="BoxShape3D" id="Shape102"]
-size = Vector3(0.576042,2.468753,0.576042)
-
-[sub_resource type="BoxShape3D" id="Shape103"]
-size = Vector3(0.576042,2.468753,0.576042)
-
-[sub_resource type="BoxShape3D" id="Shape104"]
-size = Vector3(0.614593,2.633971,0.614593)
-
-[sub_resource type="BoxShape3D" id="Shape105"]
-size = Vector3(0.614593,2.633971,0.614593)
-
-[sub_resource type="BoxShape3D" id="Shape106"]
-size = Vector3(0.919215,2.997440,0.919215)
-
-[sub_resource type="BoxShape3D" id="Shape107"]
-size = Vector3(0.919215,2.997440,0.919215)
-
-[sub_resource type="BoxShape3D" id="Shape108"]
-size = Vector3(0.710678,3.045761,0.710678)
-
-[sub_resource type="BoxShape3D" id="Shape109"]
-size = Vector3(0.710678,3.045761,0.710678)
-
-[sub_resource type="BoxShape3D" id="Shape110"]
-size = Vector3(0.608239,2.606737,0.608239)
-
-[sub_resource type="BoxShape3D" id="Shape111"]
-size = Vector3(0.608239,2.606737,0.608239)
-
-[sub_resource type="BoxShape3D" id="Shape112"]
-size = Vector3(0.764484,2.492883,0.764484)
-
-[sub_resource type="BoxShape3D" id="Shape113"]
-size = Vector3(0.764484,2.492883,0.764484)
-
-[sub_resource type="BoxShape3D" id="Shape114"]
-size = Vector3(0.621132,2.661993,0.621132)
-
-[sub_resource type="BoxShape3D" id="Shape115"]
-size = Vector3(0.621132,2.661993,0.621132)
-
-[sub_resource type="BoxShape3D" id="Shape116"]
-size = Vector3(0.625901,2.682431,0.625901)
-
-[sub_resource type="BoxShape3D" id="Shape117"]
-size = Vector3(0.625901,2.682431,0.625901)
-
-[sub_resource type="BoxShape3D" id="Shape118"]
-size = Vector3(0.769383,2.508858,0.769383)
-
-[sub_resource type="BoxShape3D" id="Shape119"]
-size = Vector3(0.769383,2.508858,0.769383)
-
-[sub_resource type="BoxShape3D" id="Shape120"]
-size = Vector3(0.670890,2.875242,0.670890)
-
-[sub_resource type="BoxShape3D" id="Shape121"]
-size = Vector3(0.670890,2.875242,0.670890)
-
-[sub_resource type="BoxShape3D" id="Shape122"]
-size = Vector3(0.636589,2.728239,0.636589)
-
-[sub_resource type="BoxShape3D" id="Shape123"]
-size = Vector3(0.636589,2.728239,0.636589)
-
-[sub_resource type="BoxShape3D" id="Shape124"]
-size = Vector3(0.677454,2.903375,0.677454)
-
-[sub_resource type="BoxShape3D" id="Shape125"]
-size = Vector3(0.677454,2.903375,0.677454)
-
-[sub_resource type="BoxShape3D" id="Shape126"]
-size = Vector3(0.635301,2.722719,0.635301)
-
-[sub_resource type="BoxShape3D" id="Shape127"]
-size = Vector3(0.635301,2.722719,0.635301)
-
-[sub_resource type="BoxShape3D" id="Shape128"]
-size = Vector3(1.819922,1.399940,1.616931)
-
-[sub_resource type="BoxShape3D" id="Shape129"]
-size = Vector3(1.819922,1.399940,1.616931)
-
-[sub_resource type="BoxShape3D" id="Shape130"]
-size = Vector3(1.639865,1.261435,1.456957)
-
-[sub_resource type="BoxShape3D" id="Shape131"]
-size = Vector3(1.639865,1.261435,1.456957)
-
-[sub_resource type="BoxShape3D" id="Shape132"]
-size = Vector3(1.719199,1.322461,1.527442)
-
-[sub_resource type="BoxShape3D" id="Shape133"]
-size = Vector3(1.719199,1.322461,1.527442)
-
-[sub_resource type="BoxShape3D" id="Shape134"]
-size = Vector3(1.700844,1.308342,1.511135)
-
-[sub_resource type="BoxShape3D" id="Shape135"]
-size = Vector3(1.700844,1.308342,1.511135)
-
-[sub_resource type="BoxShape3D" id="Shape136"]
-size = Vector3(1.618667,1.245128,1.438123)
-
-[sub_resource type="BoxShape3D" id="Shape137"]
-size = Vector3(1.618667,1.245128,1.438123)
-
-[sub_resource type="BoxShape3D" id="Shape138"]
-size = Vector3(2.088670,1.606669,1.855703)
-
-[sub_resource type="BoxShape3D" id="Shape139"]
-size = Vector3(2.088670,1.606669,1.855703)
-
-[sub_resource type="BoxShape3D" id="Shape140"]
-size = Vector3(1.633862,1.256817,1.451624)
-
-[sub_resource type="BoxShape3D" id="Shape141"]
-size = Vector3(1.633862,1.256817,1.451624)
-
-[sub_resource type="BoxShape3D" id="Shape142"]
-size = Vector3(2.359391,1.814916,2.096228)
-
-[sub_resource type="BoxShape3D" id="Shape143"]
-size = Vector3(2.359391,1.814916,2.096228)
-
-[sub_resource type="BoxShape3D" id="Shape144"]
-size = Vector3(2.336412,1.797240,2.075812)
-
-[sub_resource type="BoxShape3D" id="Shape145"]
-size = Vector3(2.336412,1.797240,2.075812)
-
-[sub_resource type="BoxShape3D" id="Shape146"]
-size = Vector3(1.876883,1.443756,1.667538)
-
-[sub_resource type="BoxShape3D" id="Shape147"]
-size = Vector3(1.876883,1.443756,1.667538)
-
-[sub_resource type="BoxShape3D" id="Shape148"]
-size = Vector3(1.766566,1.358897,1.569526)
-
-[sub_resource type="BoxShape3D" id="Shape149"]
-size = Vector3(1.766566,1.358897,1.569526)
-
-[sub_resource type="BoxShape3D" id="Shape150"]
-size = Vector3(1.822066,1.401589,1.618836)
-
-[sub_resource type="BoxShape3D" id="Shape151"]
-size = Vector3(1.822066,1.401589,1.618836)
+[sub_resource type="CylinderShape3D" id="Shape0"]
+radius = 0.386350
+height = 3.298106
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape1"]
+radius = 0.386350
+height = 3.298106
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape2"]
+radius = 0.244906
+height = 4.644770
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape3"]
+radius = 0.244906
+height = 4.644770
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape4"]
+radius = 0.250683
+height = 4.754325
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape5"]
+radius = 0.250683
+height = 4.754325
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape6"]
+radius = 0.352412
+height = 3.008392
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape7"]
+radius = 0.352412
+height = 3.008392
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape8"]
+radius = 0.271427
+height = 5.147747
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape9"]
+radius = 0.271427
+height = 5.147747
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape10"]
+radius = 0.267919
+height = 5.081222
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape11"]
+radius = 0.267919
+height = 5.081222
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape12"]
+radius = 0.359421
+height = 3.068231
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape13"]
+radius = 0.359421
+height = 3.068231
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape14"]
+radius = 0.287698
+height = 5.456336
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape15"]
+radius = 0.287698
+height = 5.456336
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape16"]
+radius = 0.236127
+height = 4.478273
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape17"]
+radius = 0.236127
+height = 4.478273
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape18"]
+radius = 0.294336
+height = 5.582231
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape19"]
+radius = 0.294336
+height = 5.582231
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape20"]
+radius = 0.243183
+height = 4.612093
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape21"]
+radius = 0.243183
+height = 4.612093
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape22"]
+radius = 0.332268
+height = 2.836438
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape23"]
+radius = 0.332268
+height = 2.836438
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape24"]
+radius = 0.252030
+height = 4.779889
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape25"]
+radius = 0.252030
+height = 4.779889
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape26"]
+radius = 0.349923
+height = 2.987145
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape27"]
+radius = 0.349923
+height = 2.987145
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape28"]
+radius = 0.254156
+height = 4.820207
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape29"]
+radius = 0.254156
+height = 4.820207
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape30"]
+radius = 0.288023
+height = 5.462497
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape31"]
+radius = 0.288023
+height = 5.462497
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape32"]
+radius = 0.406900
+height = 3.473536
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape33"]
+radius = 0.406900
+height = 3.473536
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape34"]
+radius = 0.243582
+height = 4.619665
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape35"]
+radius = 0.243582
+height = 4.619665
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape36"]
+radius = 0.287732
+height = 5.456981
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape37"]
+radius = 0.287732
+height = 5.456981
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape38"]
+radius = 0.351605
+height = 3.001502
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape39"]
+radius = 0.351605
+height = 3.001502
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape40"]
+radius = 0.274397
+height = 5.204087
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape41"]
+radius = 0.274397
+height = 5.204087
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape42"]
+points = PackedVector3Array(0.251031, 2.490907, -0.073066, -0.478716, 0.023697, -0.916722, -0.513851, 2.751025, 0.028578, -0.844096, 2.314890, 0.635032, 0.031682, 2.427492, 0.537865, -1.098270, 2.563813, -0.548055, -0.157075, 2.226273, -0.524804, -0.547228, 0.848502, -1.056013, 0.638032, 1.850019, -0.470161, 0.248675, 0.291975, -1.017449, 0.157877, 1.475854, -0.983965, 0.458375, 1.531830, 0.898839, -1.694607, 1.748693, -0.167481, -1.648308, 0.000000, -0.177204, -1.124728, 0.288004, -0.706012, -1.393503, 1.460889, -0.897992, -1.668294, 1.807544, 0.578822, -1.812181, 0.772514, 0.220833, 1.355033, 1.422620, 0.214002, 1.068154, 0.035632, 0.920978, 1.019706, 1.026449, 0.985726, 0.819960, 0.020722, -0.535715, 1.642751, 0.537956, -0.302798, 1.824046, 0.548847, 0.632738, 1.203762, 1.280583, 0.638069, 1.097732, 0.505215, 1.258912, 1.108866, 1.477108, -0.245809, 1.700230, 0.073602, -0.125435, 1.274236, 0.199803, -0.450531, 1.288762, 0.887340, -0.579470, 1.614539, 1.020709, 0.423898, 1.695316, 0.073307, 0.428205, 1.515068, 0.207560, 0.904656, 1.425876, 0.817600, 0.847908, 1.837252, 0.549640, 0.140776, 0.246221, 0.000000, 0.165747, 0.210302, 0.000000, 0.723208, -0.626895, 0.005428, 1.328238, -0.643397, 0.575402, 1.399225, -0.866585, 0.000000, 1.317666, -1.215630, 0.517113, 1.268280, -1.229030, 0.000000, 1.294527, -0.961824, 0.042546, 1.501140, -1.375887, 0.218041, 1.163123)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape43"]
+points = PackedVector3Array(0.251031, 2.490907, -0.073066, -0.478716, 0.023697, -0.916722, -0.513851, 2.751025, 0.028578, -0.844096, 2.314890, 0.635032, 0.031682, 2.427492, 0.537865, -1.098270, 2.563813, -0.548055, -0.157075, 2.226273, -0.524804, -0.547228, 0.848502, -1.056013, 0.638032, 1.850019, -0.470161, 0.248675, 0.291975, -1.017449, 0.157877, 1.475854, -0.983965, 0.458375, 1.531830, 0.898839, -1.694607, 1.748693, -0.167481, -1.648308, 0.000000, -0.177204, -1.124728, 0.288004, -0.706012, -1.393503, 1.460889, -0.897992, -1.668294, 1.807544, 0.578822, -1.812181, 0.772514, 0.220833, 1.355033, 1.422620, 0.214002, 1.068154, 0.035632, 0.920978, 1.019706, 1.026449, 0.985726, 0.819960, 0.020722, -0.535715, 1.642751, 0.537956, -0.302798, 1.824046, 0.548847, 0.632738, 1.203762, 1.280583, 0.638069, 1.097732, 0.505215, 1.258912, 1.108866, 1.477108, -0.245809, 1.700230, 0.073602, -0.125435, 1.274236, 0.199803, -0.450531, 1.288762, 0.887340, -0.579470, 1.614539, 1.020709, 0.423898, 1.695316, 0.073307, 0.428205, 1.515068, 0.207560, 0.904656, 1.425876, 0.817600, 0.847908, 1.837252, 0.549640, 0.140776, 0.246221, 0.000000, 0.165747, 0.210302, 0.000000, 0.723208, -0.626895, 0.005428, 1.328238, -0.643397, 0.575402, 1.399225, -0.866585, 0.000000, 1.317666, -1.215630, 0.517113, 1.268280, -1.229030, 0.000000, 1.294527, -0.961824, 0.042546, 1.501140, -1.375887, 0.218041, 1.163123)
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape44"]
+radius = 0.366116
+height = 3.125382
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape45"]
+radius = 0.366116
+height = 3.125382
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape46"]
+radius = 0.407965
+height = 3.482632
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape47"]
+radius = 0.407965
+height = 3.482632
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape48"]
+radius = 0.289232
+height = 5.485431
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape49"]
+radius = 0.289232
+height = 5.485431
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape50"]
+points = PackedVector3Array(0.152097, 1.509215, -0.044270, -0.290049, 0.014358, -0.555433, -0.311336, 1.666817, 0.017315, -0.511429, 1.402568, 0.384760, 0.019195, 1.470792, 0.325886, -0.665430, 1.553388, -0.332060, -0.095170, 1.348876, -0.317973, -0.331560, 0.514099, -0.639828, 0.386577, 1.120907, -0.284866, 0.150670, 0.176905, -0.616462, 0.095656, 0.894205, -0.596174, 0.277725, 0.928120, 0.544597, -1.026745, 1.059515, -0.101475, -0.998693, 0.000000, -0.107367, -0.681461, 0.174499, -0.427765, -0.844309, 0.885138, -0.544084, -1.010802, 1.095172, 0.350702, -1.097982, 0.468058, 0.133800, 0.821000, 0.861951, 0.129662, 0.647183, 0.021589, 0.558011, 0.617829, 0.621915, 0.597241, 0.496805, 0.012555, -0.324584, 0.995326, 0.325942, -0.183462, 1.105170, 0.332541, 0.383370, 0.729347, 0.775892, 0.386599, 0.665104, 0.306105, 0.762762, 0.671850, 0.894964, -0.148934, 1.030152, 0.044595, -0.076000, 0.772046, 0.121058, -0.272972, 0.780847, 0.537630, -0.351094, 0.978233, 0.618438, 0.256836, 1.027174, 0.044416, 0.259445, 0.917964, 0.125758, 0.548122, 0.863924, 0.495376, 0.513739, 1.113172, 0.333022, 0.085295, 0.149183, 0.000000, 0.100424, 0.127420, 0.000000, 0.438184, -0.379829, 0.003289, 0.804766, -0.389827, 0.348631, 0.847776, -0.525055, 0.000000, 0.798360, -0.736538, 0.313314, 0.768438, -0.744657, 0.000000, 0.784340, -0.582759, 0.025778, 0.909526, -0.833635, 0.132109, 0.704724)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape51"]
+points = PackedVector3Array(0.152097, 1.509215, -0.044270, -0.290049, 0.014358, -0.555433, -0.311336, 1.666817, 0.017315, -0.511429, 1.402568, 0.384760, 0.019195, 1.470792, 0.325886, -0.665430, 1.553388, -0.332060, -0.095170, 1.348876, -0.317973, -0.331560, 0.514099, -0.639828, 0.386577, 1.120907, -0.284866, 0.150670, 0.176905, -0.616462, 0.095656, 0.894205, -0.596174, 0.277725, 0.928120, 0.544597, -1.026745, 1.059515, -0.101475, -0.998693, 0.000000, -0.107367, -0.681461, 0.174499, -0.427765, -0.844309, 0.885138, -0.544084, -1.010802, 1.095172, 0.350702, -1.097982, 0.468058, 0.133800, 0.821000, 0.861951, 0.129662, 0.647183, 0.021589, 0.558011, 0.617829, 0.621915, 0.597241, 0.496805, 0.012555, -0.324584, 0.995326, 0.325942, -0.183462, 1.105170, 0.332541, 0.383370, 0.729347, 0.775892, 0.386599, 0.665104, 0.306105, 0.762762, 0.671850, 0.894964, -0.148934, 1.030152, 0.044595, -0.076000, 0.772046, 0.121058, -0.272972, 0.780847, 0.537630, -0.351094, 0.978233, 0.618438, 0.256836, 1.027174, 0.044416, 0.259445, 0.917964, 0.125758, 0.548122, 0.863924, 0.495376, 0.513739, 1.113172, 0.333022, 0.085295, 0.149183, 0.000000, 0.100424, 0.127420, 0.000000, 0.438184, -0.379829, 0.003289, 0.804766, -0.389827, 0.348631, 0.847776, -0.525055, 0.000000, 0.798360, -0.736538, 0.313314, 0.768438, -0.744657, 0.000000, 0.784340, -0.582759, 0.025778, 0.909526, -0.833635, 0.132109, 0.704724)
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape52"]
+radius = 0.261052
+height = 4.950980
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape53"]
+radius = 0.261052
+height = 4.950980
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape54"]
+radius = 0.425331
+height = 3.630871
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape55"]
+radius = 0.425331
+height = 3.630871
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape56"]
+radius = 0.294975
+height = 5.594360
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape57"]
+radius = 0.294975
+height = 5.594360
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape58"]
+points = PackedVector3Array(0.166876, 1.655857, -0.048571, -0.318231, 0.015753, -0.609401, -0.341587, 1.828773, 0.018998, -0.561122, 1.538847, 0.422145, 0.021061, 1.613701, 0.357551, -0.730086, 1.704322, -0.364325, -0.104417, 1.479939, -0.348869, -0.363776, 0.564052, -0.701997, 0.424138, 1.229819, -0.312545, 0.165309, 0.194094, -0.676360, 0.104951, 0.981090, -0.654101, 0.304710, 1.018300, 0.597513, -1.126508, 1.162462, -0.111335, -1.095730, 0.000000, -0.117799, -0.747675, 0.191454, -0.469329, -0.926346, 0.971142, -0.596950, -1.109016, 1.201584, 0.384778, -1.204666, 0.513537, 0.146801, 0.900773, 0.945702, 0.142260, 0.710067, 0.023687, 0.612230, 0.677860, 0.682343, 0.655272, 0.545077, 0.013775, -0.356122, 1.092036, 0.357612, -0.201288, 1.212553, 0.364852, 0.420620, 0.800214, 0.851281, 0.424163, 0.729728, 0.335847, 0.836875, 0.737130, 0.981923, -0.163405, 1.130246, 0.048928, -0.083384, 0.847062, 0.132821, -0.299496, 0.856718, 0.589868, -0.385208, 1.073282, 0.678528, 0.281791, 1.126979, 0.048732, 0.284654, 1.007158, 0.137977, 0.601380, 0.947867, 0.543508, 0.563656, 1.221333, 0.365380, 0.093583, 0.163678, 0.000000, 0.110182, 0.139800, 0.000000, 0.480760, -0.416735, 0.003609, 0.882960, -0.427704, 0.382505, 0.930150, -0.576071, 0.000000, 0.875932, -0.808103, 0.343757, 0.843103, -0.817011, 0.000000, 0.860550, -0.639383, 0.028283, 0.997900, -0.914635, 0.144945, 0.773198)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape59"]
+points = PackedVector3Array(0.166876, 1.655857, -0.048571, -0.318231, 0.015753, -0.609401, -0.341587, 1.828773, 0.018998, -0.561122, 1.538847, 0.422145, 0.021061, 1.613701, 0.357551, -0.730086, 1.704322, -0.364325, -0.104417, 1.479939, -0.348869, -0.363776, 0.564052, -0.701997, 0.424138, 1.229819, -0.312545, 0.165309, 0.194094, -0.676360, 0.104951, 0.981090, -0.654101, 0.304710, 1.018300, 0.597513, -1.126508, 1.162462, -0.111335, -1.095730, 0.000000, -0.117799, -0.747675, 0.191454, -0.469329, -0.926346, 0.971142, -0.596950, -1.109016, 1.201584, 0.384778, -1.204666, 0.513537, 0.146801, 0.900773, 0.945702, 0.142260, 0.710067, 0.023687, 0.612230, 0.677860, 0.682343, 0.655272, 0.545077, 0.013775, -0.356122, 1.092036, 0.357612, -0.201288, 1.212553, 0.364852, 0.420620, 0.800214, 0.851281, 0.424163, 0.729728, 0.335847, 0.836875, 0.737130, 0.981923, -0.163405, 1.130246, 0.048928, -0.083384, 0.847062, 0.132821, -0.299496, 0.856718, 0.589868, -0.385208, 1.073282, 0.678528, 0.281791, 1.126979, 0.048732, 0.284654, 1.007158, 0.137977, 0.601380, 0.947867, 0.543508, 0.563656, 1.221333, 0.365380, 0.093583, 0.163678, 0.000000, 0.110182, 0.139800, 0.000000, 0.480760, -0.416735, 0.003609, 0.882960, -0.427704, 0.382505, 0.930150, -0.576071, 0.000000, 0.875932, -0.808103, 0.343757, 0.843103, -0.817011, 0.000000, 0.860550, -0.639383, 0.028283, 0.997900, -0.914635, 0.144945, 0.773198)
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape60"]
+radius = 0.258822
+height = 4.908684
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape61"]
+radius = 0.258822
+height = 4.908684
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape62"]
+radius = 0.377150
+height = 3.219569
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape63"]
+radius = 0.377150
+height = 3.219569
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape64"]
+radius = 0.283700
+height = 5.380513
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape65"]
+radius = 0.283700
+height = 5.380513
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape66"]
+radius = 0.270080
+height = 5.122202
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape67"]
+radius = 0.270080
+height = 5.122202
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape68"]
+radius = 0.260373
+height = 4.938101
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape69"]
+radius = 0.260373
+height = 4.938101
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape70"]
+radius = 0.296409
+height = 5.621555
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape71"]
+radius = 0.296409
+height = 5.621555
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape72"]
+radius = 0.239358
+height = 4.539545
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape73"]
+radius = 0.239358
+height = 4.539545
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape74"]
+radius = 0.334717
+height = 2.857337
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape75"]
+radius = 0.334717
+height = 2.857337
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape76"]
+radius = 0.420521
+height = 3.589812
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape77"]
+radius = 0.420521
+height = 3.589812
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape78"]
+radius = 0.235092
+height = 4.458636
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape79"]
+radius = 0.235092
+height = 4.458636
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape80"]
+radius = 0.418998
+height = 3.576816
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape81"]
+radius = 0.418998
+height = 3.576816
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape82"]
+radius = 0.239095
+height = 4.534563
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape83"]
+radius = 0.239095
+height = 4.534563
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape84"]
+radius = 0.413691
+height = 3.531512
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape85"]
+radius = 0.413691
+height = 3.531512
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape86"]
+radius = 0.296924
+height = 5.631326
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape87"]
+radius = 0.296924
+height = 5.631326
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape88"]
+radius = 0.285343
+height = 5.411675
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape89"]
+radius = 0.285343
+height = 5.411675
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape90"]
+radius = 0.393662
+height = 3.360526
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape91"]
+radius = 0.393662
+height = 3.360526
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape92"]
+radius = 0.331166
+height = 2.827031
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape93"]
+radius = 0.331166
+height = 2.827031
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape94"]
+radius = 0.270841
+height = 5.136635
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape95"]
+radius = 0.270841
+height = 5.136635
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape96"]
+radius = 0.290005
+height = 5.500086
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape97"]
+radius = 0.290005
+height = 5.500086
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape98"]
+radius = 0.254156
+height = 4.820192
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape99"]
+radius = 0.254156
+height = 4.820192
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape100"]
+radius = 0.365111
+height = 3.116800
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape101"]
+radius = 0.365111
+height = 3.116800
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape102"]
+radius = 0.238646
+height = 4.526047
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape103"]
+radius = 0.238646
+height = 4.526047
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape104"]
+radius = 0.254617
+height = 4.828947
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape105"]
+radius = 0.254617
+height = 4.828947
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape106"]
+radius = 0.409650
+height = 3.497014
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape107"]
+radius = 0.409650
+height = 3.497014
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape108"]
+radius = 0.294424
+height = 5.583895
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape109"]
+radius = 0.294424
+height = 5.583895
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape110"]
+radius = 0.251985
+height = 4.779018
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape111"]
+radius = 0.251985
+height = 4.779018
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape112"]
+radius = 0.340694
+height = 2.908364
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape113"]
+radius = 0.340694
+height = 2.908364
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape114"]
+radius = 0.257326
+height = 4.880321
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape115"]
+radius = 0.257326
+height = 4.880321
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape116"]
+radius = 0.259302
+height = 4.917791
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape117"]
+radius = 0.259302
+height = 4.917791
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape118"]
+radius = 0.342877
+height = 2.927001
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape119"]
+radius = 0.342877
+height = 2.927001
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape120"]
+radius = 0.277940
+height = 5.271277
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape121"]
+radius = 0.277940
+height = 5.271277
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape122"]
+radius = 0.263730
+height = 5.001772
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape123"]
+radius = 0.263730
+height = 5.001772
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape124"]
+radius = 0.280660
+height = 5.322855
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape125"]
+radius = 0.280660
+height = 5.322855
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape126"]
+radius = 0.263196
+height = 4.991651
+margin = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape127"]
+radius = 0.263196
+height = 4.991651
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape128"]
+points = PackedVector3Array(0.118053, 1.171401, -0.034361, -0.225126, 0.011144, -0.431108, -0.241649, 1.293727, 0.013439, -0.396954, 1.088625, 0.298637, 0.014899, 1.141578, 0.252942, -0.516484, 1.205686, -0.257734, -0.073868, 1.046951, -0.246800, -0.257345, 0.399026, -0.496613, 0.300048, 0.870009, -0.221103, 0.116945, 0.137308, -0.478476, 0.074245, 0.694051, -0.462730, 0.215561, 0.720375, 0.422698, -0.796924, 0.822359, -0.078761, -0.775151, 0.000000, -0.083334, -0.528927, 0.135440, -0.332017, -0.655324, 0.687014, -0.422300, -0.784549, 0.850035, 0.272203, -0.852216, 0.363291, 0.103851, 0.637232, 0.669017, 0.100639, 0.502322, 0.016757, 0.433109, 0.479538, 0.482709, 0.463558, 0.385603, 0.009745, -0.251931, 0.772538, 0.252985, -0.142397, 0.857795, 0.258107, 0.297559, 0.566094, 0.602221, 0.300065, 0.516231, 0.237588, 0.592030, 0.521467, 0.694640, -0.115597, 0.799569, 0.034613, -0.058989, 0.599236, 0.093961, -0.211872, 0.606067, 0.417290, -0.272507, 0.759271, 0.480010, 0.199347, 0.797257, 0.034474, 0.201372, 0.712492, 0.097609, 0.425433, 0.670548, 0.384494, 0.398746, 0.864006, 0.258480, 0.066203, 0.115790, 0.000000, 0.077946, 0.098899, 0.000000, 0.340104, -0.294811, 0.002553, 0.624632, -0.302570, 0.270595, 0.658014, -0.407530, 0.000000, 0.619660, -0.571675, 0.243184, 0.596435, -0.577977, 0.000000, 0.608778, -0.452318, 0.020008, 0.705943, -0.647039, 0.102539, 0.546982)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape129"]
+points = PackedVector3Array(0.118053, 1.171401, -0.034361, -0.225126, 0.011144, -0.431108, -0.241649, 1.293727, 0.013439, -0.396954, 1.088625, 0.298637, 0.014899, 1.141578, 0.252942, -0.516484, 1.205686, -0.257734, -0.073868, 1.046951, -0.246800, -0.257345, 0.399026, -0.496613, 0.300048, 0.870009, -0.221103, 0.116945, 0.137308, -0.478476, 0.074245, 0.694051, -0.462730, 0.215561, 0.720375, 0.422698, -0.796924, 0.822359, -0.078761, -0.775151, 0.000000, -0.083334, -0.528927, 0.135440, -0.332017, -0.655324, 0.687014, -0.422300, -0.784549, 0.850035, 0.272203, -0.852216, 0.363291, 0.103851, 0.637232, 0.669017, 0.100639, 0.502322, 0.016757, 0.433109, 0.479538, 0.482709, 0.463558, 0.385603, 0.009745, -0.251931, 0.772538, 0.252985, -0.142397, 0.857795, 0.258107, 0.297559, 0.566094, 0.602221, 0.300065, 0.516231, 0.237588, 0.592030, 0.521467, 0.694640, -0.115597, 0.799569, 0.034613, -0.058989, 0.599236, 0.093961, -0.211872, 0.606067, 0.417290, -0.272507, 0.759271, 0.480010, 0.199347, 0.797257, 0.034474, 0.201372, 0.712492, 0.097609, 0.425433, 0.670548, 0.384494, 0.398746, 0.864006, 0.258480, 0.066203, 0.115790, 0.000000, 0.077946, 0.098899, 0.000000, 0.340104, -0.294811, 0.002553, 0.624632, -0.302570, 0.270595, 0.658014, -0.407530, 0.000000, 0.619660, -0.571675, 0.243184, 0.596435, -0.577977, 0.000000, 0.608778, -0.452318, 0.020008, 0.705943, -0.647039, 0.102539, 0.546982)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape130"]
+points = PackedVector3Array(0.106373, 1.055507, -0.030961, -0.202853, 0.010042, -0.388456, -0.217741, 1.165730, 0.012110, -0.357680, 0.980920, 0.269091, 0.013425, 1.028635, 0.227917, -0.465385, 1.086400, -0.232235, -0.066560, 0.943370, -0.222382, -0.231885, 0.359548, -0.447480, 0.270362, 0.783934, -0.199228, 0.105375, 0.123723, -0.431138, 0.066900, 0.625384, -0.416949, 0.194234, 0.649103, 0.380878, -0.718079, 0.740998, -0.070969, -0.698460, 0.000000, -0.075089, -0.476597, 0.122040, -0.299168, -0.590488, 0.619043, -0.380519, -0.706929, 0.765936, 0.245272, -0.767900, 0.327348, 0.093576, 0.574187, 0.602826, 0.090682, 0.452624, 0.015099, 0.390259, 0.432094, 0.434952, 0.417695, 0.347453, 0.008781, -0.227006, 0.696106, 0.227956, -0.128309, 0.772928, 0.232571, 0.268119, 0.510087, 0.542639, 0.270378, 0.465157, 0.214082, 0.533456, 0.469875, 0.625915, -0.104160, 0.720462, 0.031188, -0.053152, 0.539950, 0.084665, -0.190910, 0.546105, 0.376005, -0.245547, 0.684151, 0.432520, 0.179625, 0.718380, 0.031063, 0.181449, 0.642001, 0.087952, 0.383343, 0.604207, 0.346453, 0.359296, 0.778524, 0.232907, 0.059653, 0.104335, 0.000000, 0.070234, 0.089114, 0.000000, 0.306455, -0.265643, 0.002300, 0.562833, -0.272635, 0.243823, 0.592913, -0.367210, 0.000000, 0.558353, -0.515116, 0.219124, 0.537426, -0.520794, 0.000000, 0.548548, -0.407567, 0.018028, 0.636099, -0.583023, 0.092394, 0.492866)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape131"]
+points = PackedVector3Array(0.106373, 1.055507, -0.030961, -0.202853, 0.010042, -0.388456, -0.217741, 1.165730, 0.012110, -0.357680, 0.980920, 0.269091, 0.013425, 1.028635, 0.227917, -0.465385, 1.086400, -0.232235, -0.066560, 0.943370, -0.222382, -0.231885, 0.359548, -0.447480, 0.270362, 0.783934, -0.199228, 0.105375, 0.123723, -0.431138, 0.066900, 0.625384, -0.416949, 0.194234, 0.649103, 0.380878, -0.718079, 0.740998, -0.070969, -0.698460, 0.000000, -0.075089, -0.476597, 0.122040, -0.299168, -0.590488, 0.619043, -0.380519, -0.706929, 0.765936, 0.245272, -0.767900, 0.327348, 0.093576, 0.574187, 0.602826, 0.090682, 0.452624, 0.015099, 0.390259, 0.432094, 0.434952, 0.417695, 0.347453, 0.008781, -0.227006, 0.696106, 0.227956, -0.128309, 0.772928, 0.232571, 0.268119, 0.510087, 0.542639, 0.270378, 0.465157, 0.214082, 0.533456, 0.469875, 0.625915, -0.104160, 0.720462, 0.031188, -0.053152, 0.539950, 0.084665, -0.190910, 0.546105, 0.376005, -0.245547, 0.684151, 0.432520, 0.179625, 0.718380, 0.031063, 0.181449, 0.642001, 0.087952, 0.383343, 0.604207, 0.346453, 0.359296, 0.778524, 0.232907, 0.059653, 0.104335, 0.000000, 0.070234, 0.089114, 0.000000, 0.306455, -0.265643, 0.002300, 0.562833, -0.272635, 0.243823, 0.592913, -0.367210, 0.000000, 0.558353, -0.515116, 0.219124, 0.537426, -0.520794, 0.000000, 0.548548, -0.407567, 0.018028, 0.636099, -0.583023, 0.092394, 0.492866)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape132"]
+points = PackedVector3Array(0.111519, 1.106570, -0.032459, -0.212666, 0.010527, -0.407248, -0.228275, 1.222126, 0.012696, -0.374984, 1.028375, 0.282109, 0.014074, 1.078398, 0.238943, -0.487899, 1.138958, -0.243470, -0.069780, 0.989008, -0.233141, -0.243103, 0.376942, -0.469128, 0.283442, 0.821859, -0.208866, 0.110472, 0.129708, -0.451995, 0.070136, 0.655639, -0.437120, 0.203631, 0.680506, 0.399304, -0.752819, 0.776846, -0.074402, -0.732250, 0.000000, -0.078722, -0.499653, 0.127944, -0.313641, -0.619055, 0.648991, -0.398928, -0.741129, 0.802990, 0.257138, -0.805050, 0.343184, 0.098103, 0.601965, 0.631990, 0.095069, 0.474521, 0.015829, 0.409139, 0.452998, 0.455994, 0.437902, 0.364262, 0.009206, -0.237988, 0.729782, 0.238984, -0.134516, 0.810321, 0.243822, 0.281090, 0.534764, 0.568891, 0.283458, 0.487660, 0.224439, 0.559264, 0.492607, 0.656196, -0.109200, 0.755317, 0.032697, -0.055724, 0.566071, 0.088761, -0.200146, 0.572524, 0.394195, -0.257426, 0.717249, 0.453444, 0.188314, 0.753133, 0.032566, 0.190227, 0.673060, 0.092207, 0.401888, 0.633437, 0.363214, 0.376678, 0.816188, 0.244175, 0.062539, 0.109382, 0.000000, 0.073632, 0.093425, 0.000000, 0.321281, -0.278494, 0.002412, 0.590061, -0.285825, 0.255619, 0.621597, -0.384975, 0.000000, 0.585365, -0.540036, 0.229725, 0.563426, -0.545989, 0.000000, 0.575085, -0.427284, 0.018901, 0.666873, -0.611229, 0.096864, 0.516710)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape133"]
+points = PackedVector3Array(0.111519, 1.106570, -0.032459, -0.212666, 0.010527, -0.407248, -0.228275, 1.222126, 0.012696, -0.374984, 1.028375, 0.282109, 0.014074, 1.078398, 0.238943, -0.487899, 1.138958, -0.243470, -0.069780, 0.989008, -0.233141, -0.243103, 0.376942, -0.469128, 0.283442, 0.821859, -0.208866, 0.110472, 0.129708, -0.451995, 0.070136, 0.655639, -0.437120, 0.203631, 0.680506, 0.399304, -0.752819, 0.776846, -0.074402, -0.732250, 0.000000, -0.078722, -0.499653, 0.127944, -0.313641, -0.619055, 0.648991, -0.398928, -0.741129, 0.802990, 0.257138, -0.805050, 0.343184, 0.098103, 0.601965, 0.631990, 0.095069, 0.474521, 0.015829, 0.409139, 0.452998, 0.455994, 0.437902, 0.364262, 0.009206, -0.237988, 0.729782, 0.238984, -0.134516, 0.810321, 0.243822, 0.281090, 0.534764, 0.568891, 0.283458, 0.487660, 0.224439, 0.559264, 0.492607, 0.656196, -0.109200, 0.755317, 0.032697, -0.055724, 0.566071, 0.088761, -0.200146, 0.572524, 0.394195, -0.257426, 0.717249, 0.453444, 0.188314, 0.753133, 0.032566, 0.190227, 0.673060, 0.092207, 0.401888, 0.633437, 0.363214, 0.376678, 0.816188, 0.244175, 0.062539, 0.109382, 0.000000, 0.073632, 0.093425, 0.000000, 0.321281, -0.278494, 0.002412, 0.590061, -0.285825, 0.255619, 0.621597, -0.384975, 0.000000, 0.585365, -0.540036, 0.229725, 0.563426, -0.545989, 0.000000, 0.575085, -0.427284, 0.018901, 0.666873, -0.611229, 0.096864, 0.516710)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape134"]
+points = PackedVector3Array(0.110329, 1.094756, -0.032113, -0.210396, 0.010415, -0.402901, -0.225837, 1.209078, 0.012560, -0.370981, 1.017396, 0.279097, 0.013924, 1.066885, 0.236392, -0.482690, 1.126798, -0.240870, -0.069035, 0.978449, -0.230651, -0.240507, 0.372918, -0.464119, 0.280416, 0.813085, -0.206636, 0.109293, 0.128323, -0.447170, 0.069387, 0.648639, -0.432453, 0.201457, 0.673241, 0.395041, -0.744781, 0.768552, -0.073608, -0.724433, 0.000000, -0.077882, -0.494319, 0.126578, -0.310293, -0.612446, 0.642062, -0.394668, -0.733216, 0.794417, 0.254393, -0.796455, 0.339521, 0.097056, 0.595538, 0.625243, 0.094054, 0.469455, 0.015660, 0.404771, 0.448161, 0.451125, 0.433227, 0.360373, 0.009107, -0.235447, 0.721991, 0.236432, -0.133080, 0.801669, 0.241219, 0.278089, 0.529055, 0.562817, 0.280432, 0.482454, 0.222043, 0.553293, 0.487347, 0.649190, -0.108034, 0.747253, 0.032348, -0.055129, 0.560028, 0.087813, -0.198009, 0.566412, 0.389987, -0.254677, 0.709592, 0.448603, 0.186304, 0.745093, 0.032219, 0.188196, 0.665874, 0.091222, 0.397597, 0.626674, 0.359336, 0.372656, 0.807474, 0.241568, 0.061871, 0.108214, 0.000000, 0.072846, 0.092428, 0.000000, 0.317851, -0.275521, 0.002386, 0.583762, -0.282773, 0.252890, 0.614961, -0.380865, 0.000000, 0.579115, -0.534271, 0.227272, 0.557411, -0.540160, 0.000000, 0.568945, -0.422723, 0.018699, 0.659753, -0.604703, 0.095829, 0.511193)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape135"]
+points = PackedVector3Array(0.110329, 1.094756, -0.032113, -0.210396, 0.010415, -0.402901, -0.225837, 1.209078, 0.012560, -0.370981, 1.017396, 0.279097, 0.013924, 1.066885, 0.236392, -0.482690, 1.126798, -0.240870, -0.069035, 0.978449, -0.230651, -0.240507, 0.372918, -0.464119, 0.280416, 0.813085, -0.206636, 0.109293, 0.128323, -0.447170, 0.069387, 0.648639, -0.432453, 0.201457, 0.673241, 0.395041, -0.744781, 0.768552, -0.073608, -0.724433, 0.000000, -0.077882, -0.494319, 0.126578, -0.310293, -0.612446, 0.642062, -0.394668, -0.733216, 0.794417, 0.254393, -0.796455, 0.339521, 0.097056, 0.595538, 0.625243, 0.094054, 0.469455, 0.015660, 0.404771, 0.448161, 0.451125, 0.433227, 0.360373, 0.009107, -0.235447, 0.721991, 0.236432, -0.133080, 0.801669, 0.241219, 0.278089, 0.529055, 0.562817, 0.280432, 0.482454, 0.222043, 0.553293, 0.487347, 0.649190, -0.108034, 0.747253, 0.032348, -0.055129, 0.560028, 0.087813, -0.198009, 0.566412, 0.389987, -0.254677, 0.709592, 0.448603, 0.186304, 0.745093, 0.032219, 0.188196, 0.665874, 0.091222, 0.397597, 0.626674, 0.359336, 0.372656, 0.807474, 0.241568, 0.061871, 0.108214, 0.000000, 0.072846, 0.092428, 0.000000, 0.317851, -0.275521, 0.002386, 0.583762, -0.282773, 0.252890, 0.614961, -0.380865, 0.000000, 0.579115, -0.534271, 0.227272, 0.557411, -0.540160, 0.000000, 0.568945, -0.422723, 0.018699, 0.659753, -0.604703, 0.095829, 0.511193)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape136"]
+points = PackedVector3Array(0.104998, 1.041862, -0.030561, -0.200230, 0.009912, -0.383434, -0.214926, 1.150660, 0.011953, -0.353057, 0.968240, 0.265613, 0.013251, 1.015337, 0.224970, -0.459369, 1.072356, -0.229232, -0.065699, 0.931175, -0.219507, -0.228887, 0.354900, -0.441695, 0.266867, 0.773800, -0.196652, 0.104012, 0.122123, -0.425564, 0.066035, 0.617300, -0.411559, 0.191723, 0.640712, 0.375954, -0.708797, 0.731419, -0.070052, -0.689431, 0.000000, -0.074119, -0.470436, 0.120462, -0.295301, -0.582855, 0.611040, -0.375600, -0.697790, 0.756034, 0.242101, -0.757974, 0.323116, 0.092367, 0.566764, 0.595034, 0.089510, 0.446773, 0.014904, 0.385214, 0.426508, 0.429329, 0.412296, 0.342961, 0.008667, -0.224071, 0.687107, 0.225009, -0.126650, 0.762936, 0.229564, 0.264653, 0.503493, 0.535624, 0.266883, 0.459144, 0.211314, 0.526560, 0.463801, 0.617824, -0.102814, 0.711149, 0.030785, -0.052465, 0.532970, 0.083571, -0.188442, 0.539045, 0.371144, -0.242372, 0.675307, 0.426928, 0.177303, 0.709093, 0.030662, 0.179104, 0.633702, 0.086815, 0.378387, 0.596396, 0.341974, 0.354651, 0.768460, 0.229896, 0.058882, 0.102986, 0.000000, 0.069326, 0.087962, 0.000000, 0.302493, -0.262209, 0.002270, 0.555557, -0.269111, 0.240671, 0.585248, -0.362463, 0.000000, 0.551135, -0.508457, 0.216291, 0.530479, -0.514062, 0.000000, 0.541456, -0.402298, 0.017795, 0.627876, -0.575486, 0.091199, 0.486495)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape137"]
+points = PackedVector3Array(0.104998, 1.041862, -0.030561, -0.200230, 0.009912, -0.383434, -0.214926, 1.150660, 0.011953, -0.353057, 0.968240, 0.265613, 0.013251, 1.015337, 0.224970, -0.459369, 1.072356, -0.229232, -0.065699, 0.931175, -0.219507, -0.228887, 0.354900, -0.441695, 0.266867, 0.773800, -0.196652, 0.104012, 0.122123, -0.425564, 0.066035, 0.617300, -0.411559, 0.191723, 0.640712, 0.375954, -0.708797, 0.731419, -0.070052, -0.689431, 0.000000, -0.074119, -0.470436, 0.120462, -0.295301, -0.582855, 0.611040, -0.375600, -0.697790, 0.756034, 0.242101, -0.757974, 0.323116, 0.092367, 0.566764, 0.595034, 0.089510, 0.446773, 0.014904, 0.385214, 0.426508, 0.429329, 0.412296, 0.342961, 0.008667, -0.224071, 0.687107, 0.225009, -0.126650, 0.762936, 0.229564, 0.264653, 0.503493, 0.535624, 0.266883, 0.459144, 0.211314, 0.526560, 0.463801, 0.617824, -0.102814, 0.711149, 0.030785, -0.052465, 0.532970, 0.083571, -0.188442, 0.539045, 0.371144, -0.242372, 0.675307, 0.426928, 0.177303, 0.709093, 0.030662, 0.179104, 0.633702, 0.086815, 0.378387, 0.596396, 0.341974, 0.354651, 0.768460, 0.229896, 0.058882, 0.102986, 0.000000, 0.069326, 0.087962, 0.000000, 0.302493, -0.262209, 0.002270, 0.555557, -0.269111, 0.240671, 0.585248, -0.362463, 0.000000, 0.551135, -0.508457, 0.216291, 0.530479, -0.514062, 0.000000, 0.541456, -0.402298, 0.017795, 0.627876, -0.575486, 0.091199, 0.486495)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape138"]
+points = PackedVector3Array(0.135486, 1.344382, -0.039435, -0.258370, 0.012790, -0.494770, -0.277333, 1.484771, 0.015424, -0.455572, 1.249382, 0.342737, 0.017099, 1.310155, 0.290294, -0.592753, 1.383730, -0.295793, -0.084776, 1.201555, -0.283245, -0.295348, 0.457951, -0.569947, 0.344356, 0.998484, -0.253753, 0.134214, 0.157584, -0.549133, 0.085209, 0.796542, -0.531061, 0.247393, 0.826753, 0.485118, -0.914606, 0.943797, -0.090392, -0.889618, 0.000000, -0.095640, -0.607033, 0.155440, -0.381046, -0.752096, 0.788465, -0.484661, -0.900404, 0.975560, 0.312399, -0.978062, 0.416938, 0.119187, 0.731333, 0.767810, 0.115500, 0.576499, 0.019231, 0.497067, 0.550351, 0.553991, 0.532012, 0.442545, 0.011184, -0.289134, 0.886619, 0.290344, -0.163425, 0.984466, 0.296222, 0.341499, 0.649690, 0.691151, 0.344376, 0.592462, 0.272673, 0.679455, 0.598472, 0.797218, -0.132667, 0.917641, 0.039724, -0.067699, 0.687725, 0.107836, -0.243159, 0.695565, 0.478911, -0.312749, 0.871392, 0.550893, 0.228785, 0.914988, 0.039565, 0.231109, 0.817706, 0.112023, 0.488257, 0.769568, 0.441272, 0.457629, 0.991594, 0.296650, 0.075979, 0.132889, 0.000000, 0.089456, 0.113503, 0.000000, 0.390327, -0.338345, 0.002930, 0.716871, -0.347251, 0.310554, 0.755184, -0.467709, 0.000000, 0.711165, -0.656095, 0.279095, 0.684511, -0.663327, 0.000000, 0.698676, -0.519112, 0.022963, 0.810189, -0.742587, 0.117680, 0.627755)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape139"]
+points = PackedVector3Array(0.135486, 1.344382, -0.039435, -0.258370, 0.012790, -0.494770, -0.277333, 1.484771, 0.015424, -0.455572, 1.249382, 0.342737, 0.017099, 1.310155, 0.290294, -0.592753, 1.383730, -0.295793, -0.084776, 1.201555, -0.283245, -0.295348, 0.457951, -0.569947, 0.344356, 0.998484, -0.253753, 0.134214, 0.157584, -0.549133, 0.085209, 0.796542, -0.531061, 0.247393, 0.826753, 0.485118, -0.914606, 0.943797, -0.090392, -0.889618, 0.000000, -0.095640, -0.607033, 0.155440, -0.381046, -0.752096, 0.788465, -0.484661, -0.900404, 0.975560, 0.312399, -0.978062, 0.416938, 0.119187, 0.731333, 0.767810, 0.115500, 0.576499, 0.019231, 0.497067, 0.550351, 0.553991, 0.532012, 0.442545, 0.011184, -0.289134, 0.886619, 0.290344, -0.163425, 0.984466, 0.296222, 0.341499, 0.649690, 0.691151, 0.344376, 0.592462, 0.272673, 0.679455, 0.598472, 0.797218, -0.132667, 0.917641, 0.039724, -0.067699, 0.687725, 0.107836, -0.243159, 0.695565, 0.478911, -0.312749, 0.871392, 0.550893, 0.228785, 0.914988, 0.039565, 0.231109, 0.817706, 0.112023, 0.488257, 0.769568, 0.441272, 0.457629, 0.991594, 0.296650, 0.075979, 0.132889, 0.000000, 0.089456, 0.113503, 0.000000, 0.390327, -0.338345, 0.002930, 0.716871, -0.347251, 0.310554, 0.755184, -0.467709, 0.000000, 0.711165, -0.656095, 0.279095, 0.684511, -0.663327, 0.000000, 0.698676, -0.519112, 0.022963, 0.810189, -0.742587, 0.117680, 0.627755)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape140"]
+points = PackedVector3Array(0.105984, 1.051643, -0.030848, -0.202110, 0.010005, -0.387034, -0.216944, 1.161462, 0.012065, -0.356371, 0.977329, 0.268106, 0.013376, 1.024869, 0.227082, -0.463681, 1.082423, -0.231384, -0.066316, 0.939916, -0.221568, -0.231036, 0.358232, -0.445841, 0.269372, 0.781064, -0.198499, 0.104989, 0.123270, -0.429559, 0.066655, 0.623095, -0.415423, 0.193523, 0.646727, 0.379483, -0.715451, 0.738285, -0.070709, -0.695903, 0.000000, -0.074815, -0.474852, 0.121593, -0.298073, -0.588327, 0.616777, -0.379126, -0.704341, 0.763132, 0.244374, -0.765089, 0.326150, 0.093234, 0.572085, 0.600620, 0.090350, 0.450967, 0.015043, 0.388830, 0.430512, 0.433359, 0.416166, 0.346181, 0.008749, -0.226175, 0.693558, 0.227121, -0.127839, 0.770098, 0.231719, 0.267138, 0.508220, 0.540653, 0.269388, 0.463454, 0.213298, 0.531504, 0.468155, 0.623624, -0.103779, 0.717825, 0.031074, -0.052958, 0.537973, 0.084355, -0.190211, 0.544106, 0.374628, -0.244648, 0.681647, 0.430936, 0.178967, 0.715750, 0.030950, 0.180785, 0.639651, 0.087630, 0.381939, 0.601995, 0.345185, 0.357980, 0.775674, 0.232054, 0.059435, 0.103953, 0.000000, 0.069977, 0.088788, 0.000000, 0.305333, -0.264671, 0.002292, 0.560772, -0.271637, 0.242931, 0.590742, -0.365866, 0.000000, 0.556309, -0.513230, 0.218322, 0.535459, -0.518888, 0.000000, 0.546539, -0.406075, 0.017962, 0.633771, -0.580889, 0.092056, 0.491062)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape141"]
+points = PackedVector3Array(0.105984, 1.051643, -0.030848, -0.202110, 0.010005, -0.387034, -0.216944, 1.161462, 0.012065, -0.356371, 0.977329, 0.268106, 0.013376, 1.024869, 0.227082, -0.463681, 1.082423, -0.231384, -0.066316, 0.939916, -0.221568, -0.231036, 0.358232, -0.445841, 0.269372, 0.781064, -0.198499, 0.104989, 0.123270, -0.429559, 0.066655, 0.623095, -0.415423, 0.193523, 0.646727, 0.379483, -0.715451, 0.738285, -0.070709, -0.695903, 0.000000, -0.074815, -0.474852, 0.121593, -0.298073, -0.588327, 0.616777, -0.379126, -0.704341, 0.763132, 0.244374, -0.765089, 0.326150, 0.093234, 0.572085, 0.600620, 0.090350, 0.450967, 0.015043, 0.388830, 0.430512, 0.433359, 0.416166, 0.346181, 0.008749, -0.226175, 0.693558, 0.227121, -0.127839, 0.770098, 0.231719, 0.267138, 0.508220, 0.540653, 0.269388, 0.463454, 0.213298, 0.531504, 0.468155, 0.623624, -0.103779, 0.717825, 0.031074, -0.052958, 0.537973, 0.084355, -0.190211, 0.544106, 0.374628, -0.244648, 0.681647, 0.430936, 0.178967, 0.715750, 0.030950, 0.180785, 0.639651, 0.087630, 0.381939, 0.601995, 0.345185, 0.357980, 0.775674, 0.232054, 0.059435, 0.103953, 0.000000, 0.069977, 0.088788, 0.000000, 0.305333, -0.264671, 0.002292, 0.560772, -0.271637, 0.242931, 0.590742, -0.365866, 0.000000, 0.556309, -0.513230, 0.218322, 0.535459, -0.518888, 0.000000, 0.546539, -0.406075, 0.017962, 0.633771, -0.580889, 0.092056, 0.491062)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape142"]
+points = PackedVector3Array(0.153046, 1.518633, -0.044546, -0.291858, 0.014448, -0.558899, -0.313279, 1.677218, 0.017423, -0.514620, 1.411319, 0.387161, 0.019315, 1.479970, 0.327920, -0.669582, 1.563081, -0.334132, -0.095764, 1.357293, -0.319957, -0.333629, 0.517307, -0.643821, 0.388989, 1.127901, -0.286643, 0.151610, 0.178009, -0.620308, 0.096253, 0.899784, -0.599894, 0.279458, 0.933911, 0.547996, -1.033152, 1.066126, -0.102108, -1.004924, 0.000000, -0.108036, -0.685713, 0.175588, -0.430435, -0.849578, 0.890661, -0.547479, -1.017109, 1.102006, 0.352890, -1.104833, 0.470979, 0.134635, 0.826123, 0.867329, 0.130471, 0.651222, 0.021724, 0.561493, 0.621684, 0.625796, 0.600968, 0.499905, 0.012634, -0.326610, 1.001537, 0.327976, -0.184607, 1.112066, 0.334616, 0.385762, 0.733898, 0.780733, 0.389012, 0.669254, 0.308015, 0.767522, 0.676043, 0.900549, -0.149863, 1.036580, 0.044873, -0.076474, 0.776864, 0.121814, -0.274676, 0.785720, 0.540985, -0.353285, 0.984337, 0.622297, 0.258439, 1.033584, 0.044693, 0.261064, 0.923692, 0.126542, 0.551542, 0.869315, 0.498467, 0.516944, 1.120118, 0.335100, 0.085827, 0.150114, 0.000000, 0.101051, 0.128215, 0.000000, 0.440918, -0.382200, 0.003309, 0.809787, -0.392260, 0.350806, 0.853066, -0.528331, 0.000000, 0.803342, -0.741134, 0.315269, 0.773233, -0.749303, 0.000000, 0.789234, -0.586396, 0.025939, 0.915201, -0.838837, 0.132934, 0.709121)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape143"]
+points = PackedVector3Array(0.153046, 1.518633, -0.044546, -0.291858, 0.014448, -0.558899, -0.313279, 1.677218, 0.017423, -0.514620, 1.411319, 0.387161, 0.019315, 1.479970, 0.327920, -0.669582, 1.563081, -0.334132, -0.095764, 1.357293, -0.319957, -0.333629, 0.517307, -0.643821, 0.388989, 1.127901, -0.286643, 0.151610, 0.178009, -0.620308, 0.096253, 0.899784, -0.599894, 0.279458, 0.933911, 0.547996, -1.033152, 1.066126, -0.102108, -1.004924, 0.000000, -0.108036, -0.685713, 0.175588, -0.430435, -0.849578, 0.890661, -0.547479, -1.017109, 1.102006, 0.352890, -1.104833, 0.470979, 0.134635, 0.826123, 0.867329, 0.130471, 0.651222, 0.021724, 0.561493, 0.621684, 0.625796, 0.600968, 0.499905, 0.012634, -0.326610, 1.001537, 0.327976, -0.184607, 1.112066, 0.334616, 0.385762, 0.733898, 0.780733, 0.389012, 0.669254, 0.308015, 0.767522, 0.676043, 0.900549, -0.149863, 1.036580, 0.044873, -0.076474, 0.776864, 0.121814, -0.274676, 0.785720, 0.540985, -0.353285, 0.984337, 0.622297, 0.258439, 1.033584, 0.044693, 0.261064, 0.923692, 0.126542, 0.551542, 0.869315, 0.498467, 0.516944, 1.120118, 0.335100, 0.085827, 0.150114, 0.000000, 0.101051, 0.128215, 0.000000, 0.440918, -0.382200, 0.003309, 0.809787, -0.392260, 0.350806, 0.853066, -0.528331, 0.000000, 0.803342, -0.741134, 0.315269, 0.773233, -0.749303, 0.000000, 0.789234, -0.586396, 0.025939, 0.915201, -0.838837, 0.132934, 0.709121)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape144"]
+points = PackedVector3Array(0.151556, 1.503843, -0.044112, -0.289016, 0.014307, -0.553456, -0.310228, 1.660884, 0.017254, -0.509608, 1.397574, 0.383390, 0.019127, 1.465556, 0.324726, -0.663061, 1.547858, -0.330878, -0.094831, 1.344074, -0.316841, -0.330379, 0.512269, -0.637550, 0.385201, 1.116916, -0.283852, 0.150133, 0.176275, -0.614267, 0.095316, 0.891021, -0.594052, 0.276736, 0.924816, 0.542659, -1.023090, 1.055743, -0.101114, -0.995137, 0.000000, -0.106984, -0.679035, 0.173878, -0.426242, -0.841303, 0.881987, -0.542147, -1.007203, 1.091273, 0.349454, -1.094073, 0.466392, 0.133324, 0.818078, 0.858882, 0.129200, 0.644879, 0.021512, 0.556025, 0.615629, 0.619701, 0.595115, 0.495036, 0.012511, -0.323429, 0.991783, 0.324782, -0.182809, 1.101236, 0.331357, 0.382005, 0.726751, 0.773130, 0.385223, 0.662736, 0.305015, 0.760047, 0.669458, 0.891778, -0.148404, 1.026485, 0.044436, -0.075729, 0.769298, 0.120627, -0.272001, 0.778068, 0.535716, -0.349844, 0.974750, 0.616236, 0.255922, 1.023518, 0.044258, 0.258521, 0.914696, 0.125310, 0.546171, 0.860848, 0.493612, 0.511910, 1.109209, 0.331836, 0.084991, 0.148652, 0.000000, 0.100067, 0.126966, 0.000000, 0.436624, -0.378477, 0.003277, 0.801901, -0.388439, 0.347389, 0.844758, -0.523186, 0.000000, 0.795518, -0.733916, 0.312199, 0.765703, -0.742006, 0.000000, 0.781548, -0.580685, 0.025686, 0.906288, -0.830667, 0.131639, 0.702215)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape145"]
+points = PackedVector3Array(0.151556, 1.503843, -0.044112, -0.289016, 0.014307, -0.553456, -0.310228, 1.660884, 0.017254, -0.509608, 1.397574, 0.383390, 0.019127, 1.465556, 0.324726, -0.663061, 1.547858, -0.330878, -0.094831, 1.344074, -0.316841, -0.330379, 0.512269, -0.637550, 0.385201, 1.116916, -0.283852, 0.150133, 0.176275, -0.614267, 0.095316, 0.891021, -0.594052, 0.276736, 0.924816, 0.542659, -1.023090, 1.055743, -0.101114, -0.995137, 0.000000, -0.106984, -0.679035, 0.173878, -0.426242, -0.841303, 0.881987, -0.542147, -1.007203, 1.091273, 0.349454, -1.094073, 0.466392, 0.133324, 0.818078, 0.858882, 0.129200, 0.644879, 0.021512, 0.556025, 0.615629, 0.619701, 0.595115, 0.495036, 0.012511, -0.323429, 0.991783, 0.324782, -0.182809, 1.101236, 0.331357, 0.382005, 0.726751, 0.773130, 0.385223, 0.662736, 0.305015, 0.760047, 0.669458, 0.891778, -0.148404, 1.026485, 0.044436, -0.075729, 0.769298, 0.120627, -0.272001, 0.778068, 0.535716, -0.349844, 0.974750, 0.616236, 0.255922, 1.023518, 0.044258, 0.258521, 0.914696, 0.125310, 0.546171, 0.860848, 0.493612, 0.511910, 1.109209, 0.331836, 0.084991, 0.148652, 0.000000, 0.100067, 0.126966, 0.000000, 0.436624, -0.378477, 0.003277, 0.801901, -0.388439, 0.347389, 0.844758, -0.523186, 0.000000, 0.795518, -0.733916, 0.312199, 0.765703, -0.742006, 0.000000, 0.781548, -0.580685, 0.025686, 0.906288, -0.830667, 0.131639, 0.702215)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape146"]
+points = PackedVector3Array(0.121748, 1.208064, -0.035436, -0.232172, 0.011493, -0.444601, -0.249212, 1.334218, 0.013860, -0.409378, 1.122697, 0.307984, 0.015365, 1.177308, 0.260859, -0.532649, 1.243423, -0.265801, -0.076180, 1.079720, -0.254524, -0.265400, 0.411515, -0.512156, 0.309439, 0.897240, -0.228023, 0.120605, 0.141605, -0.493452, 0.076569, 0.715774, -0.477213, 0.222307, 0.742922, 0.435928, -0.821867, 0.848098, -0.081226, -0.799412, 0.000000, -0.085942, -0.545481, 0.139679, -0.342408, -0.675835, 0.708516, -0.435517, -0.809105, 0.876640, 0.280722, -0.878889, 0.374661, 0.107101, 0.657177, 0.689956, 0.103789, 0.518044, 0.017281, 0.446665, 0.494546, 0.497817, 0.478067, 0.397672, 0.010050, -0.259816, 0.796717, 0.260903, -0.146854, 0.884643, 0.266185, 0.306872, 0.583812, 0.621069, 0.309457, 0.532388, 0.245024, 0.610559, 0.537788, 0.716382, -0.119215, 0.824594, 0.035696, -0.060835, 0.617991, 0.096902, -0.218503, 0.625036, 0.430350, -0.281037, 0.783035, 0.495034, 0.205587, 0.822210, 0.035553, 0.207675, 0.734792, 0.100664, 0.438749, 0.691535, 0.396528, 0.411226, 0.891048, 0.266570, 0.068275, 0.119415, 0.000000, 0.080385, 0.101994, 0.000000, 0.350748, -0.304038, 0.002633, 0.644182, -0.312040, 0.279064, 0.678609, -0.420285, 0.000000, 0.639054, -0.589568, 0.250795, 0.615103, -0.596067, 0.000000, 0.627832, -0.466475, 0.020634, 0.728038, -0.667290, 0.105748, 0.564102)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape147"]
+points = PackedVector3Array(0.121748, 1.208064, -0.035436, -0.232172, 0.011493, -0.444601, -0.249212, 1.334218, 0.013860, -0.409378, 1.122697, 0.307984, 0.015365, 1.177308, 0.260859, -0.532649, 1.243423, -0.265801, -0.076180, 1.079720, -0.254524, -0.265400, 0.411515, -0.512156, 0.309439, 0.897240, -0.228023, 0.120605, 0.141605, -0.493452, 0.076569, 0.715774, -0.477213, 0.222307, 0.742922, 0.435928, -0.821867, 0.848098, -0.081226, -0.799412, 0.000000, -0.085942, -0.545481, 0.139679, -0.342408, -0.675835, 0.708516, -0.435517, -0.809105, 0.876640, 0.280722, -0.878889, 0.374661, 0.107101, 0.657177, 0.689956, 0.103789, 0.518044, 0.017281, 0.446665, 0.494546, 0.497817, 0.478067, 0.397672, 0.010050, -0.259816, 0.796717, 0.260903, -0.146854, 0.884643, 0.266185, 0.306872, 0.583812, 0.621069, 0.309457, 0.532388, 0.245024, 0.610559, 0.537788, 0.716382, -0.119215, 0.824594, 0.035696, -0.060835, 0.617991, 0.096902, -0.218503, 0.625036, 0.430350, -0.281037, 0.783035, 0.495034, 0.205587, 0.822210, 0.035553, 0.207675, 0.734792, 0.100664, 0.438749, 0.691535, 0.396528, 0.411226, 0.891048, 0.266570, 0.068275, 0.119415, 0.000000, 0.080385, 0.101994, 0.000000, 0.350748, -0.304038, 0.002633, 0.644182, -0.312040, 0.279064, 0.678609, -0.420285, 0.000000, 0.639054, -0.589568, 0.250795, 0.615103, -0.596067, 0.000000, 0.627832, -0.466475, 0.020634, 0.728038, -0.667290, 0.105748, 0.564102)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape148"]
+points = PackedVector3Array(0.114592, 1.137058, -0.033353, -0.218526, 0.010817, -0.418469, -0.234564, 1.255797, 0.013045, -0.385316, 1.056709, 0.289882, 0.014462, 1.108110, 0.245526, -0.501342, 1.170338, -0.250178, -0.071702, 1.016257, -0.239564, -0.249801, 0.387328, -0.482053, 0.291251, 0.844503, -0.214621, 0.113516, 0.133282, -0.464449, 0.072068, 0.673703, -0.449164, 0.209241, 0.699255, 0.410305, -0.773560, 0.798249, -0.076452, -0.752425, 0.000000, -0.080891, -0.513420, 0.131469, -0.322283, -0.636111, 0.666872, -0.409919, -0.761548, 0.825114, 0.264223, -0.827231, 0.352640, 0.100806, 0.618550, 0.649403, 0.097688, 0.487595, 0.016265, 0.420411, 0.465479, 0.468557, 0.449967, 0.374298, 0.009459, -0.244545, 0.749889, 0.245568, -0.138222, 0.832646, 0.250540, 0.288835, 0.549498, 0.584565, 0.291268, 0.501096, 0.230622, 0.574673, 0.506179, 0.674275, -0.112208, 0.776127, 0.033598, -0.057259, 0.581668, 0.091206, -0.205660, 0.588298, 0.405056, -0.264518, 0.737011, 0.465937, 0.193503, 0.773884, 0.033464, 0.195468, 0.691604, 0.094747, 0.412961, 0.650889, 0.373221, 0.387056, 0.838675, 0.250902, 0.064262, 0.112396, 0.000000, 0.075661, 0.095999, 0.000000, 0.330132, -0.286167, 0.002478, 0.606319, -0.293700, 0.262662, 0.638723, -0.395582, 0.000000, 0.601493, -0.554915, 0.236054, 0.578949, -0.561032, 0.000000, 0.590930, -0.439057, 0.019421, 0.685246, -0.628069, 0.099532, 0.530946)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape149"]
+points = PackedVector3Array(0.114592, 1.137058, -0.033353, -0.218526, 0.010817, -0.418469, -0.234564, 1.255797, 0.013045, -0.385316, 1.056709, 0.289882, 0.014462, 1.108110, 0.245526, -0.501342, 1.170338, -0.250178, -0.071702, 1.016257, -0.239564, -0.249801, 0.387328, -0.482053, 0.291251, 0.844503, -0.214621, 0.113516, 0.133282, -0.464449, 0.072068, 0.673703, -0.449164, 0.209241, 0.699255, 0.410305, -0.773560, 0.798249, -0.076452, -0.752425, 0.000000, -0.080891, -0.513420, 0.131469, -0.322283, -0.636111, 0.666872, -0.409919, -0.761548, 0.825114, 0.264223, -0.827231, 0.352640, 0.100806, 0.618550, 0.649403, 0.097688, 0.487595, 0.016265, 0.420411, 0.465479, 0.468557, 0.449967, 0.374298, 0.009459, -0.244545, 0.749889, 0.245568, -0.138222, 0.832646, 0.250540, 0.288835, 0.549498, 0.584565, 0.291268, 0.501096, 0.230622, 0.574673, 0.506179, 0.674275, -0.112208, 0.776127, 0.033598, -0.057259, 0.581668, 0.091206, -0.205660, 0.588298, 0.405056, -0.264518, 0.737011, 0.465937, 0.193503, 0.773884, 0.033464, 0.195468, 0.691604, 0.094747, 0.412961, 0.650889, 0.373221, 0.387056, 0.838675, 0.250902, 0.064262, 0.112396, 0.000000, 0.075661, 0.095999, 0.000000, 0.330132, -0.286167, 0.002478, 0.606319, -0.293700, 0.262662, 0.638723, -0.395582, 0.000000, 0.601493, -0.554915, 0.236054, 0.578949, -0.561032, 0.000000, 0.590930, -0.439057, 0.019421, 0.685246, -0.628069, 0.099532, 0.530946)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape150"]
+points = PackedVector3Array(0.118192, 1.172781, -0.034401, -0.225391, 0.011157, -0.431616, -0.241933, 1.295251, 0.013455, -0.397421, 1.089907, 0.298989, 0.014916, 1.142923, 0.253240, -0.517093, 1.207107, -0.258037, -0.073955, 1.048185, -0.247090, -0.257649, 0.399496, -0.497198, 0.300401, 0.871034, -0.221364, 0.117082, 0.137469, -0.479040, 0.074333, 0.694869, -0.463275, 0.215815, 0.721223, 0.423196, -0.797863, 0.823328, -0.078854, -0.776064, 0.000000, -0.083432, -0.529550, 0.135600, -0.332408, -0.656096, 0.687823, -0.422797, -0.785474, 0.851037, 0.272524, -0.853220, 0.363719, 0.103973, 0.637983, 0.669805, 0.100757, 0.502913, 0.016776, 0.433619, 0.480102, 0.483278, 0.464104, 0.386057, 0.009756, -0.252228, 0.773448, 0.253283, -0.142565, 0.858806, 0.258411, 0.297909, 0.566761, 0.602930, 0.300419, 0.516839, 0.237868, 0.592727, 0.522081, 0.695459, -0.115733, 0.800511, 0.034654, -0.059058, 0.599942, 0.094072, -0.212121, 0.606781, 0.417782, -0.272828, 0.760165, 0.480576, 0.199582, 0.798197, 0.034515, 0.201610, 0.713332, 0.097724, 0.425935, 0.671338, 0.384946, 0.399216, 0.865024, 0.258785, 0.066281, 0.115927, 0.000000, 0.078038, 0.099015, 0.000000, 0.340504, -0.295158, 0.002556, 0.625367, -0.302927, 0.270914, 0.658790, -0.408010, 0.000000, 0.620390, -0.572349, 0.243470, 0.597138, -0.578658, 0.000000, 0.609495, -0.452851, 0.020032, 0.706775, -0.647801, 0.102659, 0.547627)
+margin = 0.01
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape151"]
+points = PackedVector3Array(0.118192, 1.172781, -0.034401, -0.225391, 0.011157, -0.431616, -0.241933, 1.295251, 0.013455, -0.397421, 1.089907, 0.298989, 0.014916, 1.142923, 0.253240, -0.517093, 1.207107, -0.258037, -0.073955, 1.048185, -0.247090, -0.257649, 0.399496, -0.497198, 0.300401, 0.871034, -0.221364, 0.117082, 0.137469, -0.479040, 0.074333, 0.694869, -0.463275, 0.215815, 0.721223, 0.423196, -0.797863, 0.823328, -0.078854, -0.776064, 0.000000, -0.083432, -0.529550, 0.135600, -0.332408, -0.656096, 0.687823, -0.422797, -0.785474, 0.851037, 0.272524, -0.853220, 0.363719, 0.103973, 0.637983, 0.669805, 0.100757, 0.502913, 0.016776, 0.433619, 0.480102, 0.483278, 0.464104, 0.386057, 0.009756, -0.252228, 0.773448, 0.253283, -0.142565, 0.858806, 0.258411, 0.297909, 0.566761, 0.602930, 0.300419, 0.516839, 0.237868, 0.592727, 0.522081, 0.695459, -0.115733, 0.800511, 0.034654, -0.059058, 0.599942, 0.094072, -0.212121, 0.606781, 0.417782, -0.272828, 0.760165, 0.480576, 0.199582, 0.798197, 0.034515, 0.201610, 0.713332, 0.097724, 0.425935, 0.671338, 0.384946, 0.399216, 0.865024, 0.258785, 0.066281, 0.115927, 0.000000, 0.078038, 0.099015, 0.000000, 0.340504, -0.295158, 0.002556, 0.625367, -0.302927, 0.270914, 0.658790, -0.408010, 0.000000, 0.620390, -0.572349, 0.243470, 0.597138, -0.578658, 0.000000, 0.609495, -0.452851, 0.020032, 0.706775, -0.647801, 0.102659, 0.547627)
+margin = 0.01
 
 [node name="TwinValleys2V2" type="Node3D"]
 metadata/map_id = "twin_valleys_2v2"
@@ -493,7 +767,7 @@ shape = SubResource("Floor")
 [node name="NaturalObstacles" type="Node3D" parent="Environment"]
 
 [node name="tree_oak_000" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.934982,1.413474,-52.095431)
+position = Vector3(-60.934982,1.649053,-52.095431)
 rotation = Vector3(0,2.599487,0)
 collision_layer = 1
 collision_mask = 0
@@ -502,7 +776,7 @@ collision_mask = 0
 shape = SubResource("Shape0")
 
 [node name="tree_oak_001" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.934982,1.413474,52.095431)
+position = Vector3(60.934982,1.649053,52.095431)
 rotation = Vector3(0,5.741080,0)
 collision_layer = 1
 collision_mask = 0
@@ -511,7 +785,7 @@ collision_mask = 0
 shape = SubResource("Shape1")
 
 [node name="tree_pine_002" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-54.845941,1.266755,-51.108073)
+position = Vector3(-54.845941,2.322385,-51.108073)
 rotation = Vector3(0,3.699443,0)
 collision_layer = 1
 collision_mask = 0
@@ -520,7 +794,7 @@ collision_mask = 0
 shape = SubResource("Shape2")
 
 [node name="tree_pine_003" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(54.845941,1.266755,51.108073)
+position = Vector3(54.845941,2.322385,51.108073)
 rotation = Vector3(0,6.841036,0)
 collision_layer = 1
 collision_mask = 0
@@ -529,7 +803,7 @@ collision_mask = 0
 shape = SubResource("Shape3")
 
 [node name="tree_pine_004" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-50.500080,1.296634,-51.468312)
+position = Vector3(-50.500080,2.377162,-51.468312)
 rotation = Vector3(0,3.602134,0)
 collision_layer = 1
 collision_mask = 0
@@ -538,7 +812,7 @@ collision_mask = 0
 shape = SubResource("Shape4")
 
 [node name="tree_pine_005" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(50.500080,1.296634,51.468312)
+position = Vector3(50.500080,2.377162,51.468312)
 rotation = Vector3(0,6.743726,0)
 collision_layer = 1
 collision_mask = 0
@@ -547,7 +821,7 @@ collision_mask = 0
 shape = SubResource("Shape5")
 
 [node name="tree_oak_006" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-44.800454,1.289311,-52.176201)
+position = Vector3(-44.800454,1.504196,-52.176201)
 rotation = Vector3(0,3.708215,0)
 collision_layer = 1
 collision_mask = 0
@@ -556,7 +830,7 @@ collision_mask = 0
 shape = SubResource("Shape6")
 
 [node name="tree_oak_007" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(44.800454,1.289311,52.176201)
+position = Vector3(44.800454,1.504196,52.176201)
 rotation = Vector3(0,6.849808,0)
 collision_layer = 1
 collision_mask = 0
@@ -565,7 +839,7 @@ collision_mask = 0
 shape = SubResource("Shape7")
 
 [node name="tree_pine_008" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-40.310352,1.403931,-52.503956)
+position = Vector3(-40.310352,2.573873,-52.503956)
 rotation = Vector3(0,5.361798,0)
 collision_layer = 1
 collision_mask = 0
@@ -574,7 +848,7 @@ collision_mask = 0
 shape = SubResource("Shape8")
 
 [node name="tree_pine_009" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(40.310352,1.403931,52.503956)
+position = Vector3(40.310352,2.573873,52.503956)
 rotation = Vector3(0,8.503391,0)
 collision_layer = 1
 collision_mask = 0
@@ -583,7 +857,7 @@ collision_mask = 0
 shape = SubResource("Shape9")
 
 [node name="tree_pine_010" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-35.319848,1.385788,-51.206320)
+position = Vector3(-35.319848,2.540611,-51.206320)
 rotation = Vector3(0,3.086906,0)
 collision_layer = 1
 collision_mask = 0
@@ -592,7 +866,7 @@ collision_mask = 0
 shape = SubResource("Shape10")
 
 [node name="tree_pine_011" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(35.319848,1.385788,51.206320)
+position = Vector3(35.319848,2.540611,51.206320)
 rotation = Vector3(0,6.228499,0)
 collision_layer = 1
 collision_mask = 0
@@ -601,7 +875,7 @@ collision_mask = 0
 shape = SubResource("Shape11")
 
 [node name="tree_oak_012" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-29.888821,1.314956,-51.383231)
+position = Vector3(-29.888821,1.534115,-51.383231)
 rotation = Vector3(0,0.406174,0)
 collision_layer = 1
 collision_mask = 0
@@ -610,7 +884,7 @@ collision_mask = 0
 shape = SubResource("Shape12")
 
 [node name="tree_oak_013" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(29.888821,1.314956,51.383231)
+position = Vector3(29.888821,1.534115,51.383231)
 rotation = Vector3(0,3.547767,0)
 collision_layer = 1
 collision_mask = 0
@@ -619,7 +893,7 @@ collision_mask = 0
 shape = SubResource("Shape13")
 
 [node name="tree_pine_014" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-23.749076,1.488092,-52.030584)
+position = Vector3(-23.749076,2.728168,-52.030584)
 rotation = Vector3(0,5.831205,0)
 collision_layer = 1
 collision_mask = 0
@@ -628,7 +902,7 @@ collision_mask = 0
 shape = SubResource("Shape14")
 
 [node name="tree_pine_015" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(23.749076,1.488092,52.030584)
+position = Vector3(23.749076,2.728168,52.030584)
 rotation = Vector3(0,8.972798,0)
 collision_layer = 1
 collision_mask = 0
@@ -637,7 +911,7 @@ collision_mask = 0
 shape = SubResource("Shape15")
 
 [node name="tree_pine_016" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-18.831012,1.221347,-52.973936)
+position = Vector3(-18.831012,2.239136,-52.973936)
 rotation = Vector3(0,3.402710,0)
 collision_layer = 1
 collision_mask = 0
@@ -646,7 +920,7 @@ collision_mask = 0
 shape = SubResource("Shape16")
 
 [node name="tree_pine_017" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(18.831012,1.221347,52.973936)
+position = Vector3(18.831012,2.239136,52.973936)
 rotation = Vector3(0,6.544303,0)
 collision_layer = 1
 collision_mask = 0
@@ -655,7 +929,7 @@ collision_mask = 0
 shape = SubResource("Shape17")
 
 [node name="tree_pine_018" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-9.756418,1.522427,-52.403865)
+position = Vector3(-9.756418,2.791115,-52.403865)
 rotation = Vector3(0,4.221215,0)
 collision_layer = 1
 collision_mask = 0
@@ -664,7 +938,7 @@ collision_mask = 0
 shape = SubResource("Shape18")
 
 [node name="tree_pine_019" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(9.756418,1.522427,52.403865)
+position = Vector3(9.756418,2.791115,52.403865)
 rotation = Vector3(0,7.362808,0)
 collision_layer = 1
 collision_mask = 0
@@ -673,7 +947,7 @@ collision_mask = 0
 shape = SubResource("Shape19")
 
 [node name="tree_pine_020" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-3.607689,1.257843,-51.116690)
+position = Vector3(-3.607689,2.306046,-51.116690)
 rotation = Vector3(0,4.110155,0)
 collision_layer = 1
 collision_mask = 0
@@ -682,7 +956,7 @@ collision_mask = 0
 shape = SubResource("Shape20")
 
 [node name="tree_pine_021" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(3.607689,1.257843,51.116690)
+position = Vector3(3.607689,2.306046,51.116690)
 rotation = Vector3(0,7.251748,0)
 collision_layer = 1
 collision_mask = 0
@@ -691,7 +965,7 @@ collision_mask = 0
 shape = SubResource("Shape21")
 
 [node name="tree_oak_022" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.250490,1.215616,-45.993093)
+position = Vector3(-60.250490,1.418219,-45.993093)
 rotation = Vector3(0,4.538934,0)
 collision_layer = 1
 collision_mask = 0
@@ -700,7 +974,7 @@ collision_mask = 0
 shape = SubResource("Shape22")
 
 [node name="tree_oak_023" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.250490,1.215616,45.993093)
+position = Vector3(60.250490,1.418219,45.993093)
 rotation = Vector3(0,7.680526,0)
 collision_layer = 1
 collision_mask = 0
@@ -709,7 +983,7 @@ collision_mask = 0
 shape = SubResource("Shape23")
 
 [node name="tree_pine_024" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-49.910133,1.303606,-46.571238)
+position = Vector3(-49.910133,2.389944,-46.571238)
 rotation = Vector3(0,1.865259,0)
 collision_layer = 1
 collision_mask = 0
@@ -718,7 +992,7 @@ collision_mask = 0
 shape = SubResource("Shape24")
 
 [node name="tree_pine_025" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(49.910133,1.303606,46.571238)
+position = Vector3(49.910133,2.389944,46.571238)
 rotation = Vector3(0,5.006851,0)
 collision_layer = 1
 collision_mask = 0
@@ -727,7 +1001,7 @@ collision_mask = 0
 shape = SubResource("Shape25")
 
 [node name="tree_oak_026" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-45.264041,1.280205,-46.077208)
+position = Vector3(-45.264041,1.493573,-46.077208)
 rotation = Vector3(0,0.794918,0)
 collision_layer = 1
 collision_mask = 0
@@ -736,7 +1010,7 @@ collision_mask = 0
 shape = SubResource("Shape26")
 
 [node name="tree_oak_027" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(45.264041,1.280205,46.077208)
+position = Vector3(45.264041,1.493573,46.077208)
 rotation = Vector3(0,3.936511,0)
 collision_layer = 1
 collision_mask = 0
@@ -745,7 +1019,7 @@ collision_mask = 0
 shape = SubResource("Shape27")
 
 [node name="tree_pine_028" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-38.734053,1.314602,-46.750996)
+position = Vector3(-38.734053,2.410103,-46.750996)
 rotation = Vector3(0,2.858331,0)
 collision_layer = 1
 collision_mask = 0
@@ -754,7 +1028,7 @@ collision_mask = 0
 shape = SubResource("Shape28")
 
 [node name="tree_pine_029" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(38.734053,1.314602,46.750996)
+position = Vector3(38.734053,2.410103,46.750996)
 rotation = Vector3(0,5.999924,0)
 collision_layer = 1
 collision_mask = 0
@@ -763,7 +1037,7 @@ collision_mask = 0
 shape = SubResource("Shape29")
 
 [node name="tree_pine_030" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-53.958012,1.489772,-42.609417)
+position = Vector3(-53.958012,2.731249,-42.609417)
 rotation = Vector3(0,5.747809,0)
 collision_layer = 1
 collision_mask = 0
@@ -772,7 +1046,7 @@ collision_mask = 0
 shape = SubResource("Shape30")
 
 [node name="tree_pine_031" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(53.958012,1.489772,42.609417)
+position = Vector3(53.958012,2.731249,42.609417)
 rotation = Vector3(0,8.889401,0)
 collision_layer = 1
 collision_mask = 0
@@ -781,7 +1055,7 @@ collision_mask = 0
 shape = SubResource("Shape31")
 
 [node name="tree_oak_032" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-38.723221,1.488658,-41.297191)
+position = Vector3(-38.723221,1.736768,-41.297191)
 rotation = Vector3(0,1.387027,0)
 collision_layer = 1
 collision_mask = 0
@@ -790,7 +1064,7 @@ collision_mask = 0
 shape = SubResource("Shape32")
 
 [node name="tree_oak_033" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(38.723221,1.488658,41.297191)
+position = Vector3(38.723221,1.736768,41.297191)
 rotation = Vector3(0,4.528620,0)
 collision_layer = 1
 collision_mask = 0
@@ -799,7 +1073,7 @@ collision_mask = 0
 shape = SubResource("Shape33")
 
 [node name="tree_pine_034" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.642146,1.259909,-36.755240)
+position = Vector3(-60.642146,2.309832,-36.755240)
 rotation = Vector3(0,1.655293,0)
 collision_layer = 1
 collision_mask = 0
@@ -808,7 +1082,7 @@ collision_mask = 0
 shape = SubResource("Shape34")
 
 [node name="tree_pine_035" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.642146,1.259909,36.755240)
+position = Vector3(60.642146,2.309832,36.755240)
 rotation = Vector3(0,4.796886,0)
 collision_layer = 1
 collision_mask = 0
@@ -817,7 +1091,7 @@ collision_mask = 0
 shape = SubResource("Shape35")
 
 [node name="tree_pine_036" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-54.807891,1.488268,-36.786320)
+position = Vector3(-54.807891,2.728491,-36.786320)
 rotation = Vector3(0,5.357501,0)
 collision_layer = 1
 collision_mask = 0
@@ -826,7 +1100,7 @@ collision_mask = 0
 shape = SubResource("Shape36")
 
 [node name="tree_pine_037" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(54.807891,1.488268,36.786320)
+position = Vector3(54.807891,2.728491,36.786320)
 rotation = Vector3(0,8.499094,0)
 collision_layer = 1
 collision_mask = 0
@@ -835,7 +1109,7 @@ collision_mask = 0
 shape = SubResource("Shape37")
 
 [node name="tree_oak_038" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-49.824003,1.286358,-36.805998)
+position = Vector3(-49.824003,1.500751,-36.805998)
 rotation = Vector3(0,4.954551,0)
 collision_layer = 1
 collision_mask = 0
@@ -844,7 +1118,7 @@ collision_mask = 0
 shape = SubResource("Shape38")
 
 [node name="tree_oak_039" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(49.824003,1.286358,36.805998)
+position = Vector3(49.824003,1.500751,36.805998)
 rotation = Vector3(0,8.096144,0)
 collision_layer = 1
 collision_mask = 0
@@ -853,7 +1127,7 @@ collision_mask = 0
 shape = SubResource("Shape39")
 
 [node name="tree_pine_040" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-45.581075,1.419297,-36.635357)
+position = Vector3(-45.581075,2.602044,-36.635357)
 rotation = Vector3(0,3.293970,0)
 collision_layer = 1
 collision_mask = 0
@@ -862,7 +1136,7 @@ collision_mask = 0
 shape = SubResource("Shape40")
 
 [node name="tree_pine_041" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(45.581075,1.419297,36.635357)
+position = Vector3(45.581075,2.602044,36.635357)
 rotation = Vector3(0,6.435563,0)
 collision_layer = 1
 collision_mask = 0
@@ -871,7 +1145,7 @@ collision_mask = 0
 shape = SubResource("Shape41")
 
 [node name="rock_large_042" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-40.011756,1.476533,-35.933190)
+position = Vector3(-40.011756,0.000000,-35.933190)
 rotation = Vector3(0,5.729645,0)
 collision_layer = 1
 collision_mask = 0
@@ -880,7 +1154,7 @@ collision_mask = 0
 shape = SubResource("Shape42")
 
 [node name="rock_large_043" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(40.011756,1.476533,35.933190)
+position = Vector3(40.011756,0.000000,35.933190)
 rotation = Vector3(0,8.871238,0)
 collision_layer = 1
 collision_mask = 0
@@ -889,7 +1163,7 @@ collision_mask = 0
 shape = SubResource("Shape43")
 
 [node name="tree_oak_044" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-33.512296,1.339449,-37.216725)
+position = Vector3(-33.512296,1.562691,-37.216725)
 rotation = Vector3(0,2.669770,0)
 collision_layer = 1
 collision_mask = 0
@@ -898,7 +1172,7 @@ collision_mask = 0
 shape = SubResource("Shape44")
 
 [node name="tree_oak_045" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(33.512296,1.339449,37.216725)
+position = Vector3(33.512296,1.562691,37.216725)
 rotation = Vector3(0,5.811363,0)
 collision_layer = 1
 collision_mask = 0
@@ -907,7 +1181,7 @@ collision_mask = 0
 shape = SubResource("Shape45")
 
 [node name="tree_oak_046" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.367273,1.492557,-31.555580)
+position = Vector3(-59.367273,1.741316,-31.555580)
 rotation = Vector3(0,3.828875,0)
 collision_layer = 1
 collision_mask = 0
@@ -916,7 +1190,7 @@ collision_mask = 0
 shape = SubResource("Shape46")
 
 [node name="tree_oak_047" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.367273,1.492557,31.555580)
+position = Vector3(59.367273,1.741316,31.555580)
 rotation = Vector3(0,6.970468,0)
 collision_layer = 1
 collision_mask = 0
@@ -925,7 +1199,7 @@ collision_mask = 0
 shape = SubResource("Shape47")
 
 [node name="tree_pine_048" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-49.906105,1.496027,-31.122798)
+position = Vector3(-49.906105,2.742715,-31.122798)
 rotation = Vector3(0,1.301947,0)
 collision_layer = 1
 collision_mask = 0
@@ -934,7 +1208,7 @@ collision_mask = 0
 shape = SubResource("Shape48")
 
 [node name="tree_pine_049" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(49.906105,1.496027,31.122798)
+position = Vector3(49.906105,2.742715,31.122798)
 rotation = Vector3(0,4.443539,0)
 collision_layer = 1
 collision_mask = 0
@@ -943,7 +1217,7 @@ collision_mask = 0
 shape = SubResource("Shape49")
 
 [node name="rock_medium_050" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-18.214260,0.901831,-31.034203)
+position = Vector3(-18.214260,0.000000,-31.034203)
 rotation = Vector3(0,1.013771,0)
 collision_layer = 1
 collision_mask = 0
@@ -952,7 +1226,7 @@ collision_mask = 0
 shape = SubResource("Shape50")
 
 [node name="rock_medium_051" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(18.214260,0.901831,31.034203)
+position = Vector3(18.214260,0.000000,31.034203)
 rotation = Vector3(0,4.155363,0)
 collision_layer = 1
 collision_mask = 0
@@ -961,7 +1235,7 @@ collision_mask = 0
 shape = SubResource("Shape51")
 
 [node name="tree_pine_052" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-3.409021,1.350267,-30.636925)
+position = Vector3(-3.409021,2.475490,-30.636925)
 rotation = Vector3(0,3.667907,0)
 collision_layer = 1
 collision_mask = 0
@@ -970,7 +1244,7 @@ collision_mask = 0
 shape = SubResource("Shape52")
 
 [node name="tree_pine_053" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(3.409021,1.350267,30.636925)
+position = Vector3(3.409021,2.475490,30.636925)
 rotation = Vector3(0,6.809499,0)
 collision_layer = 1
 collision_mask = 0
@@ -979,7 +1253,7 @@ collision_mask = 0
 shape = SubResource("Shape53")
 
 [node name="tree_oak_054" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-55.598467,1.556087,-26.807062)
+position = Vector3(-55.598467,1.815435,-26.807062)
 rotation = Vector3(0,4.825112,0)
 collision_layer = 1
 collision_mask = 0
@@ -988,7 +1262,7 @@ collision_mask = 0
 shape = SubResource("Shape54")
 
 [node name="tree_oak_055" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(55.598467,1.556087,26.807062)
+position = Vector3(55.598467,1.815435,26.807062)
 rotation = Vector3(0,7.966704,0)
 collision_layer = 1
 collision_mask = 0
@@ -997,7 +1271,7 @@ collision_mask = 0
 shape = SubResource("Shape55")
 
 [node name="tree_pine_056" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-39.108015,1.525735,-26.621690)
+position = Vector3(-39.108015,2.797180,-26.621690)
 rotation = Vector3(0,2.793832,0)
 collision_layer = 1
 collision_mask = 0
@@ -1006,7 +1280,7 @@ collision_mask = 0
 shape = SubResource("Shape56")
 
 [node name="tree_pine_057" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(39.108015,1.525735,26.621690)
+position = Vector3(39.108015,2.797180,26.621690)
 rotation = Vector3(0,5.935425,0)
 collision_layer = 1
 collision_mask = 0
@@ -1015,7 +1289,7 @@ collision_mask = 0
 shape = SubResource("Shape57")
 
 [node name="rock_medium_058" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-13.149310,0.989457,-26.043587)
+position = Vector3(-13.149310,0.000000,-26.043587)
 rotation = Vector3(0,3.470136,0)
 collision_layer = 1
 collision_mask = 0
@@ -1024,7 +1298,7 @@ collision_mask = 0
 shape = SubResource("Shape58")
 
 [node name="rock_medium_059" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(13.149310,0.989457,26.043587)
+position = Vector3(13.149310,0.000000,26.043587)
 rotation = Vector3(0,6.611728,0)
 collision_layer = 1
 collision_mask = 0
@@ -1033,7 +1307,7 @@ collision_mask = 0
 shape = SubResource("Shape59")
 
 [node name="tree_pine_060" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-8.584724,1.338732,-26.566617)
+position = Vector3(-8.584724,2.454342,-26.566617)
 rotation = Vector3(0,2.281537,0)
 collision_layer = 1
 collision_mask = 0
@@ -1042,7 +1316,7 @@ collision_mask = 0
 shape = SubResource("Shape60")
 
 [node name="tree_pine_061" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(8.584724,1.338732,26.566617)
+position = Vector3(8.584724,2.454342,26.566617)
 rotation = Vector3(0,5.423129,0)
 collision_layer = 1
 collision_mask = 0
@@ -1051,7 +1325,7 @@ collision_mask = 0
 shape = SubResource("Shape61")
 
 [node name="tree_oak_062" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-4.103540,1.379815,-25.796822)
+position = Vector3(-4.103540,1.609785,-25.796822)
 rotation = Vector3(0,2.463760,0)
 collision_layer = 1
 collision_mask = 0
@@ -1060,7 +1334,7 @@ collision_mask = 0
 shape = SubResource("Shape62")
 
 [node name="tree_oak_063" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(4.103540,1.379815,25.796822)
+position = Vector3(4.103540,1.609785,25.796822)
 rotation = Vector3(0,5.605353,0)
 collision_layer = 1
 collision_mask = 0
@@ -1069,7 +1343,7 @@ collision_mask = 0
 shape = SubResource("Shape63")
 
 [node name="tree_pine_064" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.847598,1.467413,-21.768499)
+position = Vector3(-59.847598,2.690257,-21.768499)
 rotation = Vector3(0,3.251726,0)
 collision_layer = 1
 collision_mask = 0
@@ -1078,7 +1352,7 @@ collision_mask = 0
 shape = SubResource("Shape64")
 
 [node name="tree_pine_065" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.847598,1.467413,21.768499)
+position = Vector3(59.847598,2.690257,21.768499)
 rotation = Vector3(0,6.393319,0)
 collision_layer = 1
 collision_mask = 0
@@ -1087,7 +1361,7 @@ collision_mask = 0
 shape = SubResource("Shape65")
 
 [node name="tree_pine_066" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-44.287943,1.396964,-20.564307)
+position = Vector3(-44.287943,2.561101,-20.564307)
 rotation = Vector3(0,1.980350,0)
 collision_layer = 1
 collision_mask = 0
@@ -1096,7 +1370,7 @@ collision_mask = 0
 shape = SubResource("Shape66")
 
 [node name="tree_pine_067" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(44.287943,1.396964,20.564307)
+position = Vector3(44.287943,2.561101,20.564307)
 rotation = Vector3(0,5.121943,0)
 collision_layer = 1
 collision_mask = 0
@@ -1105,7 +1379,7 @@ collision_mask = 0
 shape = SubResource("Shape67")
 
 [node name="tree_pine_068" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-40.217500,1.346755,-22.390608)
+position = Vector3(-40.217500,2.469051,-22.390608)
 rotation = Vector3(0,2.789682,0)
 collision_layer = 1
 collision_mask = 0
@@ -1114,7 +1388,7 @@ collision_mask = 0
 shape = SubResource("Shape68")
 
 [node name="tree_pine_069" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(40.217500,1.346755,22.390608)
+position = Vector3(40.217500,2.469051,22.390608)
 rotation = Vector3(0,5.931275,0)
 collision_layer = 1
 collision_mask = 0
@@ -1123,7 +1397,7 @@ collision_mask = 0
 shape = SubResource("Shape69")
 
 [node name="tree_pine_070" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.931115,1.533151,-17.148336)
+position = Vector3(-60.931115,2.810777,-17.148336)
 rotation = Vector3(0,2.560124,0)
 collision_layer = 1
 collision_mask = 0
@@ -1132,7 +1406,7 @@ collision_mask = 0
 shape = SubResource("Shape70")
 
 [node name="tree_pine_071" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.931115,1.533151,17.148336)
+position = Vector3(60.931115,2.810777,17.148336)
 rotation = Vector3(0,5.701716,0)
 collision_layer = 1
 collision_mask = 0
@@ -1141,7 +1415,7 @@ collision_mask = 0
 shape = SubResource("Shape71")
 
 [node name="tree_pine_072" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.630456,1.238058,-11.885273)
+position = Vector3(-59.630456,2.269772,-11.885273)
 rotation = Vector3(0,0.658128,0)
 collision_layer = 1
 collision_mask = 0
@@ -1150,7 +1424,7 @@ collision_mask = 0
 shape = SubResource("Shape72")
 
 [node name="tree_pine_073" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.630456,1.238058,11.885273)
+position = Vector3(59.630456,2.269772,11.885273)
 rotation = Vector3(0,3.799720,0)
 collision_layer = 1
 collision_mask = 0
@@ -1159,7 +1433,7 @@ collision_mask = 0
 shape = SubResource("Shape73")
 
 [node name="tree_oak_074" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.506075,1.224573,-5.902559)
+position = Vector3(-59.506075,1.428668,-5.902559)
 rotation = Vector3(0,2.169456,0)
 collision_layer = 1
 collision_mask = 0
@@ -1168,7 +1442,7 @@ collision_mask = 0
 shape = SubResource("Shape74")
 
 [node name="tree_oak_075" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.506075,1.224573,5.902559)
+position = Vector3(59.506075,1.428668,5.902559)
 rotation = Vector3(0,5.311049,0)
 collision_layer = 1
 collision_mask = 0
@@ -1177,7 +1451,7 @@ collision_mask = 0
 shape = SubResource("Shape75")
 
 [node name="tree_oak_076" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.727624,1.538491,-0.903152)
+position = Vector3(-59.727624,1.794906,-0.903152)
 rotation = Vector3(0,3.075777,0)
 collision_layer = 1
 collision_mask = 0
@@ -1186,7 +1460,7 @@ collision_mask = 0
 shape = SubResource("Shape76")
 
 [node name="tree_oak_077" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.727624,1.538491,0.903152)
+position = Vector3(59.727624,1.794906,0.903152)
 rotation = Vector3(0,6.217370,0)
 collision_layer = 1
 collision_mask = 0
@@ -1195,7 +1469,7 @@ collision_mask = 0
 shape = SubResource("Shape77")
 
 [node name="tree_pine_078" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-14.646637,1.215992,-0.261213)
+position = Vector3(-14.646637,2.229318,-0.261213)
 rotation = Vector3(0,2.565521,0)
 collision_layer = 1
 collision_mask = 0
@@ -1204,7 +1478,7 @@ collision_mask = 0
 shape = SubResource("Shape78")
 
 [node name="tree_pine_079" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(14.646637,1.215992,0.261213)
+position = Vector3(14.646637,2.229318,0.261213)
 rotation = Vector3(0,5.707113,0)
 collision_layer = 1
 collision_mask = 0
@@ -1213,7 +1487,7 @@ collision_mask = 0
 shape = SubResource("Shape79")
 
 [node name="tree_oak_080" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-8.180950,1.532921,-1.027928)
+position = Vector3(-8.180950,1.788408,-1.027928)
 rotation = Vector3(0,5.289189,0)
 collision_layer = 1
 collision_mask = 0
@@ -1222,7 +1496,7 @@ collision_mask = 0
 shape = SubResource("Shape80")
 
 [node name="tree_oak_081" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(8.180950,1.532921,1.027928)
+position = Vector3(8.180950,1.788408,1.027928)
 rotation = Vector3(0,8.430782,0)
 collision_layer = 1
 collision_mask = 0
@@ -1231,7 +1505,7 @@ collision_mask = 0
 shape = SubResource("Shape81")
 
 [node name="tree_pine_082" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.266696,1.236699,4.331887)
+position = Vector3(-59.266696,2.267282,4.331887)
 rotation = Vector3(0,4.878913,0)
 collision_layer = 1
 collision_mask = 0
@@ -1240,7 +1514,7 @@ collision_mask = 0
 shape = SubResource("Shape82")
 
 [node name="tree_pine_083" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.266696,1.236699,-4.331887)
+position = Vector3(59.266696,2.267282,-4.331887)
 rotation = Vector3(0,8.020506,0)
 collision_layer = 1
 collision_mask = 0
@@ -1249,7 +1523,7 @@ collision_mask = 0
 shape = SubResource("Shape83")
 
 [node name="tree_oak_084" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-24.630965,1.513505,3.207291)
+position = Vector3(-24.630965,1.765756,3.207291)
 rotation = Vector3(0,5.104579,0)
 collision_layer = 1
 collision_mask = 0
@@ -1258,7 +1532,7 @@ collision_mask = 0
 shape = SubResource("Shape84")
 
 [node name="tree_oak_085" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(24.630965,1.513505,-3.207291)
+position = Vector3(24.630965,1.765756,-3.207291)
 rotation = Vector3(0,8.246171,0)
 collision_layer = 1
 collision_mask = 0
@@ -1267,7 +1541,7 @@ collision_mask = 0
 shape = SubResource("Shape85")
 
 [node name="tree_pine_086" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-18.564469,1.535816,4.761686)
+position = Vector3(-18.564469,2.815663,4.761686)
 rotation = Vector3(0,5.168227,0)
 collision_layer = 1
 collision_mask = 0
@@ -1276,7 +1550,7 @@ collision_mask = 0
 shape = SubResource("Shape86")
 
 [node name="tree_pine_087" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(18.564469,1.535816,-4.761686)
+position = Vector3(18.564469,2.815663,-4.761686)
 rotation = Vector3(0,8.309820,0)
 collision_layer = 1
 collision_mask = 0
@@ -1285,7 +1559,7 @@ collision_mask = 0
 shape = SubResource("Shape87")
 
 [node name="tree_pine_088" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.248261,1.475911,9.775375)
+position = Vector3(-60.248261,2.705838,9.775375)
 rotation = Vector3(0,0.339924,0)
 collision_layer = 1
 collision_mask = 0
@@ -1294,7 +1568,7 @@ collision_mask = 0
 shape = SubResource("Shape88")
 
 [node name="tree_pine_089" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.248261,1.475911,-9.775375)
+position = Vector3(60.248261,2.705838,-9.775375)
 rotation = Vector3(0,3.481517,0)
 collision_layer = 1
 collision_mask = 0
@@ -1303,7 +1577,7 @@ collision_mask = 0
 shape = SubResource("Shape89")
 
 [node name="tree_oak_090" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.121430,1.440225,19.391589)
+position = Vector3(-59.121430,1.680263,19.391589)
 rotation = Vector3(0,2.412386,0)
 collision_layer = 1
 collision_mask = 0
@@ -1312,7 +1586,7 @@ collision_mask = 0
 shape = SubResource("Shape90")
 
 [node name="tree_oak_091" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.121430,1.440225,-19.391589)
+position = Vector3(59.121430,1.680263,-19.391589)
 rotation = Vector3(0,5.553979,0)
 collision_layer = 1
 collision_mask = 0
@@ -1321,7 +1595,7 @@ collision_mask = 0
 shape = SubResource("Shape91")
 
 [node name="tree_oak_092" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.580625,1.211585,24.723093)
+position = Vector3(-60.580625,1.413515,24.723093)
 rotation = Vector3(0,0.373504,0)
 collision_layer = 1
 collision_mask = 0
@@ -1330,7 +1604,7 @@ collision_mask = 0
 shape = SubResource("Shape92")
 
 [node name="tree_oak_093" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.580625,1.211585,-24.723093)
+position = Vector3(60.580625,1.413515,-24.723093)
 rotation = Vector3(0,3.515097,0)
 collision_layer = 1
 collision_mask = 0
@@ -1339,7 +1613,7 @@ collision_mask = 0
 shape = SubResource("Shape93")
 
 [node name="tree_pine_094" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.492611,1.400901,30.577168)
+position = Vector3(-59.492611,2.568318,30.577168)
 rotation = Vector3(0,1.121551,0)
 collision_layer = 1
 collision_mask = 0
@@ -1348,7 +1622,7 @@ collision_mask = 0
 shape = SubResource("Shape94")
 
 [node name="tree_pine_095" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.492611,1.400901,-30.577168)
+position = Vector3(59.492611,2.568318,-30.577168)
 rotation = Vector3(0,4.263144,0)
 collision_layer = 1
 collision_mask = 0
@@ -1357,7 +1631,7 @@ collision_mask = 0
 shape = SubResource("Shape95")
 
 [node name="tree_pine_096" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-59.374025,1.500023,40.752496)
+position = Vector3(-59.374025,2.750043,40.752496)
 rotation = Vector3(0,1.272377,0)
 collision_layer = 1
 collision_mask = 0
@@ -1366,7 +1640,7 @@ collision_mask = 0
 shape = SubResource("Shape96")
 
 [node name="tree_pine_097" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(59.374025,1.500023,-40.752496)
+position = Vector3(59.374025,2.750043,-40.752496)
 rotation = Vector3(0,4.413970,0)
 collision_layer = 1
 collision_mask = 0
@@ -1375,7 +1649,7 @@ collision_mask = 0
 shape = SubResource("Shape97")
 
 [node name="tree_pine_098" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-55.253730,1.314598,40.002895)
+position = Vector3(-55.253730,2.410096,40.002895)
 rotation = Vector3(0,2.989303,0)
 collision_layer = 1
 collision_mask = 0
@@ -1384,7 +1658,7 @@ collision_mask = 0
 shape = SubResource("Shape98")
 
 [node name="tree_pine_099" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(55.253730,1.314598,-40.002895)
+position = Vector3(55.253730,2.410096,-40.002895)
 rotation = Vector3(0,6.130895,0)
 collision_layer = 1
 collision_mask = 0
@@ -1393,7 +1667,7 @@ collision_mask = 0
 shape = SubResource("Shape99")
 
 [node name="tree_oak_100" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.586563,1.335772,45.209915)
+position = Vector3(-60.586563,1.558400,45.209915)
 rotation = Vector3(0,3.060530,0)
 collision_layer = 1
 collision_mask = 0
@@ -1402,7 +1676,7 @@ collision_mask = 0
 shape = SubResource("Shape100")
 
 [node name="tree_oak_101" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.586563,1.335772,-45.209915)
+position = Vector3(60.586563,1.558400,-45.209915)
 rotation = Vector3(0,6.202122,0)
 collision_layer = 1
 collision_mask = 0
@@ -1411,7 +1685,7 @@ collision_mask = 0
 shape = SubResource("Shape101")
 
 [node name="tree_pine_102" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-54.729645,1.234376,45.291369)
+position = Vector3(-54.729645,2.263024,45.291369)
 rotation = Vector3(0,1.522935,0)
 collision_layer = 1
 collision_mask = 0
@@ -1420,7 +1694,7 @@ collision_mask = 0
 shape = SubResource("Shape102")
 
 [node name="tree_pine_103" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(54.729645,1.234376,-45.291369)
+position = Vector3(54.729645,2.263024,-45.291369)
 rotation = Vector3(0,4.664528,0)
 collision_layer = 1
 collision_mask = 0
@@ -1429,7 +1703,7 @@ collision_mask = 0
 shape = SubResource("Shape103")
 
 [node name="tree_pine_104" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-38.963614,1.316985,44.053172)
+position = Vector3(-38.963614,2.414473,44.053172)
 rotation = Vector3(0,0.663040,0)
 collision_layer = 1
 collision_mask = 0
@@ -1438,7 +1712,7 @@ collision_mask = 0
 shape = SubResource("Shape104")
 
 [node name="tree_pine_105" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(38.963614,1.316985,-44.053172)
+position = Vector3(38.963614,2.414473,-44.053172)
 rotation = Vector3(0,3.804633,0)
 collision_layer = 1
 collision_mask = 0
@@ -1447,7 +1721,7 @@ collision_mask = 0
 shape = SubResource("Shape105")
 
 [node name="tree_oak_106" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-60.430151,1.498720,50.981156)
+position = Vector3(-60.430151,1.748507,50.981156)
 rotation = Vector3(0,3.918148,0)
 collision_layer = 1
 collision_mask = 0
@@ -1456,7 +1730,7 @@ collision_mask = 0
 shape = SubResource("Shape106")
 
 [node name="tree_oak_107" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(60.430151,1.498720,-50.981156)
+position = Vector3(60.430151,1.748507,-50.981156)
 rotation = Vector3(0,7.059741,0)
 collision_layer = 1
 collision_mask = 0
@@ -1465,7 +1739,7 @@ collision_mask = 0
 shape = SubResource("Shape107")
 
 [node name="tree_pine_108" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-53.968665,1.522881,50.210786)
+position = Vector3(-53.968665,2.791948,50.210786)
 rotation = Vector3(0,6.170905,0)
 collision_layer = 1
 collision_mask = 0
@@ -1474,7 +1748,7 @@ collision_mask = 0
 shape = SubResource("Shape108")
 
 [node name="tree_pine_109" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(53.968665,1.522881,-50.210786)
+position = Vector3(53.968665,2.791948,-50.210786)
 rotation = Vector3(0,9.312497,0)
 collision_layer = 1
 collision_mask = 0
@@ -1483,7 +1757,7 @@ collision_mask = 0
 shape = SubResource("Shape109")
 
 [node name="tree_pine_110" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-49.927512,1.303368,49.301848)
+position = Vector3(-49.927512,2.389509,49.301848)
 rotation = Vector3(0,1.627156,0)
 collision_layer = 1
 collision_mask = 0
@@ -1492,7 +1766,7 @@ collision_mask = 0
 shape = SubResource("Shape110")
 
 [node name="tree_pine_111" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(49.927512,1.303368,-49.301848)
+position = Vector3(49.927512,2.389509,-49.301848)
 rotation = Vector3(0,4.768748,0)
 collision_layer = 1
 collision_mask = 0
@@ -1501,7 +1775,7 @@ collision_mask = 0
 shape = SubResource("Shape111")
 
 [node name="tree_oak_112" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-45.585065,1.246442,49.280891)
+position = Vector3(-45.585065,1.454182,49.280891)
 rotation = Vector3(0,4.983488,0)
 collision_layer = 1
 collision_mask = 0
@@ -1510,7 +1784,7 @@ collision_mask = 0
 shape = SubResource("Shape112")
 
 [node name="tree_oak_113" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(45.585065,1.246442,-49.280891)
+position = Vector3(45.585065,1.454182,-49.280891)
 rotation = Vector3(0,8.125081,0)
 collision_layer = 1
 collision_mask = 0
@@ -1519,7 +1793,7 @@ collision_mask = 0
 shape = SubResource("Shape113")
 
 [node name="tree_pine_114" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-38.622374,1.330997,50.035609)
+position = Vector3(-38.622374,2.440160,50.035609)
 rotation = Vector3(0,1.038826,0)
 collision_layer = 1
 collision_mask = 0
@@ -1528,7 +1802,7 @@ collision_mask = 0
 shape = SubResource("Shape114")
 
 [node name="tree_pine_115" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(38.622374,1.330997,-50.035609)
+position = Vector3(38.622374,2.440160,-50.035609)
 rotation = Vector3(0,4.180419,0)
 collision_layer = 1
 collision_mask = 0
@@ -1537,7 +1811,7 @@ collision_mask = 0
 shape = SubResource("Shape115")
 
 [node name="tree_pine_116" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-34.225759,1.341216,50.181522)
+position = Vector3(-34.225759,2.458895,50.181522)
 rotation = Vector3(0,0.531099,0)
 collision_layer = 1
 collision_mask = 0
@@ -1546,7 +1820,7 @@ collision_mask = 0
 shape = SubResource("Shape116")
 
 [node name="tree_pine_117" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(34.225759,1.341216,-50.181522)
+position = Vector3(34.225759,2.458895,-50.181522)
 rotation = Vector3(0,3.672692,0)
 collision_layer = 1
 collision_mask = 0
@@ -1555,7 +1829,7 @@ collision_mask = 0
 shape = SubResource("Shape117")
 
 [node name="tree_oak_118" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-29.514594,1.254429,49.126915)
+position = Vector3(-29.514594,1.463500,49.126915)
 rotation = Vector3(0,6.198207,0)
 collision_layer = 1
 collision_mask = 0
@@ -1564,7 +1838,7 @@ collision_mask = 0
 shape = SubResource("Shape118")
 
 [node name="tree_oak_119" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(29.514594,1.254429,-49.126915)
+position = Vector3(29.514594,1.463500,-49.126915)
 rotation = Vector3(0,9.339800,0)
 collision_layer = 1
 collision_mask = 0
@@ -1573,7 +1847,7 @@ collision_mask = 0
 shape = SubResource("Shape119")
 
 [node name="tree_pine_120" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-25.154881,1.437621,50.578596)
+position = Vector3(-25.154881,2.635639,50.578596)
 rotation = Vector3(0,1.708317,0)
 collision_layer = 1
 collision_mask = 0
@@ -1582,7 +1856,7 @@ collision_mask = 0
 shape = SubResource("Shape120")
 
 [node name="tree_pine_121" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(25.154881,1.437621,-50.578596)
+position = Vector3(25.154881,2.635639,-50.578596)
 rotation = Vector3(0,4.849910,0)
 collision_layer = 1
 collision_mask = 0
@@ -1591,7 +1865,7 @@ collision_mask = 0
 shape = SubResource("Shape121")
 
 [node name="tree_pine_122" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-19.407102,1.364120,50.493403)
+position = Vector3(-19.407102,2.500886,50.493403)
 rotation = Vector3(0,2.519319,0)
 collision_layer = 1
 collision_mask = 0
@@ -1600,7 +1874,7 @@ collision_mask = 0
 shape = SubResource("Shape122")
 
 [node name="tree_pine_123" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(19.407102,1.364120,-50.493403)
+position = Vector3(19.407102,2.500886,-50.493403)
 rotation = Vector3(0,5.660912,0)
 collision_layer = 1
 collision_mask = 0
@@ -1609,7 +1883,7 @@ collision_mask = 0
 shape = SubResource("Shape123")
 
 [node name="tree_pine_124" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-9.358242,1.451688,49.998434)
+position = Vector3(-9.358242,2.661427,49.998434)
 rotation = Vector3(0,2.887297,0)
 collision_layer = 1
 collision_mask = 0
@@ -1618,7 +1892,7 @@ collision_mask = 0
 shape = SubResource("Shape124")
 
 [node name="tree_pine_125" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(9.358242,1.451688,-49.998434)
+position = Vector3(9.358242,2.661427,-49.998434)
 rotation = Vector3(0,6.028890,0)
 collision_layer = 1
 collision_mask = 0
@@ -1627,7 +1901,7 @@ collision_mask = 0
 shape = SubResource("Shape125")
 
 [node name="tree_pine_126" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-2.951522,1.361359,49.806596)
+position = Vector3(-2.951522,2.495825,49.806596)
 rotation = Vector3(0,0.532487,0)
 collision_layer = 1
 collision_mask = 0
@@ -1636,7 +1910,7 @@ collision_mask = 0
 shape = SubResource("Shape126")
 
 [node name="tree_pine_127" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(2.951522,1.361359,-49.806596)
+position = Vector3(2.951522,2.495825,-49.806596)
 rotation = Vector3(0,3.674080,0)
 collision_layer = 1
 collision_mask = 0
@@ -1645,7 +1919,7 @@ collision_mask = 0
 shape = SubResource("Shape127")
 
 [node name="rock_medium_128" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-12.501184,0.699970,34.043568)
+position = Vector3(-12.501184,0.000000,34.043568)
 rotation = Vector3(0,4.990841,0)
 collision_layer = 1
 collision_mask = 0
@@ -1654,7 +1928,7 @@ collision_mask = 0
 shape = SubResource("Shape128")
 
 [node name="rock_medium_129" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(12.501184,0.699970,-34.043568)
+position = Vector3(12.501184,0.000000,-34.043568)
 rotation = Vector3(0,8.132434,0)
 collision_layer = 1
 collision_mask = 0
@@ -1663,7 +1937,7 @@ collision_mask = 0
 shape = SubResource("Shape129")
 
 [node name="rock_medium_130" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-27.779974,0.630717,-45.693736)
+position = Vector3(-27.779974,0.000000,-45.693736)
 rotation = Vector3(0,5.080888,0)
 collision_layer = 1
 collision_mask = 0
@@ -1672,7 +1946,7 @@ collision_mask = 0
 shape = SubResource("Shape130")
 
 [node name="rock_medium_131" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(27.779974,0.630717,45.693736)
+position = Vector3(27.779974,0.000000,45.693736)
 rotation = Vector3(0,8.222480,0)
 collision_layer = 1
 collision_mask = 0
@@ -1681,7 +1955,7 @@ collision_mask = 0
 shape = SubResource("Shape131")
 
 [node name="rock_medium_132" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-16.133060,0.661230,-24.556638)
+position = Vector3(-16.133060,0.000000,-24.556638)
 rotation = Vector3(0,2.951196,0)
 collision_layer = 1
 collision_mask = 0
@@ -1690,7 +1964,7 @@ collision_mask = 0
 shape = SubResource("Shape132")
 
 [node name="rock_medium_133" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(16.133060,0.661230,24.556638)
+position = Vector3(16.133060,0.000000,24.556638)
 rotation = Vector3(0,6.092788,0)
 collision_layer = 1
 collision_mask = 0
@@ -1699,7 +1973,7 @@ collision_mask = 0
 shape = SubResource("Shape133")
 
 [node name="rock_medium_134" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-10.593501,0.654171,-33.054837)
+position = Vector3(-10.593501,0.000000,-33.054837)
 rotation = Vector3(0,4.087728,0)
 collision_layer = 1
 collision_mask = 0
@@ -1708,7 +1982,7 @@ collision_mask = 0
 shape = SubResource("Shape134")
 
 [node name="rock_medium_135" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(10.593501,0.654171,33.054837)
+position = Vector3(10.593501,0.000000,33.054837)
 rotation = Vector3(0,7.229320,0)
 collision_layer = 1
 collision_mask = 0
@@ -1717,7 +1991,7 @@ collision_mask = 0
 shape = SubResource("Shape135")
 
 [node name="rock_medium_136" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-37.309661,0.622564,19.018586)
+position = Vector3(-37.309661,0.000000,19.018586)
 rotation = Vector3(0,4.999566,0)
 collision_layer = 1
 collision_mask = 0
@@ -1726,7 +2000,7 @@ collision_mask = 0
 shape = SubResource("Shape136")
 
 [node name="rock_medium_137" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(37.309661,0.622564,-19.018586)
+position = Vector3(37.309661,0.000000,-19.018586)
 rotation = Vector3(0,8.141158,0)
 collision_layer = 1
 collision_mask = 0
@@ -1735,7 +2009,7 @@ collision_mask = 0
 shape = SubResource("Shape137")
 
 [node name="rock_medium_138" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-26.256331,0.803335,-48.867245)
+position = Vector3(-26.256331,0.000000,-48.867245)
 rotation = Vector3(0,6.217131,0)
 collision_layer = 1
 collision_mask = 0
@@ -1744,7 +2018,7 @@ collision_mask = 0
 shape = SubResource("Shape138")
 
 [node name="rock_medium_139" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(26.256331,0.803335,48.867245)
+position = Vector3(26.256331,0.000000,48.867245)
 rotation = Vector3(0,9.358724,0)
 collision_layer = 1
 collision_mask = 0
@@ -1753,7 +2027,7 @@ collision_mask = 0
 shape = SubResource("Shape139")
 
 [node name="rock_medium_140" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-14.283159,0.628409,-30.715853)
+position = Vector3(-14.283159,0.000000,-30.715853)
 rotation = Vector3(0,3.188902,0)
 collision_layer = 1
 collision_mask = 0
@@ -1762,7 +2036,7 @@ collision_mask = 0
 shape = SubResource("Shape140")
 
 [node name="rock_medium_141" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(14.283159,0.628409,30.715853)
+position = Vector3(14.283159,0.000000,30.715853)
 rotation = Vector3(0,6.330494,0)
 collision_layer = 1
 collision_mask = 0
@@ -1771,7 +2045,7 @@ collision_mask = 0
 shape = SubResource("Shape141")
 
 [node name="rock_medium_142" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-44.118738,0.907458,44.508588)
+position = Vector3(-44.118738,0.000000,44.508588)
 rotation = Vector3(0,2.224511,0)
 collision_layer = 1
 collision_mask = 0
@@ -1780,7 +2054,7 @@ collision_mask = 0
 shape = SubResource("Shape142")
 
 [node name="rock_medium_143" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(44.118738,0.907458,-44.508588)
+position = Vector3(44.118738,0.000000,-44.508588)
 rotation = Vector3(0,5.366104,0)
 collision_layer = 1
 collision_mask = 0
@@ -1789,7 +2063,7 @@ collision_mask = 0
 shape = SubResource("Shape143")
 
 [node name="rock_medium_144" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-17.221042,0.898620,10.973224)
+position = Vector3(-17.221042,0.000000,10.973224)
 rotation = Vector3(0,5.444258,0)
 collision_layer = 1
 collision_mask = 0
@@ -1798,7 +2072,7 @@ collision_mask = 0
 shape = SubResource("Shape144")
 
 [node name="rock_medium_145" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(17.221042,0.898620,-10.973224)
+position = Vector3(17.221042,0.000000,-10.973224)
 rotation = Vector3(0,8.585850,0)
 collision_layer = 1
 collision_mask = 0
@@ -1807,7 +2081,7 @@ collision_mask = 0
 shape = SubResource("Shape145")
 
 [node name="rock_medium_146" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-56.294385,0.721878,6.096385)
+position = Vector3(-56.294385,0.000000,6.096385)
 rotation = Vector3(0,3.850186,0)
 collision_layer = 1
 collision_mask = 0
@@ -1816,7 +2090,7 @@ collision_mask = 0
 shape = SubResource("Shape146")
 
 [node name="rock_medium_147" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(56.294385,0.721878,-6.096385)
+position = Vector3(56.294385,0.000000,-6.096385)
 rotation = Vector3(0,6.991779,0)
 collision_layer = 1
 collision_mask = 0
@@ -1825,7 +2099,7 @@ collision_mask = 0
 shape = SubResource("Shape147")
 
 [node name="rock_medium_148" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-56.455887,0.679448,-45.364053)
+position = Vector3(-56.455887,0.000000,-45.364053)
 rotation = Vector3(0,1.762506,0)
 collision_layer = 1
 collision_mask = 0
@@ -1834,7 +2108,7 @@ collision_mask = 0
 shape = SubResource("Shape148")
 
 [node name="rock_medium_149" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(56.455887,0.679448,45.364053)
+position = Vector3(56.455887,0.000000,45.364053)
 rotation = Vector3(0,4.904099,0)
 collision_layer = 1
 collision_mask = 0
@@ -1843,7 +2117,7 @@ collision_mask = 0
 shape = SubResource("Shape149")
 
 [node name="rock_medium_150" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(-14.169046,0.700795,4.675646)
+position = Vector3(-14.169046,0.000000,4.675646)
 rotation = Vector3(0,1.527077,0)
 collision_layer = 1
 collision_mask = 0
@@ -1852,7 +2126,7 @@ collision_mask = 0
 shape = SubResource("Shape150")
 
 [node name="rock_medium_151" type="StaticBody3D" parent="Environment/NaturalObstacles"]
-position = Vector3(14.169046,0.700795,-4.675646)
+position = Vector3(14.169046,0.000000,-4.675646)
 rotation = Vector3(0,4.668670,0)
 collision_layer = 1
 collision_mask = 0
@@ -1890,30 +2164,40 @@ metadata/player_id = 3
 
 [node name="GoldVein0" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(-53,0,15)
+rotation = Vector3(0,0.000000,0)
 
 [node name="GoldVein1" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(-53,0,-17)
+rotation = Vector3(0,0.000000,0)
 
 [node name="GoldVein2" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(53,0,-15)
+rotation = Vector3(0,3.141593,0)
 
 [node name="GoldVein3" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(53,0,17)
+rotation = Vector3(0,3.141593,0)
 
 [node name="GoldVein4" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(-26,0,12)
+rotation = Vector3(0,0.000000,0)
 
 [node name="GoldVein5" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(-22,0,-21)
+rotation = Vector3(0,0.000000,0)
 
 [node name="GoldVein6" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(26,0,-12)
+rotation = Vector3(0,3.141593,0)
 
 [node name="GoldVein7" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(22,0,21)
+rotation = Vector3(0,3.141593,0)
 
 [node name="GoldVein8" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(-4,0,28)
+rotation = Vector3(0,0.000000,0)
 
 [node name="GoldVein9" parent="Resources" instance=ExtResource("4_mine")]
 position = Vector3(4,0,-28)
+rotation = Vector3(0,3.141593,0)

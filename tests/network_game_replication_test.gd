@@ -51,9 +51,9 @@ func _run() -> void:
 	ally.work_progress = 0.5
 	ally._model.set_working(true, "gather")
 	host.get_node("Mine").try_claim(ally)
-	own_building.production.training.append({"kind": "farmer", "elapsed": 4.0, "cost": 50})
+	own_building.production.training.append({"kind": "farmer", "elapsed": 4.0, "cost": 50, "job_id": 1})
 	own_building.production.rally_mine = host.get_node("Mine")
-	ally_building.production.research_id = "attack_1"
+	ally_building.production.research_queue.append({"id": "attack_1", "elapsed": 0.0, "cost": 100, "job_id": 1})
 	enemy_building.construction_progress = 0.45
 	var snapshot := sender.build_snapshot(0)
 	check(snapshot.entities.size() == 6, "allies_visible_enemies_only")

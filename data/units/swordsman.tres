@@ -24,5 +24,5 @@ sight = 10
 min_range = 0
 projectile = ""
 production_building = &"barracks"
-training_seconds = 0
+training_seconds = 6
 military = true

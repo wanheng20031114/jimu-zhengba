@@ -12,11 +12,13 @@ var display_name: String
 var controller: String = "human"
 var gold: int = 320
 var military_supply: int = 0
+var reserved_military_supply: int = 0
 var farmers: int = 0
 var reserved_farmers: int = 0
 var attack_level: int = 0
 var defense_level: int = 0
 var active_research: Dictionary = {}
+var queued_research: Dictionary = {}
 var last_command_sequence: int = 0
 var revealed: bool = false
 
@@ -34,6 +36,24 @@ func get_defense_bonus() -> int:
 func can_reserve_farmer() -> bool:
 	return farmers + reserved_farmers < WORKER_LIMIT
 
+func used_military_supply() -> int:
+	return military_supply + reserved_military_supply
+
+func planned_upgrade_level(track: StringName) -> int:
+	var level: int = attack_level if track == &"attack" else defense_level
+	while level < 3 and queued_research.has("%s_%d" % [track, level + 1]):
+		level += 1
+	return level
+
+func refresh_research_tracks() -> void:
+	active_research.clear()
+	for track: StringName in [&"attack", &"defense"]:
+		for level in range(1, 4):
+			var id := "%s_%d" % [track, level]
+			if queued_research.has(id):
+				active_research[track] = queued_research[id]
+				break
+
 func spend(amount: int) -> bool:
 	if amount < 0 or gold < amount:
 		return false
@@ -44,5 +64,6 @@ func public_state() -> Dictionary:
 	return {"owner_id": owner_id, "alliance_id": alliance_id, "name": display_name, "controller": controller}
 
 func private_state() -> Dictionary:
-	return {"gold": gold, "supply": military_supply, "farmers": farmers, "reserved_farmers": reserved_farmers,
+	return {"gold": gold, "supply": military_supply, "reserved_supply": reserved_military_supply, "farmers": farmers, "reserved_farmers": reserved_farmers,
+		"queued_research": queued_research.duplicate(),
 		"attack_level": attack_level, "defense_level": defense_level}

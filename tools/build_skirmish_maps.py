@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 import trimesh as tm
-from shapely.geometry import LineString, Point, Polygon, box
+from shapely.geometry import LineString, MultiPoint, Point, Polygon, box
 from shapely.ops import unary_union
 
 import build_environment as art
@@ -34,6 +34,18 @@ def shield(m, x, y, z, size=.68):
         m.add(mesh,material)
     m.box((.09*size,.67*size,.035),(x,y,z+.16),"gold")
     m.box((.53*size,.09*size,.035),(x,y+.06*size,z+.17),"gold")
+
+
+def wall_standard(m, x, y, z, width=1.0, height=1.6, angle=0):
+    """Broad actual cloth mesh, attached clear of masonry on each visible side."""
+    cloth=art.Model()
+    contour=[(-width/2,height/2),(width/2,height/2),(width/2,-height/2),
+             (0,-height*.38),(-width/2,-height/2)]
+    cloth.add(art.extruded_contour(contour,.045,0),"blue")
+    cloth.box((width+.16,.085,.085),(0,height/2+.03,0),"gold",bevel=.01)
+    cloth.box((.075,height*.47,.025),(0,.04,.044),"gold")
+    cloth.box((width*.49,.075,.025),(0,.12,.045),"gold")
+    m.absorb(cloth,(x,y,z),angle)
 
 
 def sword(m, start, end, width=.10):
@@ -69,7 +81,8 @@ def factory():
     m=art.Model()
     shell(m,5.05,4.55,3.14,(-.12,-.34))
     art.arched_gate(m,1.55,2.48,.33,(-1.15,.26,1.99))
-    art.tiled_roof(m,5.65,5.08,3.27,4.85,(-.12,-.34),True)
+    # Low workshop roof and tall square chimney distinguish the industrial silhouette.
+    art.tiled_roof(m,5.65,5.08,3.27,4.03,(-.12,-.34),False)
     # Thick dressed-stone chimney with an actual open black mouth and coping.
     m.box((.91,5.12,.94),(1.71,2.82,-1.16),"stone",bevel=.065)
     for row in range(11):
@@ -118,6 +131,8 @@ def factory():
             m.absorb(side,(-.12+sign*2.56,0,z),sign*math.pi/2)
         m.beam((-.12+sign*2.55,.91,-1.75),(-.12+sign*2.55,2.90,-.54),.13,"wood_dark")
     art.banner(m,-2.09,4.34,-.20,"blue",.67)
+    for sign in (-1,1):
+        wall_standard(m,-.12+sign*2.58,1.98,-.54,1.15,1.50,sign*math.pi/2)
     return m
 
 
@@ -163,6 +178,9 @@ def academy():
     m.cone(.11,0,.29,(0,7.19,-.46),"gold",sections=6)
     m.ring(.14,.18,.045,(0,7.41,-.46),"gold",sections=12,rot=(math.pi/2,0,0))
     art.banner(m,-2.06,3.56,1.17,"blue",.72)
+    for sign in (-1,1):
+        wall_standard(m,sign*1.62,1.95,2.155,.80,1.48)
+        wall_standard(m,sign*2.62,2.02,-.65,1.02,1.65,sign*math.pi/2)
     # A side reading desk and tightly stacked books supply near-camera detail.
     m.box((.61,.10,.46),(2.28,.96,2.38),"wood_light",bevel=.014)
     for yy,w,mat in [(1.06,.42,"blue"),(1.16,.48,"wood"),(1.25,.38,"gold")]:
@@ -174,7 +192,10 @@ def academy():
 def player_barracks():
     m=art.Model()
     shell(m,5.22,4.48,3.10,(0,-.32))
-    art.tiled_roof(m,5.85,5.07,3.21,4.90,(0,-.32),True)
+    # A fortified flat training hall, unlike the pitched HQ or academy dome.
+    m.box((5.34,.20,4.63),(0,3.22,-.32),"stone_light",bevel=.04)
+    m.box((4.88,.07,4.18),(0,3.36,-.32),"wood_dark")
+    art.battlements(m,0,-.32,5.32,4.60,3.39)
     art.arched_gate(m,1.40,2.28,.34,(0,.26,1.99))
     for sign in (-1,1):
         art.window(m,sign*1.89,2.03,1.99,.53,.84,False)
@@ -198,10 +219,20 @@ def player_barracks():
         slit=art.Model();art.window(slit,0,4.38,0,.17,.47,False)
         m.absorb(slit,(-1.58+.61*math.sin(a),0,-1.30+.61*math.cos(a)),a)
     m.cylinder(.75,.14,(-1.58,4.97,-1.30),"stone_light",sections=8)
-    m.cone(.89,.06,.95,(-1.58,5.48,-1.30),"slate",sections=8)
-    m.cone(.075,0,.21,(-1.58,6.06,-1.30),"gold",sections=6)
+    art.battlements(m,-1.58,-1.30,1.38,1.38,5.00)
     art.banner(m,1.89,3.84,-.72,"blue",.71)
+    for sign in (-1,1):
+        wall_standard(m,sign*2.67,2.13,.63,1.18,1.62,sign*math.pi/2)
+        wall_standard(m,sign*1.77,2.06,1.97,.84,1.30)
     m.box((1.74,.16,.56),(0,.30,2.38),"stone_light",bevel=.03)
+    return m
+
+
+def player_defense_tower():
+    m=art.defense_tower()
+    for sign in (-1,1):
+        wall_standard(m,sign*1.62,3.13,0,1.14,1.75,sign*math.pi/2)
+    wall_standard(m,0,3.30,1.66,.90,1.30)
     return m
 
 
@@ -215,6 +246,12 @@ def native_model(model, destination: str, limit: float | None = None, shadow=Tru
     center=(bounds[0]+bounds[1])*.5
     parts=[]
     for family,meshes in model.parts.items():
+        if destination.startswith("res://assets/models/environment/"):
+            meshes=[mesh.copy() for mesh in meshes]
+            for mesh in meshes:
+                colors=mesh.visual.vertex_colors.copy()
+                colors[:,3]=255 if mesh.metadata.get("heraldry",False) else 0
+                mesh.visual.vertex_colors=colors
         merged=tm.util.concatenate(meshes)
         if limit is not None:
             merged.vertices[:,0]=(merged.vertices[:,0]-center[0])*factor
@@ -228,12 +265,14 @@ def native_model(model, destination: str, limit: float | None = None, shadow=Tru
         merged.unmerge_vertices()
         srgb=merged.visual.vertex_colors[:,:3].astype(float)/255
         linear=np.where(srgb<=.04045,srgb/12.92,((srgb+.055)/1.055)**2.4)
-        rgba=np.concatenate((linear,np.ones((len(linear),1))),axis=1)
+        rgba=np.concatenate((linear,merged.visual.vertex_colors[:,3:4].astype(float)/255),axis=1)
         parts.append({"name":family,"vertices":np.round(merged.vertices,6).reshape(-1).tolist(),
                       "normals":np.round(merged.vertex_normals,6).reshape(-1).tolist(),
                       "colors":np.round(rgba,6).reshape(-1).tolist(),"indices":merged.faces.reshape(-1).tolist()})
     name=Path(destination).stem
-    payload={"destination":destination,"shadow":shadow,"parts":parts}
+    payload={"destination":destination,"shadow":shadow,"parts":parts,
+             "building":destination.startswith("res://assets/models/environment/"),
+             "max_height":float(bounds[1,1]-bounds[0,1])}
     staged=LOCAL/f"{name}.json"
     art.write_asset(staged,json.dumps(payload,separators=(",",":")))
     MANIFEST.append({"source":str(staged),"destination":destination})
@@ -302,6 +341,31 @@ def terrain(definition):
     return m
 
 
+def collision_geometry(kind,model):
+    """Use the real three main rock solids; small pebbles and foliage do not block units."""
+    if kind.startswith("rock") or kind == "gold_vein":
+        vertices=np.concatenate([mesh.vertices for mesh in model.parts["Stone"][:3]])
+        vertices[:,1]=np.maximum(vertices[:,1],0)
+        hull=tm.convex.convex_hull(vertices)
+        points=np.round(hull.vertices,6)
+        footprint=list(MultiPoint(points[:,[0,2]]).convex_hull.exterior.coords)[:-1]
+        return {"type":"convex","points":points.tolist(),"footprint":footprint}
+    radius=.41 if kind=="tree_oak" else .29
+    height=3.5 if kind=="tree_oak" else 5.5
+    # Match the native circular trunk, never the overhead canopy or decorative roots.
+    footprint=[(radius*math.cos(a),radius*math.sin(a)) for a in np.linspace(0,math.tau,20,endpoint=False)]
+    return {"type":"cylinder","radius":radius,"height":height,"footprint":footprint}
+
+
+def scaled_collision(collision,scale):
+    result={"type":collision["type"],"footprint":(np.asarray(collision["footprint"])*scale).round(6).tolist()}
+    if collision["type"]=="convex":
+        result["points"]=(np.asarray(collision["points"])*scale).round(6).tolist()
+    else:
+        result.update(radius=collision["radius"]*scale,height=collision["height"]*scale)
+    return result
+
+
 def natural_layout(definition):
     w,d=definition["size"]
     safe_roads=road_union(definition,1.35)
@@ -309,6 +373,7 @@ def natural_layout(definition):
     mines=[Point(p).buffer(5.1) for p in definition["mines"]]
     reserved=unary_union([safe_roads,*bases,*mines])
     models={"rock_large":art.natural_rock(True),"rock_medium":art.natural_rock(False),"tree_oak":art.oak_tree(),"tree_pine":art.pine_tree()}
+    collisions={kind:collision_geometry(kind,model) for kind,model in models.items()}
     placements=[]; occupied=[]
     def attempt(x,z,kind,scale,angle):
         width,depth,height={"rock_large":(4.05,3.60,3.1),"rock_medium":(2.60,2.31,2.0),"tree_oak":(.92,.92,3.0),"tree_pine":(.70,.70,3.0)}[kind]
@@ -321,7 +386,8 @@ def natural_layout(definition):
         for sign in (1,-1):
             placements.append({"name":f"{kind}_{len(placements):03d}","model":kind,"position":[sign*x,0,sign*z],
                                "rotation_y":angle+(math.pi if sign<0 else 0),"scale":scale,
-                               "size":[width*scale,height*scale,depth*scale]})
+                               "size":[width*scale,height*scale,depth*scale],
+                               "collision":scaled_collision(collisions[kind],scale)})
             occupied.append(Point(sign*x,sign*z).buffer(visual))
         return True
     # Art-directed clusters around road islands, then a denser boundary frame.
@@ -354,12 +420,15 @@ def navigation(definition,obstacles):
     w,d=definition["size"]
     solid=[]
     for item in obstacles:
-        x,_,z=item["position"];sx,_,sz=item["size"];a=item["rotation_y"]
+        x,_,z=item["position"];a=item["rotation_y"]
         points=[]
-        for dx,dz in [(-sx/2,-sz/2),(sx/2,-sz/2),(sx/2,sz/2),(-sx/2,sz/2)]:
+        for dx,dz in item["collision"]["footprint"]:
             points.append((x+dx*math.cos(a)+dz*math.sin(a),z-dx*math.sin(a)+dz*math.cos(a)))
-        solid.append(Polygon(points).buffer(1.15,join_style=2))
-    solid.extend(Point(p).buffer(3.35) for p in definition["mines"])
+        solid.append(Polygon(points).buffer(1.15,join_style=1))
+    ore=collision_geometry("gold_vein",art.gold_vein())
+    for x,z in definition["mines"]:
+        sign=1 if x<0 else -1
+        solid.append(Polygon([(x+sign*px,z+sign*pz) for px,pz in ore["footprint"]]).buffer(1.15))
     blocked=unary_union(solid)
     vertices=[];lookup={};polygons=[];walkable=set()
     # One polygon per integer cell is the source contract of dynamic building
@@ -403,7 +472,12 @@ def write_map(definition,obstacles,nav):
     lines=['[gd_scene load_steps='+str(6+len(obstacles))+' format=3]',*ext,
            f'[sub_resource type="BoxShape3D" id="Floor"]\nsize = Vector3({w},1,{d})']
     for i,item in enumerate(obstacles):
-        x,y,z=item["size"];lines.append(f'[sub_resource type="BoxShape3D" id="Shape{i}"]\nsize = Vector3({x:.6f},{y:.6f},{z:.6f})')
+        collision=item["collision"]
+        if collision["type"]=="convex":
+            points=", ".join(f"{value:.6f}" for point in collision["points"] for value in point)
+            lines.append(f'[sub_resource type="ConvexPolygonShape3D" id="Shape{i}"]\npoints = PackedVector3Array({points})\nmargin = 0.01')
+        else:
+            lines.append(f'[sub_resource type="CylinderShape3D" id="Shape{i}"]\nradius = {collision["radius"]:.6f}\nheight = {collision["height"]:.6f}\nmargin = 0.01')
     lines.extend([f'[node name="{name.title().replace("_", "")}" type="Node3D"]\nmetadata/map_id = "{name}"\nmetadata/map_size = Vector2({w},{d})\nmetadata/map_title = "{definition["title"]}"',
                   '[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]\nnavigation_mesh = ExtResource("1_nav")\nuse_edge_connections = false',
                   '[node name="Environment" type="Node3D" parent="."]',
@@ -413,7 +487,7 @@ def write_map(definition,obstacles,nav):
                   '[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]\nposition = Vector3(0,-0.53,0)\nshape = SubResource("Floor")',
                   '[node name="NaturalObstacles" type="Node3D" parent="Environment"]'])
     for i,item in enumerate(obstacles):
-        x,_,z=item["position"];height=item["size"][1];a=item["rotation_y"]
+        x,_,z=item["position"];height=item["collision"].get("height",0);a=item["rotation_y"]
         lines.extend([f'[node name="{item["name"]}" type="StaticBody3D" parent="Environment/NaturalObstacles"]\nposition = Vector3({x:.6f},{height/2:.6f},{z:.6f})\nrotation = Vector3(0,{a:.6f},0)\ncollision_layer = 1\ncollision_mask = 0',
                       f'[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/NaturalObstacles/{item["name"]}"]\nshape = SubResource("Shape{i}")'])
     lines.append('[node name="SpawnPoints" type="Node3D" parent="."]')
@@ -422,7 +496,7 @@ def write_map(definition,obstacles,nav):
         lines.append(f'[node name="Player{i}" type="Marker3D" parent="SpawnPoints"]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)\nmetadata/alliance_id = {alliance}\nmetadata/player_id = {i}')
     lines.append('[node name="Resources" type="Node3D" parent="."]')
     for i,(x,z) in enumerate(definition["mines"]):
-        lines.append(f'[node name="GoldVein{i}" parent="Resources" instance=ExtResource("4_mine")]\nposition = Vector3({x},0,{z})')
+        lines.append(f'[node name="GoldVein{i}" parent="Resources" instance=ExtResource("4_mine")]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{0 if x<0 else math.pi:.6f},0)')
     art.write_asset(MAPS/f"{name}.tscn","\n\n".join(lines)+"\n")
     report={**definition,"navigation_cell_size":1,"navigation_polygons":len(nav["polygons"]),
             "base_clearance_radius":11.5,"mine_clearance_radius":5.1,"obstacles":obstacles}
@@ -432,8 +506,11 @@ def write_map(definition,obstacles,nav):
 
 def main():
     MAPS.mkdir(parents=True,exist_ok=True);LOCAL.mkdir(parents=True,exist_ok=True)
-    for name,builder in [("factory",factory),("academy",academy),("player_barracks",player_barracks)]:
-        native_model(builder(),f"res://assets/models/environment/{name}.tscn",6.0)
+    ore=collision_geometry("gold_vein",art.gold_vein())
+    points=", ".join(f"{value:.6f}" for point in ore["points"] for value in point)
+    art.write_asset(MODEL_DIR/"gold_vein_collision.tres",'[gd_resource type="ConvexPolygonShape3D" format=3]\n\n[resource]\npoints = PackedVector3Array('+points+')\nmargin = 0.01\n')
+    for name,builder,limit in [("headquarters",art.headquarters,None),("defense_tower",player_defense_tower,None),("factory",factory,6.0),("academy",academy,6.0),("player_barracks",player_barracks,6.0)]:
+        native_model(builder(),f"res://assets/models/environment/{name}.tscn",limit)
     for definition in MAP_DEFINITIONS:
         name=definition["id"]
         for mine in definition["mines"]:

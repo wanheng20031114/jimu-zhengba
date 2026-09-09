@@ -65,6 +65,7 @@ func _run() -> void:
 	await _deferred_and_client_case()
 	await _physics_frequency_case()
 	await _takeover_without_headquarters_case()
+	await _timed_queue_case()
 	var file := FileAccess.open("res://artifacts/bot_strategy_results.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks": checks, "failures": failures}, "  "))
 	file.close()
@@ -260,3 +261,29 @@ func _takeover_without_headquarters_case() -> void:
 	bot = BOT.new(host, 0)
 	bot.tick(1.0)
 	_check(not bot._home_known and host.commands.is_empty(), "allied assets alone never initialize a defeated owner's takeover home")
+
+func _timed_queue_case() -> void:
+	await _fresh()
+	_ready_base([])
+	host.defer_commands = true
+	host.players[0].gold = 10000
+	var barracks: Node3D = host.owned_entities(0, "buildings").filter(func(b): return b.building_type == "barracks")[0]
+	var second: Node3D = host.add_building("barracks", 0, Vector3(-18, 0, 10))
+	for index in range(10):
+		barracks.production.training.append({"kind": "swordsman", "elapsed": 0.0})
+	host.players[0].reserved_military_supply = 10
+	var bot: RefCounted = BOT.new(host, 0)
+	bot.tick(1.0)
+	var recruits: Array = host.commands.filter(func(c): return c.kind == "recruit" and c.unit_type != "farmer")
+	_check(recruits.size() == 3 and recruits.all(func(c): return c.target == second.entity_id), "bot directs military purchases to the nonfull second barracks")
+	_check(recruits[0].unit_type != "swordsman", "already queued swordsmen count toward desired army composition")
+	host.commands.clear()
+	host.players[0].reserved_military_supply = 60
+	bot.tick(1.0)
+	_check(not host.commands.any(func(c): return c.kind == "recruit" and c.unit_type != "farmer"), "reserved military supply blocks further bot purchases")
+	host.players[0].reserved_military_supply = 20
+	for index in range(10):
+		second.production.training.append({"kind": "archer", "elapsed": 0.0})
+	host.commands.clear()
+	bot.tick(1.0)
+	_check(not host.commands.any(func(c): return c.kind == "recruit" and c.unit_type in ["swordsman", "archer", "knight"]), "full native-size queues do not produce repeated rejected bot orders")

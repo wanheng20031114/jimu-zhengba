@@ -2,7 +2,7 @@ class_name MatchCommands
 extends RefCounted
 ## Every human, Bot and remote request crosses the same fixed-tick validator.
 
-const KINDS := ["recruit", "build", "move", "attack", "gather", "work", "stop", "hold", "research", "cancel_research", "cancel_training", "cancel_site", "demolish", "rally"]
+const KINDS := ["recruit", "build", "move", "attack", "gather", "work", "stop", "hold", "research", "cancel_research", "cancel_training", "cancel_site", "demolish", "destroy", "rally"]
 const MAX_INTEGER: int = 2147483647
 var game: Node3D
 var pending: Array[Dictionary] = []
@@ -67,7 +67,25 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 	var target: Node3D = game.entities_by_id.get(int(target_id))
 	var target_valid: bool = is_instance_valid(target) and target.alive
 	var own_building: bool = target_valid and target is BattleBuilding and target.owner_id == owner
+	var buildings: Array[BattleBuilding] = []
+	var building_ids: Variant = command.get("buildings", [])
+	if not building_ids is Array or building_ids.size() > 128:
+		return failure("无效建筑列表")
+	for id: Variant in building_ids:
+		if not NetworkProtocol.integer(id, 1, MAX_INTEGER):
+			return failure("无效建筑编号")
+		var building: Node3D = game.entities_by_id.get(int(id))
+		if not is_instance_valid(building) or not building is BattleBuilding or not building.alive or building.owner_id != owner:
+			return failure("只能命令自己的建筑")
+		if building not in buildings:
+			buildings.append(building)
+	if buildings.is_empty() and own_building:
+		buildings.append(target)
 	var queued: bool = command.get("queued", false) == true
+	if queued and kind in ["move", "attack", "gather", "work", "build", "hold"]:
+		for unit: BattleUnit in entities:
+			if unit.waypoint_queue.size() >= BattleUnit.MAX_QUEUED_ORDERS:
+				return failure("连续指令已达上限（64 项）")
 	var at_data: Variant = command.get("at", [0, 0, 0])
 	if not at_data is Array or at_data.size() != 3:
 		return failure("无效坐标")
@@ -80,20 +98,26 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 	match kind:
 		"recruit":
 			var unit_type: String = str(command.get("unit_type", ""))
-			if not own_building or not BalanceCatalog.UNITS.has(unit_type):
+			if buildings.is_empty() or not BalanceCatalog.UNITS.has(unit_type):
 				return failure("需要自己的生产建筑")
-			return target.get_node("Production").recruit(unit_type)
+			return _enqueue_production(buildings, unit_type, false)
 		"research":
 			var upgrade: String = str(command.get("upgrade", ""))
-			if not own_building or not BalanceCatalog.UPGRADES.has(upgrade):
+			if buildings.is_empty() or not BalanceCatalog.UPGRADES.has(upgrade):
 				return failure("需要自己的学院")
-			return target.get_node("Production").research(upgrade)
+			return _enqueue_production(buildings, upgrade, true)
 		"cancel_research":
 			if not own_building:
 				return failure("需要自己的学院")
 			var production: BuildingProduction = target.get_node("Production")
-			if command.has("upgrade") and (not command.upgrade is String or command.upgrade != production.research_id):
-				return failure("研究项目已完成或已取消")
+			if command.has("job_id"):
+				if not NetworkProtocol.integer(command.job_id, 1, MAX_INTEGER):
+					return failure("无效研究项目编号")
+				return production.cancel_research_job(int(command.job_id))
+			if command.has("upgrade"):
+				if not command.upgrade is String:
+					return failure("无效研究项目")
+				return production.cancel_research_by_id(command.upgrade)
 			return production.cancel_research()
 		"cancel_training":
 			if not own_building:
@@ -112,7 +136,28 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 			game.get_player(owner).gold += target.cancel_construction()
 		"demolish":
 			if not own_building or not target.demolish():
-				return failure("只能拆除自己的已完工防御塔")
+				return failure("只能拆除自己的已完工建筑")
+		"destroy":
+			var destroy_ids: Variant = command.get("targets", [])
+			if not destroy_ids is Array or destroy_ids.is_empty() or destroy_ids.size() > 256:
+				return failure("无效销毁列表")
+			var victims: Array[Node3D] = []
+			for id: Variant in destroy_ids:
+				if not NetworkProtocol.integer(id, 1, MAX_INTEGER):
+					return failure("无效销毁目标")
+				var victim: Node3D = game.entities_by_id.get(int(id))
+				if not is_instance_valid(victim) or not victim.alive or victim.owner_id != owner or not (victim is BattleUnit or victim is BattleBuilding):
+					return failure("只能销毁自己的部队或建筑")
+				if victim not in victims:
+					victims.append(victim)
+			for victim: Node3D in victims:
+				if victim is BattleBuilding:
+					if victim.is_constructed:
+						victim.demolish()
+					else:
+						game.get_player(owner).gold += victim.cancel_construction()
+				else:
+					victim.receive_damage(victim.hp)
 		"build":
 			var building_type: String = str(command.get("building_type", ""))
 			if building_type not in ["headquarters", "barracks", "factory", "academy", "defense_tower"]:
@@ -125,7 +170,7 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 				return failure("需要农民施工")
 			return game.create_site(owner, building_type, at, workers, queued)
 		"rally":
-			if not own_building:
+			if buildings.is_empty():
 				return failure("需要自己的生产建筑")
 			var mine_id: Variant = command.get("mine", 0)
 			if not NetworkProtocol.integer(mine_id, 0, MAX_INTEGER):
@@ -133,15 +178,16 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 			var mine: ResourceVein = game.entities_by_id.get(int(mine_id)) as ResourceVein
 			if int(mine_id) != 0 and not is_instance_valid(mine):
 				return failure("需要矿脉目标")
-			target.rally_point = at
-			target.get_node("Production").rally_mine = mine
+			for building: BattleBuilding in buildings:
+				building.rally_point = at
+				building.get_node("Production").rally_mine = mine
 		"move":
 			game.move_formation(entities, at, command.get("attack_move", false) == true, queued)
 		"attack":
 			if not target_valid or target is ResourceVein or target.alliance_id == game.get_player(owner).alliance_id or not game.can_see_entity(owner, target):
 				return failure("目标不在视野内或不是敌军")
 			for unit: BattleUnit in entities:
-				unit.issue_attack(target)
+				unit.issue_attack(target, queued)
 		"gather":
 			if not target_valid or not target is ResourceVein:
 				return failure("需要矿脉目标")
@@ -160,8 +206,34 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 				if kind == "stop":
 					unit.stop()
 				else:
-					unit.hold()
+					unit.hold(queued)
 	return {"ok": true}
+
+func _enqueue_production(buildings: Array[BattleBuilding], id: String, research: bool) -> Dictionary:
+	# Choose on the authority tick, after earlier purchases have extended queues.
+	# A group hotkey makes one purchase per press, spreading work across buildings.
+	var best: BuildingProduction
+	var best_seconds: float = INF
+	var error: String = "需要对应的已完工生产建筑"
+	for building: BattleBuilding in buildings:
+		var production: BuildingProduction = building.get_node("Production")
+		var candidate_error: String = production.research_error(id) if research else production.recruit_error(id)
+		if not candidate_error.is_empty():
+			error = candidate_error
+			continue
+		var seconds: float = 0.0
+		if research:
+			for job: Dictionary in production.research_queue:
+				seconds += maxf(0.0, BalanceCatalog.upgrade(job.id).research_seconds - float(job.elapsed))
+		else:
+			for job: Dictionary in production.training:
+				seconds += maxf(0.0, BalanceCatalog.unit(job.kind).training_seconds - float(job.elapsed))
+		if seconds < best_seconds:
+			best_seconds = seconds
+			best = production
+	if best == null:
+		return failure(error)
+	return best.research(id) if research else best.recruit(id)
 
 static func failure(message: String) -> Dictionary:
 	return {"ok": false, "error": message}

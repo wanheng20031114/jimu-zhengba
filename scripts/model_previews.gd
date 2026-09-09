@@ -50,6 +50,8 @@ func set_team(team: int) -> void:
 	for kind: String in KINDS:
 		if kind in ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]:
 			_models[kind].set_team(team)
+		elif kind != "gold_vein":
+			FactionPalette.apply_model(_models[kind], team)
 		_viewports[kind].render_target_update_mode = SubViewport.UPDATE_ONCE
 
 func _advance_portrait() -> void:

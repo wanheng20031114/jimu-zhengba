@@ -88,13 +88,15 @@ func _ready() -> void:
 	else:
 		_model = MODELS[_stats.model].instantiate()
 		model_pivot.add_child(_model)
+	var relation := FactionPalette.relation(owner_id, alliance_id, _game)
+	FactionPalette.apply_model(_model, relation)
 	var shape: BoxShape3D = $CollisionShape3D.shape
 	shape.size = _stats.size
 	$CollisionShape3D.position.y = shape.size.y * 0.5
 	selection_ring.scale = Vector3.ONE * radius * 1.45
 	var ring_material: StandardMaterial3D = selection_ring.get_surface_override_material(0)
-	ring_material.albedo_color = Color("74d5f2") if team == 0 else Color("f26b52")
-	health_bar.set_instance_shader_parameter("bar_color", Color("86bf54") if team == 0 else Color("d85549"))
+	ring_material.albedo_color = FactionPalette.ui_color(relation)
+	health_bar.set_instance_shader_parameter("bar_color", FactionPalette.ui_color(relation))
 	health_bar.set_instance_shader_parameter("health", 1.0)
 	health_bar.position.y = _stats.bar_height
 	health_bar.scale.x = radius * 1.25
@@ -208,7 +210,7 @@ func cancel_construction() -> int:
 	return refund
 
 func demolish() -> bool:
-	if not alive or building_type != "defense_tower" or under_construction:
+	if not alive or under_construction:
 		return false
 	_die()
 	return true

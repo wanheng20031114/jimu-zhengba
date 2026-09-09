@@ -1,33 +1,20 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://assets/models/environment/defense_tower.glb" id="1_visual"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/defense_tower_stone.res" id="1_uvdhh"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/defense_tower_timber.res" id="2_5v3c1"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/defense_tower_metal.res" id="3_upfr6"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/defense_tower_fabric.res" id="4_ognph"]
 
-[ext_resource type="Shader" path="res://assets/models/environment/construction.gdshader" id="2_shader"]
+[node name="DefenseTower" type="Node3D" unique_id=1682120434]
 
-[sub_resource type="ShaderMaterial" id="Matte"]
-shader = ExtResource("2_shader")
-shader_parameter/metalness = 0.0
-shader_parameter/roughness = 0.84
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=1799319486]
+mesh = ExtResource("1_uvdhh")
 
-[sub_resource type="ShaderMaterial" id="Metal"]
-shader = ExtResource("2_shader")
-shader_parameter/metalness = 0.65
-shader_parameter/roughness = 0.38
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=1239875618]
+mesh = ExtResource("2_5v3c1")
 
-[node name="DefenseTower" type="Node3D"]
+[node name="Metal" type="MeshInstance3D" parent="." unique_id=1667893190]
+mesh = ExtResource("3_upfr6")
 
-[node name="Architecture" parent="." instance=ExtResource("1_visual")]
-
-[node name="Stone" parent="Architecture" index="0"]
-material_override = SubResource("Matte")
-
-[node name="Timber" parent="Architecture" index="1"]
-material_override = SubResource("Matte")
-
-[node name="Metal" parent="Architecture" index="2"]
-material_override = SubResource("Metal")
-
-[node name="Fabric" parent="Architecture" index="3"]
-material_override = SubResource("Matte")
-
-[editable path="Architecture"]
+[node name="Fabric" type="MeshInstance3D" parent="." unique_id=484172983]
+mesh = ExtResource("4_ognph")

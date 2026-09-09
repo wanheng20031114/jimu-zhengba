@@ -136,19 +136,20 @@ func _on_death(entity: Node3D) -> void:
 
 func _diagnostics() -> Dictionary:
 	var map: RID = game.get_world_3d().navigation_map
+	var map_iteration: int = NavigationServer3D.map_get_iteration_id(map)
 	var navigation: ConstructionNavigation = game.get_node("ConstructionNavigation")
 	var region: NavigationRegion3D = game.map_instance.get_node("NavigationRegion3D")
 	var paths: PathBudget = game.get_node("PathBudget")
 	var row := {"seconds": game.elapsed, "damage_events": damage_events, "players": [], "workers": [], "buildings": [],
 		"mines": [], "last_notification": game.last_notification,
-		"navigation": {"iteration": NavigationServer3D.map_get_iteration_id(map), "active": NavigationServer3D.map_is_active(map),
+		"navigation": {"iteration": map_iteration, "active": NavigationServer3D.map_is_active(map),
 			"region_enabled": region.enabled, "region_polygons": region.navigation_mesh.get_polygon_count(),
 			"compact_polygons": navigation.compact_polygon_count, "rebuilds": navigation.rebuild_count,
 			"worker_task": navigation.is_rebuilding(), "walkable_cells": navigation._walkable_cells.size(),
 			"queries": paths.total_queries, "pending": paths.pending_count()}}
 	for player: PlayerState in game.players:
 		row.players.append({"owner": player.owner_id, "gold": player.gold, "workers": player.farmers,
-			"reserved_workers": player.reserved_farmers, "supply": player.military_supply,
+			"reserved_workers": player.reserved_farmers, "supply": player.military_supply, "reserved_supply": player.reserved_military_supply,
 			"harvested": harvested[player.owner_id], "bot_state": str(game.bots[player.owner_id].army_state)})
 	for unit: BattleUnit in get_tree().get_nodes_in_group("units"):
 		if unit.unit_type != "farmer":
@@ -158,7 +159,7 @@ func _diagnostics() -> Dictionary:
 			"work_seconds": unit._work_seconds, "claimed_mine": unit._claimed_mine,
 			"target": unit.work_target.entity_id if is_instance_valid(unit.work_target) else 0,
 			"path_points": unit.navigation_agent.get_current_navigation_path().size(),
-			"nearest_nav": game.vector_data(NavigationServer3D.map_get_closest_point(map, unit.position))})
+			"nearest_nav": game.vector_data(NavigationServer3D.map_get_closest_point(map, unit.position)) if map_iteration > 0 else null})
 	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
 		if not building.alive:
 			continue

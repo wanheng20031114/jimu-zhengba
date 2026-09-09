@@ -62,8 +62,11 @@ func run() -> void:
 	await create_timer(0.5).timeout
 	check(not barracks.production.recruit("farmer").ok, "barracks refuses farmers")
 	var supply := player.military_supply
-	check(barracks.production.recruit("knight").ok, "barracks instant knight")
-	check(player.military_supply == supply + 2, "knight consumes two supply")
+	check(barracks.production.recruit("knight").ok, "barracks queues knight")
+	check(player.military_supply == supply and player.reserved_military_supply == 2, "knight reserves two supply before training")
+	barracks.production.set_physics_process(false)
+	barracks.production._physics_process(10.1)
+	check(player.military_supply == supply + 2 and player.reserved_military_supply == 0, "knight consumes reserved supply after ten seconds")
 	player.military_supply = 60
 	gold_before = player.gold
 	check(not barracks.production.recruit("swordsman").ok and player.gold == gold_before, "supply cap rejects purchase")

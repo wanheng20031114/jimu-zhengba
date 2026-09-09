@@ -33,6 +33,7 @@ var kills: int = 0
 var buildings_destroyed: int = 0
 var selection: Array[Node3D] = []
 var control_groups: Dictionary = {}
+var _production_group_kind: String = ""
 var rally_point := Vector3(-10, 0, 24)
 var attack_mode: bool = false
 var dragging: bool = false
@@ -181,8 +182,8 @@ func _process(delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.physical_keycode == KEY_P and online and not finished:
-			request_match_pause()
+		if event.physical_keycode in [KEY_P, KEY_F5] and not finished:
+			request_match_pause() if online else toggle_pause()
 			get_viewport().set_input_as_handled()
 			return
 		if event.is_action_pressed("debug_gold"):
@@ -244,7 +245,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif attack_mode:
 				var entity := entity_at(event.position)
 				if is_instance_valid(entity) and entity.alliance_id != get_player(local_owner_id).alliance_id:
-					command_attack(entity)
+					command_attack(entity, event.shift_pressed)
 				else:
 					command_move(camera_rig.world_at(event.position), true, event.shift_pressed)
 				set_attack_mode(false)
@@ -265,7 +266,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif is_instance_valid(entity) and entity is BattleBuilding and entity.owner_id == local_owner_id and not entity.is_constructed:
 				command_build(entity, event.shift_pressed)
 			elif is_instance_valid(entity) and entity.alliance_id != get_player(local_owner_id).alliance_id:
-				command_attack(entity)
+				command_attack(entity, event.shift_pressed)
 			else:
 				command_move(camera_rig.world_at(event.position), false, event.shift_pressed)
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -276,10 +277,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		match key:
 			KEY_A: set_attack_mode(true)
 			KEY_S: stop_selected()
-			KEY_H: hold_selected()
+			KEY_H: hold_selected(event.shift_pressed)
 			KEY_B, KEY_HOME: select_headquarters()
 			KEY_G, KEY_F2: select_army()
 			KEY_SPACE: focus_selection()
+			KEY_TAB: cycle_production_group()
 			KEY_Q: recruit("swordsman")
 			KEY_E: recruit("archer")
 			KEY_R: recruit("knight")
@@ -287,11 +289,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_Y: recruit("cannon")
 			KEY_U: recruit("farmer")
 			KEY_V: set_build_mode(not build_mode)
-			KEY_DELETE:
-				if event.ctrl_pressed:
-					demolish_selected_towers()
-				else:
-					cancel_selected_construction()
+			KEY_DELETE: destroy_selected()
 			KEY_PERIOD: select_idle_worker()
 			KEY_P: request_match_pause() if online else toggle_pause()
 			KEY_M:
@@ -323,16 +321,24 @@ func _finish_selection(at: Vector2) -> void:
 			if unit.owner_id == local_owner_id and unit.alive and not camera.is_position_behind(unit.global_position):
 				if box.has_point(camera.unproject_position(unit.global_position + Vector3(0, 0.7, 0))):
 					picked.append(unit)
+		# As in common RTS selection, mobile units take precedence; an empty
+		# troop rectangle can still collect several owned production buildings.
+		if picked.is_empty():
+			for building: BattleBuilding in owned_entities(local_owner_id, "buildings"):
+				if not camera.is_position_behind(building.global_position) and box.has_point(camera.unproject_position(building.global_position + Vector3.UP)):
+					picked.append(building)
 		select_entities(picked, shift_drag)
 	else:
 		var entity := entity_at(at)
 		if is_instance_valid(entity):
 			var now := Time.get_ticks_msec() / 1000.0
-			if entity == _last_click_entity and now - _last_click_time < 0.30 and entity.is_in_group("units") and entity.owner_id == local_owner_id:
+			if entity == _last_click_entity and now - _last_click_time < 0.30 and (entity is BattleUnit or entity is BattleBuilding) and entity.owner_id == local_owner_id:
 				var same: Array[Node3D] = []
-				for unit in get_tree().get_nodes_in_group("units"):
-					if unit.alive and unit.owner_id == local_owner_id and unit.unit_type == entity.unit_type and camera.is_position_in_frustum(unit.global_position):
-						same.append(unit)
+				var group: String = "units" if entity is BattleUnit else "buildings"
+				for item: Node3D in owned_entities(local_owner_id, group):
+					var same_type: bool = item.unit_type == entity.unit_type if entity is BattleUnit else item.building_type == entity.building_type
+					if same_type and camera.is_position_in_frustum(item.global_position):
+						same.append(item)
 				select_entities(same, shift_drag)
 			else:
 				select_entities([entity], shift_drag, shift_drag)
@@ -342,10 +348,9 @@ func _finish_selection(at: Vector2) -> void:
 			select_entities([])
 
 func select_entities(entities: Array, additive: bool = false, toggle: bool = false) -> void:
-	# Resource/building inspection never becomes part of a troop selection group.
-	if additive and entities.any(func(entity): return is_instance_valid(entity) and entity.owner_id == local_owner_id and entity.is_in_group("units")):
+	if additive and entities.any(func(entity): return is_instance_valid(entity) and entity.owner_id == local_owner_id and (entity is BattleUnit or entity is BattleBuilding)):
 		for entity: Node3D in selection.duplicate():
-			if not entity.is_in_group("units"):
+			if entity.owner_id != local_owner_id or not (entity is BattleUnit or entity is BattleBuilding):
 				entity.set_selected(false)
 				selection.erase(entity)
 	if not additive:
@@ -357,8 +362,6 @@ func select_entities(entities: Array, additive: bool = false, toggle: bool = fal
 		if not is_instance_valid(entity) or not entity.alive:
 			continue
 		if additive and entity.owner_id != local_owner_id:
-			continue
-		if additive and not entity.is_in_group("units") and selection.any(func(item): return item.is_in_group("units")):
 			continue
 		if toggle and entity in selection:
 			entity.set_selected(false)
@@ -380,6 +383,23 @@ func own_selected_units() -> Array[Node3D]:
 			result.append(entity)
 	return result
 
+func own_selected_assets() -> Array[Node3D]:
+	var result: Array[Node3D] = []
+	for entity: Node3D in selection:
+		if is_instance_valid(entity) and entity.alive and entity.owner_id == local_owner_id and (entity is BattleUnit or entity is BattleBuilding):
+			result.append(entity)
+	return result
+
+func own_selected_buildings() -> Array[BattleBuilding]:
+	var result: Array[BattleBuilding] = []
+	for entity: Node3D in own_selected_assets():
+		if entity is BattleBuilding:
+			result.append(entity)
+	return result
+
+func selected_building_ids() -> Array:
+	return own_selected_buildings().map(func(building): return building.entity_id)
+
 func own_selected_workers() -> Array[Node3D]:
 	return own_selected_units().filter(func(unit: Node3D): return unit.unit_type == "farmer")
 
@@ -388,10 +408,9 @@ func _on_gathered(worker: Node3D, amount: int) -> void:
 		get_player(worker.owner_id).gold += amount
 
 func command_gather(mine: Node3D, queued: bool = false) -> void:
-	var building := selected_production()
-	if building != null:
-		submit_local({"kind": "rally", "target": building.entity_id, "at": vector_data(mine.global_position), "mine": mine.entity_id})
-	else:
+	if not own_selected_buildings().is_empty():
+		submit_local({"kind": "rally", "buildings": selected_building_ids(), "at": vector_data(mine.global_position), "mine": mine.entity_id})
+	if not own_selected_workers().is_empty():
 		submit_local({"kind": "gather", "units": selected_ids(), "target": mine.entity_id, "queued": queued})
 	$Audio.play_ui(&"order")
 
@@ -483,20 +502,30 @@ func demolish_selected_towers() -> void:
 		if entity is BattleBuilding and entity.owner_id == local_owner_id:
 			submit_local({"kind": "demolish", "target": entity.entity_id})
 
+func destroy_selected() -> void:
+	var assets := own_selected_assets()
+	if assets.is_empty():
+		return
+	submit_local({"kind": "destroy", "targets": assets.map(func(entity): return entity.entity_id)})
+	set_build_mode(false)
+	set_attack_mode(false)
+
 func command_move(destination: Vector3, assault: bool = false, queued: bool = false) -> void:
-	var building := selected_production()
-	if building != null:
-		submit_local({"kind": "rally", "target": building.entity_id, "at": vector_data(clamp_to_map(destination))})
+	if not own_selected_buildings().is_empty():
+		submit_local({"kind": "rally", "buildings": selected_building_ids(), "at": vector_data(clamp_to_map(destination))})
 		$RallyMarker.position = destination
-	else:
+	if not own_selected_units().is_empty():
 		submit_local({"kind": "move", "units": selected_ids(), "at": vector_data(clamp_to_map(destination)), "attack_move": assault, "queued": queued})
 	spawn_effect(destination, "attack" if assault else "move", Color("ee9e57") if assault else Color("91d0ee"))
 	$Audio.play_ui(&"order")
 
-func command_attack(target: Node3D) -> void:
+func command_attack(target: Node3D, queued: bool = false) -> void:
 	if not is_instance_valid(target) or not target.alive:
 		return
-	submit_local({"kind": "attack", "units": selected_ids(), "target": target.entity_id})
+	if not own_selected_units().is_empty():
+		submit_local({"kind": "attack", "units": selected_ids(), "target": target.entity_id, "queued": queued})
+	elif not own_selected_buildings().is_empty():
+		submit_local({"kind": "rally", "buildings": selected_building_ids(), "at": vector_data(target.global_position)})
 	spawn_effect(target.global_position, "attack", Color("ff7851"))
 	$Audio.play_ui(&"order")
 
@@ -505,8 +534,8 @@ func stop_selected() -> void:
 	set_attack_mode(false)
 	$Audio.play_ui(&"order")
 
-func hold_selected() -> void:
-	submit_local({"kind": "hold", "units": selected_ids()})
+func hold_selected(queued: bool = false) -> void:
+	submit_local({"kind": "hold", "units": selected_ids(), "queued": queued})
 	set_attack_mode(false)
 	$Audio.play_ui(&"order")
 
@@ -556,29 +585,29 @@ func focus_selection() -> void:
 
 func use_control_group(number: int, assign: bool = false, append: bool = false) -> void:
 	if append:
-		var selected := own_selected_units()
+		var selected := own_selected_assets()
 		if selected.is_empty():
 			$Audio.play_ui(&"denied")
-			hud.toast("先选择要加入编队的部队", 2.0)
+			hud.toast("先选择要加入编队的部队或建筑", 2.0)
 			return
-		var group: Array = control_groups.get(number, []).filter(func(entity): return is_instance_valid(entity) and entity.alive)
+		var group: Array = control_groups.get(number, []).filter(func(entity): return is_instance_valid(entity) and entity.alive and entity.owner_id == local_owner_id)
 		for unit in selected:
 			if unit not in group:
 				group.append(unit)
 		control_groups[number] = group
 		$Audio.play_ui(&"order")
-		hud.toast("已加入编队 %d · 共 %d 人" % [number, group.size()], 2.0)
+		hud.toast("已加入编队 %d · 共 %d 个单位／建筑" % [number, group.size()], 2.0)
 	elif assign:
-		var selected := own_selected_units()
+		var selected := own_selected_assets()
 		if selected.is_empty():
 			$Audio.play_ui(&"denied")
-			hud.toast("先选择部队，再按 Ctrl + 数字编队", 2.5)
+			hud.toast("先选择部队或建筑，再按 Ctrl + 数字编队", 2.5)
 			return
 		control_groups[number] = selected.duplicate()
 		$Audio.play_ui(&"order")
-		hud.toast("编队 %d · %d 名士兵" % [number, selected.size()], 2.0)
+		hud.toast("编队 %d · %d 个单位／建筑" % [number, selected.size()], 2.0)
 	elif control_groups.has(number):
-		var group: Array = control_groups[number].filter(func(entity): return is_instance_valid(entity) and entity.alive)
+		var group: Array = control_groups[number].filter(func(entity): return is_instance_valid(entity) and entity.alive and entity.owner_id == local_owner_id)
 		control_groups[number] = group
 		select_entities(group)
 		var now := Time.get_ticks_msec() / 1000.0
@@ -592,15 +621,16 @@ func use_control_group(number: int, assign: bool = false, append: bool = false) 
 	hud.refresh()
 
 func recruit(kind: String) -> bool:
-	var building := selected_production()
-	if building == null:
+	var buildings := own_selected_buildings()
+	if buildings.is_empty():
 		hud.toast("选中对应生产建筑后招募", 2.0)
 		return false
-	var error: String = building.get_node("Production").recruit_error(kind)
-	if not error.is_empty():
-		hud.toast(error, 2.0)
+	return submit_local({"kind": "recruit", "buildings": selected_building_ids(), "unit_type": kind}).ok
+
+func research_selected(upgrade: String) -> bool:
+	if own_selected_buildings().is_empty():
 		return false
-	return submit_local({"kind": "recruit", "target": building.entity_id, "unit_type": kind}).ok
+	return submit_local({"kind": "research", "buildings": selected_building_ids(), "upgrade": upgrade}).ok
 
 func find_recruit_position(kind: String, building: BattleBuilding = null) -> Vector3:
 	if building == null:
@@ -849,9 +879,24 @@ func selected_ids() -> Array:
 	return own_selected_units().map(func(unit): return unit.entity_id)
 
 func selected_production() -> BattleBuilding:
-	if selection.size() == 1 and selection[0] is BattleBuilding and selection[0].owner_id == local_owner_id and selection[0].alive:
-		return selection[0]
-	return null
+	var buildings := own_selected_buildings()
+	for building: BattleBuilding in buildings:
+		if building.building_type == _production_group_kind:
+			return building
+	return buildings[0] if not buildings.is_empty() else null
+
+func cycle_production_group() -> void:
+	var buildings := own_selected_buildings()
+	if buildings.is_empty():
+		return
+	var kinds: Array[String] = []
+	for building: BattleBuilding in buildings:
+		if building.building_type not in kinds:
+			kinds.append(building.building_type)
+	var current: String = selected_production().building_type
+	_production_group_kind = kinds[(kinds.find(current) + 1) % kinds.size()]
+	hud.refresh()
+	hud.toast("%s · Tab 切换建筑类别" % selected_production().display_name, 2.0)
 
 static func vector_data(at: Vector3) -> Array:
 	return [at.x, at.y, at.z]

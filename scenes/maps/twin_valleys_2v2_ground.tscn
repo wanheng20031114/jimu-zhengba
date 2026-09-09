@@ -3,12 +3,12 @@
 [ext_resource type="ArrayMesh" path="res://scenes/maps/twin_valleys_2v2_ground_stone.res" id="1_5774b"]
 [ext_resource type="ArrayMesh" path="res://scenes/maps/twin_valleys_2v2_ground_earth.res" id="2_q2p5h"]
 
-[node name="TwinValleys2v2Ground" type="Node3D" unique_id=1520470931]
+[node name="TwinValleys2v2Ground" type="Node3D" unique_id=1003452936]
 
-[node name="Stone" type="MeshInstance3D" parent="." unique_id=1564076067]
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=1867978442]
 cast_shadow = 0
 mesh = ExtResource("1_5774b")
 
-[node name="Earth" type="MeshInstance3D" parent="." unique_id=562584990]
+[node name="Earth" type="MeshInstance3D" parent="." unique_id=989869316]
 cast_shadow = 0
 mesh = ExtResource("2_q2p5h")

@@ -40,8 +40,7 @@ func _draw() -> void:
 	for entity: Node3D in get_tree().get_nodes_in_group("entities"):
 		if not entity.alive or not game.can_see_entity(game.local_owner_id, entity):
 			continue
-		var allied: bool = entity.alliance_id == game.get_player(game.local_owner_id).alliance_id
-		var tint := Color("70b8ef") if entity.owner_id == game.local_owner_id else (Color("75c4ac") if allied else Color("e76446"))
+		var tint := FactionPalette.ui_color(FactionPalette.relation(entity.owner_id, entity.alliance_id, game))
 		var at := _map(entity.global_position)
 		if entity is BattleBuilding:
 			draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), tint)

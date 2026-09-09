@@ -139,6 +139,7 @@ class Model:
         mesh = mesh.copy()
         mesh.apply_transform(transform(pos, rot, scale))
         mesh.visual.vertex_colors = np.tile(color(material, variation), (len(mesh.vertices), 1))
+        mesh.metadata["heraldry"] = isinstance(material,str) and material in ("blue","red","slate","slate_light")
         self.parts[family(material)].append(mesh)
         return mesh
 

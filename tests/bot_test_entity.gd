@@ -11,6 +11,7 @@ var work_target: Node3D
 var _claimed_mine: bool = false
 var work_progress: float = 0.0
 var gathering_seconds: float = 0.0
+var production: Dictionary = {"training": []}
 var privacy_watch: bool = false
 var privacy_reads: int = 0
 var _unit: String = ""
@@ -38,4 +39,3 @@ var max_hp: float:
 		privacy_reads += 1 if privacy_watch else 0
 		return _max_hp
 	set(value): _max_hp = value
-

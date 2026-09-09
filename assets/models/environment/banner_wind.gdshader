@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode cull_disabled;
 
-uniform vec4 cloth_color : source_color = vec4(0.095, 0.245, 0.48, 1.0);
+instance uniform vec4 team_color : source_color = vec4(0.212, 0.494, 0.682, 1.0);
 uniform vec4 embroidery_color : source_color = vec4(0.82, 0.64, 0.26, 1.0);
 uniform float cloth_height = 2.30;
 uniform float wind_strength = 0.065;
@@ -22,7 +22,7 @@ void fragment() {
 	float crest = 1.0 - step(0.105, abs(UV.x - 0.5) + abs(UV.y - 0.26) * 1.2);
 	float gold = max(border, max(sword, crest));
 	float weave = 0.97 + 0.03 * sin(UV.x * 150.0) * sin(UV.y * 300.0);
-	ALBEDO = mix(cloth_color.rgb * weave, embroidery_color.rgb, gold);
+	ALBEDO = mix(team_color.rgb * weave, embroidery_color.rgb, gold);
 	ROUGHNESS = 0.90;
 	// A shallow swallowtail is cut into the free edge of the cloth.
 	if (UV.y > 0.91 + abs(UV.x - 0.5) * 0.18) {

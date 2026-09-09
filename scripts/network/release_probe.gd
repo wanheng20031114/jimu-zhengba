@@ -90,6 +90,9 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0, "packaged_farmer_training_contract")
+	var training_seconds := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	for kind: String in training_seconds:
+		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 3], ["knight", "swordsman", 6], ["swordsman", "knight", 5],
 		["swordsman", "archer", 3], ["archer", "knight", 5], ["archer", "swordsman", 10]]:
 		var defender := BalanceCatalog.unit(pair[1])

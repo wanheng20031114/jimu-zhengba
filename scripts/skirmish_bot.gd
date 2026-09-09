@@ -326,19 +326,35 @@ func _recruit_army(reserve: int) -> void:
 	var counts: Dictionary = {"swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0}
 	for unit: Node3D in _army:
 		counts[unit.unit_type] += 1
-	var supply: int = _game.get_player(_owner).military_supply
+	var queued_counts: Dictionary = {}
+	var queued_seconds: Dictionary = {}
+	for building: Node3D in _buildings:
+		queued_counts[building.entity_id] = building.production.training.size()
+		queued_seconds[building.entity_id] = 0.0
+		for job: Dictionary in building.production.training:
+			queued_seconds[building.entity_id] += maxf(0.0, BalanceCatalog.unit(job.kind).training_seconds - float(job.elapsed))
+			if job.kind != "farmer":
+				counts[job.kind] += 1
+	var supply: int = _game.get_player(_owner).used_military_supply()
 	for purchase: int in range(3):
 		var kind: String = _choose_recruit(counts)
 		if factory_only:
 			kind = "cannon" if _known_fortifications() > 0 else "catapult"
 		var definition: UnitDefinition = BalanceCatalog.unit(kind)
-		var producer: Node3D = _building(String(definition.production_building), true)
+		var producer: Node3D
+		var shortest: float = INF
+		for building: Node3D in _buildings:
+			if building.is_constructed and building.building_type == String(definition.production_building) and int(queued_counts[building.entity_id]) < BuildingProduction.TRAINING_LIMIT and float(queued_seconds[building.entity_id]) < shortest:
+				producer = building
+				shortest = float(queued_seconds[building.entity_id])
 		if producer == null or _budget - reserve < definition.cost or supply + definition.supply > PlayerState.SUPPLY_LIMIT:
 			return
 		if not _submit({"kind": "recruit", "target": producer.entity_id, "unit_type": kind}, definition.cost):
 			return
 		counts[kind] += 1
 		supply += definition.supply
+		queued_counts[producer.entity_id] += 1
+		queued_seconds[producer.entity_id] += definition.training_seconds
 
 func _enemy_power_near(at: Vector3, reach: float) -> float:
 	var power: float = 0.0

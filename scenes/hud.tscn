@@ -490,7 +490,7 @@ offset_left = 0
 offset_top = -28
 offset_right = 180
 offset_bottom = -4
-text = "即时招募"
+text = "生产与研究"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 12
@@ -502,7 +502,7 @@ offset_left = 318
 offset_top = -28
 offset_right = 542
 offset_bottom = -4
-text = "消耗金币 · 即刻出兵"
+text = "金币入队扣除 · 可取消退款"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 11
@@ -570,12 +570,47 @@ layout_mode = 2
 layout_mode = 0
 offset_left = 446.0
 offset_right = 566.0
-offset_bottom = 40.0
+offset_bottom = 18.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.91, 0.85, 0.69, 1)
 theme_override_font_sizes/font_size = 11
-text = "训练队列\n点击格子取消"
+text = "点击格子取消"
 vertical_alignment = 1
+
+[node name="QueuePrevious" type="Button" parent="CommandBar/Recruitment/QueueStrip"]
+unique_name_in_owner = true
+visible = false
+offset_left = 446.0
+offset_top = 19.0
+offset_right = 471.0
+offset_bottom = 40.0
+focus_mode = 0
+text = "‹"
+tooltip_text = "上一页队列"
+
+[node name="QueuePage" type="Label" parent="CommandBar/Recruitment/QueueStrip"]
+unique_name_in_owner = true
+visible = false
+offset_left = 472.0
+offset_top = 19.0
+offset_right = 540.0
+offset_bottom = 40.0
+mouse_filter = 2
+text = "1 / 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 11
+
+[node name="QueueNext" type="Button" parent="CommandBar/Recruitment/QueueStrip"]
+unique_name_in_owner = true
+visible = false
+offset_left = 541.0
+offset_top = 19.0
+offset_right = 566.0
+offset_bottom = 40.0
+focus_mode = 0
+text = "›"
+tooltip_text = "下一页队列"
 
 [node name="Recruit0" type="Button" parent="CommandBar/Recruitment"]
 layout_mode = 0

@@ -32,6 +32,20 @@ func run() -> void:
 		check(pool.active_count() == 0 and not effect.visible, "completed %s recycled" % kind)
 		check(effect._tweens.is_empty(), "completed %s releases its tweens" % kind)
 	check(pool.get_child_count() == count, "repeated reuse creates no extra nodes")
+	# A command marker or light hit must never restart unrelated dust/debris.
+	# Reusing a just-exploded instance exercises the stale-particle regression.
+	pool.play(Vector3.ZERO, "collapse", Color.WHITE)
+	var recycled: BattleEffect = pool._active.back()
+	check(recycled.get_node("Dust").visible and recycled.get_node("Debris").visible, "collapse activates both relevant emitters")
+	recycled._on_lifetime_timeout()
+	for kind: String in ["move", "attack", "hit", "stone_chip", "spawn"]:
+		pool.play(Vector3.ZERO, kind, Color.WHITE)
+		var marker: BattleEffect = pool._active.back()
+		check(not marker.get_node("Dust").visible and not marker.get_node("Dust").emitting, kind + " never emits dust")
+		check(not marker.get_node("Debris").visible and not marker.get_node("Debris").emitting, kind + " never emits debris")
+		if kind in ["move", "attack"]:
+			check(not marker.get_node("Sparks").visible and not marker.get_node("Sparks").emitting, kind + " is only a clean command marker")
+		marker._on_lifetime_timeout()
 	pool.queue_free()
 	await process_frame
 	await process_frame

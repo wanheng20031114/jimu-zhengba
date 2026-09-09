@@ -4,13 +4,13 @@
 [ext_resource type="ArrayMesh" path="res://scenes/maps/amber_crossroads_1v1_nature_foliage.res" id="2_78785"]
 [ext_resource type="ArrayMesh" path="res://scenes/maps/amber_crossroads_1v1_nature_stone.res" id="3_0rvv1"]
 
-[node name="AmberCrossroads1v1Nature" type="Node3D" unique_id=2027734270]
+[node name="AmberCrossroads1v1Nature" type="Node3D" unique_id=1808153426]
 
-[node name="Timber" type="MeshInstance3D" parent="." unique_id=1473639609]
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=1402527880]
 mesh = ExtResource("1_syjsr")
 
-[node name="Foliage" type="MeshInstance3D" parent="." unique_id=1536879776]
+[node name="Foliage" type="MeshInstance3D" parent="." unique_id=1752349919]
 mesh = ExtResource("2_78785")
 
-[node name="Stone" type="MeshInstance3D" parent="." unique_id=1751009494]
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=269261972]
 mesh = ExtResource("3_0rvv1")

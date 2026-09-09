@@ -1,14 +1,31 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://assets/models/environment/headquarters.glb" id="1_visual"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/headquarters_stone.res" id="1_httlm"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/royal_banner.tscn" id="2_banner"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/headquarters_timber.res" id="2_uj1vc"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/headquarters_metal.res" id="3_l3r4u"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/headquarters_roof.res" id="4_hcmok"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/headquarters_fabric.res" id="5_o45q2"]
 
-[node name="Headquarters" type="Node3D"]
+[node name="Headquarters" type="Node3D" unique_id=2076663231]
 
-[node name="Architecture" parent="." instance=ExtResource("1_visual")]
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=1372234698]
+mesh = ExtResource("1_httlm")
 
-[node name="RoyalBannerLeft" parent="." instance=ExtResource("2_banner")]
-position = Vector3(-3.23, 0.48, 3.365)
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=259980798]
+mesh = ExtResource("2_uj1vc")
 
-[node name="RoyalBannerRight" parent="." instance=ExtResource("2_banner")]
-position = Vector3(3.23, 0.48, 3.365)
+[node name="Metal" type="MeshInstance3D" parent="." unique_id=177830225]
+mesh = ExtResource("3_l3r4u")
+
+[node name="Roof" type="MeshInstance3D" parent="." unique_id=2135437735]
+mesh = ExtResource("4_hcmok")
+
+[node name="Fabric" type="MeshInstance3D" parent="." unique_id=178247966]
+mesh = ExtResource("5_o45q2")
+
+[node name="RoyalBannerLeft" type="Node3D" parent="." unique_id=850739830 instance=ExtResource("2_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.23, 0.48, 3.365)
+
+[node name="RoyalBannerRight" type="Node3D" parent="." unique_id=298451345 instance=ExtResource("2_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.23, 0.48, 3.365)

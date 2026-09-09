@@ -34,7 +34,7 @@ func _run() -> void:
 		var sculpture: Node3D = load("res://assets/models/environment/" + kind + ".tscn").instantiate()
 		var bounds := AABB()
 		var meshes: Array[Node] = sculpture.find_children("*", "MeshInstance3D", true, false)
-		check(meshes.size() >= 5 and meshes.size() <= 7, kind + " consolidates details into bounded native material groups")
+		check(meshes.size() >= 4 and meshes.size() <= 7, kind + " consolidates details into bounded native material groups")
 		for index: int in meshes.size():
 			var mesh: ArrayMesh = meshes[index].mesh
 			check(mesh != null and mesh.resource_path.ends_with(".res"), kind + " uses a directly editable native mesh resource")
@@ -82,8 +82,12 @@ func _check_map(map_id: String) -> void:
 		check(cells.has(Vector2i(spawn.position.x, spawn.position.z)), map_id + " starts every player on the main navigation component")
 		var development_clear: bool = true
 		for collider: StaticBody3D in map_scene.get_node("Environment/NaturalObstacles").get_children():
-			var shape: BoxShape3D = collider.get_node("CollisionShape3D").shape
-			var clearance: float = Vector2(collider.position.x, collider.position.z).distance_to(Vector2(spawn.position.x, spawn.position.z)) - Vector2(shape.size.x, shape.size.z).length() * 0.5
+			var shape: Shape3D = collider.get_node("CollisionShape3D").shape
+			var horizontal_radius: float = shape.radius if shape is CylinderShape3D else 0.0
+			if shape is ConvexPolygonShape3D:
+				for point: Vector3 in shape.points:
+					horizontal_radius = maxf(horizontal_radius, Vector2(point.x, point.z).length())
+			var clearance: float = Vector2(collider.position.x, collider.position.z).distance_to(Vector2(spawn.position.x, spawn.position.z)) - horizontal_radius
 			if clearance < 11.45:
 				development_clear = false
 		check(development_clear, map_id + " keeps each base development circle unobstructed")

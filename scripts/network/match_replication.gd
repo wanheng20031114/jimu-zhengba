@@ -396,14 +396,12 @@ func _apply_entity(entity: Node3D, state: Dictionary) -> void:
 		if entity.owner_id == game.local_owner_id:
 			entity.rally_point = vector(state.rally)
 			entity.production.training.assign(state.production.training)
-			entity.production.research_id = String(state.production.research_id)
-			entity.production.research_elapsed = float(state.production.research_elapsed)
+			entity.production.research_queue.assign(state.production.research_queue)
 			entity.production.rally_mine = game.entities_by_id.get(int(state.rally_mine))
 
 func _present_unit(unit: BattleUnit, a: Dictionary, b: Dictionary, weight: float, delta: float) -> void:
 	unit._model.set_motion(bool(a.moving))
 	unit._model.set_working(bool(a.working), "gather" if a.anim == "gather" else "build")
-	unit._set_movement_dust(bool(a.moving))
 	unit._model.locomotion.advance(delta)
 	var player: AnimationPlayer = unit._attack_animation
 	var animation: String = a.anim
@@ -437,10 +435,12 @@ func _apply_players(states: Array) -> void:
 		var own: Dictionary = state.private
 		player.gold = int(own.gold)
 		player.military_supply = int(own.supply)
+		player.reserved_military_supply = int(own.reserved_supply)
 		player.farmers = int(own.farmers)
 		player.reserved_farmers = int(own.reserved_farmers)
 		player.attack_level = int(own.attack_level)
 		player.defense_level = int(own.defense_level)
+		player.queued_research = own.queued_research.duplicate()
 		player.active_research.clear()
 		for track: String in own.active_research:
 			player.active_research[StringName(track)] = int(own.active_research[track])
@@ -525,7 +525,7 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 func _valid_private(value: Variant) -> bool:
 	if not value is Dictionary:
 		return false
-	for key: String in ["gold", "supply", "farmers", "reserved_farmers"]:
+	for key: String in ["gold", "supply", "reserved_supply", "farmers", "reserved_farmers"]:
 		if not NetworkProtocol.integer(value.get(key), 0, 2147483647):
 			return false
 	for key: String in ["attack_level", "defense_level"]:
@@ -536,6 +536,11 @@ func _valid_private(value: Variant) -> bool:
 	for track: Variant in value.active_research:
 		if not track in ["attack", "defense"] or not NetworkProtocol.integer(value.active_research[track], 1, 2147483647):
 			return false
+	if not value.get("queued_research") is Dictionary or value.queued_research.size() > 6:
+		return false
+	for id: Variant in value.queued_research:
+		if not id in BalanceCatalog.UPGRADES or not NetworkProtocol.integer(value.queued_research[id], 1, 2147483647):
+			return false
 	return true
 
 func _valid_production(state: Dictionary) -> bool:
@@ -544,20 +549,33 @@ func _valid_production(state: Dictionary) -> bool:
 	if not state.get("production") is Dictionary:
 		return false
 	var production: Dictionary = state.production
-	if not production.get("training") is Array or production.training.size() > 10:
+	if not production.get("training") is Array or production.training.size() > BuildingProduction.TRAINING_LIMIT:
 		return false
 	var job_ids: Dictionary = {}
 	for item: Variant in production.training:
 		if not item is Dictionary or not item.get("kind") in BalanceCatalog.UNITS or not _number(item.get("elapsed"), 0, 1000) or not NetworkProtocol.integer(item.get("cost"), 0, 1000000):
 			return false
-		# Existing 0.6 snapshots have no job ID. New paid jobs always include one.
-		if item.has("job_id"):
-			if not NetworkProtocol.integer(item.job_id, 1, 2147483647) or job_ids.has(int(item.job_id)):
-				return false
-			job_ids[int(item.job_id)] = true
+		if not NetworkProtocol.integer(item.get("job_id"), 1, 2147483647) or job_ids.has(int(item.job_id)):
+			return false
+		job_ids[int(item.job_id)] = true
 	if not production.get("research_id") is String or not _number(production.get("research_elapsed"), 0, 10000):
 		return false
-	return production.research_id.is_empty() or production.research_id in BalanceCatalog.UPGRADES
+	if not production.get("research_queue") is Array or production.research_queue.size() > BuildingProduction.RESEARCH_LIMIT:
+		return false
+	var research_ids: Dictionary = {}
+	var research_jobs: Dictionary = {}
+	for job: Variant in production.research_queue:
+		if not job is Dictionary or not job.get("id") in BalanceCatalog.UPGRADES:
+			return false
+		if not _number(job.get("elapsed"), 0, BalanceCatalog.upgrade(job.id).research_seconds) or not NetworkProtocol.integer(job.get("cost"), 0, 1000000):
+			return false
+		if not NetworkProtocol.integer(job.get("job_id"), 1, 2147483647) or research_jobs.has(int(job.job_id)) or research_ids.has(job.id):
+			return false
+		research_jobs[int(job.job_id)] = true
+		research_ids[job.id] = true
+	if production.research_queue.is_empty():
+		return production.research_id.is_empty() and is_zero_approx(float(production.research_elapsed))
+	return production.research_id == production.research_queue[0].id and is_equal_approx(float(production.research_elapsed), float(production.research_queue[0].elapsed))
 
 static func _number(value: Variant, minimum: float, maximum: float) -> bool:
 	return (value is float or value is int) and is_finite(float(value)) and float(value) >= minimum and float(value) <= maximum

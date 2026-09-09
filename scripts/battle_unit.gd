@@ -21,6 +21,7 @@ const STATS: Dictionary = BalanceCatalog.UNITS
 enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
 const GATHER_SECONDS: float = 3.0
 const GATHER_GOLD: int = 3
+const MAX_QUEUED_ORDERS: int = 64
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var owner_id: int = -1
@@ -67,7 +68,6 @@ var _home_position: Vector3
 var _strike_target: Node3D
 var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
-var _raises_movement_dust: bool = false
 var _moving: bool = false
 var _move_retaliation: Node3D
 var _retaliation_time: float = 0.0
@@ -87,7 +87,6 @@ var _claimed_mine: bool = false
 @onready var selection_ring: MeshInstance3D = $SelectionRing
 @onready var attack_windup: Timer = $AttackWindup
 @onready var work_bar: MeshInstance3D = $WorkBar
-@onready var movement_dust: GPUParticles3D = $MovementDust
 
 func _ready() -> void:
 	if owner_id < 0:
@@ -101,8 +100,6 @@ func _ready() -> void:
 	attack_range = _stats.range
 	attack_damage = _stats.damage
 	min_attack_range = _stats.min_range
-	_raises_movement_dust = unit_type in ["knight", "catapult", "cannon"]
-	movement_dust.visible = _raises_movement_dust
 	# Keep the common picking layer; dedicated faction layers filter native queries.
 	collision_layer = 4 | (16 if team == 0 else 8)
 	var sight_shape := SphereShape3D.new()
@@ -121,7 +118,8 @@ func _ready() -> void:
 	add_to_group("units")
 	add_to_group("friendly_units" if team == 0 else "enemy_units")
 	_model = MODELS[unit_type].instantiate()
-	_model.set_team(team)
+	var relation: int = FactionPalette.relation(owner_id, alliance_id, _game)
+	_model.set_team(relation)
 	model_pivot.add_child(_model)
 	_attack_animation = _model.get_node("Attack")
 	model_pivot.rotation.y = rotation.y
@@ -136,8 +134,8 @@ func _ready() -> void:
 	capsule.height = maxf(radius * 1.7, 1.8)
 	$CollisionShape3D.position.y = capsule.height * 0.5
 	selection_ring.scale = Vector3.ONE * radius * 1.65
-	selection_ring.set_instance_shader_parameter("ring_color", Color("74d5f2") if team == 0 else Color("f26b52"))
-	health_bar.set_instance_shader_parameter("bar_color", Color("86bf54") if team == 0 else Color("d85549"))
+	selection_ring.set_instance_shader_parameter("ring_color", FactionPalette.ui_color(relation))
+	health_bar.set_instance_shader_parameter("bar_color", FactionPalette.ui_color(relation))
 	health_bar.position.y = 3.45 if unit_type == "knight" else (2.8 if unit_type in ["catapult", "cannon"] else 2.45)
 	health_bar.scale.x = 1.65 if radius > 0.7 else 1.25
 	_update_health_bar()
@@ -257,27 +255,19 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 	velocity.y = 0.0
 	if velocity.length_squared() < 0.001:
 		velocity = Vector3.ZERO
-		_set_movement_dust(false)
 		return
 	var previous_position: Vector3 = global_position
 	move_and_slide()
 	if absf(global_position.y) > 0.001:
 		global_position.y = 0.0
-	# Both footsteps and dust follow actual displacement, including RVO and walls.
+	# Footsteps follow actual displacement, including RVO and walls.
 	var travelled: float = global_position.distance_to(previous_position)
-	_set_movement_dust(travelled > get_physics_process_delta_time() * 0.2)
 	_foley_distance += travelled
 	var stride: float = 1.65 if unit_type == "knight" else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
 	if _foley_distance >= stride:
 		_foley_distance = fmod(_foley_distance, stride)
 		var foot_sound: StringName = &"horse_hoof" if unit_type == "knight" else (&"cart_wheel" if unit_type in ["catapult", "cannon"] else &"footstep_dirt")
 		sound_requested.emit(foot_sound, global_position)
-
-func _set_movement_dust(moving: bool) -> void:
-	var emitting: bool = _raises_movement_dust and moving
-	if movement_dust.emitting != emitting:
-		# Stop only new emission; existing particles finish in world space.
-		movement_dust.emitting = emitting
 
 func _set_navigation_target(at: Vector3) -> void:
 	at.y = 0.0
@@ -416,6 +406,8 @@ func _issue_work(entity: Node3D, work_order: Order, queued: bool) -> bool:
 			var last_order: Dictionary = waypoint_queue.back()
 			if last_order.kind == "work" and last_order.entity == entity and last_order.order == work_order:
 				return true
+		if waypoint_queue.size() >= MAX_QUEUED_ORDERS:
+			return false
 		waypoint_queue.append({"kind": "work", "entity": entity, "order": work_order})
 		return true
 	waypoint_queue.clear()
@@ -559,6 +551,12 @@ func queue_move(at: Vector3, attack_move: bool = false) -> void:
 	if not alive:
 		return
 	if order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+		if waypoint_queue.size() >= MAX_QUEUED_ORDERS:
+			return
+		if not waypoint_queue.is_empty():
+			var last: Dictionary = waypoint_queue.back()
+			if last.kind == "move" and last.attack_move == attack_move and last.position.distance_squared_to(at) < 0.01:
+				return
 		waypoint_queue.append({"kind": "move", "position": at, "attack_move": attack_move})
 	else:
 		_begin_move(at, attack_move)
@@ -574,12 +572,23 @@ func _begin_move(at: Vector3, attack_move: bool) -> void:
 	_scan_time = 0.0
 	_set_navigation_target(destination)
 
-func issue_attack(entity: Node3D) -> void:
+func issue_attack(entity: Node3D, queued: bool = false) -> void:
 	if not alive or not _valid_target(entity):
 		return
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+		if waypoint_queue.is_empty() and order == Order.ATTACK and target == entity:
+			return
+		if not waypoint_queue.is_empty() and waypoint_queue.back().kind == "attack" and waypoint_queue.back().entity == entity:
+			return
+		if waypoint_queue.size() < MAX_QUEUED_ORDERS:
+			waypoint_queue.append({"kind": "attack", "entity": entity})
+		return
+	waypoint_queue.clear()
+	_begin_attack(entity)
+
+func _begin_attack(entity: Node3D) -> void:
 	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
 	_interrupt_work()
-	waypoint_queue.clear()
 	order = Order.ATTACK
 	order_name = "攻击目标"
 	# Repeated focus fire replaces queued orders without canceling the current strike.
@@ -596,7 +605,13 @@ func stop() -> void:
 	waypoint_queue.clear()
 	_finish_order()
 
-func hold() -> void:
+func hold(queued: bool = false) -> void:
+	if not alive:
+		return
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+		if waypoint_queue.size() < MAX_QUEUED_ORDERS and (waypoint_queue.is_empty() or waypoint_queue.back().kind != "hold"):
+			waypoint_queue.append({"kind": "hold"})
+		return
 	stop()
 	order = Order.HOLD
 	order_name = "坚守阵地"
@@ -606,11 +621,19 @@ func _complete_waypoint() -> void:
 	_interrupt_work()
 	while not waypoint_queue.is_empty():
 		var next_waypoint: Dictionary = waypoint_queue.pop_front()
+		if next_waypoint.kind == "hold":
+			hold()
+			return
 		if next_waypoint.kind == "move":
 			_begin_move(next_waypoint.position, next_waypoint.attack_move)
 			return
 		var next_entity: Variant = next_waypoint.entity
 		if not is_instance_valid(next_entity) or not next_entity.alive:
+			continue
+		if next_waypoint.kind == "attack":
+			if _valid_target(next_entity):
+				_begin_attack(next_entity)
+				return
 			continue
 		if next_waypoint.order == Order.BUILD and next_entity.is_constructed:
 			continue
@@ -629,7 +652,6 @@ func _finish_order() -> void:
 	attack_windup.stop()
 	# Stop presentation state synchronously: battle completion may disable
 	# physics and avoidance before another velocity callback can arrive.
-	_set_movement_dust(false)
 	_moving = false
 	_model.set_motion(false)
 	_path_budget.cancel(self)
@@ -677,7 +699,6 @@ func _die() -> void:
 	alive = false
 	sound_requested.emit(&"death_fall", global_position)
 	order_name = "阵亡"
-	_set_movement_dust(false)
 	set_selected(false)
 	health_bar.hide()
 	attack_windup.stop()

@@ -6,19 +6,19 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_metal.res" id="4_xo6s2"]
 [ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_fabric.res" id="5_f7yo5"]
 
-[node name="Academy" type="Node3D" unique_id=1301634339]
+[node name="Academy" type="Node3D" unique_id=1667804012]
 
-[node name="Stone" type="MeshInstance3D" parent="." unique_id=2021366949]
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=571279271]
 mesh = ExtResource("1_orm60")
 
-[node name="Timber" type="MeshInstance3D" parent="." unique_id=1332837152]
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=929445111]
 mesh = ExtResource("2_w4r5r")
 
-[node name="Roof" type="MeshInstance3D" parent="." unique_id=1806369398]
+[node name="Roof" type="MeshInstance3D" parent="." unique_id=632494101]
 mesh = ExtResource("3_jxfxi")
 
-[node name="Metal" type="MeshInstance3D" parent="." unique_id=1079629911]
+[node name="Metal" type="MeshInstance3D" parent="." unique_id=1375651506]
 mesh = ExtResource("4_xo6s2")
 
-[node name="Fabric" type="MeshInstance3D" parent="." unique_id=1341019082]
+[node name="Fabric" type="MeshInstance3D" parent="." unique_id=233022078]
 mesh = ExtResource("5_f7yo5")

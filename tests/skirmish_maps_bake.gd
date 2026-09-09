@@ -44,7 +44,16 @@ func _initialize() -> void:
 				material.roughness = 0.34
 			if part.name in ["Fabric", "Foliage"]:
 				material.cull_mode = BaseMaterial3D.CULL_DISABLED
-			mesh.surface_set_material(0, material)
+			if payload.building:
+				var building_material := ShaderMaterial.new()
+				building_material.resource_name = part.name
+				building_material.shader = load("res://assets/models/environment/building_surface.gdshader")
+				building_material.set_shader_parameter("metalness", material.metallic)
+				building_material.set_shader_parameter("surface_roughness", material.roughness)
+				building_material.set_shader_parameter("building_height", payload.max_height)
+				mesh.surface_set_material(0, building_material)
+			else:
+				mesh.surface_set_material(0, material)
 			var resource_path: String = payload.destination.trim_suffix(".tscn") + "_" + String(part.name).to_snake_case() + ".res"
 			assert(ResourceSaver.save(mesh, resource_path, ResourceSaver.FLAG_COMPRESS) == OK)
 			var instance := MeshInstance3D.new()
@@ -55,6 +64,13 @@ func _initialize() -> void:
 			scene.add_child(instance)
 			instance.owner = scene
 			total += 1
+		if payload.destination.ends_with("/headquarters.tscn"):
+			for side: int in [-1, 1]:
+				var standard: Node3D = load("res://assets/models/environment/royal_banner.tscn").instantiate()
+				standard.name = "RoyalBannerLeft" if side == -1 else "RoyalBannerRight"
+				standard.position = Vector3(side * 3.23, 0.48, 3.365)
+				scene.add_child(standard)
+				standard.owner = scene
 		var packed := PackedScene.new()
 		assert(packed.pack(scene) == OK)
 		assert(ResourceSaver.save(packed, payload.destination) == OK)

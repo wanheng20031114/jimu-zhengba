@@ -54,6 +54,6 @@ func get_projectile_origin() -> Vector3:
 
 func set_team(team: int) -> void:
 	_team = team
-	var tint := Color("aa4934") if team == 1 else Color("2e648b")
+	var tint := FactionPalette.model_color(team)
 	for mesh: MeshInstance3D in _team_surfaces:
 		mesh.set_instance_shader_parameter("team_color", tint)
