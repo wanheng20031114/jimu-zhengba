@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle_building.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/defense_tower.tscn" id="2_tower"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/scaffolding.tscn" id="3_scaffolding"]
+[ext_resource type="Script" path="res://scripts/building_production.gd" id="4_production"]
 
 [sub_resource type="BoxShape3D" id="Shape_building"]
 resource_local_to_scene = true
@@ -192,5 +193,8 @@ position = Vector3(-0.3, 0.1, -1.1)
 rotation = Vector3(0, -0.35, 0.3)
 scale = Vector3(0.7, 0.5, 0.5)
 mesh = SubResource("Mesh_rubble_angular")
+
+[node name="Production" type="Node" parent="."]
+script = ExtResource("4_production")
 
 [connection signal="timeout" from="DebrisLifetime" to="." method="_on_debris_timeout"]

@@ -47,6 +47,7 @@ shape = SubResource("Capsule_body")
 [node name="MovementDust" parent="." instance=ExtResource("2_dust")]
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_search_max_polygons = 16384
 path_desired_distance = 0.4
 target_desired_distance = 0.22
 path_max_distance = 2.5

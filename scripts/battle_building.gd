@@ -13,7 +13,9 @@ const BUILD_REACH: float = 1.9
 const MODELS: Dictionary = {
 	"headquarters": preload("res://assets/models/environment/headquarters.tscn"),
 	"enemy_keep": preload("res://assets/models/environment/enemy_keep.tscn"),
-	"barracks": preload("res://assets/models/environment/barracks.tscn"),
+	"barracks": preload("res://assets/models/environment/player_barracks.tscn"),
+	"factory": preload("res://assets/models/environment/factory.tscn"),
+	"academy": preload("res://assets/models/environment/academy.tscn"),
 	"tower": preload("res://assets/models/environment/tower.tscn"),
 	"house": preload("res://assets/models/environment/house.tscn"),
 }
@@ -54,6 +56,7 @@ var _construction_meshes: Array[MeshInstance3D] = []
 @onready var model_pivot: Node3D = $ModelPivot
 @onready var construction_bar: MeshInstance3D = $ConstructionBar
 @onready var scaffolding: Node3D = $ModelPivot/Scaffolding
+@onready var production: BuildingProduction = $Production
 
 func _ready() -> void:
 	_stats = BalanceCatalog.building(building_type)
@@ -205,7 +208,7 @@ func cancel_construction() -> int:
 	return refund
 
 func demolish() -> bool:
-	if not alive or team != 0 or building_type != "defense_tower" or under_construction:
+	if not alive or building_type != "defense_tower" or under_construction:
 		return false
 	_die()
 	return true
@@ -218,6 +221,9 @@ func _update_construction_visuals() -> void:
 	health_bar.visible = alive and (selected or hp < max_hp)
 	for mesh: MeshInstance3D in _construction_meshes:
 		mesh.set_instance_shader_parameter("construction_progress", construction_progress)
+	if building_type != "defense_tower":
+		_model.scale.y = 0.08 + construction_progress * 0.92
+	scaffolding.scale = Vector3(_stats.size.x / 4, 1, _stats.size.z / 4)
 
 func set_selected(value: bool) -> void:
 	selected = value and alive
@@ -255,6 +261,7 @@ func receive_damage(amount: float, source: Node3D = null) -> void:
 
 func _die() -> void:
 	alive = false
+	production.destroyed()
 	_builder = null
 	order_name = "已摧毁"
 	set_selected(false)
@@ -272,8 +279,7 @@ func _die() -> void:
 	remove_from_group("buildings")
 	# The five authored ruins belong to the map. Player-created sites are
 	# unbounded, so retire their full node hierarchy after the debris settles.
-	if building_type == "defense_tower":
-		$DebrisLifetime.start()
+	$DebrisLifetime.start()
 	var collapse: Tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS).set_parallel(true)
 	collapse.tween_property(model_pivot, "position:y", -1.0, 1.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	collapse.tween_property(model_pivot, "scale", Vector3(1.08, 0.08, 1.08), 1.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)

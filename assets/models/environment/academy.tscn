@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_stone.res" id="1_orm60"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_timber.res" id="2_w4r5r"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_roof.res" id="3_jxfxi"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_metal.res" id="4_xo6s2"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/academy_fabric.res" id="5_f7yo5"]
+
+[node name="Academy" type="Node3D" unique_id=1301634339]
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=2021366949]
+mesh = ExtResource("1_orm60")
+
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=1332837152]
+mesh = ExtResource("2_w4r5r")
+
+[node name="Roof" type="MeshInstance3D" parent="." unique_id=1806369398]
+mesh = ExtResource("3_jxfxi")
+
+[node name="Metal" type="MeshInstance3D" parent="." unique_id=1079629911]
+mesh = ExtResource("4_xo6s2")
+
+[node name="Fabric" type="MeshInstance3D" parent="." unique_id=1341019082]
+mesh = ExtResource("5_f7yo5")

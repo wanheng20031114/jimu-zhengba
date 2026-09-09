@@ -13,9 +13,6 @@ var _sources: Array[Dictionary] = []
 var _blocked_cells: Dictionary = {}
 var _walkable_cells: Dictionary = {}
 
-func _ready() -> void:
-	_cache_sources()
-
 func _cache_sources() -> void:
 	if not _sources.is_empty():
 		return
@@ -43,8 +40,8 @@ func refresh() -> void:
 	var started: int = Time.get_ticks_usec()
 	var occupied: Dictionary = {}
 	for building: Node3D in get_tree().get_nodes_in_group("buildings"):
-		if building.alive and building.building_type == "defense_tower":
-			for cell: Vector2i in footprint_cells(building.global_position):
+		if building.alive:
+			for cell: Vector2i in footprint_cells(building.global_position, building.get_combat_definition().size):
 				occupied[cell] = true
 	var changed: bool = occupied != _blocked_cells
 	_blocked_cells = occupied
@@ -69,17 +66,17 @@ func refresh() -> void:
 		rebuild_count += 1
 	last_rebuild_usec = Time.get_ticks_usec() - started
 
-func footprint_cells(at: Vector3) -> Array[Vector2i]:
+func footprint_cells(at: Vector3, size: Vector3 = Vector3(4, 6, 4)) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
-	var half_size: float = FOOTPRINT_HALF + NAV_PADDING
-	for x: int in range(floori(at.x - half_size), ceili(at.x + half_size)):
-		for z: int in range(floori(at.z - half_size), ceili(at.z + half_size)):
-			if absf(float(x) + 0.5 - at.x) < half_size and absf(float(z) + 0.5 - at.z) < half_size:
+	var half_size := Vector2(size.x, size.z) * 0.5 + Vector2.ONE * NAV_PADDING
+	for x: int in range(floori(at.x - half_size.x), ceili(at.x + half_size.x)):
+		for z: int in range(floori(at.z - half_size.y), ceili(at.z + half_size.y)):
+			if absf(float(x) + 0.5 - at.x) < half_size.x and absf(float(z) + 0.5 - at.z) < half_size.y:
 				result.append(Vector2i(x, z))
 	return result
 
-func walkable_footprint(at: Vector3) -> bool:
-	for cell: Vector2i in footprint_cells(at):
+func walkable_footprint(at: Vector3, size: Vector3 = Vector3(4, 6, 4)) -> bool:
+	for cell: Vector2i in footprint_cells(at, size):
 		if not _walkable_cells.has(cell):
 			return false
 	return true

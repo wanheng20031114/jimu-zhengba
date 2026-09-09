@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/player_barracks_stone.res" id="1_y62wd"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/player_barracks_timber.res" id="2_m1oh5"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/player_barracks_roof.res" id="3_p4w6x"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/player_barracks_metal.res" id="4_k8pab"]
+[ext_resource type="ArrayMesh" path="res://assets/models/environment/player_barracks_fabric.res" id="5_jisie"]
+
+[node name="PlayerBarracks" type="Node3D" unique_id=2083218168]
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=498826110]
+mesh = ExtResource("1_y62wd")
+
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=164060340]
+mesh = ExtResource("2_m1oh5")
+
+[node name="Roof" type="MeshInstance3D" parent="." unique_id=1716402079]
+mesh = ExtResource("3_p4w6x")
+
+[node name="Metal" type="MeshInstance3D" parent="." unique_id=59552809]
+mesh = ExtResource("4_k8pab")
+
+[node name="Fabric" type="MeshInstance3D" parent="." unique_id=2119702939]
+mesh = ExtResource("5_jisie")

@@ -2,6 +2,8 @@ extends Control
 
 const UNIT_ORDER := ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]
 const UNIT_NAMES := ["剑士", "弓箭手", "骑士", "投石车", "加农炮", "农民"]
+const BUILD_ORDER := ["barracks", "factory", "academy", "defense_tower", "headquarters"]
+var _actions: Array[Dictionary] = []
 var game: Node3D
 var portraits: Dictionary = {}
 var _toast_remaining: float = 0.0
@@ -23,11 +25,11 @@ var _selected_preview: String = "headquarters"
 @onready var buttons: Array[Button] = [%Recruit0, %Recruit1, %Recruit2, %Recruit3, %Recruit4, %Recruit5]
 
 func _ready() -> void:
-	for kind in UNIT_ORDER + ["headquarters", "gold_vein", "defense_tower"]:
+	for kind in UNIT_ORDER + ["headquarters", "gold_vein", "defense_tower", "barracks", "factory", "academy"]:
 		portraits[kind] = $ModelPreviews.portrait(kind)
 	for index in range(buttons.size()):
 		buttons[index].pressed.connect(_on_recruit.bind(index))
-		buttons[index].mouse_entered.connect(_set_preview_hover.bind(UNIT_ORDER[index]))
+		buttons[index].mouse_entered.connect(func(): _set_preview_hover(_actions[index].portrait if index < _actions.size() else ""))
 		buttons[index].mouse_exited.connect(_set_preview_hover.bind(""))
 		var definition := BalanceCatalog.unit(UNIT_ORDER[index])
 		buttons[index].tooltip_text = definition.name + " · " + str(definition.cost) + " 金币\n" + definition.description
@@ -92,35 +94,12 @@ func refresh() -> void:
 	if not is_instance_valid(game):
 		return
 	gold_label.text = str(game.gold)
-	army_label.text = "%d / %d" % [game.player_count(), game.MAX_ARMY]
+	var player: PlayerState = game.get_player(game.local_owner_id)
+	army_label.text = "%d/60 军队  ·  %d/10 农民" % [player.military_supply, player.farmers + player.reserved_farmers]
 	timer_label.text = "%02d:%02d" % [int(game.elapsed) / 60, int(game.elapsed) % 60]
-	objective_label.text = "摧毁敌方军事建筑  %d / 4" % game.buildings_destroyed
-	%EnemyCount.text = "敌军 %d    击败 %d" % [game.enemy_count(), game.kills]
-	var can_recruit: bool = is_instance_valid(game.headquarters) and game.headquarters.alive and game.headquarters in game.selection and not game.finished
-	%RecruitHint.text = "消耗金币 · 即刻出兵" if can_recruit else "选中大本营以招募  [B]"
-	var selected_site: BattleBuilding
-	if game.selection.size() == 1 and game.selection[0] is BattleBuilding:
-		selected_site = game.selection[0]
-	var construction_selected: bool = selected_site != null and selected_site.team == 0 and selected_site.building_type == "defense_tower"
-	var workers_selected: bool = not game.own_selected_workers().is_empty()
-	var worker_panel: bool = workers_selected or construction_selected
-	$CommandBar/Recruitment/RecruitTitle.text = "防御建设" if worker_panel else "即时招募"
-	%BuildPanel.visible = worker_panel
-	%BuildButton.disabled = not workers_selected or game.gold < game.TOWER_COST or game.finished
-	%CancelSiteButton.visible = construction_selected
-	%CancelSiteButton.text = "拆除防御塔  [Ctrl+Delete]" if construction_selected and selected_site.is_constructed else "取消施工  [Delete]"
-	%BuildQueueHint.visible = not %CancelSiteButton.visible
-	if worker_panel:
-		%RecruitHint.text = "Shift 排队 · 20 秒施工" if workers_selected else "农民右键可接手工地"
-		if construction_selected and selected_site.is_constructed:
-			%RecruitHint.text = "自动警戒 · 可拆除腾出道路"
-		%BuildInfo.text = "防御塔 · 100 金币\n施工 20 秒 · 自动攻击 · 无需驻军"
-		if construction_selected:
-			%BuildInfo.text = "防御塔已就绪\n自动警戒 · 射程 12 · 无需驻军" if selected_site.is_constructed else "防御塔施工 %d%%\n取消返还未完成部分的金币" % roundi(selected_site.construction_progress * 100)
-	for index in range(buttons.size()):
-		buttons[index].visible = not worker_panel
-		buttons[index].disabled = not can_recruit or game.gold < BalanceCatalog.unit(UNIT_ORDER[index]).cost
-		buttons[index].get_node("Cost").modulate = Color("e9c97b") if game.gold >= BalanceCatalog.unit(UNIT_ORDER[index]).cost else Color("c27055")
+	objective_label.text = "摧毁敌队全部军事建筑"
+	%EnemyCount.text = "已发现敌军 %d    击败 %d" % [game.enemy_count(), game.kills]
+	_refresh_actions()
 	if game.selection.is_empty():
 		selected_name.text = "等待指令"
 		selected_role.text = "蓝旗军团"
@@ -132,8 +111,8 @@ func refresh() -> void:
 	elif game.selection.size() == 1:
 		var entity = game.selection[0]
 		selected_name.text = entity.display_name
-		selected_role.text = "蓝旗军团" if entity.team == 0 else "赤牙守军"
-		selected_role.modulate = Color("90bcda") if entity.team == 0 else Color("e98968")
+		selected_role.text = "你的部队" if entity.owner_id == game.local_owner_id else ("盟友部队" if entity.alliance_id == player.alliance_id else "敌方部队")
+		selected_role.modulate = Color("90bcda") if entity.owner_id == game.local_owner_id else Color("e98968")
 		hp_bar.visible = true
 		hp_label.visible = true
 		if entity.is_in_group("resource_veins"):
@@ -143,7 +122,7 @@ func refresh() -> void:
 			_selected_preview = "gold_vein"
 			selected_role.text = "中立资源 · 金矿"
 			selected_role.modulate = Color("e5c76b")
-			selected_stats.text = "农民右键开始采集\n每人每 3 秒 +3 金币"
+			selected_stats.text = "采集位置 %d / 6\n每人每 3 秒 +3 金币" % entity.occupied_slots()
 		else:
 			hp_bar.max_value = entity.max_hp
 			hp_bar.value = entity.hp
@@ -151,17 +130,26 @@ func refresh() -> void:
 		if entity.is_in_group("units"):
 			selected_portrait.texture = portraits[entity.unit_type]
 			_selected_preview = entity.unit_type
-			selected_stats.text = "攻击 %d    射程 %.1f\n%s" % [entity.attack_damage, entity.attack_range, entity.order_name]
+			var definition := BalanceCatalog.unit(entity.unit_type)
+			var tech: PlayerState = game.get_player(entity.owner_id)
+			selected_stats.text = "攻击 %d  近甲 %d / 远甲 %d\n%s" % [definition.damage + (tech.get_attack_bonus() if definition.military else 0), definition.melee_armor + (tech.get_defense_bonus() if definition.military else 0), definition.ranged_armor + (tech.get_defense_bonus() if definition.military else 0), entity.order_name]
 			if entity.unit_type == "farmer":
-				selected_stats.text = "采矿 +3 / 3秒 · 建塔 [V]\n%s%s" % [entity.order_name, " · 队列 %d" % entity.waypoint_queue.size() if not entity.waypoint_queue.is_empty() else ""]
+				selected_stats.text = "采矿 +3 / 3秒 · 建筑面板\n%s%s" % [entity.order_name, " · 队列 %d" % entity.waypoint_queue.size() if not entity.waypoint_queue.is_empty() else ""]
 		elif entity.is_in_group("buildings"):
-			selected_portrait.texture = portraits.headquarters
-			_selected_preview = "headquarters"
-			selected_stats.text = "每秒 +1 金币\n右键地面设置集结点" if entity.team == 0 else "敌方军事建筑\n摧毁获得 90 金币"
-			if entity.building_type == "defense_tower":
-				selected_portrait.texture = portraits.defense_tower
-				_selected_preview = "defense_tower"
-				selected_stats.text = "自动攻击范围内敌军\n无法进驻单位" if entity.is_constructed else "施工 %d%%\n农民右键继续建造" % roundi(entity.construction_progress * 100)
+			var portrait_kind: String = entity.building_type if entity.building_type in portraits else "headquarters"
+			selected_portrait.texture = portraits[portrait_kind]
+			_selected_preview = portrait_kind
+			selected_stats.text = "近甲 10 / 远甲 10\n" + entity.order_name
+			if entity.owner_id == game.local_owner_id:
+				var production: BuildingProduction = entity.get_node("Production")
+				if not entity.is_constructed:
+					selected_stats.text = "施工 %d%% · 农民右键接手\n取消返还未完成部分费用" % roundi(entity.construction_progress * 100)
+				elif not production.training.is_empty():
+					selected_stats.text = "农民训练 %.1f / 10 秒\n队列 %d 人 · 点击取消返还金币" % [production.training[0].elapsed, production.training.size()]
+				elif not production.research_id.is_empty():
+					var upgrade := BalanceCatalog.upgrade(production.research_id)
+					selected_stats.text = "%s · %d%%\n取消全额退款" % [upgrade.name, roundi(production.research_elapsed / upgrade.research_seconds * 100)]
+
 	else:
 		selected_name.text = "%d 支部队" % game.selection.size()
 		selected_role.text = "蓝旗军团 · 联合编队"
@@ -201,7 +189,62 @@ func refresh() -> void:
 		button.tooltip_text = "编队 %d · %d 人\nCtrl + %d 覆盖 · Shift + %d 追加\n按 %d 召回 · 双按定位" % [index, count, index, index, index]
 
 func _on_recruit(index: int) -> void:
-	game.recruit(UNIT_ORDER[index])
+	if index >= _actions.size():
+		return
+	var action: Dictionary = _actions[index]
+	match action.kind:
+		"build": game.set_build_mode(true, action.id)
+		"recruit": game.recruit(action.id)
+		"research": game.submit_local({"kind": "research", "target": game.selected_production().entity_id, "upgrade": action.id})
+		"cancel_training", "cancel_research", "cancel_site": game.submit_local({"kind": action.kind, "target": game.selected_production().entity_id})
+
+func _refresh_actions() -> void:
+	_actions.clear()
+	%BuildPanel.hide()
+	var building: BattleBuilding = game.selected_production()
+	var workers: bool = not game.own_selected_workers().is_empty()
+	$CommandBar/Recruitment/RecruitTitle.text = "建造" if workers else "生产与研究"
+	%RecruitHint.text = "选中农民或生产建筑"
+	if workers:
+		%RecruitHint.text = "Shift 连续指派 · 单人施工"
+		for kind: String in BUILD_ORDER:
+			var definition := BalanceCatalog.building(kind)
+			_actions.append({"kind": "build", "id": kind, "portrait": kind, "name": definition.name, "cost": definition.cost, "hint": "%d 秒施工" % definition.build_seconds})
+	elif building != null:
+		if not building.is_constructed:
+			_actions.append({"kind": "cancel_site", "id": "", "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还未完成部分的费用"})
+		elif building.building_type == "academy":
+			var player: PlayerState = game.get_player(game.local_owner_id)
+			for track: String in ["attack", "defense"]:
+				var level: int = player.attack_level if track == "attack" else player.defense_level
+				if level < 3:
+					var upgrade := BalanceCatalog.upgrade("%s_%d" % [track, level + 1])
+					_actions.append({"kind": "research", "id": upgrade.id, "portrait": "swordsman" if track == "attack" else "knight", "name": upgrade.name, "cost": upgrade.cost, "hint": "%d 秒 · 全军总加成 +%d" % [upgrade.research_seconds, upgrade.total_bonus]})
+			if not building.production.research_id.is_empty():
+				_actions.append({"kind": "cancel_research", "id": "", "portrait": "academy", "name": "取消研究", "cost": 0, "hint": "全额退款"})
+		else:
+			for kind: String in building.get_combat_definition().produces:
+				var definition := BalanceCatalog.unit(kind)
+				_actions.append({"kind": "recruit", "id": kind, "portrait": kind, "name": definition.name, "cost": definition.cost, "hint": "训练 10 秒" if kind == "farmer" else "即时出场"})
+			if not building.production.training.is_empty():
+				_actions.append({"kind": "cancel_training", "id": "", "portrait": "farmer", "name": "取消训练", "cost": 0, "hint": "取消队首 · 全额退款"})
+		%RecruitHint.text = "右键设置集结点 · 研究取消全额退款" if building.building_type == "academy" else "右键设置集结点"
+	for index in range(buttons.size()):
+		var button := buttons[index]
+		button.visible = index < _actions.size()
+		if not button.visible:
+			continue
+		var action := _actions[index]
+		button.get_node("Portrait").texture = portraits[action.portrait]
+		button.get_node("Name").text = action.name
+		button.get_node("Cost").text = "◈ %d" % action.cost if action.cost > 0 else "退款"
+		button.get_node("Hotkey").text = ""
+		button.tooltip_text = action.name + " · " + action.hint
+		button.disabled = game.finished or game.gold < action.cost
+		if action.kind == "recruit":
+			button.disabled = button.disabled or not building.production.recruit_error(action.id).is_empty()
+		elif action.kind == "research":
+			button.disabled = button.disabled or not building.production.research_error(action.id).is_empty()
 
 func _on_building_action() -> void:
 	if game.selection.size() == 1 and game.selection[0] is BattleBuilding and game.selection[0].is_constructed:
@@ -231,6 +274,6 @@ func show_pause(value: bool) -> void:
 
 func show_result(victory: bool, duration: float, defeated: int) -> void:
 	%ResultOverlay.visible = true
-	%ResultHeading.text = "沙石镇已解放" if victory else "大本营已失守"
+	%ResultHeading.text = "战场属于你" if victory else "你的队伍已战败"
 	%ResultEyebrow.text = "VICTORY  /  胜利" if victory else "DEFEAT  /  战败"
-	%ResultBody.text = ("蓝旗再次升起。你的军队夺回了这片土地。" if victory else "整顿军队，重新部署你的进攻。") + "\n\n用时 %02d:%02d      击败敌军 %d" % [int(duration) / 60, int(duration) % 60, defeated]
+	%ResultBody.text = ("敌队全部军事建筑已被摧毁。" if victory else "整顿军队，重新部署你的进攻。") + "\n\n用时 %02d:%02d      击败敌军 %d" % [int(duration) / 60, int(duration) % 60, defeated]

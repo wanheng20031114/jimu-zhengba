@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/model_previews.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/models/units/swordsman.tscn" id="2_model"]
@@ -12,6 +12,10 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/farmer.tscn" id="farmer_model"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/gold_vein.tscn" id="mine_model"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/defense_tower.tscn" id="tower_model"]
+
+[ext_resource type="PackedScene" path="res://assets/models/environment/player_barracks.tscn" id="barracks_model"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/factory.tscn" id="factory_model"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/academy.tscn" id="academy_model"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial"]
 sky_top_color = Color(0.42, 0.50, 0.61, 1)
@@ -367,6 +371,114 @@ position = Vector3(0, 3.0, 0)
 position = Vector3(8, 7, -11)
 projection = 1
 size = 7.6
+near = 0.1
+far = 60.0
+current = true
+
+[node name="barracks" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="barracks"]
+
+[node name="Model" parent="barracks/World" instance=ExtResource("barracks_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="barracks/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="barracks/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="barracks/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="barracks/World"]
+position = Vector3(0, 3.0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="barracks/World"]
+position = Vector3(8, 7, -11)
+projection = 1
+size = 8.5
+near = 0.1
+far = 60.0
+current = true
+
+[node name="factory" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="factory"]
+
+[node name="Model" parent="factory/World" instance=ExtResource("factory_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="factory/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="factory/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="factory/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="factory/World"]
+position = Vector3(0, 3.0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="factory/World"]
+position = Vector3(8, 7, -11)
+projection = 1
+size = 8.5
+near = 0.1
+far = 60.0
+current = true
+
+[node name="academy" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="academy"]
+
+[node name="Model" parent="academy/World" instance=ExtResource("academy_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="academy/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="academy/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="academy/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="academy/World"]
+position = Vector3(0, 3.0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="academy/World"]
+position = Vector3(8, 7, -11)
+projection = 1
+size = 8.5
 near = 0.1
 far = 60.0
 current = true

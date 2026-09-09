@@ -1,6 +1,6 @@
 extends Node
 ## Cached isolated native render targets. Only the active portrait advances at 15 Hz.
-const KINDS: Array[String] = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "headquarters", "gold_vein", "defense_tower"]
+const KINDS: Array[String] = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "headquarters", "gold_vein", "defense_tower", "barracks", "factory", "academy"]
 const FRAME_TIME := 1.0 / 15.0
 
 var _viewports: Dictionary[String, SubViewport] = {}
