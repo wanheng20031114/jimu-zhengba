@@ -1,5 +1,5 @@
 {
-  "build": "0.7.4",
+  "build": "0.7.5",
   "protocol": 4,
   "files": {
     "data/buildings/academy.tres": "f868bc59ee251b7885d2499e81db0b2135c752b063e841ec3a7d97003e69f45e",
@@ -18,7 +18,7 @@
     "data/units/catapult.tres": "e10e9e5c83dd489a536419363a3f47173d0fcd1f1bb547f0c250c90abfd09d60",
     "data/units/farmer.tres": "d33bcdfa6b7fb71aa253a333eaf80068750b6f61df5a3130bb1386858782dc7b",
     "data/units/knight.tres": "f7606384c5b1bdf520733877d47ff72896b697b8d55f10dd5e3b7ec4c4aaf843",
-    "data/units/swordsman.tres": "18ef9062b868fb7a5719b79b998699a3f8ab029ab0e483d201debf737b6f0a73",
+    "data/units/swordsman.tres": "1eb3ada425ab63fb92fea7efec5ab6aa3f8a0feea8318c4912118892f17c1e91",
     "data/upgrades/attack_1.tres": "b1135a7f5c80d1a65ab4df8501adc2759c7dee71afccba6d13cbeeebabca884c",
     "data/upgrades/attack_2.tres": "79f08f587246485cf3326364db7ffdd81fe69c2156d0796582bb07c5926f4e6a",
     "data/upgrades/attack_3.tres": "df1ae4da6efa9aa7756d01f49d10712abeb99840a9fda02cf82e1ce77a9f967b",
