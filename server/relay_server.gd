@@ -12,6 +12,9 @@ const VISUAL_EVENT_RATE: float = 60.0
 const VISUAL_EVENT_BURST: float = 90.0
 const CRITICAL_EVENT_RATE: float = 30.0
 const CRITICAL_EVENT_BURST: float = 45.0
+const THROTTLE_INTERVAL_MS: int = 500
+const THROTTLE_ACCELERATION: int = 4
+const THROTTLE_DECELERATION: int = 1
 
 var max_rooms: int = 1
 var max_humans: int = 4
@@ -65,6 +68,11 @@ func _process(_delta: float) -> void:
 				var peer: ENetPacketPeer = event[1]
 				peer.set_timeout(8, 2000, 5000)
 				peer.ping_interval(500)
+				# The native default keeps a five-second idle RTT baseline. A full
+				# roster reveal/first move can then suppress every snapshot for over
+				# a second. Refresh the baseline while retaining congestion response.
+				# Configure only after CONNECT; ENet reliably applies it to both ends.
+				peer.throttle_configure(THROTTLE_INTERVAL_MS, THROTTLE_ACCELERATION, THROTTLE_DECELERATION)
 				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "event_buckets": {}, "control": 0, "strikes": 0}
 			ENetConnection.EVENT_RECEIVE:
 				var peer: ENetPacketPeer = event[1]

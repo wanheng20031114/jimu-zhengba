@@ -65,7 +65,7 @@ def main() -> int:
     stderr = err_path.read_text(encoding="utf-8", errors="replace")
     # Emit only intentionally sanitized summaries, never raw engine endpoint diagnostics.
     for line in stdout.splitlines():
-        if line.startswith(("NETWORK_RESULTS ", "NETWORK_REMOTE_RESULTS ", "NETWORK_REMOTE_METRICS ", "NETWORK_CERTIFICATE_RESULTS ", "NETWORK_GAME_RESULTS ", "NETWORK_GAME_METRICS ", "NETWORK_GAME_EXPIRY_RESULTS ", "NETWORK_COMMAND_VALIDATION_RESULTS ")):
+        if line.startswith(("NETWORK_RESULTS ", "NETWORK_REMOTE_RESULTS ", "NETWORK_REMOTE_METRICS ", "NETWORK_CERTIFICATE_RESULTS ", "NETWORK_GAME_RESULTS ", "NETWORK_GAME_METRICS ", "NETWORK_GAME_QUANTIZATION_METRICS ", "NETWORK_GAME_EXPIRY_RESULTS ", "NETWORK_COMMAND_VALIDATION_RESULTS ")):
             print(line)
     if args.suite != "certificate" and stderr.strip():
         print("NETWORK_SUITE_HAS_STDERR " + args.suite)

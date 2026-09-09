@@ -534,8 +534,8 @@ func select_army() -> void:
 
 func select_idle_worker() -> void:
 	var idle: Array[Node3D] = []
-	for unit: Node3D in get_tree().get_nodes_in_group("friendly_units"):
-		if unit.alive and unit.unit_type == "farmer" and unit.order == BattleUnit.Order.IDLE:
+	for unit: Node3D in owned_entities(local_owner_id, "units"):
+		if unit.unit_type == "farmer" and unit.order == BattleUnit.Order.IDLE:
 			idle.append(unit)
 	if idle.is_empty():
 		hud.toast("没有空闲农民", 1.8)

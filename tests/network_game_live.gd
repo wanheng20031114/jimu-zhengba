@@ -30,6 +30,23 @@ var _command_marks: Dictionary = {}
 var _observed_stages: Array[String] = []
 var _file_publish_retries: int = 0
 var _steady_seconds: float = 0.0
+var _load_units: int = 0
+var _load_seconds: float = 20.0
+var _load_gaps: Array[int] = []
+var _load_counts: Array[int] = []
+var _load_last_msec: int = 0
+var _load_first_snapshot_msec: int = -1
+var _load_last_count: int = 0
+var _load_started_msec: int = 0
+var _load_long_gaps: Array[Dictionary] = []
+var _load_process_gaps: Array[Dictionary] = []
+var _load_last_process_msec: int = 0
+var _load_ready_msec: int = 0
+var _load_setup_msec: int = 0
+var _native_samples: Array[Dictionary] = []
+var _native_sample_at: int = 0
+var _load_report: Dictionary = {}
+var _load_routes: Dictionary = {}
 
 func _initialize() -> void:
 	Engine.max_fps = 60
@@ -38,6 +55,10 @@ func _initialize() -> void:
 			directory = argument.trim_prefix("--live-dir=")
 		elif argument.begins_with("--peer-index="):
 			peer_index = int(argument.trim_prefix("--peer-index="))
+		elif argument.begins_with("--load-units="):
+			_load_units = int(argument.trim_prefix("--load-units="))
+		elif argument.begins_with("--load-seconds="):
+			_load_seconds = float(argument.trim_prefix("--load-seconds="))
 	started_msec = Time.get_ticks_msec()
 	_run.call_deferred()
 
@@ -207,6 +228,8 @@ func host_steps() -> void:
 	for client_owner in range(1, 4):
 		var report := owner_status(client_owner)
 		check(int(report.get("snapshots", 0)) > 20, "continuous_world_snapshots_owner_%d" % client_owner)
+	if _load_units > 0:
+		await host_network_load()
 	check(failures.is_empty(), "host_scenario_complete")
 	check(_transport_states.count("reconnecting") == 1, "host_has_only_planned_transport_interruption")
 	game.end_battle(true)
@@ -215,7 +238,11 @@ func host_steps() -> void:
 
 func client_steps() -> void:
 	var previous: String = ""
-	while Time.get_ticks_msec() - started_msec < 135000:
+	while Time.get_ticks_msec() - started_msec < 135000 + int((_load_seconds + 45.0) * 1000) * int(_load_units > 0):
+		var process_now: int = Time.get_ticks_msec()
+		if phase == "network_load" and _load_last_process_msec > 0 and process_now - _load_last_process_msec > 100:
+			_load_process_gaps.append({"at_ms": process_now - _load_started_msec, "gap_ms": process_now - _load_last_process_msec})
+		_load_last_process_msec = process_now
 		var directive := read_record("phase.json")
 		if directive.is_empty():
 			status()
@@ -241,6 +268,37 @@ func client_steps() -> void:
 		_observed_stages.append(stage)
 		_published = directive
 		match stage:
+			"network_load_setup":
+				phase = stage
+				_load_setup_msec = Time.get_ticks_msec()
+				check(await until(func(): return _load_last_count == _load_units and get_nodes_in_group("units").size() == _load_units, 25.0), "load_complete_roster_arrives_before_measurement")
+				_load_ready_msec = Time.get_ticks_msec()
+				phase = "network_load_ready"
+			"network_load":
+				_load_gaps.clear()
+				_load_counts.clear()
+				_load_long_gaps.clear()
+				_load_process_gaps.clear()
+				_load_last_msec = 0
+				_load_first_snapshot_msec = -1
+				_load_started_msec = Time.get_ticks_msec()
+				_load_last_process_msec = _load_started_msec
+				phase = stage
+			"network_load_end":
+				_load_report = {"units": _load_units, "snapshots": _load_counts.size(), "unit_counts": number_statistics(_load_counts),
+					"gap_ms": number_statistics(_load_gaps), "seconds": (Time.get_ticks_msec() - _load_started_msec) / 1000.0,
+					"long_snapshot_gaps": _load_long_gaps, "long_process_frame_gaps": _load_process_gaps,
+					"roster_load_ms": _load_ready_msec - _load_setup_msec, "ready_before_window_ms": _load_started_msec - _load_ready_msec,
+					"native_transport_samples": _native_samples,
+					"first_snapshot_latency_ms": _load_first_snapshot_msec - _load_started_msec if _load_first_snapshot_msec >= 0 else -1,
+					"last_snapshot_age_ms": Time.get_ticks_msec() - _load_last_msec,
+					"byte_source": "runner joins this peer's relay_to_client UDP payload counters from the isolated network_load window"}
+				check(not _load_counts.is_empty() and _load_counts.all(func(count): return count == _load_units), "every_load_snapshot_contains_all_280_units")
+				check(_load_counts.size() >= int(_load_seconds * 5.0), "load_receives_at_least_five_complete_snapshots_per_second")
+				check(not _load_gaps.is_empty() and _load_gaps.max() <= 1000, "load_has_no_complete_snapshot_outage_over_one_second")
+				check(_load_first_snapshot_msec >= 0 and _load_first_snapshot_msec - _load_started_msec <= 1000 and Time.get_ticks_msec() - _load_last_msec <= 1000, "load_window_first_and_last_snapshot_are_within_one_second")
+				check(get_nodes_in_group("units").size() == _load_units, "all_280_native_client_replicas_remain_present")
+				phase = stage
 			"steady":
 				phase = stage
 			"orders":
@@ -301,6 +359,21 @@ func resume_transport() -> void:
 func _snapshot(snapshot: Dictionary) -> void:
 	snapshots += 1
 	var now := Time.get_ticks_msec()
+	if phase.begins_with("network_load"):
+		_load_last_count = 0
+		for entity: Dictionary in snapshot.get("entities", []):
+			if entity.get("category") == "unit":
+				_load_last_count += 1
+		if phase == "network_load":
+			if _load_first_snapshot_msec < 0:
+				_load_first_snapshot_msec = now
+			_load_counts.append(_load_last_count)
+			if _load_last_msec > 0:
+				_load_gaps.append(now - _load_last_msec)
+				if now - _load_last_msec > 200:
+					_load_long_gaps.append({"at_ms": now - _load_started_msec, "gap_ms": now - _load_last_msec,
+						"tick": int(snapshot.tick), "previous_tick": _last_snapshot_tick})
+			_load_last_msec = now
 	if int(snapshot.tick) < _last_snapshot_tick:
 		_snapshot_tick_regressions += 1
 	_last_snapshot_tick = int(snapshot.tick)
@@ -364,11 +437,21 @@ func owner_status(target_owner: int) -> Dictionary:
 
 func status(force: bool = false) -> void:
 	var now := Time.get_ticks_msec()
+	if _load_units > 0 and phase.begins_with("network_load") and now >= _native_sample_at and relay._peer != null and relay._peer.is_active():
+		_native_sample_at = now + 50
+		_native_samples.append({"at_ms": now - _load_started_msec if _load_started_msec > 0 else -1, "phase": phase,
+			"throttle": relay._peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE),
+			"limit": relay._peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE_LIMIT),
+			"rtt": relay._peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME),
+			"variance": relay._peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME_VARIANCE),
+			"last_rtt": relay._peer.get_statistic(ENetPacketPeer.PEER_LAST_ROUND_TRIP_TIME),
+			"last_variance": relay._peer.get_statistic(ENetPacketPeer.PEER_LAST_ROUND_TRIP_TIME_VARIANCE)})
 	if not force and now - _last_status_msec < 250:
 		return
 	_last_status_msec = now
 	write_record("peer-%d.json" % peer_index, {"owner": owner, "phase": phase, "snapshots": snapshots,
-		"events": events, "checks": checks, "failures": failures, "last_tick": game.simulation_tick if is_instance_valid(game) else -1})
+		"events": events, "checks": checks, "failures": failures, "load_count": _load_last_count,
+		"last_tick": game.simulation_tick if is_instance_valid(game) else -1})
 
 func until(predicate: Callable, duration: float) -> bool:
 	var deadline := Time.get_ticks_msec() + int(duration * 1000)
@@ -433,6 +516,7 @@ func finish() -> void:
 		"error_codes": errors, "transport_states": _transport_states,
 		"observed_stages": _observed_stages, "coordinator_publish_retries": _file_publish_retries,
 		"snapshot_gap_ms": gap_statistics(), "snapshot_tick_regressions": _snapshot_tick_regressions,
+		"network_load": _load_report, "peer_index": peer_index,
 		"elapsed_seconds": (Time.get_ticks_msec() - started_msec) / 1000.0}
 	write_record("result-%d.json" % peer_index, result)
 	print("NETWORK_GAME_LIVE_PEER " + JSON.stringify(result))
@@ -455,3 +539,150 @@ static func data(at: Vector3) -> Array:
 
 static func vec(at: Array) -> Vector3:
 	return Vector3(float(at[0]), float(at[1]), float(at[2]))
+
+static func number_statistics(values: Array) -> Dictionary:
+	if values.is_empty():
+		return {"samples": 0}
+	var ordered := values.duplicate()
+	ordered.sort()
+	var total: float = 0.0
+	for value in ordered:
+		total += float(value)
+	return {"samples": ordered.size(), "min": ordered.front(), "mean": total / ordered.size(),
+		"p50": ordered[int((ordered.size() - 1) * 0.5)], "p95": ordered[int((ordered.size() - 1) * 0.95)],
+		"p99": ordered[int((ordered.size() - 1) * 0.99)], "max": ordered.back()}
+
+func host_network_load() -> void:
+	check(_load_units == 280, "load_fixture_is_four_real_sixty_supply_ten_farmer_rosters")
+	if _load_units != 280:
+		return
+	publish("network_load_setup")
+	game.select_entities([])
+	game.control_groups.clear()
+	game.bots.clear()
+	game.get_node("IncomeTimer").stop()
+	for building: BattleBuilding in get_nodes_in_group("buildings"):
+		while not building.production.training.is_empty():
+			building.production.cancel_training(0)
+	for unit: BattleUnit in get_nodes_in_group("units"):
+		unit.stop()
+		# Fixture replacement bypasses death; preserve the registry invariant
+		# normally maintained by Game.on_entity_died before freeing old actors.
+		game.entities_by_id.erase(unit.entity_id)
+		unit.queue_free()
+	await physics_frame
+	await process_frame
+	for player: PlayerState in game.players:
+		player.farmers = 0
+		player.reserved_farmers = 0
+		player.military_supply = 0
+	# This isolated fixture deliberately models worst-case visibility. Keep the
+	# configured fog serializer intact while postponing only future recomputes.
+	var fog: FogOfWar = game.get_node("FogOfWar")
+	fog._tick_time = -_load_seconds - 90.0
+	for alliance: int in range(2):
+		var cells: PackedByteArray = fog._cells[alliance]
+		cells.fill(2)
+		fog._cells[alliance] = cells
+	fog.revision += 1
+	fog.apply_visibility(0)
+	var taken: Dictionary = {}
+	for player: PlayerState in game.players:
+		var points := _load_spawn_points(player.owner_id, taken)
+		check(points.size() == 70, "seventy_nonoverlapping_walkable_spawns_owner_%d" % player.owner_id)
+		if points.size() != 70:
+			return
+		for index: int in range(70):
+			var unit: BattleUnit = game.spawn_unit("farmer" if index < 10 else "swordsman", player.owner_id, points[index])
+			_load_routes[unit.entity_id] = [points[index], points[(index + 35) % 70]]
+			unit.issue_move(points[(index + 35) % 70])
+		check(player.farmers == 10 and player.military_supply == 60, "load_keeps_real_owner_population_limits_%d" % player.owner_id)
+	await seconds(2.0)
+	check(await until(func(): return all_phase("network_load_ready"), 25.0), "three_clients_have_complete_load_roster")
+	var probe: Node = preload("res://tests/skirmish_profile_probe.tscn").instantiate()
+	game.add_child(probe)
+	probe.begin_sample()
+	var tick_start: int = game.simulation_tick
+	var began: int = Time.get_ticks_usec()
+	_load_started_msec = Time.get_ticks_msec()
+	var first_positions: Dictionary = {}
+	var moved_ids: Dictionary = {}
+	var moving_samples: Array[int] = []
+	for unit: BattleUnit in get_nodes_in_group("units"):
+		first_positions[unit.entity_id] = unit.position
+	publish("network_load")
+	var reissue_at: int = 0
+	var motion_check_at: int = 0
+	var turn: int = 0
+	while Time.get_ticks_usec() - began < int(_load_seconds * 1000000):
+		if Time.get_ticks_msec() >= motion_check_at:
+			motion_check_at = Time.get_ticks_msec() + 1000
+			var active: int = 0
+			for unit: BattleUnit in get_nodes_in_group("units"):
+				if unit.position.distance_to(first_positions[unit.entity_id]) > 0.5:
+					moved_ids[unit.entity_id] = true
+				if unit.velocity.length_squared() > 0.04:
+					active += 1
+			moving_samples.append(active)
+		if Time.get_ticks_msec() >= reissue_at:
+			reissue_at = Time.get_ticks_msec() + 2500
+			turn += 1
+			for unit: BattleUnit in get_nodes_in_group("units"):
+				unit.issue_move(_load_routes[unit.entity_id][turn % 2])
+		status()
+		await process_frame
+	var elapsed: float = (Time.get_ticks_usec() - began) / 1000000.0
+	var ticks: int = game.simulation_tick - tick_start
+	var physics_ms: Array = probe.end_sample()
+	var units: Array[Node] = get_nodes_in_group("units")
+	var moving: int = moved_ids.size()
+	check(units.size() == _load_units and units.all(func(unit): return unit.alive and unit.is_physics_processing() and unit.navigation_agent.avoidance_enabled), "load_all_280_units_keep_native_physics_and_rvo")
+	check(moving >= 210, "at_least_three_quarters_of_roster_actually_displaced_during_march")
+	_load_report = {"units": units.size(), "expected_units": _load_units, "seconds": elapsed, "ticks": ticks,
+		"tps": ticks / elapsed, "physics_logic_ms": number_statistics(physics_ms), "physics_logic_samples_ms": physics_ms,
+		"moved_units": moving, "moving_units_samples": moving_samples, "full_visibility": true,
+		"native_transport_samples": _native_samples,
+		"scope": "four owners each 10 farmers + 60 swordsmen, all visible, native CharacterBody/RVO/NavigationAgent enabled; SceneTree priority markers bracket callbacks, not the whole native physics server step"}
+	publish("network_load_end")
+	check(await until(func(): return all_phase("network_load_end"), 12.0), "three_clients_finish_independent_load_measurements")
+	check(await until(func(): return read_record("udp-window-ended.json").get("complete", false), 3.0), "runner_acknowledges_isolated_udp_measurement_window")
+	probe.queue_free()
+
+func _load_spawn_points(target_owner: int, taken: Dictionary) -> Array[Vector3]:
+	var result: Array[Vector3] = []
+	var bases: Array[Vector3] = []
+	for index: int in range(4):
+		bases.append(game.map_instance.get_node("SpawnPoints/Player%d" % index).position)
+	var home: Vector3 = bases[target_owner]
+	var candidates: Array[Vector3] = []
+	var navigation: ConstructionNavigation = game.get_node("ConstructionNavigation")
+	for x: int in range(-24, 25, 2):
+		for z: int in range(-24, 25, 2):
+			var at := home + Vector3(x, 0, z)
+			if taken.has(at) or not navigation.contains_walkable_point(at):
+				continue
+			var nearest: bool = true
+			for index: int in range(4):
+				if index != target_owner and at.distance_squared_to(bases[index]) < at.distance_squared_to(home) + 4.0:
+					nearest = false
+			if nearest:
+				candidates.append(at)
+	candidates.sort_custom(func(a: Vector3, b: Vector3): return a.distance_squared_to(home) < b.distance_squared_to(home))
+	var query := PhysicsShapeQueryParameters3D.new()
+	var shape := SphereShape3D.new()
+	shape.radius = 0.72
+	query.shape = shape
+	query.collision_mask = 1 | 2 | 4 | 128
+	var world: World3D = game.get_world_3d()
+	for at: Vector3 in candidates:
+		var closest: Vector3 = NavigationServer3D.map_get_closest_point(world.navigation_map, at)
+		if closest.distance_squared_to(at) > 0.01:
+			continue
+		query.transform.origin = at + Vector3.UP * 0.9
+		if not world.direct_space_state.intersect_shape(query, 1).is_empty():
+			continue
+		taken[at] = true
+		result.append(at)
+		if result.size() == 70:
+			break
+	return result

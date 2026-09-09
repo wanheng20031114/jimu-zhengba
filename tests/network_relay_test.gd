@@ -101,6 +101,9 @@ func _run() -> void:
 		_check("client %d native connection begins" % index, client.connect_relay("127.0.0.1", port) == OK)
 	await _until(func(): return clients.all(func(c): return c.connection_state == "connected"))
 	_check("four trusted DTLS handshakes", clients.all(func(c): return c.connection_state == "connected"))
+	await _until(func(): return clients.all(func(c): return c._peer != null and c._peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE_INTERVAL) == Server.THROTTLE_INTERVAL_MS))
+	_check("native RTT window applies on all client peers after handshake", clients.all(func(c): return c._peer != null and c._peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE_INTERVAL) == 500))
+	_check("native congestion deceleration remains enabled", relay._connections.values().all(func(s): return s.peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE_INTERVAL) == 500 and s.peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE_DECELERATION) == 1 and s.peer.get_statistic(ENetPacketPeer.PEER_PACKET_THROTTLE_ACCELERATION) == 4))
 	if clients[0].connection_state != "connected":
 		_finish()
 		return

@@ -59,7 +59,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
     key_path.write_bytes(key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.TraditionalOpenSSL, serialization.NoEncryption()))
     cert_path.write_bytes(cert.public_bytes(serialization.Encoding.PEM))
     stage = directory / "relay-project"
-    for relative in ("server/relay_main.gd", "server/relay_server.gd", "server/relay.tscn", "scripts/network/network_protocol.gd"):
+    for relative in ("server/relay_main.gd", "server/relay_server.gd", "server/relay.tscn", "scripts/network/network_protocol.gd", "tests/network_relay_diagnostic.gd"):
         destination = stage / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / relative, destination)
@@ -80,7 +80,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
     environment = os.environ.copy()
     environment["ASHEN_RELAY_CONFIG"] = str(config)
     runtime = load_deploy().runtime("win64.exe")
-    process = subprocess.Popen([str(runtime), "--headless", "--path", str(stage), "--script", "res://server/relay_main.gd"],
+    process = subprocess.Popen([str(runtime), "--headless", "--path", str(stage), "--script", "res://tests/network_relay_diagnostic.gd"],
                                env=environment, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
     children.append(process)
     deadline = time.monotonic() + 15
@@ -99,12 +99,16 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=24571)
     parser.add_argument("--loss", type=float, choices=(0.03, 0.04, 0.05), default=0.04)
     parser.add_argument("--steady-seconds", type=float, default=15)
+    parser.add_argument("--load-units", type=int, choices=(0, 280), default=0)
+    parser.add_argument("--load-seconds", type=float, default=20)
     # Launch the engine itself: killing the small Windows console wrapper on a
     # timeout can leave its child engine alive after this runner has returned.
     parser.add_argument("--godot", type=Path, default=Path("C:/Program Files/Godot/Godot.exe"))
     args = parser.parse_args()
     if not 0 <= args.steady_seconds <= 30:
         parser.error("--steady-seconds must be between 0 and 30")
+    if not 5 <= args.load_seconds <= 60:
+        parser.error("--load-seconds must be between 5 and 60")
     directory = LOCAL / ("live-" + args.target + "-" + uuid.uuid4().hex[:8])
     directory.mkdir(parents=True)
     children: list[subprocess.Popen] = []
@@ -116,24 +120,26 @@ def main() -> int:
     try:
         endpoint = local_server(directory, children, handles) if args.target != "remote" else json.loads((LOCAL / "endpoint.json").read_text(encoding="utf-8"))
         (directory / "endpoint.json").write_text(json.dumps(endpoint), encoding="utf-8")
-        if args.target == "impaired":
-            impairment = ImpairedRelay((endpoint["address"], endpoint["port"]), seed=args.seed, loss=args.loss).start()
+        if args.target == "impaired" or args.load_units:
+            impairment = ImpairedRelay((endpoint["address"], endpoint["port"]), seed=args.seed, loss=args.loss).start() if args.target == "impaired" else ImpairedRelay(
+                (endpoint["address"], endpoint["port"]), seed=args.seed, rtt_ms=0, rtt_jitter_ms=0, loss=0, reorder=0).start()
             for index, port in enumerate(impairment.ports):
                 # The public certificate still authenticates the actual relay;
                 # forwarding never parses, decrypts, or substitutes DTLS records.
-                record = dict(endpoint, address="127.0.0.1", port=port, impaired=True, steady_seconds=args.steady_seconds)
+                record = dict(endpoint, address="127.0.0.1", port=port, impaired=args.target == "impaired", steady_seconds=args.steady_seconds)
                 (directory / ("endpoint-%d.json" % index)).write_text(json.dumps(record), encoding="utf-8")
         for index in range(4):
             out = (directory / ("peer-%d.stdout.log" % index)).open("wb")
             err = (directory / ("peer-%d.stderr.log" % index)).open("wb")
             handles.extend((out, err))
-            command = [str(args.godot), "--headless", "--path", str(ROOT), "--script", "res://tests/network_game_live.gd", "--",
-                       "--live-dir=" + directory.as_posix(), "--peer-index=" + str(index)]
+            command = [str(args.godot), "--headless", "--audio-driver", "Dummy", "--path", str(ROOT), "--script", "res://tests/network_game_live.gd", "--",
+                       "--live-dir=" + directory.as_posix(), "--peer-index=" + str(index),
+                       "--load-units=" + str(args.load_units), "--load-seconds=" + str(args.load_seconds)]
             process = subprocess.Popen(command, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
             children.append(process)
             peers.append(process)
             time.sleep(0.35)
-        deadline = time.monotonic() + 150
+        deadline = time.monotonic() + 150 + (args.load_seconds + 45 if args.load_units else 0)
         last_phase = ""
         while time.monotonic() < deadline and any(process.poll() is None for process in peers):
             phase_path = directory / "phase.json"
@@ -143,6 +149,12 @@ def main() -> int:
                     if phase != last_phase:
                         last_phase = phase
                         print("NETWORK_GAME_LIVE_PHASE " + phase, flush=True)
+                        if impairment is not None and args.load_units:
+                            if phase == "network_load":
+                                impairment.begin_window("network_load")
+                            elif phase == "network_load_end" and "network_load" in impairment.windows:
+                                impairment.end_window("network_load")
+                                (directory / "udp-window-ended.json").write_text(json.dumps({"complete": True}), encoding="utf-8")
                 except (ValueError, OSError):
                     pass
             time.sleep(0.25)
@@ -170,6 +182,7 @@ def main() -> int:
             if unexpected:
                 failed.append("local_relay_stderr")
         report = {"target": args.target, "failures": failed, "peers": results, "log_directory": directory.name,
+                  "load_units": args.load_units, "load_seconds": args.load_seconds if args.load_units else 0,
                   "expected_dtls_reorder_diagnostics": expected_dtls_diagnostics}
         if impairment is not None:
             report["impairment"] = impairment.close()
@@ -177,12 +190,29 @@ def main() -> int:
             statistics = report["impairment"]
             if statistics["error"]:
                 failed.append("impairment_thread_error")
-            if sum(item["dropped"] for item in statistics["directions"]) == 0:
+            if not statistics["byte_accounting_balanced"] or statistics["observation_seconds"] <= 0:
+                failed.append("impairment_byte_accounting_invalid")
+            if args.target == "impaired" and sum(item["dropped"] for item in statistics["directions"]) == 0:
                 failed.append("impairment_did_not_drop_packets")
-            if sum(item["out_of_order_deliveries"] for item in statistics["directions"]) == 0:
+            if args.target == "impaired" and sum(item["out_of_order_deliveries"] for item in statistics["directions"]) == 0:
                 failed.append("impairment_did_not_reorder_packets")
+            if args.load_units:
+                load_window = statistics["windows"].get("network_load", {})
+                report["network_load_udp"] = load_window
+                if not load_window.get("complete") or not load_window.get("byte_accounting_balanced"):
+                    failed.append("load_udp_window_missing_or_unbalanced")
+                else:
+                    for result in results:
+                        peer_index = result["peer_index"]
+                        result.setdefault("network_load", {})["udp"] = [row for row in load_window["directions"] if row["peer"] == peer_index]
         (directory / "summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-        print("NETWORK_GAME_LIVE_RESULTS " + json.dumps(report, ensure_ascii=False))
+        # The complete samples stay in summary.json; do not dump thousands of
+        # native diagnostic rows into the coordinating terminal.
+        print("NETWORK_GAME_LIVE_RESULTS " + json.dumps({
+            "target": args.target, "failures": failed, "log_directory": str(directory),
+            "checks": sum(peer.get("checks", 0) for peer in results),
+            "peers": [{"owner": peer.get("owner"), "failures": peer.get("failures", [])} for peer in results],
+        }, ensure_ascii=False))
         return 1 if failed else 0
     finally:
         for process in children:

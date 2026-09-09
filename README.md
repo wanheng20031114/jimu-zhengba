@@ -1,99 +1,60 @@
 # 灰烬王国 · 中世纪乱斗
 
-使用 **Godot 4.6** 制作的原创 3D 即时战略游戏。指挥蓝旗军团进攻敌方兵营、哨塔与要塞，让农民开采金矿并修建防御塔。战场采用 **45° 正交视角**，石板道路穿过岩石与树林，大本营负责即时招募。
+Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。快速建立兵营，指挥混编军队，争夺金矿并摧毁敌方基地。支持单人对 Bot、四人 2v2，以及通过上海 ENet/DTLS 中继联机。
 
 ![战场画面](artifacts/battlefield.png)
 
 ## 运行
 
-使用 Godot 4.6.3 或更新的 4.6 版本导入 `project.godot`，等待资源导入完成后按 **F5**（主场景为 `scenes/main.tscn`）。使用 Forward+ 渲染，建议独立显卡。
+用 Godot 4.6.3 导入 `project.godot` 后按 F5，主场景为原生大厅 `scenes/lobby.tscn`。Windows 发布包解压后运行 `windows/AshenCrown.exe`，保持 EXE 与 PCK 同目录。使用 Forward+ Vulkan 渲染。
 
-Windows 构建输出为 `builds/windows/AshenCrown.exe`；分发包路径为 `builds/AshenCrown-Windows-x64.zip`，解压后保留 EXE 和 PCK 在同一目录。构建产物不纳入 Git；已完成的发布包验证见 [验证记录](docs/validation.md)。
+安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/AshenCrown-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
-安装 Godot 4.6.3 的导出模板后，可运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1` 重新打包。导出使用项目内的 Windows Desktop 原生预设，默认 Vulkan。
+## 对局
 
-## 玩法
-
-- 五种军事单位：剑士、弓箭手、骑士、投石车、加农炮；另有负责采矿和建造的农民。
-- 选中大本营后消耗金币立即生产，无生产计时。
-- 每秒自动增加 **1 金币**，**F12** 通过 `debug_gold` 输入映射增加 **100 金币**。
-- 消灭守军并摧毁四座敌方军事建筑获胜；大本营被摧毁则失败。
-- 敌方兵营定时派出援军，摧毁兵营可切断增援；摧毁军事建筑获得 90 金币。
-- 连续对同一目标下达攻击命令会保留当前攻击进度；切换目标仍立即响应。
-- 双方军事单位待命时会主动发现并追击附近敌人，击杀后继续寻找目标；**H 坚守**只攻击射程内敌人，保持原地。
-
-开局拥有 **2 名农民**，额外招募每人 **50 金币**。选中农民后右键矿脉，农民到达矿边便持续工作，头顶进度条每 **3 秒**完成一次，立即增加 **3 金币**，无需运回大本营。矿脉储量无限，多名农民各自结算。移动或停止可中断采集，未完成的周期不入账；反复右键同一矿脉不会重置进度。选中大本营后右键矿脉，可让新招募农民直接前往采集。
-
-选中农民按 **V** 显示防御塔预览，左键在空地放置，立即扣除 **100 金币**。农民抵达工地后累计施工 **20 秒**建成；每座塔同时由一名农民施工，多人不能加速。工人离开或死亡后，工地保留进度，可用另一名农民右键接手。工地可以受攻击；防御塔建成后自动射击范围内敌人，无进驻功能。
-
-按住 **Shift** 可连续放置多座塔，也可将移动、采矿与施工混合排入任务队列。采矿有后续任务时，完成当前的一个 3 秒周期后转入下一项；队列最后的采矿任务会持续采集。选择未完成工地按 **Delete** 取消，按未完成比例返还金币并向下取整，例如施工一半返还 50 金币。普通 Delete 保护已完成塔；选择自家已完成塔按 **Ctrl + Delete** 可拆除，不返还金币。
+- 1v1 琥珀十字路（96×96），2v2 双谷争锋（128×112）；对称出生、主路与侧路、6/10处永久矿脉。
+- 每人开局 1 座大本营、3 农民、320 金币。自然收入每秒 1，采矿每人每 3 秒 +3；每处矿脉共享 6 个位置。
+- 大本营只训练农民：50 金币、10 秒，存活与排队合计上限10。兵营与军工厂即时生产军事单位；军事人口上限60，骑士占2、攻城器占3，其余军队占1。
+- 农民建造、Shift 排队、施工接手；学院研究全军攻防 I/II/III，总加成为 +1/+2/+4。
+- 近战/远程护甲与类别附伤统一计算。剑克骑、骑切弓；弓箭利用射程，投石克密集阵列，炮克建筑与攻城器。
+- 摧毁敌队全部军事建筑及工地获胜。失去大本营仍可重建；全队完工核心生产建筑全失后，军事建筑永久暴露。
+- Bot 遵守相同金币、人口、建造、生产、科技与视野；没有免费刷兵或拆楼奖励。
 
 | 操作 | 按键 |
-| --- | --- |
-| 选择 / 框选 | 左键 / 拖动左键 |
-| 追加或取消选择 | Shift + 左键 / 框选 |
-| 选择视野内同类单位 | 双击单位 |
-| 移动 / 攻击 / 采矿 / 接手工地 / 大本营集结点 | 右键目标 |
-| 追加移动、采矿或施工任务 | Shift + 右键 |
-| 攻击前进 | A，再左键 |
-| 停止 / 坚守 | S / H |
-| 创建 / 覆盖编队 | Ctrl + 1–9 |
-| 追加所选部队到编队 | Shift + 1–9 |
-| 召回编队 / 定位编队 | 1–9 / 双按数字 |
-| 移动镜头 | 中键拖动、方向键、屏幕边缘 |
-| 缩放 / 定位所选部队 | 滚轮 / 空格 |
-| 大本营 / 选择全军（不含农民） | B / G |
-| 招募剑士 / 弓箭手 / 骑士 / 投石车 / 炮 | Q / E / R / T / Y |
-| 招募农民 / 轮选空闲农民 | U / .（句点） |
-| 防御塔预览 / 放置 / 连续放置 | V / 左键 / Shift + 左键 |
-| 退出建造预览 | 右键 / Esc |
-| 取消未完成工地 / 拆除自家已完成塔 | Delete / Ctrl + Delete |
-| 操作说明 / 暂停 | F1 / Esc |
-| 隐藏界面 | F10 |
-| 全屏 / 静音 | F11 / M |
-| 调试金币 | F12 |
+|---|---|
+| 选择、框选、同类选择 | 左键、拖动、双击 |
+| 移动/攻击/采矿/接手施工/集结点 | 右键目标 |
+| 追加任务、连续建造 | Shift + 指派 |
+| 攻击前进、停止、坚守 | A、S、H |
+| 覆盖编队、追加编队、召回、定位 | Ctrl + 数字、Shift + 数字、数字、双按数字 |
+| 视角移动、缩放 | 屏幕边缘/中键/方向键、滚轮 |
+| 大本营、全军、空闲农民 | B、G、句点 |
+| 操作帮助、菜单 | F1、Esc |
+| 统一暂停 | 单机 Esc；联机房主 P |
+| 单机调试金币 | F12，+100 |
 
-## 音效
+## 联机与工程
 
-包含 **54 个 WAV 变体、22 类运行事件**，覆盖五兵种挥击与发射、不同材质命中、炮弹爆炸、步伐、马蹄、车轮、死亡、建筑倒塌、招募和操作反馈。农民采矿使用轻石击，施工使用木击，防御塔复用弩箭发射与命中音效。轻石击 `stone_chip` 复用投石命中的三个样本并降低增益。**不播放 BGM**；按 **Esc** 可调整音效音量，**M** 切换静音。
+客户端主动连接 UDP 24571，中继只管理房间、身份和转发，房主运行 30 TPS 权威模拟。独立通道的可见快照以每客户端15Hz发送，位置、朝向和攻击动画在120ms时间线插值；丢包时完整快照的实收频率会降低。命令统一校验 owner、序号、资源与人口；客户端不判伤、不产金、不运行 Bot。局内原始消息按受信证书加密，私人密钥不进仓库。
 
-声音结合 [Kenney Impact Sounds](https://kenney.nl/assets/impact-sounds)、[Kenney Interface Sounds](https://kenney.nl/assets/interface-sounds) 和 [Vehicle / Jan Schupke 武器与装备拟音](https://opengameart.org/content/fantasy-weapons-and-apparel-sfx-library) 的 CC0 录音，以及项目自制合成层。原音源、许可和离线重建记录见 [音效来源](assets/audio/CREDITS.md)。
+每人独立控制资产，同队共享视野。未探索、已探索与当前可见分开；失去视野的建筑只留下冻结记忆，隐藏敌人的实时数据不会发给普通客户端。普通断线10秒后Bot接管、120秒内可恢复；房主等待30秒，超时中断，无自动迁移。
 
-运行时使用 **38 个原生声部**（战斗 24、步伐等拟音 8、界面 6），限制同类连发与同时播放数量，并避免连续使用同一变体。监听点位于镜头所看战场上方，配合距离衰减、战斗总线轻压缩和 Master −1 dB 限峰；不会因 RTS 相机悬在高空而让近处战斗过分微弱。
+单位、建筑、科技、地图由 `data/` 原生 Resource 定义。模型、场景、界面均可编辑；生产按钮展示游戏内3D模型，活动预览15FPS更新。单位原生 `AnimationPlayer`、`NavigationAgent3D` 与物理插值保留动作细节。声音使用有界原生声部、分类增益和总线压缩，无BGM；录音许可与生成记录见 [音效来源](assets/audio/CREDITS.md)。
 
-## 美术与工程
+## 验证与重建
 
-模型均为本项目离线建模脚本制作的真实 3D 网格。单位以原生场景关节及 `AnimationPlayer` 实现动作，农民会切换矿镐与木槌；建筑、场景道具、碰撞和界面保存为可编辑 Godot 场景。防御塔施工以脚手架和逐层显露的石墙表现，保持建筑原本比例。招募栏直接展示游戏内模型，使用缓存的原生 3D 视口；只有活动预览以 15 FPS 更新。
-
-战斗采用 **30 TPS 固定模拟 + 原生物理插值**：移动、攻击、弹道、采集与施工共用模拟时钟，镜头、选择框与指令反馈按显示帧即时更新。持续攻击保留冷却跨步余数，避免降低模拟频率后攻击变慢；新实体重置插值，弹丸保留命中终点到下一步回收。结构和扩展边界见 [模拟架构](docs/simulation-architecture.md)。
-
-- `assets/models/units/`：五兵种与农民模型、原生关节网格与动作。
-- `assets/models/environment/`：军事建筑、矿脉、自然岩树、道路与施工脚手架；此前制作的聚落道具仍保留为源资产，已移出正式地图。
-- `assets/audio/`：运行音效、CC0 原音源、来源及响度记录。
-- `scenes/`：主战场、实体、界面、弹丸与粒子场景。
-- `scripts/`：RTS 操作、经济、导航、战斗、界面。
-- `tools/`：离线模型、界面与导航作者脚本。
-- `tests/`：引擎内功能验证与压力测试。
-
-离线建模脚本使用 Python 3、NumPy、SciPy、trimesh 和 Shapely 2.1+；运行游戏无需 Python。中文界面使用系统中文字体。
-
-## 验证
+以本轮测试为准，旧0.5战役测试保留作历史参考，不适用于已移除的四楼战役规则。
 
 ```text
-Godot_console.exe --headless --path . -- --smoke-test
-Godot_console.exe --headless --path . -- --ui-smoke
-Godot_console.exe --headless --path . --script res://tests/combat_smoke.gd
-Godot_console.exe --headless --path . --script res://tests/battle_scenario.gd
-Godot_console.exe --headless --path . --script res://tests/navigation_audit.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/worker_ai_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/construction_navigation_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/economy_input_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/audio_runtime_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/shutdown_lifecycle.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script res://tests/audio_pause_boundary.gd
-Godot_console.exe --path . --rendering-driver d3d12 --audio-driver Dummy --script res://tests/repeated_attack_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script tests/balance_matrix_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script tests/balance_combat_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script tests/skirmish_match_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --script tests/fog_state_test.gd
+python tests/network_runner.py local
+python tests/network_game_live_runner.py local
+powershell -ExecutionPolicy Bypass -File tools/profile_skirmish.ps1
 ```
 
-农民采矿与双方军事待命 AI、施工及导航、真实输入和新模型分别有独立回归；已完成的本轮检查见 [验证记录](docs/validation.md)。五兵种原有模型重建验证为 360 项，43 个源文件字节一致；新增模型另做原生视口与动作切换检查。
+阶段实现与验收记录：[遭遇战实施](docs/skirmish-implementation.md)、[性能实测](docs/performance-0.6.0.md)、[联网验收](docs/network-validation.md)、[发布包完整对局](docs/release-match-validation.md)。标准混编2v2显示帧P95为16.46ms，P99仍24.86ms；最坏280人混战不能锁定60FPS，完整数据与统计边界保留在报告中。
 
-**0.5.0 连续对照**：RTX 3080 / i9-10900KF、1600×900、Forward+ / Vulkan，旧版→当前版的 160 人行军为 **69.5→86.5 FPS**，初始 160 人混战为 **72.3→84.2 FPS**；行军绘制调用约减少 **30%**。两次 61 项压力检查通过、零孤儿节点。测试时另一个用户 3D 程序仍在运行，外部负载不受控制；混战 P95 为 17.57→18.60 ms，尾帧尚未改善。使用 Dummy 音频驱动并执行混音。全部运行条件、未筛选的数值与历史阶段见 [性能验证](tests/performance_review.md) 和 [原始统计](tests/performance_0_5_0.json)。
+建模脚本为 `tools/build_units.py`、`tools/build_environment.py`、`tools/build_skirmish_maps.py`；离线建模需要 Python、NumPy、SciPy、trimesh、Shapely，运行游戏无需这些依赖。

@@ -1,0 +1,1024 @@
+{
+  "captured_at": "2026-09-09 12:40 Asia/Shanghai",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 3080 10 GiB",
+    "cpu": "Intel Core i9-10900KF",
+    "driver": "616.56",
+    "desktop_gpu_before_percent": 30,
+    "desktop_gpu_after_percent": 35,
+    "desktop_apps_left_running": true
+  },
+  "baseline": {
+    "1v1": {
+      "benchmark_conditions": "HQ/maps remain native; bots and passive income stopped; all owners at 60 military supply + 10 farmers; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
+      "checks": 19,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "harness_check_only": false,
+      "mode": "1v1",
+      "msaa_3d": 2,
+      "phases": [
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.00238,
+          "ending_units": 103,
+          "engine_physics_monitor_ms": {
+            "max": 12.218,
+            "mean": 7.97308000000003,
+            "p50": 7.912,
+            "p95": 12.218,
+            "p99": 12.218,
+            "samples": 450
+          },
+          "frame_count": 4033,
+          "frame_ms": {
+            "max": 16.932,
+            "mean": 3.71990478551948,
+            "p50": 3.023,
+            "p95": 8.916,
+            "p99": 11.105,
+            "samples": 4033
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 268.824013256563,
+          "name": "mixed_supply60_combat",
+          "navigation_ms": {
+            "max": 1.161,
+            "mean": 0.773691111111108,
+            "p50": 0.722,
+            "p95": 1.161,
+            "p99": 1.161,
+            "samples": 450
+          },
+          "observed_tps": 29.9952407551335,
+          "physics_logic_ms": {
+            "max": 10.9,
+            "mean": 4.11628222222223,
+            "p50": 4.029,
+            "p95": 6.101,
+            "p99": 6.942,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 9.911,
+            "mean": 9.16390676915465,
+            "p50": 9.13,
+            "p95": 9.911,
+            "p99": 9.911,
+            "samples": 4033
+          },
+          "starting_units": 104
+        },
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.001981,
+          "ending_units": 139,
+          "engine_physics_monitor_ms": {
+            "max": 16.9,
+            "mean": 12.02272,
+            "p50": 11.753,
+            "p95": 13.139,
+            "p99": 16.9,
+            "samples": 450
+          },
+          "frame_count": 2919,
+          "frame_ms": {
+            "max": 21.35,
+            "mean": 5.13942343268243,
+            "p50": 3.534,
+            "p95": 13.135,
+            "p99": 15.32,
+            "samples": 2919
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 194.574303220355,
+          "name": "maximum_units_combat",
+          "navigation_ms": {
+            "max": 1.303,
+            "mean": 1.13223333333333,
+            "p50": 1.097,
+            "p95": 1.294,
+            "p99": 1.303,
+            "samples": 450
+          },
+          "observed_tps": 29.996038523179,
+          "physics_logic_ms": {
+            "max": 14.971,
+            "mean": 6.81578,
+            "p50": 6.68,
+            "p95": 9.157,
+            "p99": 10.164,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 12.364,
+            "mean": 11.0828982528264,
+            "p50": 11.051,
+            "p95": 12.364,
+            "p99": 12.364,
+            "samples": 2919
+          },
+          "starting_units": 140
+        },
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.002563,
+          "ending_units": 140,
+          "engine_physics_monitor_ms": {
+            "max": 52.765,
+            "mean": 8.79243111111111,
+            "p50": 5.294,
+            "p95": 52.765,
+            "p99": 52.765,
+            "samples": 450
+          },
+          "frame_count": 4493,
+          "frame_ms": {
+            "max": 63.202,
+            "mean": 3.33909614956599,
+            "p50": 2.917,
+            "p95": 7.202,
+            "p99": 9.025,
+            "samples": 4493
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 299.482161814618,
+          "name": "maximum_units_marching",
+          "navigation_ms": {
+            "max": 1.785,
+            "mean": 1.47855777777777,
+            "p50": 1.494,
+            "p95": 1.785,
+            "p99": 1.785,
+            "samples": 450
+          },
+          "observed_tps": 29.9948748757129,
+          "physics_logic_ms": {
+            "max": 50.08,
+            "mean": 2.13056444444445,
+            "p50": 1.752,
+            "p95": 3.319,
+            "p99": 3.976,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 10.804,
+            "mean": 8.73383908301768,
+            "p50": 8.492,
+            "p95": 10.804,
+            "p99": 10.804,
+            "samples": 4493
+          },
+          "starting_units": 140
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_metric": "physics_logic_ms brackets SceneTree physics callbacks with saved-scene priorities -1000000/+1000000. It excludes PhysicsServer stepping outside the SceneTree. engine_physics_monitor_ms separately reports cached Performance.TIME_PHYSICS_PROCESS. Neither uses tick arrival intervals as logic cost.",
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_atlas_size": 4096,
+      "shadow_max_distance": 135.0,
+      "shadow_mode": 0,
+      "taa": true,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "2v2": {
+      "benchmark_conditions": "HQ/maps remain native; bots and passive income stopped; all owners at 60 military supply + 10 farmers; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
+      "checks": 25,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "harness_check_only": false,
+      "mode": "2v2",
+      "msaa_3d": 2,
+      "phases": [
+        {
+          "authority_ticks": 451,
+          "duration_seconds": 15.018363,
+          "ending_units": 208,
+          "engine_physics_monitor_ms": {
+            "max": 19.937,
+            "mean": 17.1723436807095,
+            "p50": 17.074,
+            "p95": 19.412,
+            "p99": 19.937,
+            "samples": 451
+          },
+          "frame_count": 1631,
+          "frame_ms": {
+            "max": 32.899,
+            "mean": 9.20806744328633,
+            "p50": 5.278,
+            "p95": 21.993,
+            "p99": 28.96,
+            "samples": 1631
+          },
+          "frame_p95_under_16ms": false,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 108.600384742332,
+          "name": "mixed_supply60_combat",
+          "navigation_ms": {
+            "max": 1.772,
+            "mean": 1.51930155210642,
+            "p50": 1.479,
+            "p95": 1.772,
+            "p99": 1.772,
+            "samples": 451
+          },
+          "observed_tps": 30.0299040581187,
+          "physics_logic_ms": {
+            "max": 16.405,
+            "mean": 10.3369756097561,
+            "p50": 10.187,
+            "p95": 13.689,
+            "p99": 14.534,
+            "samples": 451
+          },
+          "process_ms": {
+            "max": 22.175,
+            "mean": 15.9196701410178,
+            "p50": 15.463,
+            "p95": 22.175,
+            "p99": 22.175,
+            "samples": 1631
+          },
+          "starting_units": 208
+        },
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.005298,
+          "ending_units": 274,
+          "engine_physics_monitor_ms": {
+            "max": 40.158,
+            "mean": 27.3029066666667,
+            "p50": 25.711,
+            "p95": 40.158,
+            "p99": 40.158,
+            "samples": 450
+          },
+          "frame_count": 787,
+          "frame_ms": {
+            "max": 46.695,
+            "mean": 19.0664447268107,
+            "p50": 22.758,
+            "p95": 37.844,
+            "p99": 41.489,
+            "samples": 787
+          },
+          "frame_p95_under_16ms": false,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 52.4481419829183,
+          "name": "maximum_units_combat",
+          "navigation_ms": {
+            "max": 3.118,
+            "mean": 2.21458222222222,
+            "p50": 2.171,
+            "p95": 3.118,
+            "p99": 3.118,
+            "samples": 450
+          },
+          "observed_tps": 29.9894077411858,
+          "physics_logic_ms": {
+            "max": 35.722,
+            "mean": 14.8961688888889,
+            "p50": 14.71,
+            "p95": 19.46,
+            "p99": 25.643,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 21.283,
+            "mean": 18.7907318932654,
+            "p50": 18.731,
+            "p95": 21.283,
+            "p99": 21.283,
+            "samples": 787
+          },
+          "starting_units": 280
+        },
+        {
+          "authority_ticks": 451,
+          "duration_seconds": 15.008325,
+          "ending_units": 280,
+          "engine_physics_monitor_ms": {
+            "max": 161.823,
+            "mean": 21.8946569506726,
+            "p50": 11.512,
+            "p95": 161.823,
+            "p99": 161.823,
+            "samples": 446
+          },
+          "frame_count": 2653,
+          "frame_ms": {
+            "max": 168.467,
+            "mean": 5.65711232566905,
+            "p50": 3.698,
+            "p95": 13.614,
+            "p99": 20.467,
+            "samples": 2653
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 176.768560115802,
+          "name": "maximum_units_marching",
+          "navigation_ms": {
+            "max": 3.133,
+            "mean": 2.6530941704036,
+            "p50": 2.618,
+            "p95": 3.133,
+            "p99": 3.133,
+            "samples": 446
+          },
+          "observed_tps": 30.0499889228145,
+          "physics_logic_ms": {
+            "max": 157.039,
+            "mean": 5.03647006651885,
+            "p50": 4.396,
+            "p95": 7.038,
+            "p99": 8.132,
+            "samples": 451
+          },
+          "process_ms": {
+            "max": 21.65,
+            "mean": 14.5297157934413,
+            "p50": 13.571,
+            "p95": 20.346,
+            "p99": 21.65,
+            "samples": 2653
+          },
+          "starting_units": 280
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_metric": "physics_logic_ms brackets SceneTree physics callbacks with saved-scene priorities -1000000/+1000000. It excludes PhysicsServer stepping outside the SceneTree. engine_physics_monitor_ms separately reports cached Performance.TIME_PHYSICS_PROCESS. Neither uses tick arrival intervals as logic cost.",
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_atlas_size": 4096,
+      "shadow_max_distance": 135.0,
+      "shadow_mode": 0,
+      "taa": true,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    }
+  },
+  "final": {
+    "1v1": {
+      "benchmark_conditions": "HQ/maps remain native; bots and passive income stopped; all owners at 60 military supply + 10 farmers; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
+      "checks": 22,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "harness_check_only": false,
+      "mode": "1v1",
+      "msaa_3d": 2,
+      "phases": [
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.00464,
+          "ending_units": 103,
+          "engine_physics_monitor_ms": {
+            "max": 7.358,
+            "mean": 6.52346000000001,
+            "p50": 6.49,
+            "p95": 7.358,
+            "p99": 7.358,
+            "samples": 450
+          },
+          "frame_count": 3693,
+          "frame_ms": {
+            "max": 16.764,
+            "mean": 4.06299268887085,
+            "p50": 3.301,
+            "p95": 8.846,
+            "p99": 10.371,
+            "samples": 3693
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 246.123865684215,
+          "name": "mixed_supply60_combat",
+          "navigation_ms": {
+            "max": 1.117,
+            "mean": 0.906728888888887,
+            "p50": 0.901,
+            "p95": 1.087,
+            "p99": 1.117,
+            "samples": 450
+          },
+          "observed_tps": 29.9907228697256,
+          "path_query_count": {
+            "max": 15.0,
+            "mean": 0.942222222222222,
+            "p50": 1.0,
+            "p95": 3.0,
+            "p99": 5.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 1.87,
+            "mean": 0.139004444444444,
+            "p50": 0.15,
+            "p95": 0.428,
+            "p99": 0.651,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 5.823,
+            "mean": 3.49634222222222,
+            "p50": 3.361,
+            "p95": 4.619,
+            "p99": 5.278,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 10.316,
+            "mean": 9.76185025724373,
+            "p50": 9.703,
+            "p95": 10.316,
+            "p99": 10.316,
+            "samples": 3693
+          },
+          "starting_units": 104
+        },
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.001768,
+          "ending_units": 139,
+          "engine_physics_monitor_ms": {
+            "max": 12.147,
+            "mean": 9.18031999999997,
+            "p50": 8.694,
+            "p95": 12.147,
+            "p99": 12.147,
+            "samples": 450
+          },
+          "frame_count": 2851,
+          "frame_ms": {
+            "max": 19.669,
+            "mean": 5.26193019992986,
+            "p50": 3.902,
+            "p95": 11.649,
+            "p99": 13.902,
+            "samples": 2851
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 190.044266782422,
+          "name": "maximum_units_combat",
+          "navigation_ms": {
+            "max": 2.087,
+            "mean": 1.49270444444444,
+            "p50": 1.454,
+            "p95": 2.087,
+            "p99": 2.087,
+            "samples": 450
+          },
+          "observed_tps": 29.9964644167274,
+          "path_query_count": {
+            "max": 24.0,
+            "mean": 3.85111111111111,
+            "p50": 4.0,
+            "p95": 8.0,
+            "p99": 10.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 3.135,
+            "mean": 0.533177777777778,
+            "p50": 0.517,
+            "p95": 1.101,
+            "p99": 1.383,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 9.666,
+            "mean": 5.06285555555556,
+            "p50": 4.922,
+            "p95": 6.344,
+            "p99": 7.421,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 14.283,
+            "mean": 11.4284286215367,
+            "p50": 11.132,
+            "p95": 14.283,
+            "p99": 14.283,
+            "samples": 2851
+          },
+          "starting_units": 140
+        },
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.001225,
+          "ending_units": 140,
+          "engine_physics_monitor_ms": {
+            "max": 9.345,
+            "mean": 5.90842,
+            "p50": 6.11,
+            "p95": 9.345,
+            "p99": 9.345,
+            "samples": 450
+          },
+          "frame_count": 4388,
+          "frame_ms": {
+            "max": 15.419,
+            "mean": 3.41869211485871,
+            "p50": 2.918,
+            "p95": 7.58,
+            "p99": 9.905,
+            "samples": 4388
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 292.509445061987,
+          "name": "maximum_units_marching",
+          "navigation_ms": {
+            "max": 2.069,
+            "mean": 1.55061333333334,
+            "p50": 1.546,
+            "p95": 2.069,
+            "p99": 2.069,
+            "samples": 450
+          },
+          "observed_tps": 29.997550200067,
+          "path_query_count": {
+            "max": 24.0,
+            "mean": 0.653333333333333,
+            "p50": 0.0,
+            "p95": 2.0,
+            "p99": 3.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 3.531,
+            "mean": 0.100146666666667,
+            "p50": 0.0,
+            "p95": 0.307,
+            "p99": 0.651,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 7.122,
+            "mean": 2.24675555555555,
+            "p50": 2.108,
+            "p95": 3.484,
+            "p99": 4.302,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 12.348,
+            "mean": 9.24941476754773,
+            "p50": 8.486,
+            "p95": 12.348,
+            "p99": 12.348,
+            "samples": 4388
+          },
+          "starting_units": 140
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_metric": "physics_logic_ms brackets SceneTree physics callbacks with saved-scene priorities -1000000/+1000000. It excludes PhysicsServer stepping outside the SceneTree. engine_physics_monitor_ms separately reports cached Performance.TIME_PHYSICS_PROCESS. Neither uses tick arrival intervals as logic cost.",
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_atlas_size": 4096,
+      "shadow_max_distance": 135.0,
+      "shadow_mode": 0,
+      "taa": true,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    },
+    "2v2": {
+      "benchmark_conditions": "HQ/maps remain native; bots and passive income stopped; all owners at 60 military supply + 10 farmers; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
+      "checks": 28,
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "harness_check_only": false,
+      "mode": "2v2",
+      "msaa_3d": 2,
+      "phases": [
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.001772,
+          "ending_units": 206,
+          "engine_physics_monitor_ms": {
+            "max": 14.327,
+            "mean": 12.0919222222223,
+            "p50": 11.797,
+            "p95": 14.327,
+            "p99": 14.327,
+            "samples": 450
+          },
+          "frame_count": 1733,
+          "frame_ms": {
+            "max": 29.029,
+            "mean": 8.65652971725332,
+            "p50": 5.841,
+            "p95": 16.464,
+            "p99": 24.858,
+            "samples": 1733
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 115.519686607689,
+          "name": "mixed_supply60_combat",
+          "navigation_ms": {
+            "max": 1.957,
+            "mean": 1.40032444444445,
+            "p50": 1.398,
+            "p95": 1.957,
+            "p99": 1.957,
+            "samples": 450
+          },
+          "observed_tps": 29.9964564186151,
+          "path_query_count": {
+            "max": 14.0,
+            "mean": 1.41777777777778,
+            "p50": 1.0,
+            "p95": 4.0,
+            "p99": 6.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 2.911,
+            "mean": 0.330111111111111,
+            "p50": 0.257,
+            "p95": 0.851,
+            "p99": 1.259,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 11.49,
+            "mean": 6.72020888888889,
+            "p50": 6.407,
+            "p95": 8.853,
+            "p99": 9.839,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 17.058,
+            "mean": 16.2076733987305,
+            "p50": 16.125,
+            "p95": 17.058,
+            "p99": 17.058,
+            "samples": 1733
+          },
+          "starting_units": 208
+        },
+        {
+          "authority_ticks": 450,
+          "duration_seconds": 15.007268,
+          "ending_units": 275,
+          "engine_physics_monitor_ms": {
+            "max": 21.51,
+            "mean": 17.6539777777779,
+            "p50": 17.291,
+            "p95": 21.51,
+            "p99": 21.51,
+            "samples": 450
+          },
+          "frame_count": 1006,
+          "frame_ms": {
+            "max": 39.235,
+            "mean": 14.917754473161,
+            "p50": 8.62,
+            "p95": 32.094,
+            "p99": 34.197,
+            "samples": 1006
+          },
+          "frame_p95_under_16ms": false,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 67.0341863688981,
+          "name": "maximum_units_combat",
+          "navigation_ms": {
+            "max": 2.958,
+            "mean": 2.24913333333334,
+            "p50": 2.203,
+            "p95": 2.958,
+            "p99": 2.958,
+            "samples": 450
+          },
+          "observed_tps": 29.9854710397655,
+          "path_query_count": {
+            "max": 24.0,
+            "mean": 4.32,
+            "p50": 4.0,
+            "p95": 10.0,
+            "p99": 19.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 5.268,
+            "mean": 0.929555555555556,
+            "p50": 0.822,
+            "p95": 2.006,
+            "p99": 3.991,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 17.25,
+            "mean": 9.84066666666666,
+            "p50": 9.466,
+            "p95": 12.409,
+            "p99": 14.554,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 20.909,
+            "mean": 19.6098538767396,
+            "p50": 19.606,
+            "p95": 20.909,
+            "p99": 20.909,
+            "samples": 1006
+          },
+          "starting_units": 280
+        },
+        {
+          "authority_ticks": 451,
+          "duration_seconds": 15.008221,
+          "ending_units": 280,
+          "engine_physics_monitor_ms": {
+            "max": 17.124,
+            "mean": 12.2336452328159,
+            "p50": 11.817,
+            "p95": 17.124,
+            "p99": 17.124,
+            "samples": 451
+          },
+          "frame_count": 2349,
+          "frame_ms": {
+            "max": 36.521,
+            "mean": 6.38919327373351,
+            "p50": 4.411,
+            "p95": 15.197,
+            "p99": 24.492,
+            "samples": 2349
+          },
+          "frame_p95_under_16ms": true,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 156.514219773283,
+          "name": "maximum_units_marching",
+          "navigation_ms": {
+            "max": 3.603,
+            "mean": 2.68233259423504,
+            "p50": 2.646,
+            "p95": 3.603,
+            "p99": 3.603,
+            "samples": 451
+          },
+          "observed_tps": 30.0501971552791,
+          "path_query_count": {
+            "max": 24.0,
+            "mean": 2.4589800443459,
+            "p50": 2.0,
+            "p95": 6.0,
+            "p99": 24.0,
+            "samples": 451
+          },
+          "path_query_ms": {
+            "max": 5.707,
+            "mean": 0.569745011086474,
+            "p50": 0.463,
+            "p95": 1.259,
+            "p99": 5.381,
+            "samples": 451
+          },
+          "physics_logic_ms": {
+            "max": 13.062,
+            "mean": 5.46568292682927,
+            "p50": 5.162,
+            "p95": 7.853,
+            "p99": 11.247,
+            "samples": 451
+          },
+          "process_ms": {
+            "max": 23.562,
+            "mean": 15.4586228182205,
+            "p50": 14.27,
+            "p95": 23.562,
+            "p99": 23.562,
+            "samples": 2349
+          },
+          "starting_units": 280
+        }
+      ],
+      "physics_interpolation": true,
+      "physics_metric": "physics_logic_ms brackets SceneTree physics callbacks with saved-scene priorities -1000000/+1000000. It excludes PhysicsServer stepping outside the SceneTree. engine_physics_monitor_ms separately reports cached Performance.TIME_PHYSICS_PROCESS. Neither uses tick arrival intervals as logic cost.",
+      "physics_ticks_per_second": 30,
+      "rendered": true,
+      "renderer": "forward_plus",
+      "shadow_atlas_size": 4096,
+      "shadow_max_distance": 135.0,
+      "shadow_mode": 0,
+      "taa": true,
+      "viewport_size": "(1600.0, 900.0)",
+      "window_size": "(1600, 900)"
+    }
+  },
+  "navigation_query_comparison": {
+    "fixture": "Same native 2v2 static mesh and 280 fixed-seed endpoint pairs; no headquarters carving",
+    "runs": [
+      {
+        "polygons": 11440,
+        "routes": 280,
+        "failed_routes": 0,
+        "total_ms": 320.437,
+        "mean_ms": 1.1444178571428572,
+        "p95_ms": 2.162,
+        "max_ms": 3.152
+      },
+      {
+        "polygons": 1896,
+        "routes": 280,
+        "failed_routes": 0,
+        "total_ms": 72.135,
+        "mean_ms": 0.257625,
+        "p95_ms": 0.336,
+        "max_ms": 0.416
+      }
+    ]
+  },
+  "real_map_command_latency": {
+    "1v1": {
+      "all_paths_ticks": 3,
+      "checks": 8,
+      "compact_polygons": 1068,
+      "failures": [],
+      "max_motion_ms": 109.591,
+      "max_path_ms": 109.591,
+      "mode": "1v1",
+      "native_query_count": 70,
+      "query_ticks": [
+        {
+          "queries": 24,
+          "query_ms": 4.234,
+          "tick": 1
+        },
+        {
+          "queries": 24,
+          "query_ms": 4.589,
+          "tick": 2
+        },
+        {
+          "queries": 22,
+          "query_ms": 3.862,
+          "tick": 3
+        }
+      ],
+      "units": 70,
+      "worker_mesh_ms": 12.143
+    },
+    "2v2": {
+      "all_paths_ticks": 3,
+      "checks": 8,
+      "compact_polygons": 1768,
+      "failures": [],
+      "max_motion_ms": 104.91,
+      "max_path_ms": 104.91,
+      "mode": "2v2",
+      "native_query_count": 70,
+      "query_ticks": [
+        {
+          "queries": 24,
+          "query_ms": 6.643,
+          "tick": 1
+        },
+        {
+          "queries": 24,
+          "query_ms": 6.81,
+          "tick": 2
+        },
+        {
+          "queries": 22,
+          "query_ms": 6.181,
+          "tick": 3
+        }
+      ],
+      "units": 70,
+      "worker_mesh_ms": 20.582
+    }
+  },
+  "cpu_attribution_before_compaction": {
+    "functions_ms": {
+      "effect_create": {
+        "max": 0.558,
+        "mean": 0.18172,
+        "p50": 0.174,
+        "p95": 0.387,
+        "p99": 0.489,
+        "samples": 450
+      },
+      "game_physics_fog_commands": {
+        "max": 2.46,
+        "mean": 0.324375555555556,
+        "p50": 0.014,
+        "p95": 1.874,
+        "p99": 1.912,
+        "samples": 450
+      },
+      "game_render_ui_fog": {
+        "max": 1.858,
+        "mean": 0.415746666666666,
+        "p50": 0.076,
+        "p95": 1.083,
+        "p99": 1.749,
+        "samples": 450
+      },
+      "native_animation_advance": {
+        "max": 2.033,
+        "mean": 1.62569555555556,
+        "p50": 1.613,
+        "p95": 1.773,
+        "p99": 1.919,
+        "samples": 450
+      },
+      "path_follow_nested": {
+        "max": 0.659,
+        "mean": 0.483862222222222,
+        "p50": 0.479,
+        "p95": 0.543,
+        "p99": 0.589,
+        "samples": 450
+      },
+      "projectile_create": {
+        "max": 0.554,
+        "mean": 0.108606666666667,
+        "p50": 0.116,
+        "p95": 0.308,
+        "p99": 0.382,
+        "samples": 450
+      },
+      "projectile_physics_total": {
+        "max": 1.226,
+        "mean": 0.270646666666667,
+        "p50": 0.251,
+        "p95": 0.595,
+        "p99": 0.69,
+        "samples": 450
+      },
+      "rvo_move_slide_callback": {
+        "max": 1.638,
+        "mean": 1.02998,
+        "p50": 1.012,
+        "p95": 1.193,
+        "p99": 1.371,
+        "samples": 450
+      },
+      "target_scan_nested": {
+        "max": 1.446,
+        "mean": 0.119924444444445,
+        "p50": 0.087,
+        "p95": 0.165,
+        "p99": 1.143,
+        "samples": 450
+      },
+      "unit_physics_total": {
+        "max": 5.531,
+        "mean": 3.98459111111111,
+        "p50": 3.943,
+        "p95": 4.461,
+        "p99": 5.06,
+        "samples": 450
+      },
+      "worker_economy_nested": {
+        "max": 0.378,
+        "mean": 0.171402222222222,
+        "p50": 0.157,
+        "p95": 0.248,
+        "p99": 0.288,
+        "samples": 450
+      }
+    },
+    "native_navigation_cached_peak_ms": {
+      "max": 2.2,
+      "mean": 1.82168,
+      "p50": 1.815,
+      "p95": 2.2,
+      "p99": 2.2,
+      "samples": 450
+    },
+    "native_path_query_ms": {
+      "max": 13.446,
+      "mean": 1.59876391982183,
+      "p50": 1.451,
+      "p95": 3.216,
+      "p99": 4.728,
+      "samples": 449
+    },
+    "native_scene_physics": {
+      "max": 21.342,
+      "mean": 8.67513363028954,
+      "p50": 8.497,
+      "p95": 11.323,
+      "p99": 11.771,
+      "samples": 449
+    },
+    "ticks": 450,
+    "units": 206
+  }
+}

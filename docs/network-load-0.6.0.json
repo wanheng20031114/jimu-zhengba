@@ -1,0 +1,1638 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-09",
+  "product": "Ashen Crown 0.6.0",
+  "scope": {
+    "players": 4,
+    "map": "2v2",
+    "units": 280,
+    "per_owner": {
+      "farmers": 10,
+      "swordsmen": 60
+    },
+    "window_seconds": 20,
+    "host_native_physics_and_rvo": true,
+    "all_visible_only_during_pressure_fixture": true,
+    "prior_real_orders_privacy_disconnect_rejoin_attack_checks_retained": true,
+    "topology": "Four headless native game processes, a local relay and opaque UDP proxy on one Windows machine. Local profile injects zero impairment.",
+    "steady_state_claim": "Short capacity sample; not long-duration endurance or rendering FPS.",
+    "physics_timing": "SceneTree priority probes bracket physics callbacks, not the whole native physics server step.",
+    "udp_boundary": "UDP payload including ENet/DTLS/ACK/retransmission, excluding UDP/IP/link headers. Received and delivered are different observations of the same traffic; never add them.",
+    "quantile": "Sorted sample at floor((count-1)*percentile).",
+    "comparison_limit": "Historical code/profile variants are labelled; they are not a controlled single-variable A/B."
+  },
+  "cases": [
+    {
+      "case_id": "local-before-visual-burst-fix",
+      "source_record_id": "live-local-d1cf8ce2",
+      "revision_note": "Fast snapshot encoding; before decorative-event burst fix and display quantization.",
+      "target": "local",
+      "passed": true,
+      "assertions": 115,
+      "failed_assertions": [],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 0,
+        "link_rtt_jitter_bound_ms": 0,
+        "datagram_loss_probability": 0,
+        "extra_reorder_probability": 0,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 0,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.047,
+        "pending_bytes_before": 0,
+        "pending_bytes_after": 0,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.010468,
+          "ticks": 600,
+          "tps": 29.984306,
+          "moved_units": 280,
+          "full_visibility": true,
+          "physics_logic_ms": {
+            "max": 38.894,
+            "mean": 16.749387,
+            "min": 7.536,
+            "p50": 16.629,
+            "p95": 32.049,
+            "p99": 35.769,
+            "samples": 600
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 7835,
+              "bytes": 10331322,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 7835,
+              "delivered_bytes": 10331322,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 515355.016,
+              "delivered_bytes_per_second": 515355.016
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.007,
+          "snapshots": 270,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 270
+          },
+          "gap_ms": {
+            "max": 284,
+            "mean": 72.947955,
+            "min": 11,
+            "p50": 67,
+            "p95": 100,
+            "p99": 200,
+            "samples": 269
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.495277,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 2577,
+              "bytes": 3366796,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 2577,
+              "delivered_bytes": 3366796,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 167945.129,
+              "delivered_bytes_per_second": 167945.129
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 22,
+          "units": 280,
+          "seconds": 20.011,
+          "snapshots": 271,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 271
+          },
+          "gap_ms": {
+            "max": 549,
+            "mean": 72.448148,
+            "min": 12,
+            "p50": 67,
+            "p95": 117,
+            "p99": 166,
+            "samples": 270
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.542552,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 2596,
+              "bytes": 3381090,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 2596,
+              "delivered_bytes": 3381090,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 168658.153,
+              "delivered_bytes_per_second": 168658.153
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.009,
+          "snapshots": 268,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 268
+          },
+          "gap_ms": {
+            "max": 216,
+            "mean": 72.726592,
+            "min": 11,
+            "p50": 67,
+            "p95": 106,
+            "p99": 200,
+            "samples": 267
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.393973,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 2563,
+              "bytes": 3339682,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 2563,
+              "delivered_bytes": 3339682,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 166592.607,
+              "delivered_bytes_per_second": 166592.607
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "impaired-visual-burst-failure",
+      "source_record_id": "live-impaired-aa92c97e",
+      "revision_note": "Real event_limit failure ended the battle prematurely; physics and throughput are not valid capacity measurements.",
+      "target": "impaired",
+      "passed": false,
+      "assertions": 127,
+      "failed_assertions": [
+        {
+          "owner": 0,
+          "labels": [
+            "unexpected_transport_error_event_limit",
+            "load_all_280_units_keep_native_physics_and_rvo",
+            "host_scenario_complete"
+          ]
+        },
+        {
+          "owner": 1,
+          "labels": [
+            "load_receives_at_least_five_complete_snapshots_per_second",
+            "canonical_match_result_reaches_actual_client_game"
+          ]
+        },
+        {
+          "owner": 3,
+          "labels": [
+            "load_receives_at_least_five_complete_snapshots_per_second",
+            "canonical_match_result_reaches_actual_client_game"
+          ]
+        },
+        {
+          "owner": 2,
+          "labels": [
+            "load_receives_at_least_five_complete_snapshots_per_second",
+            "canonical_match_result_reaches_actual_client_game",
+            "client_has_only_planned_transport_interruption"
+          ]
+        }
+      ],
+      "capacity_measurement_valid": false,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 150,
+        "link_rtt_jitter_bound_ms": 40,
+        "datagram_loss_probability": 0.04,
+        "extra_reorder_probability": 0.08,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 11,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.046,
+        "pending_bytes_before": 72934,
+        "pending_bytes_after": 100,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 59,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.014173,
+          "ticks": 282,
+          "tps": 14.090015,
+          "moved_units": 280,
+          "full_visibility": true,
+          "invalid_timing_reason": "Battle stopped early; ordinary SceneTree callbacks kept running. Do not interpret callback cost as capacity.",
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 3786,
+              "bytes": 4972301,
+              "dropped": 140,
+              "dropped_bytes": 185851,
+              "delivered": 3687,
+              "delivered_bytes": 4841143,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 248044.548,
+              "delivered_bytes_per_second": 241501.696
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.016,
+          "snapshots": 50,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 50
+          },
+          "gap_ms": {
+            "max": 556,
+            "mean": 186.714286,
+            "min": 27,
+            "p50": 163,
+            "p95": 507,
+            "p99": 533,
+            "samples": 49
+          },
+          "window_edge_availability_asserted": false,
+          "invalid_timing_reason": "Battle stopped early; ordinary SceneTree callbacks kept running. Do not interpret callback cost as capacity.",
+          "complete_snapshots_per_second": 2.498002,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 915,
+              "bytes": 1108275,
+              "dropped": 43,
+              "dropped_bytes": 52855,
+              "delivered": 874,
+              "delivered_bytes": 1058258,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 55286.591,
+              "delivered_bytes_per_second": 52791.48
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 22,
+          "units": 280,
+          "seconds": 20.015,
+          "snapshots": 61,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 61
+          },
+          "gap_ms": {
+            "max": 399,
+            "mean": 152.5,
+            "min": 19,
+            "p50": 134,
+            "p95": 318,
+            "p99": 362,
+            "samples": 60
+          },
+          "window_edge_availability_asserted": false,
+          "invalid_timing_reason": "Battle stopped early; ordinary SceneTree callbacks kept running. Do not interpret callback cost as capacity.",
+          "complete_snapshots_per_second": 3.047714,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 918,
+              "bytes": 1116858,
+              "dropped": 26,
+              "dropped_bytes": 31835,
+              "delivered": 892,
+              "delivered_bytes": 1085023,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 55714.756,
+              "delivered_bytes_per_second": 54126.659
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.022,
+          "snapshots": 55,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 55
+          },
+          "gap_ms": {
+            "max": 467,
+            "mean": 166.351852,
+            "min": 10,
+            "p50": 133,
+            "p95": 416,
+            "p99": 433,
+            "samples": 54
+          },
+          "window_edge_availability_asserted": false,
+          "invalid_timing_reason": "Battle stopped early; ordinary SceneTree callbacks kept running. Do not interpret callback cost as capacity.",
+          "complete_snapshots_per_second": 2.746978,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 875,
+              "bytes": 1060625,
+              "dropped": 31,
+              "dropped_bytes": 40311,
+              "delivered": 855,
+              "delivered_bytes": 1035406,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 52909.558,
+              "delivered_bytes_per_second": 51651.502
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "impaired-visual-burst-fixed-before-quantization",
+      "source_record_id": "live-impaired-5ec393cb",
+      "revision_note": "Visual-event burst fix applied; position/yaw not yet quantized.",
+      "target": "impaired",
+      "passed": true,
+      "assertions": 115,
+      "failed_assertions": [],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 150,
+        "link_rtt_jitter_bound_ms": 40,
+        "datagram_loss_probability": 0.04,
+        "extra_reorder_probability": 0.08,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 5,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.047,
+        "pending_bytes_before": 56783,
+        "pending_bytes_after": 68283,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.006936,
+          "ticks": 600,
+          "tps": 29.9896,
+          "moved_units": 280,
+          "full_visibility": true,
+          "physics_logic_ms": {
+            "max": 26.902,
+            "mean": 14.732832,
+            "min": 9.726,
+            "p50": 16.094,
+            "p95": 21.371,
+            "p99": 23.098,
+            "samples": 600
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 8066,
+              "bytes": 10336760,
+              "dropped": 305,
+              "dropped_bytes": 387737,
+              "delivered": 7762,
+              "delivered_bytes": 9949075,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 515626.278,
+              "delivered_bytes_per_second": 496287.474
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 23,
+          "units": 280,
+          "seconds": 19.997,
+          "snapshots": 113,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 113
+          },
+          "gap_ms": {
+            "max": 617,
+            "mean": 175.517857,
+            "min": 10,
+            "p50": 137,
+            "p95": 402,
+            "p99": 533,
+            "samples": 112
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 5.650848,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1716,
+              "bytes": 2096883,
+              "dropped": 69,
+              "dropped_bytes": 85977,
+              "delivered": 1644,
+              "delivered_bytes": 2008517,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 104598.344,
+              "delivered_bytes_per_second": 100190.403
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 22,
+          "units": 280,
+          "seconds": 20.015,
+          "snapshots": 123,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 123
+          },
+          "gap_ms": {
+            "max": 469,
+            "mean": 162.163934,
+            "min": 10,
+            "p50": 148,
+            "p95": 369,
+            "p99": 433,
+            "samples": 122
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 6.145391,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1818,
+              "bytes": 2251547,
+              "dropped": 73,
+              "dropped_bytes": 93821,
+              "delivered": 1745,
+              "delivered_bytes": 2157286,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 112313.413,
+              "delivered_bytes_per_second": 107611.413
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.004,
+          "snapshots": 128,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 128
+          },
+          "gap_ms": {
+            "max": 535,
+            "mean": 153.976378,
+            "min": 10,
+            "p50": 134,
+            "p95": 346,
+            "p99": 490,
+            "samples": 127
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 6.39872,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1792,
+              "bytes": 2221348,
+              "dropped": 54,
+              "dropped_bytes": 69954,
+              "delivered": 1731,
+              "delivered_bytes": 2142521,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 110807.004,
+              "delivered_bytes_per_second": 106874.894
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "quantized-local-cold-transition-attempt-1",
+      "source_record_id": "live-local-8959a1c5",
+      "revision_note": "Quantized final wire format. Failed maximum-gap requirement; retained, not a passing run.",
+      "target": "local",
+      "passed": false,
+      "assertions": 115,
+      "failed_assertions": [
+        {
+          "owner": 1,
+          "labels": [
+            "load_has_no_complete_snapshot_outage_over_one_second"
+          ]
+        },
+        {
+          "owner": 2,
+          "labels": [
+            "load_has_no_complete_snapshot_outage_over_one_second"
+          ]
+        },
+        {
+          "owner": 3,
+          "labels": [
+            "load_has_no_complete_snapshot_outage_over_one_second"
+          ]
+        }
+      ],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 0,
+        "link_rtt_jitter_bound_ms": 0,
+        "datagram_loss_probability": 0,
+        "extra_reorder_probability": 0,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 0,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.047,
+        "pending_bytes_before": 0,
+        "pending_bytes_after": 0,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.017296,
+          "ticks": 601,
+          "tps": 30.024035,
+          "moved_units": 280,
+          "full_visibility": true,
+          "physics_logic_ms": {
+            "max": 33.49,
+            "mean": 15.044571,
+            "min": 9.747,
+            "p50": 15.984,
+            "p95": 21.981,
+            "p99": 25.532,
+            "samples": 601
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 4651,
+              "bytes": 5327317,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 4651,
+              "delivered_bytes": 5327317,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 265741.358,
+              "delivered_bytes_per_second": 265741.358
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.015,
+          "snapshots": 280,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 280
+          },
+          "gap_ms": {
+            "max": 1284,
+            "mean": 71.458781,
+            "min": 35,
+            "p50": 67,
+            "p95": 84,
+            "p99": 100,
+            "samples": 279
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.989508,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1651,
+              "bytes": 1776639,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1651,
+              "delivered_bytes": 1776639,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 88623.684,
+              "delivered_bytes_per_second": 88623.684
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 22,
+          "units": 280,
+          "seconds": 20.026,
+          "snapshots": 281,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 281
+          },
+          "gap_ms": {
+            "max": 1067,
+            "mean": 71.103571,
+            "min": 30,
+            "p50": 67,
+            "p95": 86,
+            "p99": 131,
+            "samples": 280
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 14.031759,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1666,
+              "bytes": 1788855,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1666,
+              "delivered_bytes": 1788855,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 89233.052,
+              "delivered_bytes_per_second": 89233.052
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.017,
+          "snapshots": 278,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 278
+          },
+          "gap_ms": {
+            "max": 1400,
+            "mean": 71.916968,
+            "min": 42,
+            "p50": 67,
+            "p95": 84,
+            "p99": 104,
+            "samples": 277
+          },
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.888195,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1631,
+              "bytes": 1761267,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1631,
+              "delivered_bytes": 1761267,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 87856.886,
+              "delivered_bytes_per_second": 87856.886
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "quantized-local-cold-transition-diagnostic",
+      "source_record_id": "live-local-51f78662",
+      "revision_note": "Added first-roster and long-gap timing. Failed maximum-gap requirement after full-roster acknowledgement; retained.",
+      "target": "local",
+      "passed": false,
+      "assertions": 115,
+      "failed_assertions": [
+        {
+          "owner": 2,
+          "labels": [
+            "load_has_no_complete_snapshot_outage_over_one_second"
+          ]
+        }
+      ],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 0,
+        "link_rtt_jitter_bound_ms": 0,
+        "datagram_loss_probability": 0,
+        "extra_reorder_probability": 0,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 0,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.047,
+        "pending_bytes_before": 0,
+        "pending_bytes_after": 0,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.012301,
+          "ticks": 601,
+          "tps": 30.031529,
+          "moved_units": 280,
+          "full_visibility": true,
+          "physics_logic_ms": {
+            "max": 45.273,
+            "mean": 16.178459,
+            "min": 7.251,
+            "p50": 15.898,
+            "p95": 32.005,
+            "p99": 35.225,
+            "samples": 601
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 4446,
+              "bytes": 5126070,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 4446,
+              "delivered_bytes": 5126070,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 255702.599,
+              "delivered_bytes_per_second": 255702.599
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.018,
+          "snapshots": 268,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 268
+          },
+          "gap_ms": {
+            "max": 617,
+            "mean": 71.595506,
+            "min": 10,
+            "p50": 67,
+            "p95": 99,
+            "p99": 117,
+            "samples": 267
+          },
+          "roster_load_ms": 602,
+          "ready_before_window_ms": 1562,
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.387951,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1563,
+              "bytes": 1709912,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1563,
+              "delivered_bytes": 1709912,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 85295.156,
+              "delivered_bytes_per_second": 85295.156
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 22,
+          "units": 280,
+          "seconds": 20.002,
+          "snapshots": 269,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 269
+          },
+          "gap_ms": {
+            "max": 1001,
+            "mean": 74.365672,
+            "min": 11,
+            "p50": 67,
+            "p95": 103,
+            "p99": 166,
+            "samples": 268
+          },
+          "roster_load_ms": 595,
+          "ready_before_window_ms": 1573,
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.448655,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1574,
+              "bytes": 1704674,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1574,
+              "delivered_bytes": 1704674,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 85033.87,
+              "delivered_bytes_per_second": 85033.87
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.001,
+          "snapshots": 267,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 267
+          },
+          "gap_ms": {
+            "max": 717,
+            "mean": 71.849624,
+            "min": 11,
+            "p50": 67,
+            "p95": 100,
+            "p99": 117,
+            "samples": 266
+          },
+          "roster_load_ms": 608,
+          "ready_before_window_ms": 1571,
+          "window_edge_availability_asserted": false,
+          "complete_snapshots_per_second": 13.349333,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1562,
+              "bytes": 1701744,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1562,
+              "delivered_bytes": 1701744,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 84887.714,
+              "delivered_bytes_per_second": 84887.714
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "quantized-local-native-throttle-diagnostic",
+      "source_record_id": "live-local-402e6ca4",
+      "revision_note": "Old native 5000ms throttle; host throttle reached zero. Original assertions passed but first-snapshot latency was not yet asserted, so this is diagnosis, not final continuity acceptance.",
+      "target": "local",
+      "passed": true,
+      "assertions": 115,
+      "failed_assertions": [],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 0,
+        "link_rtt_jitter_bound_ms": 0,
+        "datagram_loss_probability": 0,
+        "extra_reorder_probability": 0,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 0,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.063,
+        "pending_bytes_before": 0,
+        "pending_bytes_after": 0,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.002036,
+          "ticks": 600,
+          "tps": 29.996946,
+          "moved_units": 280,
+          "full_visibility": true,
+          "native_throttle_summary": {
+            "samples": 301,
+            "minimum": 0.0,
+            "zero_samples": 17,
+            "first_zero_at_ms": 265,
+            "last_zero_at_ms": 1532
+          },
+          "physics_logic_ms": {
+            "max": 30.915,
+            "mean": 14.857262,
+            "min": 9.747,
+            "p50": 16.011,
+            "p95": 21.342,
+            "p99": 25.787,
+            "samples": 600
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 4571,
+              "bytes": 5253153,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 4571,
+              "delivered_bytes": 5253153,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 261832.876,
+              "delivered_bytes_per_second": 261832.876
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.0,
+          "snapshots": 276,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 276
+          },
+          "gap_ms": {
+            "max": 99,
+            "mean": 66.712727,
+            "min": 34,
+            "p50": 67,
+            "p95": 84,
+            "p99": 88,
+            "samples": 275
+          },
+          "roster_load_ms": 477,
+          "ready_before_window_ms": 1653,
+          "window_edge_availability_asserted": false,
+          "native_throttle_summary": {
+            "samples": 342,
+            "minimum": 30.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 13.8,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1623,
+              "bytes": 1752910,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1623,
+              "delivered_bytes": 1752910,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 87370.284,
+              "delivered_bytes_per_second": 87370.284
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 22,
+          "units": 280,
+          "seconds": 19.999,
+          "snapshots": 277,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 277
+          },
+          "gap_ms": {
+            "max": 851,
+            "mean": 71.481884,
+            "min": 33,
+            "p50": 67,
+            "p95": 84,
+            "p99": 121,
+            "samples": 276
+          },
+          "roster_load_ms": 471,
+          "ready_before_window_ms": 1668,
+          "window_edge_availability_asserted": false,
+          "native_throttle_summary": {
+            "samples": 345,
+            "minimum": 32.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 13.850693,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1645,
+              "bytes": 1768954,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1645,
+              "delivered_bytes": 1768954,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 88169.965,
+              "delivered_bytes_per_second": 88169.965
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.011,
+          "snapshots": 276,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 276
+          },
+          "gap_ms": {
+            "max": 101,
+            "mean": 66.730909,
+            "min": 34,
+            "p50": 67,
+            "p95": 84,
+            "p99": 86,
+            "samples": 275
+          },
+          "roster_load_ms": 481,
+          "ready_before_window_ms": 1650,
+          "window_edge_availability_asserted": false,
+          "native_throttle_summary": {
+            "samples": 344,
+            "minimum": 30.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 13.792414,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1606,
+              "bytes": 1746176,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1606,
+              "delivered_bytes": 1746176,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 87034.641,
+              "delivered_bytes_per_second": 87034.641
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "final-local",
+      "source_record_id": "live-local-1f72578c",
+      "revision_note": "Display quantization and native throttle 500ms/4/1, decorative-event burst fix. Includes independent first/last snapshot availability assertions.",
+      "target": "local",
+      "passed": true,
+      "assertions": 118,
+      "failed_assertions": [],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 0,
+        "link_rtt_jitter_bound_ms": 0,
+        "datagram_loss_probability": 0,
+        "extra_reorder_probability": 0,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 0,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.047,
+        "pending_bytes_before": 0,
+        "pending_bytes_after": 0,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.015148,
+          "ticks": 600,
+          "tps": 29.977295,
+          "moved_units": 280,
+          "full_visibility": true,
+          "native_throttle_summary": {
+            "samples": 292,
+            "minimum": 13.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "physics_logic_ms": {
+            "max": 50.386,
+            "mean": 16.659808,
+            "min": 7.163,
+            "p50": 15.957,
+            "p95": 32.008,
+            "p99": 38.811,
+            "samples": 600
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 4567,
+              "bytes": 5336411,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 4567,
+              "delivered_bytes": 5336411,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 266194.992,
+              "delivered_bytes_per_second": 266194.992
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 24,
+          "units": 280,
+          "seconds": 20.019,
+          "snapshots": 281,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 281
+          },
+          "gap_ms": {
+            "max": 229,
+            "mean": 71.303571,
+            "min": 11,
+            "p50": 67,
+            "p95": 112,
+            "p99": 151,
+            "samples": 280
+          },
+          "first_snapshot_latency_ms": 42,
+          "last_snapshot_age_ms": 12,
+          "roster_load_ms": 609,
+          "ready_before_window_ms": 1582,
+          "window_edge_availability_asserted": true,
+          "native_throttle_summary": {
+            "samples": 337,
+            "minimum": 31.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 14.036665,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1603,
+              "bytes": 1773192,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1603,
+              "delivered_bytes": 1773192,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 88451.738,
+              "delivered_bytes_per_second": 88451.738
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 23,
+          "units": 280,
+          "seconds": 19.996,
+          "snapshots": 282,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 282
+          },
+          "gap_ms": {
+            "max": 201,
+            "mean": 70.72242,
+            "min": 10,
+            "p50": 67,
+            "p95": 101,
+            "p99": 151,
+            "samples": 281
+          },
+          "first_snapshot_latency_ms": 64,
+          "last_snapshot_age_ms": 59,
+          "roster_load_ms": 590,
+          "ready_before_window_ms": 1620,
+          "window_edge_availability_asserted": true,
+          "native_throttle_summary": {
+            "samples": 339,
+            "minimum": 31.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 14.102821,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1627,
+              "bytes": 1783638,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1627,
+              "delivered_bytes": 1783638,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 88972.814,
+              "delivered_bytes_per_second": 88972.814
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 24,
+          "units": 280,
+          "seconds": 20.018,
+          "snapshots": 279,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 279
+          },
+          "gap_ms": {
+            "max": 300,
+            "mean": 71.794964,
+            "min": 11,
+            "p50": 67,
+            "p95": 112,
+            "p99": 153,
+            "samples": 278
+          },
+          "first_snapshot_latency_ms": 41,
+          "last_snapshot_age_ms": 18,
+          "roster_load_ms": 602,
+          "ready_before_window_ms": 1593,
+          "window_edge_availability_asserted": true,
+          "native_throttle_summary": {
+            "samples": 335,
+            "minimum": 30.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 13.937456,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1577,
+              "bytes": 1756433,
+              "dropped": 0,
+              "dropped_bytes": 0,
+              "delivered": 1577,
+              "delivered_bytes": 1756433,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 87615.753,
+              "delivered_bytes_per_second": 87615.753
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "final-impaired",
+      "source_record_id": "live-impaired-0ad30b1e",
+      "revision_note": "Same final implementation as final-local, 4% packet loss and 150ms+/-40ms link RTT. Includes independent first/last snapshot availability assertions.",
+      "target": "impaired",
+      "passed": true,
+      "assertions": 118,
+      "failed_assertions": [],
+      "capacity_measurement_valid": true,
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 150,
+        "link_rtt_jitter_bound_ms": 40,
+        "datagram_loss_probability": 0.04,
+        "extra_reorder_probability": 0.08,
+        "extra_reorder_delay_ms": 90
+      },
+      "peer_stderr_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected_dtls_reorder_diagnostics": 5,
+      "udp_window": {
+        "complete": true,
+        "seconds": 20.047,
+        "pending_bytes_before": 40872,
+        "pending_bytes_after": 46506,
+        "byte_accounting_balanced": true,
+        "phase_boundary": "runner observes phase.json at 250ms intervals; per-boundary error <=250ms plus OS scheduling; excludes preceding handshake/outage phases"
+      },
+      "peers": [
+        {
+          "owner": 0,
+          "checks": 47,
+          "units": 280,
+          "expected_units": 280,
+          "seconds": 20.002538,
+          "ticks": 600,
+          "tps": 29.996193,
+          "moved_units": 280,
+          "full_visibility": true,
+          "native_throttle_summary": {
+            "samples": 300,
+            "minimum": 29.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "physics_logic_ms": {
+            "max": 28.204,
+            "mean": 14.984468,
+            "min": 9.852,
+            "p50": 16.22,
+            "p95": 21.707,
+            "p99": 24.19,
+            "samples": 600
+          },
+          "udp": [
+            {
+              "direction": "client_to_relay",
+              "received": 5057,
+              "bytes": 5769725,
+              "dropped": 195,
+              "dropped_bytes": 219843,
+              "delivered": 4856,
+              "delivered_bytes": 5542977,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 287809.897,
+              "delivered_bytes_per_second": 276499.077
+            }
+          ]
+        },
+        {
+          "owner": 1,
+          "checks": 24,
+          "units": 280,
+          "seconds": 20.009,
+          "snapshots": 150,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 150
+          },
+          "gap_ms": {
+            "max": 450,
+            "mean": 132.657718,
+            "min": 10,
+            "p50": 130,
+            "p95": 284,
+            "p99": 351,
+            "samples": 149
+          },
+          "first_snapshot_latency_ms": 90,
+          "last_snapshot_age_ms": 153,
+          "roster_load_ms": 865,
+          "ready_before_window_ms": 1286,
+          "window_edge_availability_asserted": true,
+          "native_throttle_summary": {
+            "samples": 356,
+            "minimum": 31.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 7.496627,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1320,
+              "bytes": 1435393,
+              "dropped": 59,
+              "dropped_bytes": 68232,
+              "delivered": 1262,
+              "delivered_bytes": 1366702,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 71601.387,
+              "delivered_bytes_per_second": 68174.889
+            }
+          ]
+        },
+        {
+          "owner": 2,
+          "checks": 23,
+          "units": 280,
+          "seconds": 20.001,
+          "snapshots": 154,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 154
+          },
+          "gap_ms": {
+            "max": 434,
+            "mean": 129.738562,
+            "min": 10,
+            "p50": 118,
+            "p95": 276,
+            "p99": 350,
+            "samples": 153
+          },
+          "first_snapshot_latency_ms": 91,
+          "last_snapshot_age_ms": 60,
+          "roster_load_ms": 636,
+          "ready_before_window_ms": 1514,
+          "window_edge_availability_asserted": true,
+          "native_throttle_summary": {
+            "samples": 354,
+            "minimum": 31.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 7.699615,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1288,
+              "bytes": 1404948,
+              "dropped": 43,
+              "dropped_bytes": 45772,
+              "delivered": 1247,
+              "delivered_bytes": 1362816,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 70082.706,
+              "delivered_bytes_per_second": 67981.045
+            }
+          ]
+        },
+        {
+          "owner": 3,
+          "checks": 24,
+          "units": 280,
+          "seconds": 19.999,
+          "snapshots": 146,
+          "unit_counts": {
+            "min": 280,
+            "max": 280,
+            "samples": 146
+          },
+          "gap_ms": {
+            "max": 622,
+            "mean": 137.165517,
+            "min": 10,
+            "p50": 131,
+            "p95": 302,
+            "p99": 401,
+            "samples": 145
+          },
+          "first_snapshot_latency_ms": 89,
+          "last_snapshot_age_ms": 21,
+          "roster_load_ms": 669,
+          "ready_before_window_ms": 1482,
+          "window_edge_availability_asserted": true,
+          "native_throttle_summary": {
+            "samples": 359,
+            "minimum": 30.0,
+            "zero_samples": 0,
+            "first_zero_at_ms": null,
+            "last_zero_at_ms": null
+          },
+          "complete_snapshots_per_second": 7.300365,
+          "udp": [
+            {
+              "direction": "relay_to_client",
+              "received": 1254,
+              "bytes": 1361784,
+              "dropped": 52,
+              "dropped_bytes": 53869,
+              "delivered": 1202,
+              "delivered_bytes": 1306036,
+              "closed_flow_bytes": 0,
+              "received_bytes_per_second": 67929.566,
+              "delivered_bytes_per_second": 65148.701
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
