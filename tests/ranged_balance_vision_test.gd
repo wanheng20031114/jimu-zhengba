@@ -41,10 +41,12 @@ func _run() -> void:
 	await physics_frame
 	var archer := BalanceCatalog.unit("archer")
 	var knight := BalanceCatalog.unit("knight")
-	check(archer.damage == 12 and archer.bonuses[&"cavalry"] == 12, "archer reduces general damage while keeping cavalry bonus")
+	check(archer.damage == 12 and archer.bonuses.is_empty(), "archer retains twelve base damage with no anti-cavalry bonus")
 	check(knight.sight == 15 and archer.sight == 13, "cavalry sees two world units farther than archers")
 	check(archer.range == 10 and is_equal_approx(archer.cooldown, 1.5), "archer reach and cadence stay at their approved values")
-	for pair: Array in [["knight", 22, 6], ["swordsman", 8, 13]]:
+	check(knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.cost == 80, "cavalry has four ranged armor and costs eighty gold")
+	check(knight.bonuses[&"archer"] == 11 and knight.damage == 19, "anti-archer damage is a class bonus, not extra damage against all units")
+	for pair: Array in [["knight", 8, 15], ["swordsman", 8, 13]]:
 		await _shoot_to_defeat(pair[0], pair[1], pair[2])
 	await _vision_case()
 	await _clear()

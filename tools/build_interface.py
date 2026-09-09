@@ -101,7 +101,7 @@ s.node('Separator1','ColorRect','CommandBar',**rect(323,17,1,124),color='Color(0
 s.node('Recruitment','Control','CommandBar',**rect(342,0,566,156),mouse_filter='2')
 label('RecruitTitle','CommandBar/Recruitment','即时招募',0,-28,180,24,12,'Color(0.91,0.85,0.69,1)')
 label('RecruitHint','CommandBar/Recruitment','消耗金币 · 即刻出兵',318,-28,224,24,11,'Color(0.80,0.76,0.63,1)',unique=True,horizontal_alignment='2')
-for index, (name, hotkey, cost) in enumerate(zip(['剑士','弓箭手','骑士','投石车','加农炮','农民'],['Q','E','R','T','Y','U'],[45,60,100,140,180,50])):
+for index, (name, hotkey, cost) in enumerate(zip(['剑士','弓箭手','骑士','投石车','加农炮','农民'],['Q','E','R','T','Y','U'],[45,60,80,140,180,50])):
     path='CommandBar/Recruitment/Recruit'+str(index)
     button('Recruit'+str(index),'CommandBar/Recruitment','',index*93,12,86,130)
     s.node('Portrait','TextureRect',path,**rect(4,4,78,82),expand_mode='1',stretch_mode='5',mouse_filter='2')

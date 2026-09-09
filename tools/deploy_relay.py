@@ -11,6 +11,7 @@ import datetime as dt
 import hashlib
 import json
 from pathlib import Path
+import re
 import shlex
 import sys
 import time
@@ -29,6 +30,36 @@ RUNTIME_DIGESTS = {
     "linux.x86_64": "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4",
     "win64.exe": "731980f9608d61333e5baf54a2ef17210acc7a538446c0cb9969f002aca1e953",
 }
+
+
+def relay_journal_ready(journal: str) -> bool:
+    """A rejected DTLS peer does not invalidate an otherwise healthy relay host."""
+    ready = False
+    for raw in journal.splitlines():
+        line = raw.strip()
+        if re.fullmatch(r"ERROR: D?TLS handshake error: -[1-9][0-9]*", line):
+            continue
+        if "SCRIPT ERROR" in line or "ERROR:" in line or "RELAY_TRANSPORT_ERROR" in line:
+            raise RuntimeError("The new relay did not start cleanly")
+        if re.fullmatch(r"ASHEN_RELAY_READY protocol=[0-9]+ rooms=[0-9]+ humans=[0-9]+", line):
+            ready = True
+    return ready
+
+
+def relay_service_identity(output: str, expected: tuple[str, int, int] | None = None) -> tuple[str, int, int]:
+    """Read the native systemd identity and reject exits or restarts during readiness."""
+    properties = dict(line.split("=", 1) for line in output.splitlines() if "=" in line)
+    invocation = properties.get("InvocationID", "")
+    pid = properties.get("MainPID", "")
+    restarts = properties.get("NRestarts", "")
+    if (not re.fullmatch(r"[0-9a-f]{32}", invocation) or not pid.isdigit() or int(pid) <= 0
+            or not restarts.isdigit() or properties.get("ActiveState") != "active"
+            or properties.get("SubState") != "running"):
+        raise RuntimeError("The relay service is not running with a verifiable identity")
+    identity = (invocation, int(pid), int(restarts))
+    if expected is not None and identity != expected:
+        raise RuntimeError("The relay service changed identity or restarted during readiness")
+    return identity
 
 
 def runtime(platform: str = "linux.x86_64") -> Path:
@@ -213,29 +244,27 @@ WantedBy=multi-user.target
         run("systemctl enable " + SERVICE)
         run("systemctl restart " + SERVICE)
         # Require readiness from this invocation, not a stale journal entry.
-        invocation = run("systemctl show " + SERVICE + " -p InvocationID --value")
-        if len(invocation) != 32 or any(char not in "0123456789abcdef" for char in invocation):
-            raise RuntimeError("New relay invocation could not be verified")
+        identity_command = "systemctl show " + SERVICE + " -p InvocationID -p MainPID -p ActiveState -p SubState -p NRestarts"
+        identity = relay_service_identity(run(identity_command))
+        invocation = identity[0]
         deadline = time.monotonic() + 8
         ready = False
         while time.monotonic() < deadline:
             journal = run("journalctl _SYSTEMD_INVOCATION_ID=" + invocation + " --no-pager -o cat")
-            if "SCRIPT ERROR" in journal or "ERROR:" in journal:
-                raise RuntimeError("The new relay did not start cleanly")
-            if "ASHEN_RELAY_READY" in journal:
+            if relay_journal_ready(journal):
                 ready = True
                 break
             time.sleep(0.25)
         if not ready:
             raise RuntimeError("The new relay did not report readiness")
-        state = run("systemctl is-active " + SERVICE)
+        relay_service_identity(run(identity_command), identity)
         after_pid = run("systemctl show bot-jump-relay.service -p MainPID --value")
-        if state != "active" or old_pid != after_pid:
+        if old_pid != after_pid:
             raise RuntimeError("Service verification or preservation of the existing relay failed")
         # Connection endpoint is local-only; never commit or echo the credential source.
         LOCAL.mkdir(parents=True, exist_ok=True)
         (LOCAL / "endpoint.json").write_text(json.dumps({"server_name": "shanghai", "address": config["ip"], "port": 24571}), encoding="utf-8")
-        print(json.dumps({"server_name": "shanghai", "service": SERVICE, "state": state, "release": digest, "existing_relay_preserved": True}))
+        print(json.dumps({"server_name": "shanghai", "service": SERVICE, "state": "active", "release": digest, "existing_relay_preserved": True}))
     finally:
         ssh.close()
 

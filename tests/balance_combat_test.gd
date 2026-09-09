@@ -97,7 +97,9 @@ func _melee_and_vision() -> void:
 	charging_knight.issue_attack(archer)
 	charging_knight._start_attack()
 	await _wait(0.3)
-	_check(archer.hp == 38, "visual cavalry charge does not multiply approved 22 damage")
+	_check(archer.hp == 30, "visual cavalry charge does not multiply the 30-damage anti-archer strike")
+	charging_knight.set_physics_process(true)
+	_check(await _until(func(): return not archer.alive, 1.6), "two native cavalry strikes defeat a full-health archer")
 	await _clear()
 
 func _cannon_snapshot() -> void:

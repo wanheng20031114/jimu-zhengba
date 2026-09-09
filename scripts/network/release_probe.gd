@@ -93,14 +93,16 @@ func validate_resource_values() -> void:
 	var training_seconds := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
-	for pair: Array in [["knight", "archer", 3], ["knight", "swordsman", 6], ["swordsman", "knight", 5],
-		["swordsman", "archer", 3], ["archer", "knight", 6], ["archer", "swordsman", 13]]:
+	for pair: Array in [["knight", "archer", 2], ["knight", "swordsman", 6], ["swordsman", "knight", 5],
+		["swordsman", "archer", 3], ["archer", "knight", 15], ["archer", "swordsman", 13]]:
 		var defender := BalanceCatalog.unit(pair[1])
 		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
 		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
 	var archer := BalanceCatalog.unit("archer")
-	check(archer.damage == 12 and archer.bonuses.get(&"cavalry") == 12 and archer.sight == 13, "packaged_archer_damage_and_sight")
+	check(archer.damage == 12 and archer.bonuses.is_empty() and archer.sight == 13, "packaged_archer_damage_and_sight")
 	check(BalanceCatalog.unit("knight").sight == 15 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
+	var knight := BalanceCatalog.unit("knight")
+	check(knight.cost == 80 and knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.damage == 19 and knight.bonuses.get(&"archer") == 11, "packaged_knight_price_ranged_armor_and_archer_bonus")
 	check(BalanceCatalog.unit("catapult").bonuses.get(&"building") == 50, "packaged_catapult_building_bonus")
 	check(BalanceCatalog.unit("cannon").bonuses.get(&"building") == 200, "packaged_cannon_building_bonus")
 	check(BalanceCatalog.unit("cannon").bonuses.get(&"siege") == 100, "packaged_cannon_siege_bonus")

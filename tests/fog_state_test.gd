@@ -244,7 +244,7 @@ func _projectile_visibility_case(source: Node3D, target: Node3D) -> void:
 	_check(not projectile.visible and projectile._active, "projectile disappears into fog without stopping its authoritative flight")
 	var hp_before: float = target.hp
 	projectile._physics_process(projectile._duration)
-	_check(not projectile.visible and target.hp == hp_before - 22, "hidden homing arrow still resolves its original 22 cavalry damage once")
+	_check(not projectile.visible and target.hp == hp_before - 8, "hidden homing arrow still resolves its original 8 cavalry damage once")
 	projectile.queue_free()
 
 func _check_circle_cells() -> void:

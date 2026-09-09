@@ -120,7 +120,7 @@ func refresh_hotkey_labels() -> void:
 	for index in range(1, 7):
 		slot_keys.append(game.settings.hotkey_text("rts_slot_%d" % index))
 	var help_keys: Array[String] = [
-		"左键 / 框选 / 双击", "右键 / Shift + 右键",
+		"左键 / 框选 / 双击或 Ctrl+单击", "右键 / Shift + 右键",
 		"%s + 左键 / %s / %s" % [game.settings.hotkey_text("rts_attack_move"), game.settings.hotkey_text("rts_stop"), game.settings.hotkey_text("rts_hold")],
 		"Ctrl / Shift + 编队键", "编队键 / 双按 / " + game.settings.hotkey_text("rts_cycle_buildings"),
 		"窗口边缘 / 中键 / 镜头方向键", "滚轮 / " + game.settings.hotkey_text("rts_focus"),

@@ -41,6 +41,7 @@ var dragging: bool = false
 var drag_start := Vector2.ZERO
 var pointer_now := Vector2.ZERO
 var shift_drag: bool = false
+var ctrl_drag: bool = false
 var _last_click_time: float = -1.0
 var _last_click_entity: Node3D
 var _last_group: int = -1
@@ -256,6 +257,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				dragging = true
 				drag_start = event.position
 				shift_drag = event.shift_pressed
+				ctrl_drag = event.ctrl_pressed
 				overlay.box_start = drag_start
 				overlay.box_end = drag_start
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
@@ -334,7 +336,9 @@ func _finish_selection(at: Vector2) -> void:
 		var entity := entity_at(at)
 		if is_instance_valid(entity):
 			var now := Time.get_ticks_msec() / 1000.0
-			if entity == _last_click_entity and now - _last_click_time < 0.30 and (entity is BattleUnit or entity is BattleBuilding) and entity.owner_id == local_owner_id:
+			var double_click: bool = entity == _last_click_entity and now - _last_click_time < 0.30
+			var select_type: bool = double_click or (ctrl_drag and entity is BattleUnit)
+			if select_type and (entity is BattleUnit or entity is BattleBuilding) and entity.owner_id == local_owner_id:
 				var same: Array[Node3D] = []
 				var group: String = "units" if entity is BattleUnit else "buildings"
 				for item: Node3D in owned_entities(local_owner_id, group):

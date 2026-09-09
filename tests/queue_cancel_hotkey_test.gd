@@ -118,7 +118,7 @@ func _run() -> void:
 	_key(KEY_ESCAPE)
 	_tick()
 	check(first.production.training.size() == 1 and second.production.training.size() == 2, "equal queue lengths choose the lower entity ID despite reversed selection order")
-	check(player.gold == before_gold + 85 and player.reserved_military_supply == 4, "tie-selected knight refunds eighty-five and releases two population")
+	check(player.gold == before_gold + 80 and player.reserved_military_supply == 4, "tie-selected knight refunds eighty and releases two population")
 	_clear_training([first, second])
 
 	academy.production.research("attack_1")
