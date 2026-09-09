@@ -31,6 +31,21 @@ static func encode(message: Dictionary) -> PackedByteArray:
 	var budget: Array[int] = [MAX_VALUES]
 	if not _primitive(message, 0, budget):
 		return PackedByteArray()
+	return _encode_json(message)
+
+static func encode_snapshot(snapshot: Dictionary, recipient: int, sequence: int, match_id: String) -> PackedByteArray:
+	# TRUST BOUNDARY: only the authority's MatchReplication schema builder may
+	# supply this payload through RelayClient.snapshot_to. It constructs primitive
+	# fields from typed game state, never copies a received command dictionary.
+	# Do not use this path for commands, events, decoded packets or relay forwarding.
+	# All receivers still apply decode()'s full untrusted-value budget and schema.
+	if recipient < 0 or recipient > 3 or sequence < 1 or sequence > 2147483647 or match_id.length() != 32:
+		return PackedByteArray()
+	return _encode_json({"op": "snapshot", "match": match_id, "to": recipient, "sequence": sequence, "payload": snapshot})
+
+static func _encode_json(message: Dictionary) -> PackedByteArray:
+	# Native JSON serializes the fixed schema; the size cap is always enforced,
+	# including on trusted authority snapshots, before ENet can fragment a packet.
 	var raw := JSON.stringify(message, "", false).to_utf8_buffer()
 	if raw.size() + HEADER_BYTES > MAX_PACKET_BYTES:
 		return PackedByteArray()

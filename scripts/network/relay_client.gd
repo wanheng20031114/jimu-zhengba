@@ -114,12 +114,17 @@ func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 		return ERR_UNAUTHORIZED
 	if owner < 0 or owner > 3:
 		return ERR_INVALID_PARAMETER
+	if _peer == null or not _peer.is_active() or _peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
+		return ERR_UNAVAILABLE
 	var now := Time.get_ticks_msec()
 	# Each recipient is independently capped; the simulation should call at 15 Hz.
 	if now - int(_snapshot_sent_at.get(owner, -1000)) < 50:
 		return ERR_BUSY
 	var sequence: int = int(_snapshot_sequences.get(owner, 0)) + 1
-	var result := _send({"op": "snapshot", "match": _match.match_id, "to": owner, "sequence": sequence, "payload": snapshot}, Protocol.SNAPSHOT_CHANNEL + owner)
+	var packet := Protocol.encode_snapshot(snapshot, owner, sequence, _match.match_id)
+	if packet.is_empty():
+		return ERR_INVALID_DATA
+	var result := _send_packet(packet, Protocol.SNAPSHOT_CHANNEL + owner)
 	if result == OK:
 		_snapshot_sequences[owner] = sequence
 		_snapshot_sent_at[owner] = now

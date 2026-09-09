@@ -1,6 +1,7 @@
 extends SceneTree
 
 const SERVER_SCENE: PackedScene = preload("res://server/relay.tscn")
+const PROTOCOL = preload("res://scripts/network/network_protocol.gd")
 var relay: Node
 
 func _initialize() -> void:
@@ -24,7 +25,7 @@ func _start() -> void:
 		push_error("RELAY_START_FAILED code=%d" % result)
 		quit(1)
 		return
-	print("ASHEN_RELAY_READY protocol=%d rooms=%d humans=%d" % [1, relay.max_rooms, relay.max_humans])
+	print("ASHEN_RELAY_READY protocol=%d rooms=%d humans=%d" % [PROTOCOL.VERSION, relay.max_rooms, relay.max_humans])
 
 func _finalize() -> void:
 	if is_instance_valid(relay):

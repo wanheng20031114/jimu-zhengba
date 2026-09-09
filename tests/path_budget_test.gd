@@ -39,6 +39,9 @@ func _run() -> void:
 	budget = host.get_node("PathBudget")
 	for i in range(3): await step()
 	for i in range(280): spawn(i)
+	# This fixture measures an already registered army's scheduling budget.
+	# Empty startup iterations are exercised separately with delayed regions.
+	await step()
 	var began: int = Engine.get_physics_frames()
 	for unit: BattleUnit in units:
 		unit.issue_move(Vector3(30, 0, 30))

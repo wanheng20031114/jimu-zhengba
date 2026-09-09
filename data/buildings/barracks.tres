@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="BuildingDefinition" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/building_definition.gd" id="1_definition"]
 
 [resource]
 script = ExtResource("1_definition")
-combat_class = &"building"
+cost = 150
+build_seconds = 15.0
+bar_height = 6.8
+model = "barracks"
+produces = PackedStringArray("swordsman", "archer", "knight")
+id = &"barracks"
+name = "兵营"
+hp = 1500.0
 melee_armor = 10.0
 ranged_armor = 10.0
 damage_channel = 1
-id = &"barracks"
-name = "兵营"
-hp = 1500
-cost = 150
-build_seconds = 15
-radius = 3
-size = Vector3(6, 4, 5)
-bar_height = 6.8
-damage = 0
-range = 0
-cooldown = 1
-model = "barracks"
-produces = PackedStringArray("swordsman", "archer", "knight")
+combat_class = &"building"

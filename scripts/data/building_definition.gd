@@ -7,5 +7,4 @@ extends CombatDefinition
 @export var size: Vector3 = Vector3(6, 4, 5)
 @export var bar_height: float = 5.9
 @export var model: String
-@export var produces: PackedStringArray = []
-
+@export var produces: PackedStringArray = PackedStringArray()

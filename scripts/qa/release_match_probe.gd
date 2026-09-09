@@ -15,6 +15,8 @@ var military_deaths: int = 0
 var first_damage: float = -1.0
 var started_at: int = 0
 var step_valid: bool = true
+var samples: Array[Dictionary] = []
+var catalogue_probe: Dictionary = {}
 @onready var session: Node = get_node("/root/Session")
 
 func _ready() -> void:
@@ -33,6 +35,8 @@ func _run() -> void:
 		get_tree().quit(2)
 		return
 	var speed: int = 10 if "--match-smoke-fast" in arguments else 1
+	var diagnostic: bool = "--match-smoke-diagnose" in arguments
+	var match_limit: float = 120.0 if diagnostic else MAX_MATCH_SECONDS
 	Engine.physics_ticks_per_second = 30 * speed
 	Engine.time_scale = speed
 	Engine.max_physics_steps_per_frame = 64 if speed > 1 else 8
@@ -45,6 +49,8 @@ func _run() -> void:
 	await get_tree().scene_changed
 	game = get_tree().current_scene
 	game.camera_rig.edge_scroll = false
+	catalogue_probe = _inspect_catalogue()
+	print("MATCH_SMOKE_CATALOGUE ", JSON.stringify(catalogue_probe))
 	check(not game.tests_running and not game.online, "production_offline_victory_and_economy_enabled")
 	check(game.players.size() == 2 and game.bots.size() == 2, "two_standard_bots_loaded_from_session")
 	for player: PlayerState in game.players:
@@ -54,7 +60,7 @@ func _run() -> void:
 	var next_progress: float = 0.0
 	var previous_tick: int = game.simulation_tick
 	var previous_elapsed: float = game.elapsed
-	while not game.finished and game.elapsed < MAX_MATCH_SECONDS:
+	while not game.finished and game.elapsed < match_limit:
 		await get_tree().physics_frame
 		if game.simulation_tick > previous_tick:
 			var elapsed_per_tick: float = (game.elapsed - previous_elapsed) / (game.simulation_tick - previous_tick)
@@ -65,8 +71,10 @@ func _run() -> void:
 			_observe()
 			next_observation += 1.0
 		if game.elapsed >= next_progress:
-			print("MATCH_SMOKE_PROGRESS ", JSON.stringify({"seconds": game.elapsed, "supply": [game.players[0].military_supply, game.players[1].military_supply], "damage_events": damage_events}))
-			next_progress += 60.0
+			var sample := _diagnostics()
+			samples.append(sample)
+			print("MATCH_SMOKE_PROGRESS ", JSON.stringify(sample))
+			next_progress += 30.0 if next_progress < 60.0 else 60.0
 		if Time.get_ticks_msec() - started_at > (300000 if speed > 1 else 1500000):
 			check(false, "wall_clock_guard")
 			break
@@ -76,7 +84,7 @@ func _run() -> void:
 		if building.alive:
 			remaining[building.alliance_id] += 1
 	var winner: int = 0 if remaining[0] > 0 and remaining[1] == 0 else (1 if remaining[1] > 0 and remaining[0] == 0 else -1)
-	check(game.finished and winner >= 0, "natural_victory_destroyed_all_opposing_military_buildings")
+	check(not diagnostic and game.finished and winner >= 0, "natural_victory_destroyed_all_opposing_military_buildings")
 	check(step_valid and game.simulation_tick > 0, "every_observed_simulation_tick_preserved_one_thirtieth_second")
 	check(damage_events > 0 and military_deaths > 0 and first_damage > 0, "real_armies_dealt_damage_and_suffered_casualties")
 	for owner: int in range(2):
@@ -88,7 +96,8 @@ func _run() -> void:
 		"speed": speed, "step_seconds": STEP, "observed_step_valid": step_valid, "simulated_seconds": game.elapsed,
 		"wall_seconds": (Time.get_ticks_msec() - started_at) / 1000.0, "finished": game.finished, "winner": winner,
 		"remaining_buildings": remaining, "first_damage": first_damage, "damage_events": damage_events,
-		"military_deaths": military_deaths, "harvested_gold": harvested, "produced": produced, "completed": completed}
+		"military_deaths": military_deaths, "harvested_gold": harvested, "produced": produced, "completed": completed,
+		"diagnostic_only": diagnostic, "samples": samples, "catalogue_probe": catalogue_probe, "final_state": _diagnostics()}
 	# Report success only after the production shutdown has stopped sounds and units.
 	await game.prepare_shutdown()
 	game.queue_free()
@@ -124,3 +133,56 @@ func _on_gathered(worker: BattleUnit, amount: int) -> void:
 func _on_death(entity: Node3D) -> void:
 	if entity is BattleUnit and entity.unit_type != "farmer":
 		military_deaths += 1
+
+func _diagnostics() -> Dictionary:
+	var map: RID = game.get_world_3d().navigation_map
+	var navigation: ConstructionNavigation = game.get_node("ConstructionNavigation")
+	var region: NavigationRegion3D = game.map_instance.get_node("NavigationRegion3D")
+	var paths: PathBudget = game.get_node("PathBudget")
+	var row := {"seconds": game.elapsed, "damage_events": damage_events, "players": [], "workers": [], "buildings": [],
+		"mines": [], "last_notification": game.last_notification,
+		"navigation": {"iteration": NavigationServer3D.map_get_iteration_id(map), "active": NavigationServer3D.map_is_active(map),
+			"region_enabled": region.enabled, "region_polygons": region.navigation_mesh.get_polygon_count(),
+			"compact_polygons": navigation.compact_polygon_count, "rebuilds": navigation.rebuild_count,
+			"worker_task": navigation.is_rebuilding(), "walkable_cells": navigation._walkable_cells.size(),
+			"queries": paths.total_queries, "pending": paths.pending_count()}}
+	for player: PlayerState in game.players:
+		row.players.append({"owner": player.owner_id, "gold": player.gold, "workers": player.farmers,
+			"reserved_workers": player.reserved_farmers, "supply": player.military_supply,
+			"harvested": harvested[player.owner_id], "bot_state": str(game.bots[player.owner_id].army_state)})
+	for unit: BattleUnit in get_tree().get_nodes_in_group("units"):
+		if unit.unit_type != "farmer":
+			continue
+		row.workers.append({"id": unit.entity_id, "owner": unit.owner_id, "at": game.vector_data(unit.position),
+			"destination": game.vector_data(unit.destination), "order": unit.order_name, "working": unit._working,
+			"work_seconds": unit._work_seconds, "claimed_mine": unit._claimed_mine,
+			"target": unit.work_target.entity_id if is_instance_valid(unit.work_target) else 0,
+			"path_points": unit.navigation_agent.get_current_navigation_path().size(),
+			"nearest_nav": game.vector_data(NavigationServer3D.map_get_closest_point(map, unit.position))})
+	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
+		if not building.alive:
+			continue
+		row.buildings.append({"id": building.entity_id, "owner": building.owner_id, "kind": building.building_type,
+			"at": game.vector_data(building.position), "built": building.is_constructed,
+			"progress": building.construction_progress, "training": building.production.training.duplicate(true),
+			"definition_path": building.get_combat_definition().resource_path,
+			"produces": Array(building.get_combat_definition().produces),
+			"can_list_farmer": "farmer" in building.get_combat_definition().produces,
+			"recruit_farmer_error": building.production.recruit_error("farmer"),
+			"recruit_swordsman_error": building.production.recruit_error("swordsman"),
+			"farmer_exit_available": game.find_recruit_position("farmer", building).is_finite() if building.building_type == "headquarters" else false})
+	for mine: ResourceVein in get_tree().get_nodes_in_group("resource_veins"):
+		row.mines.append({"id": mine.entity_id, "at": game.vector_data(mine.position), "occupied": mine.occupied_slots()})
+	return row
+
+func _inspect_catalogue() -> Dictionary:
+	var result: Dictionary = {}
+	for kind: String in ["headquarters", "barracks", "factory"]:
+		var path: String = "res://data/buildings/%s.tres" % kind
+		var cached: BuildingDefinition = BalanceCatalog.BUILDINGS[kind]
+		var fresh: BuildingDefinition = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
+		result[kind] = {"cached_produces": Array(cached.produces), "fresh_produces": Array(fresh.produces),
+			"cached_type": typeof(cached.produces), "fresh_type": typeof(fresh.produces),
+			"cached_damage": cached.damage, "fresh_damage": fresh.damage,
+			"same_instance": cached == fresh, "cached_path": cached.resource_path, "fresh_path": fresh.resource_path}
+	return result

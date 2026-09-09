@@ -122,6 +122,12 @@ func _run() -> void:
 	invalid.entities[0].p = ["unsafe", 0, 0]
 	receiver.receive_snapshot(invalid)
 	check(receiver.last_received_tick == 2, "malformed_transform_rejected_atomically")
+	for malformed_owner: Variant in [{}, []]:
+		invalid = second.duplicate(true)
+		invalid.tick = 4
+		invalid.entities[0].owner = malformed_owner
+		receiver.receive_snapshot(invalid)
+		check(receiver.last_received_tick == 2 and remote.owner_id == 0, "malformed_existing_replica_owner_rejected_before_integer_conversion")
 	invalid = second.duplicate(true)
 	invalid.tick = 4
 	invalid.entities[0].id = client.get_node("Mine").entity_id
@@ -168,11 +174,12 @@ func _run() -> void:
 		host.spawn_unit("swordsman", index % 2, Vector3(index % 20, 0, index / 20))
 	host.visible_ids.assign([enemy.entity_id, hidden.entity_id, enemy_building.entity_id])
 	var large := sender.build_snapshot(0)
-	bytes = NetworkProtocol.encode({"op": "snapshot", "payload": large})
+	var snapshot_epoch := "1".repeat(32)
+	bytes = NetworkProtocol.encode_snapshot(large, 0, 1, snapshot_epoch)
 	check(not bytes.is_empty(), "280_units_fit_primitive_wire_budget")
 	var began: int = Time.get_ticks_usec()
 	for iteration in range(30):
-		NetworkProtocol.encode({"op": "snapshot", "payload": sender.build_snapshot(0)})
+		NetworkProtocol.encode_snapshot(sender.build_snapshot(0), 0, 1, snapshot_epoch)
 	var encoding_usec: float = (Time.get_ticks_usec() - began) / 30.0
 	began = Time.get_ticks_usec()
 	for iteration in range(30):
@@ -180,7 +187,7 @@ func _run() -> void:
 	var build_usec: float = (Time.get_ticks_usec() - began) / 30.0
 	began = Time.get_ticks_usec()
 	for iteration in range(30):
-		NetworkProtocol.encode({"op": "snapshot", "payload": large})
+		NetworkProtocol.encode_snapshot(large, 0, 1, snapshot_epoch)
 	var encode_usec: float = (Time.get_ticks_usec() - began) / 30.0
 	began = Time.get_ticks_usec()
 	for iteration in range(30):
@@ -190,14 +197,69 @@ func _run() -> void:
 	for iteration in range(30):
 		JSON.stringify(large, "", false)
 	var json_usec: float = (Time.get_ticks_usec() - began) / 30.0
-	print("NETWORK_GAME_METRICS " + JSON.stringify({"entities": large.entities.size(), "decoded_bytes": NetworkProtocol.decoded_size(bytes), "wire_bytes": bytes.size(), "build_encode_mean_usec": encoding_usec, "build_mean_usec": build_usec, "encode_mean_usec": encode_usec, "primitive_mean_usec": primitive_usec, "json_mean_usec": json_usec}))
+	print("NETWORK_GAME_METRICS " + JSON.stringify({"encoder": "authority_snapshot", "entities": large.entities.size(), "decoded_bytes": NetworkProtocol.decoded_size(bytes), "wire_bytes": bytes.size(), "build_encode_mean_usec": encoding_usec, "build_mean_usec": build_usec, "encode_mean_usec": encode_usec, "untrusted_primitive_mean_usec": primitive_usec, "json_mean_usec": json_usec}))
+	var moving_units: Array = host.entities_by_id.values().filter(func(entity): return entity is BattleUnit)
+	var dynamic_wire_before := 0
+	var dynamic_wire_after := 0
+	var dynamic_decoded_before := 0
+	var dynamic_decoded_after := 0
+	var max_position_error := 0.0
+	var max_yaw_error := 0.0
+	var untouched_fields := true
+	var unchanged_schema := true
+	var unchanged_source := true
+	for sample in range(30):
+		for index in range(moving_units.size()):
+			var unit: BattleUnit = moving_units[index]
+			unit.global_position = Vector3((index % 20) * 2.0 - 20.0 + sin(index * 0.731 + sample * 0.07) * 0.17,
+				0.0, floorf(index / 20.0) * 2.0 - 14.0 + cos(index * 0.479 + sample * 0.06) * 0.21)
+			unit.model_pivot.rotation.y = wrapf(index * 0.371 + sample * 0.07, -PI, PI)
+			unit._moving = true
+		var source_position: Vector3 = own.global_position
+		var source_yaw: float = own.model_pivot.rotation.y
+		var quantized := sender.build_snapshot(0)
+		var unquantized := quantized.duplicate(true)
+		for index in range(quantized.entities.size()):
+			var state: Dictionary = quantized.entities[index]
+			var original: Node3D = host.entities_by_id[int(state.id)]
+			unquantized.entities[index].p = Replication.vector_data(original.global_position)
+			unquantized.entities[index].yaw = original.model_pivot.rotation.y
+			for axis in range(3):
+				max_position_error = maxf(max_position_error, absf(float(state.p[axis]) - float(original.global_position[axis])))
+			max_yaw_error = maxf(max_yaw_error, absf(angle_difference(float(state.yaw), float(original.model_pivot.rotation.y))))
+			var original_fields: Dictionary = unquantized.entities[index].duplicate(true)
+			var retained_fields := state.duplicate(true)
+			for key: String in ["p", "yaw"]:
+				original_fields.erase(key)
+				retained_fields.erase(key)
+			untouched_fields = untouched_fields and original_fields == retained_fields
+		unchanged_schema = unchanged_schema and receiver._valid_snapshot(quantized)
+		unchanged_source = unchanged_source and own.global_position == source_position and own.model_pivot.rotation.y == source_yaw
+		var before := NetworkProtocol.encode_snapshot(unquantized, 0, 1, snapshot_epoch)
+		var after := NetworkProtocol.encode_snapshot(quantized, 0, 1, snapshot_epoch)
+		dynamic_wire_before += before.size()
+		dynamic_wire_after += after.size()
+		dynamic_decoded_before += NetworkProtocol.decoded_size(before)
+		dynamic_decoded_after += NetworkProtocol.decoded_size(after)
+	check(max_position_error <= 0.005000001, "presentation_position_quantization_within_half_centimeter_per_axis")
+	check(max_yaw_error <= 0.000500001, "presentation_yaw_quantization_within_half_milliradian")
+	check(untouched_fields, "quantization_preserves_health_orders_animation_and_other_snapshot_fields")
+	check(unchanged_source, "quantization_never_changes_authority_transforms")
+	check(unchanged_schema, "quantized_dynamic_snapshots_retain_existing_visibility_and_schema_contract")
+	check(dynamic_wire_after < dynamic_wire_before, "dynamic_280_unit_quantization_reduces_compressed_payload")
+	print("NETWORK_GAME_QUANTIZATION_METRICS " + JSON.stringify({"samples": 30, "units": moving_units.size(),
+		"decoded_before_mean_bytes": dynamic_decoded_before / 30.0, "decoded_after_mean_bytes": dynamic_decoded_after / 30.0,
+		"wire_before_mean_bytes": dynamic_wire_before / 30.0, "wire_after_mean_bytes": dynamic_wire_after / 30.0,
+		"wire_reduction_percent": (1.0 - float(dynamic_wire_after) / float(dynamic_wire_before)) * 100.0,
+		"max_position_error_m": max_position_error, "max_yaw_error_rad": max_yaw_error,
+		"scope": "30 synthetic moving transforms on 280 authored units; actual protocol encoder, not socket throughput"}))
 	var recording := RecordingRelay.new()
 	host.add_child(recording)
 	recording.connection_state = "match"
 	sender.configure(host, recording)
 	host.is_authority = true
 	for index in range(300):
-		sender.queue_host_visual(1, {"kind": "sound", "sound": "footstep_dirt", "at": [0, 0, 0]})
+		sender.queue_host_visual(1, {"kind": "effect", "effect": "muzzle", "at": [0, 0, 0]})
 	check(sender._outbound_visual[1].size() == Replication.MAX_VISUAL_EVENTS, "outbound_visual_backlog_is_bounded")
 	for simulation_frame in range(7, 13):
 		host.simulation_tick = simulation_frame
@@ -205,8 +267,33 @@ func _run() -> void:
 		sender.tick(1.0 / 30.0)
 	check(recording.captured[1] == [8, 10, 12] and recording.captured[2] == [7, 9, 11] and recording.captured[3] == [8, 10, 12], "three_clients_each_15hz_without_three_snapshots_in_one_tick")
 	check(not recording.captured.has(0), "host_does_not_replicate_to_itself")
-	check(recording.visual_packets.size() == 3 and recording.visual_packets[0].event.events.size() == 96 and recording.visual_packets[2].event.events.size() == 64, "300_sounds_use_three_bounded_reliable_batches")
+	check(recording.visual_packets.size() == 3 and recording.visual_packets[0].event.events.size() == 96 and recording.visual_packets[2].event.events.size() == 64, "300_battle_effects_use_three_bounded_reliable_batches")
 	check(recording.visual_packets.all(func(packet): return NetworkProtocol.decoded_size(NetworkProtocol.encode({"op": "event", "payload": packet.event})) < NetworkProtocol.MAX_EVENT_BYTES), "visual_batches_respect_transport_size_limit")
+	recording.visual_packets.clear()
+	for index in range(300):
+		sender.queue_host_visual(1, {"kind": "sound", "sound": "footstep_dirt", "at": [0, 0, 0]})
+	check(sender._outbound_visual[1].size() == 1, "same_cell_same_period_steps_coalesce")
+	host.simulation_tick = 14
+	sender.flush_visual()
+	check(recording.visual_packets.size() == 1 and recording.visual_packets[0].event.events.size() == 1, "coalesced_steps_keep_one_spatial_sound")
+	for index in range(80):
+		sender.queue_host_visual(1, {"kind": "sound", "sound": "footstep_dirt", "at": [1000 + index * 4, 0, 0]})
+	sender.queue_host_visual(1, {"kind": "projectile", "projectile": "arrow", "at": [0, 0, 0]})
+	sender.queue_host_visual(1, {"kind": "effect", "effect": "explosion", "at": [0, 0, 0]})
+	sender.flush_visual()
+	check(recording.visual_packets.size() == 1, "explicit_flush_cannot_send_twice_same_tick")
+	host.simulation_tick = 16
+	sender.flush_visual()
+	var motion_batch: Array = recording.visual_packets.back().event.events
+	check(motion_batch.size() == 18 and motion_batch[0].kind == "projectile" and motion_batch[1].effect == "explosion", "battle_visuals_precede_at_most_sixteen_motion_sounds")
+	check(sender._outbound_visual[1].is_empty(), "excess_decorative_steps_do_not_accumulate_reliable_backlog")
+	sender.queue_host_visual(1, {"kind": "sound", "sound": "horse_hoof", "at": [0, 0, 0]})
+	sender.queue_host_visual(1, {"kind": "effect", "effect": "explosion", "at": [0, 0, 0]})
+	host.elapsed += 0.3
+	host.simulation_tick = 18
+	sender.flush_visual()
+	check(recording.visual_packets.back().event.events.size() == 1 and recording.visual_packets.back().event.events[0].effect == "explosion", "stale_footsteps_expire_without_dropping_current_battle_visual")
+	check(not sender._cosmetic_times.has(1), "expired_cosmetic_dedup_cache_is_removed")
 	client.queue_free()
 	host.queue_free()
 	current_scene = null

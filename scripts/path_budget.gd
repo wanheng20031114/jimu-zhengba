@@ -19,6 +19,7 @@ class Route extends RefCounted:
 	var sampled_tick: int = -1
 	var requested_tick: int = 0
 	var pending: bool = false
+	var waiting_for_map: bool = false
 	var generation: int = 0
 
 var queries_this_tick: int = 0
@@ -27,6 +28,7 @@ var total_queries: int = 0
 var max_wait_ticks: int = 0
 var max_pending: int = 0
 var _routes: Dictionary = {}
+var _waiting_for_map: Dictionary = {}
 var _queue: Array[Array] = []
 var _head: int = 0
 var _serial: int = 0
@@ -42,12 +44,13 @@ func register(unit: BattleUnit) -> void:
 	route.agent.path_changed.connect(_on_path_changed)
 
 func unregister(unit: BattleUnit) -> void:
+	_waiting_for_map.erase(unit.get_instance_id())
 	_routes.erase(unit.get_instance_id())
 
 func request(unit: BattleUnit, at: Vector3) -> void:
 	var route: Route = _routes[unit.get_instance_id()]
 	at.y = 0.0
-	if (route.pending or route.active) and route.goal.distance_squared_to(at) < 0.0025:
+	if (route.pending or route.active or route.waiting_for_map) and route.goal.distance_squared_to(at) < 0.0025:
 		return
 	route.goal = at
 	_enqueue(unit.get_instance_id(), route)
@@ -55,28 +58,38 @@ func request(unit: BattleUnit, at: Vector3) -> void:
 func cancel(unit: BattleUnit) -> void:
 	var route: Route = _routes[unit.get_instance_id()]
 	route.pending = false
+	route.waiting_for_map = false
+	_waiting_for_map.erase(unit.get_instance_id())
 	route.active = false
 	route.finished = true
 	route.path.clear()
 
 func has_pending(unit: BattleUnit) -> bool:
-	return _routes[unit.get_instance_id()].pending
+	var route: Route = _routes[unit.get_instance_id()]
+	return route.pending or route.waiting_for_map
+
+func is_blocked(unit: BattleUnit) -> bool:
+	# An empty corridor is explicitly blocked, not a completed move. It waits
+	# for changed map connectivity; unchanged maps never cause periodic queries.
+	return _routes[unit.get_instance_id()].waiting_for_map
 
 func target_position(unit: BattleUnit) -> Vector3:
 	return _routes[unit.get_instance_id()].goal
 
 func is_finished(unit: BattleUnit) -> bool:
 	var route: Route = _routes[unit.get_instance_id()]
-	return route.finished and not route.pending
+	return route.finished and not route.pending and not route.waiting_for_map
 
 func pending_count() -> int:
 	var count: int = 0
 	for route: Route in _routes.values():
-		if route.pending: count += 1
+		if route.pending or route.waiting_for_map: count += 1
 	return count
 
 func _enqueue(id: int, route: Route) -> void:
 	if route.pending: return
+	route.waiting_for_map = false
+	_waiting_for_map.erase(id)
 	route.pending = true
 	route.requested_tick = Engine.get_physics_frames()
 	_serial += 1
@@ -89,6 +102,15 @@ func _physics_process(_delta: float) -> void:
 	query_usec_this_tick = 0
 	if not get_parent().is_authority: return
 	var tick: int = Engine.get_physics_frames()
+	for id: int in _waiting_for_map.keys():
+		var waiting: Route = _waiting_for_map[id]
+		var waiting_unit: BattleUnit = waiting.unit.get_ref()
+		if not is_instance_valid(waiting_unit) or not waiting_unit.alive:
+			_waiting_for_map.erase(id)
+			_routes.erase(id)
+			continue
+		if NavigationServer3D.map_get_iteration_id(waiting.agent.get_navigation_map()) != waiting.iteration:
+			_enqueue(id, waiting)
 	while _head < _queue.size() and queries_this_tick < queries_per_tick:
 		var entry: Array = _queue[_head]
 		_head += 1
@@ -116,7 +138,14 @@ func _physics_process(_delta: float) -> void:
 		query_usec_this_tick += Time.get_ticks_usec() - began
 		route.iteration = iteration
 		route.sampled_tick = tick
-		if route.path.is_empty(): route.finished = true
+		if route.path.is_empty():
+			# The map can publish its empty first iteration before its asynchronously
+			# built region arrives. Retain the intent and retry only on a new map
+			# iteration or an explicitly changed order, never at a polling rate.
+			route.active = false
+			route.finished = false
+			route.waiting_for_map = true
+			_waiting_for_map[entry[0]] = route
 	if _head == _queue.size():
 		_queue.clear()
 		_head = 0

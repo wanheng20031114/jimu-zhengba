@@ -12,6 +12,7 @@ var errors: Array[String] = []
 var received_config: Dictionary = {}
 var received_finish: bool = false
 var catalog_files: int = 0
+var resource_value_checks: int = 0
 var handshake_msec: int = -1
 
 func _ready() -> void:
@@ -35,6 +36,7 @@ func _run() -> void:
 			var path := "res://" + relative
 			# Native export may convert scenes/resources to binary and remap them.
 			check(FileAccess.file_exists(path) if relative.ends_with(".json") else ResourceLoader.exists(path), "catalogue_resource_" + relative)
+	validate_resource_values()
 	check(FileAccess.file_exists(RelayClient.CERTIFICATE_PATH), "packaged_public_trust_certificate_exists")
 	var endpoint := read_dictionary(ENDPOINT_PATH)
 	check(endpoint.get("address") is String and not endpoint.get("address", "").is_empty() and NetworkProtocol.integer(endpoint.get("port"), 1, 65535), "packaged_public_endpoint_exists")
@@ -71,6 +73,38 @@ func _run() -> void:
 	check(errors.is_empty(), "no_transport_error_during_release_probe")
 	await finish()
 
+func validate_resource_values() -> void:
+	# File existence and a source manifest cannot detect a converter dropping a
+	# saved exported property. Exercise the actual ResourceLoader values in PCK.
+	var began := checks
+	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "archer", "knight"],
+		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
+	for kind: String in production:
+		var building := BalanceCatalog.building(kind)
+		check(Array(building.produces) == production[kind], "packaged_production_members_" + kind)
+		check(building.id == StringName(kind) and building.hp >= 1000.0 and building.melee_armor == 10.0 and building.ranged_armor == 10.0,
+			"packaged_building_combat_values_" + kind)
+	for kind: String in BalanceCatalog.UNITS:
+		var unit := BalanceCatalog.unit(kind)
+		check(unit.id == StringName(kind) and unit.hp > 0.0 and is_finite(unit.hp) and unit.cost > 0 and unit.speed > 0.0
+			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
+	var farmer := BalanceCatalog.unit("farmer")
+	check(not farmer.military and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0, "packaged_farmer_training_contract")
+	for pair: Array in [["knight", "archer", 3], ["knight", "swordsman", 6], ["swordsman", "knight", 5],
+		["swordsman", "archer", 3], ["archer", "knight", 5], ["archer", "swordsman", 10]]:
+		var defender := BalanceCatalog.unit(pair[1])
+		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
+		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
+	check(BalanceCatalog.unit("catapult").bonuses.get(&"building") == 50, "packaged_catapult_building_bonus")
+	check(BalanceCatalog.unit("cannon").bonuses.get(&"building") == 200, "packaged_cannon_building_bonus")
+	check(BalanceCatalog.unit("cannon").bonuses.get(&"siege") == 100, "packaged_cannon_siege_bonus")
+	for track: String in ["attack", "defense"]:
+		for level in range(1, 4):
+			var upgrade := BalanceCatalog.upgrade(track + "_" + str(level))
+			check(upgrade.track == StringName(track) and upgrade.level == level and upgrade.total_bonus == [1, 2, 4][level - 1],
+				"packaged_upgrade_values_" + track + "_" + str(level))
+	resource_value_checks = checks - began
+
 func until(predicate: Callable, duration: float) -> bool:
 	var deadline := Time.get_ticks_msec() + int(duration * 1000)
 	while Time.get_ticks_msec() < deadline and relay.connection_state != "error":
@@ -96,6 +130,6 @@ func finish() -> void:
 	relay.disconnect_relay()
 	print("NETWORK_RELEASE_PROBE " + JSON.stringify({"checks": checks, "failures": failures,
 		"error_codes": errors, "build": NetworkProtocol.BUILD_ID, "protocol": NetworkProtocol.VERSION,
-		"content_hash": NetworkProtocol.content_hash(), "catalogue_files": catalog_files,
+		"content_hash": NetworkProtocol.content_hash(), "catalogue_files": catalog_files, "resource_value_checks": resource_value_checks,
 		"exported_template": not OS.has_feature("editor"), "handshake_msec": handshake_msec}))
 	get_tree().quit(0 if failures.is_empty() else 1)

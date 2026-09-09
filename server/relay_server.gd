@@ -8,6 +8,10 @@ const BOT_GRACE_MS: int = 10000
 const REJOIN_GRACE_MS: int = 120000
 const IDLE_ROOM_MS: int = 900000
 const MAX_PEERS: int = 16
+const VISUAL_EVENT_RATE: float = 60.0
+const VISUAL_EVENT_BURST: float = 90.0
+const CRITICAL_EVENT_RATE: float = 30.0
+const CRITICAL_EVENT_BURST: float = 45.0
 
 var max_rooms: int = 1
 var max_humans: int = 4
@@ -16,6 +20,7 @@ var running: bool = false
 var rejected_packets: int = 0
 var relayed_commands: int = 0
 var relayed_snapshots: int = 0
+var dropped_visual_batches: int = 0
 var connection: ENetConnection
 var rooms: Dictionary = {}
 var sessions: Dictionary = {}
@@ -60,7 +65,7 @@ func _process(_delta: float) -> void:
 				var peer: ENetPacketPeer = event[1]
 				peer.set_timeout(8, 2000, 5000)
 				peer.ping_interval(500)
-				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "control": 0, "strikes": 0}
+				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "event_buckets": {}, "control": 0, "strikes": 0}
 			ENetConnection.EVENT_RECEIVE:
 				var peer: ENetPacketPeer = event[1]
 				_receive(peer, peer.get_packet(), int(event[3]), now)
@@ -120,8 +125,8 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 			return
 	elif op == "event":
 		state.events += 1
-		if channel != Protocol.EVENT_CHANNEL or Protocol.decoded_size(packet) > Protocol.MAX_EVENT_BYTES or state.events > 90:
-			_reject(peer, "event_limit", "事件超过限制")
+		if channel != Protocol.EVENT_CHANNEL:
+			_reject(peer, "invalid_channel", "事件通道不正确")
 			return
 	else:
 		state.control += 1
@@ -346,10 +351,35 @@ func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, m
 		if message.payload.get("kind", "") in ["host_paused", "host_resumed", "match_aborted", "player_disconnected", "player_reconnected", "bot_takeover"]:
 			_reject(peer, "reserved_event", "该事件由中继管理")
 			return
+		var visual: bool = message.payload.get("kind") == "visual_batch"
+		if visual and not _visual_batch_structure(message.payload):
+			_reject(peer, "invalid_visual_batch", "无效的表现批次")
+			return
+		# Identity, epoch, payload structure, channel, compressed/uncompressed
+		# byte caps and aggregate packet limits have all passed before this gate.
+		var state: Dictionary = _connections[peer.get_instance_id()]
+		if not _event_allowed(state, visual, now):
+			if visual:
+				dropped_visual_batches += 1
+			else:
+				_reject(peer, "event_limit", "关键事件发送过快")
+			return
 		if recipient == -1:
 			_broadcast_event(room, message.payload)
 		else:
 			_send_owner(room, recipient, {"op": "event", "match": room.match_id, "payload": message.payload}, Protocol.EVENT_CHANNEL)
+
+static func _visual_batch_structure(payload: Dictionary) -> bool:
+	var items: Variant = payload.get("events")
+	if not items is Array or items.is_empty() or items.size() > 96:
+		return false
+	for item: Variant in items:
+		if not item is Dictionary or not item.get("kind") is String:
+			return false
+		var stamp: Variant = item.get("time")
+		if not (stamp is int or stamp is float) or not is_finite(stamp) or stamp < 0 or stamp > 10000000:
+			return false
+	return true
 
 func _snapshot_allowed(session: Dictionary, recipient: int, now: int) -> bool:
 	# A 15 Hz stream can arrive in small clusters after jitter. A strict minimum
@@ -359,6 +389,22 @@ func _snapshot_allowed(session: Dictionary, recipient: int, now: int) -> bool:
 	bucket.credits = minf(3.0, float(bucket.credits) + maxi(0, now - int(bucket.at)) * 0.02)
 	bucket.at = now
 	session.snapshot_buckets[recipient] = bucket
+	if float(bucket.credits) < 1.0:
+		return false
+	bucket.credits -= 1.0
+	return true
+
+func _event_allowed(state: Dictionary, visual: bool, now: int) -> bool:
+	# Ordered reliable delivery can release >1s of accumulated visual batches
+	# together after a lost fragment. Retain a bounded burst, and reserve an
+	# independent budget for pause/notices so footsteps cannot consume it.
+	var key := "visual" if visual else "critical"
+	var capacity: float = VISUAL_EVENT_BURST if visual else CRITICAL_EVENT_BURST
+	var rate: float = VISUAL_EVENT_RATE if visual else CRITICAL_EVENT_RATE
+	var bucket: Dictionary = state.event_buckets.get(key, {"at": now, "credits": capacity})
+	bucket.credits = minf(capacity, float(bucket.credits) + maxi(0, now - int(bucket.at)) * rate / 1000.0)
+	bucket.at = now
+	state.event_buckets[key] = bucket
 	if float(bucket.credits) < 1.0:
 		return false
 	bucket.credits -= 1.0

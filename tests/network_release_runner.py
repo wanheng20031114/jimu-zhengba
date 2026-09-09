@@ -41,9 +41,10 @@ def main() -> int:
             summary = json.loads(line.removeprefix("NETWORK_RELEASE_PROBE "))
     stderr = (directory / "stderr.log").read_text(encoding="utf-8", errors="replace")
     success = code == 0 and summary is not None and not summary["failures"] and not stderr.strip()
+    value_audit_present = summary is not None and summary.get("resource_value_checks") == 38 and summary.get("checks", 0) >= 95
     if summary is not None:
-        success = success and summary["exported_template"] != args.source
-    report = {"passed": success, "summary": summary, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
+        success = success and summary["exported_template"] != args.source and value_audit_present
+    report = {"passed": success, "summary": summary, "resource_value_audit_present": value_audit_present, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
     (directory / "summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print("NETWORK_RELEASE_RESULTS " + json.dumps(report, ensure_ascii=False))
     return 0 if success else 1

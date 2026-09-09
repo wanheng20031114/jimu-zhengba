@@ -15,6 +15,9 @@ const MAX_VISIBLE_ENTITIES: int = 768
 const MAX_CONTINUOUS_GAP: float = 0.5
 const MAX_VISUAL_EVENTS: int = 256
 const MAX_BATCH_EVENTS: int = 96
+const MAX_COSMETIC_BATCH: int = 16
+const COSMETIC_INTERVAL: float = 0.2
+const COSMETIC_CELL_SIZE: float = 4.0
 
 var game: Node3D
 var relay: RelayClient
@@ -28,6 +31,8 @@ var _last_arrival_msec: int = 0
 var _fog: Node
 var _send_errors: Dictionary = {}
 var _outbound_visual: Dictionary = {}
+var _cosmetic_times: Dictionary = {}
+var _last_visual_tick: Dictionary = {}
 var _visual_queue: Array[Dictionary] = []
 
 func configure(match_game: Node3D, transport: RelayClient) -> void:
@@ -53,6 +58,8 @@ func reset() -> void:
 	_last_arrival_msec = 0
 	_send_errors.clear()
 	_outbound_visual.clear()
+	_cosmetic_times.clear()
+	_last_visual_tick.clear()
 	_visual_queue.clear()
 	game = null
 	relay = null
@@ -108,7 +115,10 @@ func build_snapshot(recipient: int) -> Dictionary:
 
 func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 	var state := {"id": entity.entity_id, "owner": entity.owner_id,
-		"p": vector_data(entity.global_position), "yaw": entity.model_pivot.rotation.y,
+		# Quantize only presentation transforms, directly into GDScript float64
+		# arrays. Passing the rounded values through Vector3 would restore float32
+		# tails and inflate native JSON/ENet fragmentation without visual benefit.
+		"p": presentation_position(entity.global_position), "yaw": roundf(float(entity.model_pivot.rotation.y) * 1000.0) / 1000.0,
 		"hp": entity.hp, "max_hp": entity.max_hp}
 	if entity is BattleUnit:
 		var unit := entity as BattleUnit
@@ -132,6 +142,9 @@ func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 			state["rally_mine"] = building.production.rally_mine.entity_id if is_instance_valid(building.production.rally_mine) else 0
 			state["order_name"] = building.order_name
 	return state
+
+static func presentation_position(at: Vector3) -> Array:
+	return [roundf(float(at.x) * 100.0) / 100.0, roundf(float(at.y) * 100.0) / 100.0, roundf(float(at.z) * 100.0) / 100.0]
 
 func receive_snapshot(snapshot: Dictionary) -> void:
 	if game == null or game.is_authority:
@@ -203,8 +216,29 @@ func queue_host_visual(recipient: int, event: Dictionary) -> void:
 	if not _outbound_visual.has(recipient):
 		_outbound_visual[recipient] = []
 	var pending: Array = _outbound_visual[recipient]
+	var cosmetic: bool = _is_cosmetic(event)
+	if cosmetic:
+		var times: Dictionary = _cosmetic_times.get(recipient, {})
+		var at: Array = event.at
+		var kind: int = ["footstep_dirt", "horse_hoof", "cart_wheel"].find(event.get("sound", "")) + 1
+		var key := Vector3i(floori(float(at[0]) / COSMETIC_CELL_SIZE), floori(float(at[2]) / COSMETIC_CELL_SIZE), kind)
+		if game.elapsed - float(times.get(key, -1.0)) < COSMETIC_INTERVAL:
+			return
+		times[key] = game.elapsed
+		_cosmetic_times[recipient] = times
 	if pending.size() >= MAX_VISUAL_EVENTS:
-		return # Presentation has a bounded backlog; it cannot affect gameplay.
+		if cosmetic:
+			return
+		# Battle presentation may replace footsteps; room/gameplay events use
+		# send_event/finish_match directly and never enter this cosmetic backlog.
+		var replacement := -1
+		for index in range(pending.size()):
+			if _is_cosmetic(pending[index]):
+				replacement = index
+				break
+		if replacement < 0:
+			return
+		pending.remove_at(replacement)
 	var stamped := event.duplicate(true)
 	stamped["time"] = game.elapsed
 	pending.append(stamped)
@@ -214,7 +248,29 @@ func flush_visual() -> void:
 		_flush_visual(recipient)
 
 func _flush_visual(recipient: int) -> void:
+	var times: Dictionary = _cosmetic_times.get(recipient, {})
+	for key: Vector3i in times.keys():
+		if game.elapsed - float(times[key]) >= COSMETIC_INTERVAL:
+			times.erase(key)
+	if times.is_empty():
+		_cosmetic_times.erase(recipient)
 	var pending: Array = _outbound_visual.get(recipient, [])
+	if pending.is_empty():
+		return
+	if game.simulation_tick - int(_last_visual_tick.get(recipient, -SNAPSHOT_TICKS)) < SNAPSHOT_TICKS:
+		return
+	var battle: Array = []
+	var cosmetic: Array = []
+	for item: Dictionary in pending:
+		var age: float = game.elapsed - float(item.time)
+		if _is_cosmetic(item):
+			if age <= COSMETIC_INTERVAL and cosmetic.size() < MAX_COSMETIC_BATCH:
+				cosmetic.append(item)
+		elif age <= MAX_CONTINUOUS_GAP:
+			battle.append(item)
+	pending = battle
+	pending.append_array(cosmetic)
+	_outbound_visual[recipient] = pending
 	if pending.is_empty():
 		return
 	var batch: Array = pending.slice(0, mini(pending.size(), MAX_BATCH_EVENTS))
@@ -228,10 +284,14 @@ func _flush_visual(recipient: int) -> void:
 		batch = batch.slice(0, maxi(1, batch.size() / 2))
 	var error := relay.send_event(recipient, {"kind": "visual_batch", "events": batch})
 	if error == OK:
+		_last_visual_tick[recipient] = game.simulation_tick
 		_outbound_visual[recipient] = pending.slice(batch.size())
 	elif error in [ERR_INVALID_DATA, ERR_OUT_OF_MEMORY]:
 		_outbound_visual[recipient] = pending.slice(batch.size())
 		replication_error.emit(recipient, error)
+
+static func _is_cosmetic(event: Dictionary) -> bool:
+	return (event.get("kind") == "sound" and event.get("sound") in ["footstep_dirt", "horse_hoof", "cart_wheel"]) or (event.get("kind") == "effect" and event.get("effect") == "dust")
 
 func _relay_event(event: Dictionary) -> void:
 	if game == null or game.is_authority or event.get("kind") != "visual_batch":
@@ -409,6 +469,8 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 		if not NetworkProtocol.integer(state.get("id"), 1, 2147483647) or ids.has(int(state.id)):
 			return false
 		ids[int(state.id)] = true
+		if not NetworkProtocol.integer(state.get("owner"), 0, game.players.size() - 1):
+			return false
 		var existing: Node3D = game.entities_by_id.get(int(state.id))
 		if is_instance_valid(existing) and existing is ResourceVein:
 			return false
@@ -419,8 +481,6 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 				return false
 			if existing is BattleBuilding and (state.get("category") != "building" or state.get("kind") != existing.building_type):
 				return false
-		if not NetworkProtocol.integer(state.get("owner"), 0, game.players.size() - 1):
-			return false
 		if not _vector(state.get("p")) or not _number(state.get("yaw"), -1000000, 1000000):
 			return false
 		if not _number(state.get("hp"), 0, 10000000) or not _number(state.get("max_hp"), 1, 10000000):

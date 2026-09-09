@@ -80,6 +80,19 @@ func _refresh_own_army() -> void:
 			_home = building.global_position
 			_home_known = true
 			break
+	# A fresh disconnect takeover has no remembered headquarters. Anchor recovery
+	# to surviving own assets; allied bases must never become its owned home.
+	if not _home_known:
+		var anchor: Node3D
+		if not _buildings.is_empty():
+			anchor = _buildings[0]
+		elif not _workers.is_empty():
+			anchor = _workers[0]
+		elif not _army.is_empty():
+			anchor = _army[0]
+		if anchor != null:
+			_home = anchor.global_position
+			_home_known = true
 	var allied_center: Vector3 = _home
 	var bases: int = 1
 	for player: PlayerState in _game.players:
@@ -208,6 +221,8 @@ func _try_build(kind: String, near: Vector3) -> bool:
 func _develop_base() -> int:
 	var flank: Vector3 = _front.cross(Vector3.UP)
 	if _building("headquarters") == null:
+		if _workers.is_empty():
+			return 0
 		return 0 if _try_build("headquarters", _home) else BalanceCatalog.building(&"headquarters").cost
 	if _building("barracks") == null:
 		return 0 if _try_build("barracks", _home + _front * 9.0) else BalanceCatalog.building(&"barracks").cost
@@ -303,7 +318,10 @@ func _choose_recruit(counts: Dictionary) -> String:
 	return choice
 
 func _recruit_army(reserve: int) -> void:
-	if _building("barracks", true) == null:
+	var factory_only: bool = _building("barracks", true) == null
+	# With neither headquarters nor builders, use the surviving factory instead
+	# of saving forever for infrastructure that this player can no longer build.
+	if factory_only and (_building("headquarters") != null or not _workers.is_empty() or _building("factory", true) == null):
 		return
 	var counts: Dictionary = {"swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0}
 	for unit: Node3D in _army:
@@ -311,6 +329,8 @@ func _recruit_army(reserve: int) -> void:
 	var supply: int = _game.get_player(_owner).military_supply
 	for purchase: int in range(3):
 		var kind: String = _choose_recruit(counts)
+		if factory_only:
+			kind = "cannon" if _known_fortifications() > 0 else "catapult"
 		var definition: UnitDefinition = BalanceCatalog.unit(kind)
 		var producer: Node3D = _building(String(definition.production_building), true)
 		if producer == null or _budget - reserve < definition.cost or supply + definition.supply > PlayerState.SUPPLY_LIMIT:

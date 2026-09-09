@@ -69,7 +69,11 @@ func _capture_lobby() -> void:
 	await RenderingServer.frame_post_draw
 	var target: String = "res://artifacts/lobby.png" if OS.has_feature("editor") else "user://lobby.png"
 	var capture: Image = get_viewport().get_texture().get_image()
-	assert(capture.save_png(target) == OK)
+	var error: Error = capture.save_png(target)
+	if error != OK:
+		push_error("Lobby capture failed: %s" % error_string(error))
+		get_tree().quit(1)
+		return
 	print("LOBBY_CAPTURE ", target)
 	get_tree().quit()
 

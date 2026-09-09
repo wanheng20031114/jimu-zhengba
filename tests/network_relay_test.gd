@@ -31,6 +31,21 @@ func _run() -> void:
 	var deep: Dictionary = {}
 	for _i in range(20): deep = {"nested": deep}
 	_check("reject excessive depth", Protocol.encode(deep).is_empty())
+	var snapshot_epoch := "1".repeat(32)
+	var trusted_payload := {"tick": 1, "time": 0.0, "entities": [{"id": 1, "p": [1.0, 0.0, 2.0], "hp": 100.0}]}
+	var trusted_packet := Protocol.encode_snapshot(trusted_payload, 1, 2, snapshot_epoch)
+	var ordinary_packet := Protocol.encode({"op": "snapshot", "match": snapshot_epoch, "to": 1, "sequence": 2, "payload": trusted_payload})
+	_check("trusted snapshot bytes retain wire contract", trusted_packet == ordinary_packet)
+	_check("trusted snapshot passes complete receiver validation", Protocol.decode(trusted_packet).payload.entities[0].hp == 100.0)
+	_check("trusted snapshot rejects invalid envelope", Protocol.encode_snapshot(trusted_payload, 4, 2, snapshot_epoch).is_empty() and Protocol.encode_snapshot(trusted_payload, 1, 0, snapshot_epoch).is_empty() and Protocol.encode_snapshot(trusted_payload, 1, 2, "").is_empty())
+	_check("trusted snapshot retains uncompressed size cap", Protocol.encode_snapshot({"padding": "x".repeat(Protocol.MAX_PACKET_BYTES)}, 1, 2, snapshot_epoch).is_empty())
+	_check("receiver depth remains untrusted after sender optimization", Protocol.decode(Protocol.encode_snapshot(deep, 1, 2, snapshot_epoch)).is_empty())
+	var many: Array = []
+	many.resize(Protocol.MAX_VALUES + 1)
+	many.fill(0)
+	_check("general encoder retains total value budget", Protocol.encode({"many": many}).is_empty())
+	_check("receiver retains total value budget", Protocol.decode(Protocol.encode_snapshot({"many": many}, 1, 2, snapshot_epoch)).is_empty())
+	_check("receiver retains string and key bounds", Protocol.decode(Protocol.encode_snapshot({"long": "x".repeat(32769)}, 1, 2, snapshot_epoch)).is_empty() and Protocol.decode(Protocol.encode_snapshot({"x".repeat(65): 1}, 1, 2, snapshot_epoch)).is_empty())
 	_check("sequence integer validation", not Protocol.integer(1.5, 0, 10) and Protocol.integer(5.0, 0, 10))
 	var compressed := Protocol.encode({"repeated": "abc".repeat(2000)})
 	_check("native Zstd roundtrip bounded", compressed.size() < 100 and Protocol.decode(compressed).repeated.length() == 6000)
@@ -58,6 +73,23 @@ func _run() -> void:
 	for arrival in [1000, 1125, 1125, 1210, 1266, 1390, 1390, 1466, 1585, 1600]:
 		clustered_ok = relay._snapshot_allowed(jitter_session, 1, arrival) and clustered_ok
 	_check("valid fifteen-Hz arrival clusters survive jitter", clustered_ok)
+	var event_state := {"event_buckets": {}}
+	var visual_burst := 0
+	for _index in range(100):
+		visual_burst += int(relay._event_allowed(event_state, true, 1000))
+	_check("reliable visual burst bounded at ninety", visual_burst == 90)
+	_check("visual refill retains sixty per second boundary", not relay._event_allowed(event_state, true, 1016) and relay._event_allowed(event_state, true, 1017))
+	var critical_burst := 0
+	for _index in range(60):
+		critical_burst += int(relay._event_allowed(event_state, false, 1017))
+	_check("critical budget independent of exhausted footsteps", critical_burst == 45)
+	_check("critical refill retains thirty per second boundary", not relay._event_allowed(event_state, false, 1050) and relay._event_allowed(event_state, false, 1051))
+	var clustered_events := {"event_buckets": {}}
+	var event_clusters_ok := true
+	for arrival in [1000, 3000, 3333, 3666, 4000, 4333]:
+		for _index in range(90 if arrival == 3000 else 15):
+			event_clusters_ok = relay._event_allowed(clustered_events, true, arrival) and event_clusters_ok
+	_check("two seconds reliable backlog plus forty-five Hz stream survives", event_clusters_ok)
 	var result: Error = relay.start("127.0.0.1", 0, _key_path, _certificate_path)
 	_check("DTLS server starts", result == OK)
 	if result != OK:
@@ -94,6 +126,30 @@ func _run() -> void:
 	await _until(func(): return starts.size() == 4)
 	_check("same match starts on four clients", starts.size() == 4)
 	_check("stable map and teams", starts[0].config.map_id == "teams" and starts[0].config.players.map(func(p): return int(p.team_id)) == [0, 0, 1, 1])
+	# A monotonic receive-time advance reproduces ordered ENet backlog release,
+	# without an actual packet-loss wait. Packets still cross full relay validation.
+	var host_peer: ENetPacketPeer = relay.sessions[clients[0]._token].peer
+	var host_state: Dictionary = relay._connections[host_peer.get_instance_id()]
+	var strikes_before: int = host_state.strikes
+	var receive_time := Time.get_ticks_msec()
+	var visual_message := {"op": "event", "match": clients[0]._match.match_id, "to": 1,
+		"payload": {"kind": "visual_batch", "events": [{"kind": "sound", "sound": "footstep_dirt", "time": 1.0, "at": [0, 0, 0]}]}}
+	var visual_packet := Protocol.encode(visual_message)
+	for _index in range(91):
+		relay._receive(host_peer, visual_packet, Protocol.EVENT_CHANNEL, receive_time)
+	_check("ninety-one visual burst only expires excess presentation", relay.dropped_visual_batches == 1 and int(host_state.strikes) == strikes_before)
+	for step in range(1, 11):
+		for _index in range(20):
+			relay._receive(host_peer, visual_packet, Protocol.EVENT_CHANNEL, receive_time + step * 100)
+	_check("sustained visual excess is bounded without host disconnect", relay.dropped_visual_batches > 100 and int(host_state.strikes) == strikes_before and relay.sessions[clients[0]._token].peer == host_peer)
+	var pause_packet := Protocol.encode({"op": "event", "match": clients[0]._match.match_id, "to": -1, "payload": {"kind": "pause", "paused": false}})
+	relay._receive(host_peer, pause_packet, Protocol.EVENT_CHANNEL, receive_time + 1000)
+	await _until(func(): return events.filter(func(e): return e.data.kind == "pause").size() == 4)
+	_check("critical pause reaches all clients after full visual burst", events.filter(func(e): return e.data.kind == "pause").size() == 4)
+	var malformed_visual := Protocol.encode({"op": "event", "match": clients[0]._match.match_id, "to": 1, "payload": {"kind": "visual_batch", "events": {}}})
+	relay._receive(host_peer, malformed_visual, Protocol.EVENT_CHANNEL, receive_time + 1000)
+	_check("exhausted visual allowance still validates message structure", int(host_state.strikes) == strikes_before + 1)
+	await create_timer(1.05).timeout
 	clients[2].send_command({"kind": "move", "units": [12, 13], "position": [2.0, 0.0, 5.0], "owner": 0})
 	await _until(func(): return messages.size() == 1)
 	_check("relay binds sender owner", messages.size() == 1 and messages[0].owner == 2)
@@ -104,6 +160,7 @@ func _run() -> void:
 	clients[2]._send({"op": "snapshot", "to": 1, "sequence": 1, "payload": {"forged": true}}, Protocol.SNAPSHOT_CHANNEL)
 	await _frames(8)
 	_check("guest cannot send authoritative snapshots", snapshots.is_empty())
+	_check("guest cannot enter trusted authority encoder", clients[2].snapshot_to(1, trusted_payload) == ERR_UNAUTHORIZED)
 	var units: Array = []
 	for index in range(280): units.append({"id": index + 1, "p": [float(index), 0.0, 5.0], "hp": 100, "kind": "swordsman"})
 	_check("large snapshot send accepted", clients[0].snapshot_to(1, {"tick": 600, "units": units}) == OK)
