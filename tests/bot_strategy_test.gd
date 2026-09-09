@@ -66,6 +66,7 @@ func _run() -> void:
 	await _workforce_expansion_case()
 	await _army_expansion_case()
 	await _mining_research_case()
+	await _special_research_case()
 	await _deferred_and_client_case()
 	await _physics_frequency_case()
 	await _takeover_without_headquarters_case()
@@ -135,6 +136,22 @@ func _defense_tower_budget_case() -> void:
 	bot.tick(1.0)
 	_check(host.commands.any(func(c: Dictionary) -> bool: return c.kind == "build" and c.building_type == "defense_tower")
 		and host.total_spent == 150 and host.players[0].gold == 0, "emergency tower is commissioned immediately when 150 gold is available")
+	for next_price: int in [185, 225, 255, 280, 270]:
+		for tower: Node3D in host.owned_entities(0, "buildings"):
+			if tower.building_type == "defense_tower":
+				tower.alive = false
+		# Actual workers leave a destroyed construction target on the next fixed
+		# step; this command-only fixture must advance that lifecycle explicitly.
+		for builder: Node3D in host.owned_entities(0, "units"):
+			if builder.unit_type == "farmer" and builder.order == BattleUnit.Order.BUILD:
+				host._set_worker_order(builder, BattleUnit.Order.IDLE, null)
+		var spending_before: int = host.total_spent
+		host.players[0].gold = next_price - 1
+		bot.tick(4.0)
+		_check(host.total_spent == spending_before and host.players[0].gold == next_price - 1, "replacement tower reserves current ladder quote without starving savings: " + str(next_price))
+		host.players[0].gold = next_price
+		bot.tick(1.0)
+		_check(host.total_spent == spending_before + next_price and host.players[0].gold == 0, "Bot pays current replacement price after previous tower destruction: " + str(next_price))
 
 func _retreat_and_ally_case() -> void:
 	await _fresh()
@@ -400,3 +417,37 @@ func _mining_research_case() -> void:
 		host.advance(seconds[level - 1])
 		_check(player.mining_level == level and is_equal_approx(player.get_mining_rate_multiplier(), 1.0 + level * 0.1), "completed mining upgrade applies its total percentage " + id)
 	_check(host.players[1].mining_level == 0 and host.players[2].mining_level == 0, "mining research remains independent between owners and allies")
+
+func _special_research_case() -> void:
+	await _fresh()
+	_ready_base(["cannon", "swordsman", "swordsman", "archer", "archer", "knight", "knight", "swordsman"])
+	var player: PlayerState = host.players[0]
+	player.active_research.clear()
+	player.attack_level = 3
+	player.defense_level = 3
+	player.mining_level = 3
+	player.workforce_level = 1
+	player.recovery_level = 1
+	player.farmers = 12
+	player.gold = 329
+	var bot: RefCounted = BOT.new(host, 0)
+	bot.tick(1.0)
+	_check(not host.commands.any(func(c): return c.kind == "research" and c.upgrade == "cannon_range_1"), "bot cannon range preserves ninety gold for reinforcements")
+	player.gold = 330
+	bot.tick(1.0)
+	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "cannon_range_1" and c.cost == 240), "bot with cannon submits paid 240 gold range research")
+	_check(player.cannon_range_level == 0, "bot range does not apply at purchase")
+	host.advance(29.0)
+	_check(player.cannon_range_level == 0, "bot range observes full thirty second research")
+	host.advance(1.0)
+	_check(player.cannon_range_level == 1 and host.players[1].cannon_range_level == 0, "bot range completion affects only the researching owner")
+	player.recovery_level = 0
+	player.gold = 190
+	bot.tick(30.0)
+	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "recovery_1" and c.cost == 100), "developed bot invests one hundred real gold in recovery")
+	_check(player.recovery_level == 0, "bot recovery waits for completion")
+	host.advance(20.0)
+	_check(player.recovery_level == 1 and host.players[1].recovery_level == 0, "bot recovery completes at twenty seconds without helping allies")
+	player.gold = 1000
+	bot.tick(30.0)
+	_check(host.commands.filter(func(c): return c.kind == "research" and c.upgrade == "cannon_range_1").size() == 1 and host.commands.filter(func(c): return c.kind == "research" and c.upgrade == "recovery_1").size() == 1, "bot never researches either single-level track twice")

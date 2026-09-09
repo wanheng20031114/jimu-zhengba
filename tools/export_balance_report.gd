@@ -35,7 +35,7 @@ func _export() -> void:
 	for id: StringName in BUILDING_IDS:
 		var building := BalanceCatalog.building(id)
 		var data := _combat_data(building)
-		data.merge({"cost": building.cost, "build_seconds": building.build_seconds})
+		data.merge({"cost": building.cost, "build_seconds": building.build_seconds, "cost_progression": Array(building.cost_progression)})
 		building_data.append(data)
 	for id: String in BalanceCatalog.UPGRADES:
 		var upgrade := BalanceCatalog.upgrade(id)
@@ -67,10 +67,10 @@ func _export() -> void:
 			for defense_level: int in range(LEVELS):
 				defense_matchups.append(_matchup(building, defender, 0, defense_level, 0,
 					defense_bonuses[defense_level] if defender.military else 0))
-	var report := {"schema_version": 2, "build_id": NetworkProtocol.BUILD_ID,
+	var report := {"schema_version": 3, "build_id": NetworkProtocol.BUILD_ID,
 		"source": "BalanceCatalog + PlayerState + DamageResolver + ResourceVein (Godot)",
 		"units": unit_data, "buildings": building_data, "upgrades": upgrades,
-		"economy": _economy_data(),
+		"economy": _economy_data(), "support_technology": _support_technology_data(),
 		"attack_bonuses": attack_bonuses, "defense_bonuses": defense_bonuses,
 		"matchups": matchups, "building_matchups": building_matchups,
 		"defense_matchups": defense_matchups}
@@ -96,7 +96,7 @@ func _export() -> void:
 				var upgrade: UpgradeDefinition = load(args[1].path_join("%s_%d.tres" % [track, level]))
 				bonuses.append(upgrade.total_bonus)
 			baseline_upgrade_bonuses[track] = bonuses
-		report["baseline"] = {"build_id": "0.8.0", "units": baseline_unit_data, "matchups": baseline_matchups,
+		report["baseline"] = {"build_id": "0.9.0", "units": baseline_unit_data, "matchups": baseline_matchups,
 			"upgrade_bonuses": baseline_upgrade_bonuses}
 	var file := FileAccess.open(args[0], FileAccess.WRITE)
 	if file == null:
@@ -107,6 +107,20 @@ func _export() -> void:
 	file.close()
 	print("BALANCE_REPORT_EXPORT ", matchups.size(), " unit + ", building_matchups.size(), " siege + ", defense_matchups.size(), " defense rows")
 	quit(0)
+
+func _support_technology_data() -> Dictionary:
+	var state := PlayerState.new()
+	var base_range: float = BalanceCatalog.unit(&"cannon").range + state.get_cannon_range_bonus()
+	state.complete_upgrade(BalanceCatalog.upgrade(&"cannon_range_1"))
+	state.complete_upgrade(BalanceCatalog.upgrade(&"recovery_1"))
+	var tower_prices: Array[int] = []
+	for count in range(8):
+		state.paid_tower_count = count
+		tower_prices.append(state.get_building_cost(&"defense_tower"))
+	return {"cannon_range_before": base_range,
+		"cannon_range_after": BalanceCatalog.unit(&"cannon").range + state.get_cannon_range_bonus(),
+		"recovery_delay_seconds": BattleUnit.RECOVERY_DELAY, "recovery_per_second": state.get_recovery_per_second(),
+		"tower_quotes_first_eight": tower_prices}
 
 func _economy_data() -> Dictionary:
 	var definition := BalanceCatalog.ECONOMY

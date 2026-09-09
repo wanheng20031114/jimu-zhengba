@@ -121,7 +121,7 @@ func submit_command(command: Dictionary, owner: int = -1) -> Dictionary:
 	var player: PlayerState = players[owner]
 	var target: Node3D = entities.get(int(command.get("target", 0)))
 	match String(command.kind):
-		"build": cost = BalanceCatalog.building(command.building_type).cost
+		"build": cost = player.get_building_cost(command.building_type)
 		"recruit":
 			var definition: UnitDefinition = BalanceCatalog.unit(command.unit_type)
 			if target == null or not target.is_constructed or not BalanceCatalog.building(target.building_type).produces.has(command.unit_type):
@@ -155,6 +155,7 @@ func submit_command(command: Dictionary, owner: int = -1) -> Dictionary:
 		"build":
 			var at := Vector3(float(command.at[0]), 0, float(command.at[2]))
 			var site: Node3D = add_building(command.building_type, owner, at, false)
+			player.record_building_placement(command.building_type)
 			construction[site.entity_id] = BalanceCatalog.building(command.building_type).build_seconds
 			_set_worker_order(entities[command.units[0]], BattleUnit.Order.BUILD, site)
 		"work": _set_worker_order(entities[command.units[0]], BattleUnit.Order.BUILD, target)

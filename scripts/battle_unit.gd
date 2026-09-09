@@ -21,6 +21,7 @@ const STATS: Dictionary = BalanceCatalog.UNITS
 enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
 const MAX_QUEUED_ORDERS: int = 64
 const CHASE_PREDICTION_SECONDS: float = 0.55
+const RECOVERY_DELAY: float = 10.0
 # A small contact tolerance (about one knight step at the authoritative 30 TPS),
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
@@ -46,7 +47,14 @@ var selected: bool = false
 var display_name: String = ""
 var radius: float = 0.5
 var speed: float = 3.5
-var attack_range: float = 1.0
+var _base_or_replicated_range: float = 1.0
+var attack_range: float:
+	get:
+		# Before _ready this property has its authored base. After binding, only
+		# the authority derives combat values; clients receive the visible result.
+		return _base_or_replicated_range + (_owner_state.get_cannon_range_bonus() if _game != null and _game.is_authority and unit_type == "cannon" else 0.0)
+	set(value):
+		_base_or_replicated_range = value
 var attack_damage: float = 20.0
 var min_attack_range: float = 0.0
 var order_name: String = "待命"
@@ -61,6 +69,9 @@ var _stats: UnitDefinition
 var _model: Node3D
 var _attack_animation: AnimationPlayer
 var _game: Node
+var _owner_state: PlayerState
+var _recovery_quiet_seconds: float = 0.0
+var _recovery_progress: float = 0.0
 var _path_budget: PathBudget
 var _attack_cooldown: float = 0.0
 var _scan_time: float = 0.0
@@ -112,6 +123,7 @@ func _ready() -> void:
 	_target_query.collision_mask = CombatLayers.hostile_entities(alliance_id)
 	_space_state = get_world_3d().direct_space_state
 	_game = get_tree().current_scene
+	_owner_state = _game.get_player(owner_id)
 	_path_budget = _game.get_node("PathBudget")
 	_home_position = global_position
 	destination = global_position
@@ -152,6 +164,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not alive or not _game.is_authority:
 		return
+	_tick_recovery(delta)
 	# Keep the fractional tick at expiry for continuous attacks (e.g. 1.05 s
 	# at 30 physics ticks). An already-ready unit never banks idle attack time.
 	_attack_cooldown = _attack_cooldown - delta if _attack_cooldown > 0.0 else 0.0
@@ -738,6 +751,9 @@ func receive_damage(amount: float, source: Node3D = null) -> void:
 	_apply_damage(maxf(0.0, amount), source)
 
 func _apply_damage(actual_damage: float, source: Node3D) -> void:
+	if actual_damage > 0.0:
+		_recovery_quiet_seconds = 0.0
+		_recovery_progress = 0.0
 	hp = maxf(0.0, hp - actual_damage)
 	_damage_bar_time = 5.0
 	_update_health_bar()
@@ -752,6 +768,27 @@ func _apply_damage(actual_damage: float, source: Node3D) -> void:
 		elif not _valid_target(target) and (order != Order.HOLD or _within_attack_range(source)):
 			target = source
 			_repath_time = 0.0
+
+func _tick_recovery(delta: float) -> void:
+	if not alive or not _game.is_authority or hp >= max_hp:
+		return
+	var waiting: float = maxf(0.0, RECOVERY_DELAY - _recovery_quiet_seconds)
+	_recovery_quiet_seconds = minf(RECOVERY_DELAY, _recovery_quiet_seconds + delta)
+	var rate: float = _owner_state.get_recovery_per_second()
+	if rate <= 0.0:
+		_recovery_progress = 0.0
+		return
+	# Only time after the quiet window accrues healing, retaining fractional
+	# simulation ticks at both boundaries. No wall clock, Timer or global scan.
+	_recovery_progress += maxf(0.0, delta - waiting)
+	if _recovery_progress + 0.000001 < 1.0:
+		return
+	var pulses: int = floori(_recovery_progress + 0.000001)
+	_recovery_progress = maxf(0.0, _recovery_progress - pulses)
+	hp = minf(max_hp, hp + pulses * rate)
+	if hp >= max_hp:
+		_recovery_progress = 0.0
+	_update_health_bar()
 
 func _update_health_bar() -> void:
 	health_bar.set_instance_shader_parameter("health", hp / max_hp)

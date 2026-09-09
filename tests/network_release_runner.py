@@ -49,7 +49,7 @@ def main() -> int:
             summary = json.loads(line.removeprefix("NETWORK_RELEASE_PROBE "))
     stderr = (directory / "stderr.log").read_text(encoding="utf-8", errors="replace")
     success = code == 0 and summary is not None and not summary["failures"] and not stderr.strip()
-    value_audit_present = summary is not None and summary.get("resource_value_checks") == 68 and summary.get("checks", 0) >= 127
+    value_audit_present = summary is not None and summary.get("resource_value_checks") == 75 and summary.get("checks", 0) >= 134
     if summary is not None:
         success = success and summary["exported_template"] != args.source and value_audit_present
         success = success and summary.get("catalogue_only", False) == args.catalogue_only

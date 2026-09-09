@@ -244,7 +244,7 @@ func _run() -> void:
 	await click(control("Codex"))
 	var codex: Control = control("UnitCodex")
 	check(codex.visible, "native codex entry opens the full catalogue")
-	var counts: Array[int] = [6, 5, 12]
+	var counts: Array[int] = [6, 5, 14]
 	for category in range(3):
 		codex._on_category_changed(category)
 		check(codex.get_node("%Entries").item_count == counts[category], "catalogue category " + str(category) + " contains every current resource")
@@ -282,6 +282,14 @@ func _run() -> void:
 	codex.select_entry(2, "mining_3")
 	check(codex.get_node("%Description").text.contains("30%") and codex.get_node("%Stats").get_parsed_text().contains("2.31"), "mining codex shows total thirty percent and actual shortened cycle")
 	await capture("codex-090-mining")
+	codex.select_entry(2, "cannon_range_1")
+	check(codex.get_node("%Stats").get_parsed_text().contains("13 → 14") and codex.get_node("%Description").text.contains("最小射程不变"), "cannon range codex distinguishes increased maximum range from unchanged minimum range")
+	codex.select_entry(2, "recovery_1")
+	var recovery_stats: String = codex.get_node("%Stats").get_parsed_text()
+	check(recovery_stats.contains("10 秒") and recovery_stats.contains("1 生命 / 秒") and recovery_stats.contains("含农民、攻城器"), "recovery codex shows the quiet delay, healing rate and all mobile target classes")
+	check(codex.get_node("%Description").text.contains("每满 1 秒") and codex.get_node("%Description").text.contains("建筑不受益"), "recovery codex explains discrete healing after the delay and excludes buildings")
+	codex.select_entry(1, "defense_tower")
+	check(codex.get_node("%Special").text.contains("150 / 185 / 225 / 255 / 280 / 270") and codex.get_node("%Special").text.contains("取消或摧毁不会重置"), "tower codex displays the exact permanent per-player price progression")
 	await click(codex.get_node("%CloseCodex"))
 	check(not codex.visible and codex.get_node("%CodexViewport").render_target_update_mode == SubViewport.UPDATE_DISABLED and codex._model.process_mode == Node.PROCESS_MODE_DISABLED, "closing codex disables its rendering and animation work")
 	await click(control("SoloMenu"))

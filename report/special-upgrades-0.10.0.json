@@ -1,0 +1,28 @@
+{
+  "game": "积木争霸",
+  "version": "0.10.0",
+  "protocol": 9,
+  "date": "2026-09-10",
+  "engine": "Godot 4.6.3 stable official",
+  "tps": 30,
+  "upgrades": {
+    "cannon_range_1": {"cost": 240, "research_seconds": 30, "base_range": 13, "effective_range": 14},
+    "recovery_1": {"cost": 100, "research_seconds": 20, "quiet_seconds": 10, "first_heal_seconds": 11, "hp_per_second": 1, "includes_workers_and_siege": true, "includes_buildings": false}
+  },
+  "special_suite": {"checks": 144, "failures": [], "exit_code": 0, "stderr_empty": true, "snapshot_wire_bytes": 775, "snapshot_scope": "three visible cannon units; encoded test content only, not match throughput"},
+  "bot_suite": {"checks": 184, "new_special_upgrade_checks": 9, "failures": [], "exit_code": 0, "stderr_empty": true},
+  "recovery_microbenchmark": {
+    "units": 896,
+    "owners": 8,
+    "samples_per_case": 600,
+    "scope": "total recovery callback time for all 896 authored damaged units per logical step; not per unit and not full-match FPS",
+    "unresearched": {"mean_usec": 569.888333333333, "p95_usec": 612, "p99_usec": 700, "max_usec": 1000},
+    "researched": {"mean_usec": 1031.14166666667, "p95_usec": 1107, "p99_usec": 1850, "max_usec": 1975},
+    "mean_increment_usec": 461.253333333333,
+    "increment_baseline": "unresearched callback in 0.10.0, not absence of callback in 0.9.0",
+    "all_units_healed_twenty": true,
+    "exit_code": 0,
+    "stderr_empty": true
+  },
+  "helper_cleanup": {"owned_godot_processes_remaining": 0, "verified_with_windows_process_command": true, "user_editor_preserved": true}
+}

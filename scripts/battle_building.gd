@@ -36,6 +36,7 @@ var radius: float = 4.0
 var order_name: String = "驻防"
 var rally_point: Vector3
 var construction_progress: float = 0.0
+var actual_paid_gold: int = 0
 var is_constructed: bool:
 	get:
 		return alive and not under_construction
@@ -202,10 +203,15 @@ func contribute_work(worker: Node3D, delta: float) -> void:
 		_update_construction_visuals()
 		construction_completed.emit(self)
 
+func construction_refund() -> int:
+	if not alive or not under_construction:
+		return 0
+	return floori(actual_paid_gold * (1.0 - construction_progress) + 0.00001)
+
 func cancel_construction() -> int:
 	if not alive or not under_construction:
 		return 0
-	var refund: int = floori(_stats.cost * (1.0 - construction_progress) + 0.00001)
+	var refund: int = construction_refund()
 	_die()
 	return refund
 

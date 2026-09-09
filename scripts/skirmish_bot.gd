@@ -203,8 +203,8 @@ func _assign_miners() -> void:
 func _try_build(kind: String, near: Vector3) -> bool:
 	if _building(kind) != null or float(_pending_builds.get(kind, 0.0)) > _clock:
 		return true
-	var definition: BuildingDefinition = BalanceCatalog.building(kind)
-	if _budget < definition.cost:
+	var price: int = _game.get_player(_owner).get_building_cost(kind)
+	if _budget < price:
 		return false
 	var position: Vector3 = _game.find_build_location(_owner, kind, near)
 	if not position.is_finite():
@@ -212,7 +212,7 @@ func _try_build(kind: String, near: Vector3) -> bool:
 	var builder: Node3D = _worker_for(position)
 	if builder == null:
 		return false
-	if _submit({"kind": "build", "building_type": kind, "units": [builder.entity_id], "at": [position.x, 0, position.z], "queued": false}, definition.cost):
+	if _submit({"kind": "build", "building_type": kind, "units": [builder.entity_id], "at": [position.x, 0, position.z], "queued": false}, price):
 		_busy_workers[builder.entity_id] = true
 		_pending_builds[kind] = _clock + 3.0
 		return true
@@ -238,7 +238,7 @@ func _develop_base() -> int:
 		return 0
 	if _enemy_power_near(_home, 17.0) > 120.0:
 		if _building("defense_tower") == null:
-			return 0 if _try_build("defense_tower", _home + _front * 11.0) else BalanceCatalog.building(&"defense_tower").cost
+			return 0 if _try_build("defense_tower", _home + _front * 11.0) else _game.get_player(_owner).get_building_cost(&"defense_tower")
 		return 0
 	if _building("factory") == null and _clock >= 75.0:
 		_investment_kind = "factory"
@@ -266,6 +266,14 @@ func _develop_base() -> int:
 	if player.mining_level < int(BalanceCatalog.UPGRADE_TRACKS[&"mining"]) and _workers.size() >= 6 and _army.size() >= 6:
 		var mining := BalanceCatalog.upgrade("mining_%d" % (player.mining_level + 1))
 		if _budget >= mining.cost + BalanceCatalog.unit(&"swordsman").cost * 2 and _start_research(academy, mining):
+			return 0
+	if player.cannon_range_level == 0 and _army.any(func(unit: Node3D): return unit.unit_type == "cannon"):
+		var range_upgrade := BalanceCatalog.upgrade(&"cannon_range_1")
+		if _budget >= range_upgrade.cost + BalanceCatalog.unit(&"swordsman").cost * 2 and _start_research(academy, range_upgrade):
+			return 0
+	if player.recovery_level == 0 and _army.size() >= 6:
+		var recovery := BalanceCatalog.upgrade(&"recovery_1")
+		if _budget >= recovery.cost + BalanceCatalog.unit(&"swordsman").cost * 2 and _start_research(academy, recovery):
 			return 0
 	var track: String = "defense" if player.defense_level <= player.attack_level else "attack"
 	var level: int = player.get_upgrade_level(StringName(track)) + 1

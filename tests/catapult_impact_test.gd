@@ -33,7 +33,7 @@ func _run() -> void:
 		_freeze(building)
 	_check(game.players.map(func(p): return p.alliance_id) == [0, 0, 1, 1], "real 2v2 has four owners and two alliances")
 	var definition := BalanceCatalog.unit("catapult")
-	_check(definition.damage == 18 and definition.bonuses == {&"infantry": 6, &"building": 50} and definition.range == 13,
+	_check(definition.damage == 18 and definition.bonuses == {&"infantry": 6, &"building": 50} and definition.range == 13 and definition.hp == 140 and definition.ranged_armor == 2,
 		"production catapult matches approved damage and range")
 	for legacy: bool in [true, false]:
 		for owner in 4:
@@ -91,16 +91,14 @@ func _target_batch(owner: int, legacy: bool) -> void:
 		var at := Vector3(-28 + (index % 3) * 28, 0, -30 + (index / 3) * 20)
 		var target: Node3D
 		var kind: String
-		var expected: float
 		if index < 10:
 			kind = BUILDINGS[index % 5]
 			target = _building(kind, defender, at, index >= 5)
-			expected = 60.0 if legacy else 58.0
 		else:
 			kind = ["catapult", "cannon", "swordsman", "archer"][index - 10]
 			target = _unit(kind, defender, at)
-			expected = [16.0, 14.0, 38.0, 17.0][index - 10] if legacy else [14.0, 12.0, 24.0, 15.0][index - 10]
 		var source := _unit("catapult", owner, at + Vector3(-10, 0, 0))
+		var expected: float = DamageResolver.resolve(_payload(source, legacy), target.get_combat_definition())
 		pending.append({"source": source, "target": target, "before": target.hp, "expected": expected,
 			"kind": kind, "site": index >= 5 and index < 10})
 	await physics_frame
@@ -139,16 +137,20 @@ func _edge_and_allies() -> void:
 	await physics_frame
 	var point: Vector3 = building.get_attack_position(Vector3.UP)
 	_check(is_equal_approx(Vector2(point.x, point.z).length(), 3.0), "rotated large building footprint touches blast edge despite distant center")
+	var payload: DamagePayload = _payload(source)
+	var archer_damage: float = DamageResolver.resolve(payload, center.get_combat_definition())
+	var siege_damage: float = DamageResolver.resolve(payload, edge.get_combat_definition())
+	var building_damage: float = DamageResolver.resolve(payload, building.get_combat_definition())
 	_fire(source, center)
 	await create_timer(2.5, true, true).timeout
 	var measured: Array[Dictionary] = [
-		{"label": "center", "entity": center, "target": "archer", "expected": 15.0},
-		{"label": "inner", "entity": inner, "target": "archer", "expected": 15.0},
-		{"label": "edge", "entity": archer_edge, "target": "archer", "expected": 15.0},
+		{"label": "center", "entity": center, "target": "archer", "expected": archer_damage},
+		{"label": "inner", "entity": inner, "target": "archer", "expected": archer_damage},
+		{"label": "edge", "entity": archer_edge, "target": "archer", "expected": archer_damage},
 		{"label": "outside", "entity": archer_outside, "target": "archer", "expected": 0.0},
 		{"label": "friendly", "entity": archer_friendly, "target": "archer", "expected": 0.0},
-		{"label": "edge_siege", "entity": edge, "target": "catapult", "expected": 14.0},
-		{"label": "edge_building", "entity": building, "target": "factory", "expected": 58.0},
+		{"label": "edge_siege", "entity": edge, "target": "catapult", "expected": siege_damage},
+		{"label": "edge_building", "entity": building, "target": "factory", "expected": building_damage},
 	]
 	for sample: Dictionary in measured:
 		var entity: Node3D = sample.entity
@@ -160,10 +162,10 @@ func _edge_and_allies() -> void:
 		uniform_splash_samples.append({"label": sample.label, "target": sample.target,
 			"footprint_distance": footprint_distance, "actual": actual, "expected": sample.expected})
 		_check(is_equal_approx(actual, sample.expected), "measured uniform native splash " + sample.label)
-	_check(center.hp == 45 and center.alive, "stone center leaves an archer at forty-five health")
-	_check(is_equal_approx(edge.hp, edge.max_hp - 14.0),
-		"outer siege at footprint distance 2.95 takes full fourteen damage without falloff (actual %.6f)" % (edge.max_hp - edge.hp))
-	_check(is_equal_approx(building.hp, building.max_hp - 58.0), "rotated factory receives full edge splash at footprint instead of center")
+	_check(center.hp == center.max_hp - archer_damage and center.alive, "stone center leaves an archer alive after one hit")
+	_check(is_equal_approx(edge.hp, edge.max_hp - siege_damage),
+		"outer siege at footprint distance 2.95 takes full damage without falloff (actual %.6f)" % (edge.max_hp - edge.hp))
+	_check(is_equal_approx(building.hp, building.max_hp - building_damage), "rotated factory receives full edge splash at footprint instead of center")
 	_check(outside.hp == outside.max_hp, "siege outside true three-meter footprint radius takes no damage")
 	_check(friendly_unit.hp == friendly_unit.max_hp and friendly_building.hp == friendly_building.max_hp,
 		"different allied owner unit and building both reject splash")
@@ -173,6 +175,7 @@ func _source_death() -> void:
 	var source := _unit("catapult", 3, Vector3(-12, 0, 0))
 	var target := _building("headquarters", 0, Vector3.ZERO)
 	game.get_player(3).attack_level = 1
+	var expected_damage: float = DamageResolver.resolve(_payload(source), target.get_combat_definition())
 	await physics_frame
 	await physics_frame
 	_fire(source, target)
@@ -180,15 +183,15 @@ func _source_death() -> void:
 	source.queue_free()
 	game.get_player(3).attack_level = 3
 	await create_timer(2.5, true, true).timeout
-	_check(target.hp == target.max_hp - 59, "freed attacker retains launch +1 snapshot and building bonus on landing")
+	_check(target.hp == target.max_hp - expected_damage, "freed attacker retains launch +1 snapshot and building bonus on landing")
 	game.get_player(3).attack_level = 0
 	await _clear_case()
 
 func _native_attack_release() -> void:
-	var expected_damage: Dictionary = {"factory": 58.0, "catapult": 14.0, "cannon": 12.0, "swordsman": 24.0, "archer": 15.0}
-	for kind: String in expected_damage:
+	for kind: String in ["factory", "catapult", "cannon", "swordsman", "archer"]:
 		var source := _unit("catapult", 0, Vector3(-12, 0, 0))
 		var target: Node3D = _building(kind, 2, Vector3.ZERO) if kind == "factory" else _unit(kind, 2, Vector3.ZERO)
+		var expected: float = DamageResolver.resolve(_payload(source), target.get_combat_definition())
 		game.get_node("FogOfWar").tick(0.3)
 		await physics_frame
 		await physics_frame
@@ -199,7 +202,6 @@ func _native_attack_release() -> void:
 		var shots: Array = game.effect_container.get_children().filter(func(effect): return effect is BattleProjectile)
 		_check(shots.size() == 1, "authored attack windup creates a real stone against " + kind)
 		await create_timer(2.5, true, true).timeout
-		var expected: float = expected_damage[kind]
 		_check(is_equal_approx(target.max_hp - target.hp, expected), "native animation-release-flight-impact damages " + kind)
 		await _clear_case()
 

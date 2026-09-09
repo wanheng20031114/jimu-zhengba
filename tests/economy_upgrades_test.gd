@@ -47,6 +47,7 @@ func _run() -> void:
 	var ally: PlayerState = game.get_player(1)
 	player.gold = 10000
 	var barracks := _building("barracks")
+	var factory := _building("factory")
 	var academy := _building("academy")
 	var other := _building("academy")
 	var research: BuildingProduction = academy.production
@@ -76,10 +77,12 @@ func _run() -> void:
 	check(player.get_supply_limit() == 50 and not unit_queue.recruit("archer").ok, "expansion I waits the entire thirty seconds")
 	research._physics_process(0.01)
 	check(player.get_supply_limit() == 75 and ally.get_supply_limit() == 50, "expansion I grants twenty-five population to its owner only")
-	check(unit_queue.recruit("knight").ok and player.reserved_military_supply == 2, "new population becomes available to paid training")
+	check(unit_queue.recruit("knight").ok and player.reserved_military_supply == 1, "new population becomes available to one-supply knight training")
 	unit_queue.cancel_training(0)
 	player.military_supply = 74
-	check(not unit_queue.recruit("knight").ok and unit_queue.recruit("swordsman").ok, "expanded cap includes weighted living and reserved population")
+	gold_before = player.gold
+	check(not factory.production.recruit("cannon").ok and player.gold == gold_before, "three-supply cannon cannot oversubscribe the expanded cap or charge for rejection")
+	check(unit_queue.recruit("knight").ok and player.used_military_supply() == 75 and player.reserved_military_supply == 1, "one-supply knight reserves the expanded cap's final slot")
 	gold_before = player.gold
 	check(not unit_queue.recruit("archer").ok and player.gold == gold_before and unit_queue.recruit_error("archer").contains("75"), "expanded cap rejection displays seventy-five and does not charge")
 	unit_queue.cancel_training(0)
@@ -88,7 +91,9 @@ func _run() -> void:
 	gold_before = player.gold
 	check(not research.research("army_capacity_2").ok and player.gold == gold_before, "completed expansion cannot be purchased twice")
 	player.military_supply = 99
-	check(unit_queue.recruit("swordsman").ok and player.used_military_supply() == 100, "last fully expanded population slot may be reserved")
+	gold_before = player.gold
+	check(not factory.production.recruit("cannon").ok and player.gold == gold_before, "three-supply cannon is still weighted at the full expansion limit")
+	check(unit_queue.recruit("knight").ok and player.used_military_supply() == 100, "one-supply knight reserves the fully expanded final slot")
 	check(not unit_queue.recruit("knight").ok, "one hundred is the final military ceiling")
 	unit_queue.cancel_training(0)
 	player.military_supply = 0

@@ -601,10 +601,14 @@ func host_selection_retirement() -> void:
 	check(await until(func(): return all_phase("retirement_select"), 15.0), "client_selects_groups_and_commands_real_knight")
 	check(await until(func(): return knight.global_position.distance_to(at) > 0.7, 8.0), "selected_remote_knight_move_reaches_authority")
 	var supply_before: int = game.get_player(1).military_supply
+	var knight_supply: int = BalanceCatalog.unit("knight").supply
+	check(knight_supply == 1, "current_knight_contract_is_one_military_population")
 	var id: int = knight.entity_id
 	knight.receive_damage(knight.max_hp)
 	check(not knight.alive and not game.entities_by_id.has(id), "host_uses_native_death_to_retire_knight")
-	check(game.get_player(1).military_supply == supply_before - 2, "retirement_death_releases_knight_population_once")
+	check(game.get_player(1).military_supply == supply_before - knight_supply, "retirement_death_releases_knight_population_once")
+	knight.receive_damage(knight.max_hp)
+	check(game.get_player(1).military_supply == supply_before - knight_supply, "repeated_damage_on_dead_knight_cannot_release_population_again")
 	publish("retirement_removed")
 	check(await until(func(): return all_phase("retirement_removed"), 15.0), "client_survives_deletion_shift_append_group_and_right_click")
 	var survivor: BattleUnit = game.entities_by_id[int(_published.actors["1"])]
@@ -847,7 +851,7 @@ static func number_statistics(values: Array) -> Dictionary:
 		"p99": ordered[int((ordered.size() - 1) * 0.99)], "max": ordered.back()}
 
 func host_network_load() -> void:
-	check(_load_units == 280, "load_fixture_is_four_real_sixty_supply_ten_farmer_rosters")
+	check(_load_units == 280, "load_fixture_preserves_four_seventy_unit_rosters")
 	if _load_units != 280:
 		return
 	publish("network_load_setup")
@@ -886,11 +890,15 @@ func host_network_load() -> void:
 		check(points.size() == 70, "seventy_nonoverlapping_walkable_spawns_owner_%d" % player.owner_id)
 		if points.size() != 70:
 			return
+		var expected_supply: int = 0
 		for index: int in range(70):
-			var unit: BattleUnit = game.spawn_unit("farmer" if index < 10 else "swordsman", player.owner_id, points[index])
+			var kind: String = "farmer" if index < 10 else "swordsman"
+			var definition := BalanceCatalog.unit(kind)
+			expected_supply += definition.supply if definition.military else 0
+			var unit: BattleUnit = game.spawn_unit(kind, player.owner_id, points[index])
 			_load_routes[unit.entity_id] = [points[index], points[(index + 35) % 70]]
 			unit.issue_move(points[(index + 35) % 70])
-		check(player.farmers == 10 and player.military_supply == 60, "load_keeps_real_owner_population_limits_%d" % player.owner_id)
+		check(player.farmers == 10 and player.military_supply == expected_supply, "load_owner_population_matches_unchanged_roster_%d" % player.owner_id)
 	await seconds(2.0)
 	check(await until(func(): return all_phase("network_load_ready"), 25.0), "three_clients_have_complete_load_roster")
 	var probe: Node = preload("res://tests/skirmish_profile_probe.tscn").instantiate()

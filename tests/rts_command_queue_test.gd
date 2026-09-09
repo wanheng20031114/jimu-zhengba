@@ -164,12 +164,12 @@ func _paid_tower_construction() -> void:
 			return
 		var result := command({"kind": "build", "building_type": "defense_tower", "units": [worker.entity_id],
 			"at": [at.x, at.y, at.z], "queued": true})
-		check(result.ok and player.gold == original_gold - (index + 1) * 150, "shift_tower_command_charges_150_gold_" + str(index))
+		check(result.ok and player.gold == original_gold - [150, 335][index], "shift_tower_command_charges_authoritative_ladder_" + str(index))
 		if not result.ok:
 			return
 		sites.append(game.entities_by_id[result.entity_id])
 	check(worker.work_target == sites[0] and worker.waypoint_queue.size() == 1 and worker.waypoint_queue[0].entity == sites[1], "paid_shift_towers_keep_active_and_queued_worker_jobs")
-	check(command({"kind": "cancel_site", "target": sites[1].entity_id}).ok and player.gold == original_gold - 150, "untouched_queued_tower_refunds_all_150_gold")
+	check(command({"kind": "cancel_site", "target": sites[1].entity_id}).ok and player.gold == original_gold - 150, "untouched_second_queued_tower_refunds_its_paid_185_gold")
 	check(not command({"kind": "cancel_site", "target": sites[1].entity_id}).ok and player.gold == original_gold - 150, "repeated_queued_tower_cancel_cannot_refund_twice")
 	worker.global_position = sites[0].global_position + Vector3(3, 0, 0)
 	check(sites[0].try_claim_builder(worker), "paid_tower_claims_actual_assigned_builder")
@@ -182,7 +182,7 @@ func _paid_tower_construction() -> void:
 	if not at.is_finite():
 		return
 	var result := command({"kind": "build", "building_type": "defense_tower", "units": [worker.entity_id], "at": [at.x, at.y, at.z]})
-	check(result.ok and player.gold == original_gold - 210, "completion_case_pays_another_150_gold")
+	check(result.ok and player.gold == original_gold - 285, "completion_case_pays_third_tower_price_225_gold_despite_cancellations")
 	if not result.ok:
 		return
 	var tower: BattleBuilding = game.entities_by_id[result.entity_id]
@@ -190,7 +190,7 @@ func _paid_tower_construction() -> void:
 	check(tower.try_claim_builder(worker), "completion_case_claims_actual_builder")
 	tower.contribute_work(worker, 20.0)
 	check(tower.is_constructed and tower.hp == 1000 and tower.max_hp == 1000, "twenty_seconds_completes_paid_tower_with_one_thousand_health")
-	check(command({"kind": "destroy", "targets": [tower.entity_id]}).ok and not tower.alive and player.gold == original_gold - 210, "completed_paid_tower_demolition_has_no_refund")
+	check(command({"kind": "destroy", "targets": [tower.entity_id]}).ok and not tower.alive and player.gold == original_gold - 285, "completed_paid_tower_demolition_has_no_refund")
 	worker.stop()
 
 func _groups_and_production() -> void:
@@ -266,6 +266,7 @@ func _destroy() -> void:
 	check(command({"kind": "destroy", "targets": [worker.entity_id, worker.entity_id]}).ok, "duplicate_delete_ids_processed_once")
 	check(not worker.alive and mine.occupied_slots() == slots - 1, "worker_delete_releases_mine_slot")
 	var site := building("defense_tower", 0, Vector3(-10, 0, 12), true)
+	site.actual_paid_gold = 150
 	site.construction_progress = 0.4
 	gold = game.get_player(0).gold
 	check(command({"kind": "destroy", "targets": [site.entity_id]}).ok, "delete_cancels_construction_site")

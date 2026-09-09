@@ -1,6 +1,6 @@
 extends SceneTree
 ## Stability, not a frame-rate benchmark. Native maps, damage, HP, 30 TPS and audio.
-## Reuses the 60-supply army compositions and placement of skirmish_stress_test.
+## Reuses the fixed army compositions and placement of skirmish_stress_test.
 const STRESS_FIXTURE = preload("res://tests/skirmish_stress_test.gd")
 const ROUNDS: Array[Dictionary] = [
 	{"mode": "1v1", "composition": "mixed", "units": 104},
@@ -73,7 +73,7 @@ func _run() -> void:
 		"projectile_kinds": projectiles_seen.keys(), "wall_seconds": (Time.get_ticks_msec() - started_msec) / 1000.0,
 		"audio": AudioServer.get_driver_name(), "renderer": RenderingServer.get_current_rendering_method(),
 		"physics_tps": Engine.physics_ticks_per_second, "time_scale": Engine.time_scale,
-		"conditions": "Real maps and 60 supply plus 10 farmers per owner; fixture units/gold only; no health/damage/cooldown changes; no FPS claims with another player process active."}
+		"conditions": "Real maps; unchanged 42-unit mixed army or 60 infantry plus 10 farmers per owner, population derived from current resources; fixture units/gold only; no health/damage/cooldown changes; no FPS claims with another player process active."}
 	var output := FileAccess.open("res://artifacts/crash_stability_results.json", FileAccess.WRITE)
 	output.store_string(JSON.stringify(report, "  "))
 	output.close()
@@ -195,7 +195,9 @@ func _populate(config: Dictionary, site_at: Vector3) -> void:
 				for count: int in range(STRESS_FIXTURE.MIXED_COUNTS[kind]): roster.append(kind)
 		else:
 			for count: int in range(60): roster.append("swordsman" if count % 2 == 0 else "archer")
+		var expected_supply: int = 0
 		for index: int in range(roster.size()):
+			expected_supply += BalanceCatalog.unit(roster[index]).supply
 			var at := Vector3(lane + (float(index % 8) - 3.5) * 2.0, 0, sign_z * (12.0 + float(index / 8) * 2.0))
 			var unit: BattleUnit = game.spawn_unit(roster[index], player.owner_id, NavigationServer3D.map_get_closest_point(map, at))
 			unit.died.connect(_on_death)
@@ -213,7 +215,7 @@ func _populate(config: Dictionary, site_at: Vector3) -> void:
 			worker.died.connect(_on_death)
 			worker.damaged.connect(_on_damage)
 			if player.owner_id != 0 or index != 0: worker.issue_gather(mine)
-		_check(player.farmers == 10 and player.military_supply == 60, "fixture owner %d preserves native population caps" % player.owner_id)
+		_check(player.farmers == 10 and player.military_supply == expected_supply, "fixture owner %d accounts for the unchanged roster using current population data" % player.owner_id)
 	_check(get_nodes_in_group("units").size() == int(config.units), "fixture native unit count is %d" % config.units)
 	_check(get_nodes_in_group("units").all(func(unit): return unit.max_hp == BalanceCatalog.unit(unit.unit_type).hp), "fixture retains original unit HP without durability multipliers")
 	game.select_army()

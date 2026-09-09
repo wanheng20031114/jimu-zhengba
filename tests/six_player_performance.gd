@@ -89,7 +89,11 @@ func _populate(composition: String) -> void:
 			player.complete_upgrade(BalanceCatalog.upgrade("workforce_1"))
 			player.complete_upgrade(BalanceCatalog.upgrade("army_capacity_2"))
 		var worker_count: int = player.get_worker_limit()
-		var expected_supply: int = 36 if composition == "mixed" else player.get_supply_limit()
+		var expected_supply: int = player.get_supply_limit()
+		if composition == "mixed":
+			expected_supply = 0
+			for kind: String in SIX_PLAYER_MIX:
+				expected_supply += SIX_PLAYER_MIX[kind] * BalanceCatalog.unit(kind).supply
 		_check(player.get_supply_limit() == (50 if composition == "mixed" else 100), "owner %d has the real researched population limit" % player.owner_id)
 		var sign_x: float = -1.0 if player.alliance_id == 0 else 1.0
 		# Preserve the original 3v3 fixture exactly. Four-player teams instead use

@@ -1,0 +1,32 @@
+{
+  "game": "积木争霸",
+  "version": "0.10.0",
+  "protocol": 9,
+  "mode": "2v2",
+  "transport": "four native Godot clients and one local ENet/DTLS relay",
+  "public_server_used": false,
+  "command": "python tests/network_game_live_runner.py local --mode 2v2 --steady-seconds 0",
+  "log_directory": ".local/network/live-2v2-local-a27dc90c",
+  "checks": 217,
+  "failures": [],
+  "stderr_empty_all_four_clients_and_relay": true,
+  "expected_dtls_reorder_diagnostics": 0,
+  "knight_population_contract": 1,
+  "native_death_releases_population_once": true,
+  "repeated_damage_on_dead_knight_releases_no_more_population": true,
+  "client_selection_group_and_right_click_survive_retirement": true,
+  "peers": [
+    {"owner": 0, "checks": 99, "failures": [], "elapsed_seconds": 78.596, "snapshots": 0, "snapshot_rejections": 0, "snapshot_tick_regressions": 0},
+    {"owner": 1, "checks": 53, "failures": [], "elapsed_seconds": 77.763, "snapshots": 1112, "snapshot_rejections": 0, "snapshot_tick_regressions": 0, "sampled_snapshot_gap_ms": {"samples": 366, "mean": 66.6584699453552, "p95": 83, "max": 90}},
+    {"owner": 2, "checks": 32, "failures": [], "elapsed_seconds": 77.408, "snapshots": 1119, "snapshot_rejections": 0, "snapshot_tick_regressions": 0, "sampled_snapshot_gap_ms": {"samples": 366, "mean": 66.7158469945355, "p95": 83, "max": 90}, "expected_permission_rejection": "host_only"},
+    {"owner": 3, "checks": 33, "failures": [], "elapsed_seconds": 77.031, "snapshots": 960, "snapshot_rejections": 0, "snapshot_tick_regressions": 0, "sampled_snapshot_gap_ms": {"samples": 364, "mean": 66.6648351648352, "p95": 83, "max": 87}}
+  ],
+  "unchanged_stress_rosters": {
+    "mixed_per_owner": {"swordsman": 19, "archer": 10, "knight": 8, "catapult": 3, "cannon": 2, "farmer": 10, "military_population_at_current_values": 52, "actual_units": 52},
+    "maximum_per_owner": {"infantry": 60, "farmer": 10, "military_population_at_current_values": 60, "actual_units": 70},
+    "population_assertions": "computed from each unchanged roster and current UnitDefinition.supply; direct-spawn stress counts are not legal baseline recruitment-cap claims",
+    "old_long_stress_suites_rerun": false,
+    "load_units_for_this_live_run": 0
+  },
+  "cleanup": {"owned_helpers_remaining": 0, "windows_process_query_verified": true, "ephemeral_local_private_key_removed_by_runner": true, "user_editor_preserved": true}
+}

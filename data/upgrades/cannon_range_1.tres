@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"cannon_range_1"
+name = "加长炮管"
+track = &"cannon_range"
+level = 1
+cost = 240
+research_seconds = 30.0
+total_bonus = 1

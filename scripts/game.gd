@@ -461,7 +461,7 @@ func set_build_mode(value: bool, kind: String = "defense_tower") -> void:
 		_preview_time = 0.0
 		var definition := BalanceCatalog.building(kind)
 		$BuildingPreview.configure(kind, definition.size)
-		hud.toast("%s · %d 金币 · 左键放置 · Shift 连续建造" % [definition.name, definition.cost], 6.0)
+		hud.toast("%s · %d 金币 · 左键放置 · Shift 连续建造" % [definition.name, get_player(local_owner_id).get_building_cost(kind)], 6.0)
 	$BuildingPreview.visible = build_mode
 	hud.refresh()
 
@@ -476,8 +476,9 @@ func placement_error(at: Vector3, owner: int = -1, kind: String = "") -> String:
 	var definition := BalanceCatalog.building(kind)
 	if finished:
 		return "当前无法建造"
-	if get_player(owner).gold < definition.cost:
-		return "金币不足 · 需要 %d 金币" % definition.cost
+	var price: int = get_player(owner).get_building_cost(kind)
+	if get_player(owner).gold < price:
+		return "金币不足 · 需要 %d 金币" % price
 	var own := owned_entities(owner, "buildings")
 	if kind == "headquarters" and own.any(func(b): return b.building_type == "headquarters"):
 		return "每位玩家只能拥有一座大本营（含工地）"
@@ -1023,10 +1024,18 @@ func create_site(owner: int, kind: String, at: Vector3, workers: Array, queued: 
 	if not error.is_empty():
 		return MatchCommands.failure(error)
 	var worker := choose_builder(workers, at, queued)
-	get_player(owner).gold -= BalanceCatalog.building(kind).cost
+	var player: PlayerState = get_player(owner)
+	var price: int = player.get_building_cost(kind)
+	# Validation and placement run consecutively on the authority tick. Each Shift
+	# request observes the preceding paid placement, never a client-supplied quote.
+	player.gold -= price
 	var site := spawn_building(kind, owner, at, true)
+	site.actual_paid_gold = price
+	player.record_building_placement(kind)
 	worker.issue_build(site, queued)
 	$ConstructionNavigation.refresh()
+	if owner == local_owner_id and queued and build_mode and build_kind == kind:
+		hud.toast("%s · 下一座 %d 金币 · Shift 连续建造" % [site.display_name, player.get_building_cost(kind)], 6.0)
 	return {"ok": true, "entity_id": site.entity_id}
 
 func spawn_building(kind: String, owner: int, at: Vector3, construction: bool = false, id: int = 0) -> BattleBuilding:

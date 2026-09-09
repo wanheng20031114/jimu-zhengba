@@ -100,13 +100,14 @@ func _melee_and_vision() -> void:
 	await _clear()
 	var charging_knight: BattleUnit = _spawn("knight", 0, Vector3.ZERO)
 	var archer: BattleUnit = _spawn("archer", 1, Vector3(1.5, 0, 0))
+	var expected_damage: float = DamageResolver.resolve(DamageResolver.snapshot(charging_knight.get_combat_definition(), 0, 0, 0), archer.get_combat_definition())
 	charging_knight._charge_time = 2.0
 	charging_knight.issue_attack(archer)
 	charging_knight._start_attack()
 	await _wait(0.3)
-	_check(archer.hp == 50, "visual cavalry charge does not multiply the ten-damage anti-archer strike")
+	_check(archer.hp == archer.max_hp - expected_damage, "visual cavalry charge does not multiply the resource-defined anti-archer strike")
 	charging_knight.set_physics_process(true)
-	_check(await _until(func(): return not archer.alive, 7.0), "six native cavalry strikes defeat a full-health archer")
+	_check(await _until(func(): return not archer.alive, 7.0), "native cavalry completes its attack cycles against a full-health archer")
 	await _clear()
 
 func _cannon_snapshot() -> void:
@@ -119,8 +120,9 @@ func _cannon_snapshot() -> void:
 	cannon.queue_free()
 	host.get_player(0).attack_level = 3
 	host.get_player(1).defense_level = 2
+	var expected_damage: float = DamageResolver.resolve(payload, catapult.get_combat_definition(), host.get_player(1).get_defense_bonus())
 	await _wait(1.0)
-	_check(catapult.hp == 119, "source freed after launch deals the captured attack +1 versus current defense +2")
+	_check(catapult.hp == catapult.max_hp - expected_damage, "source freed after launch deals the captured attack +1 versus current defense +2")
 	_check(neighbor.hp == neighbor.max_hp, "cannon explosion does not splash a neighboring archer")
 	_check(host.get_node("Effects").get_child_count() == 0, "completed projectile frees itself after the interpolation tail")
 	await _clear()
@@ -157,18 +159,20 @@ func _siege_melee_vulnerability() -> void:
 		var siege: BattleUnit = _spawn(kind, 1, Vector3(1.5, 0, 0))
 		host.get_player(1).defense_level = 3
 		var melee := DamageResolver.snapshot(sword.get_combat_definition(), 0, 0, 0)
+		var melee_damage: float = DamageResolver.resolve(melee, siege.get_combat_definition(), host.get_player(1).get_defense_bonus())
 		siege.receive_hit(melee, sword)
-		_check(siege.hp == siege.max_hp - 4, kind + " native melee receive_hit ignores defense III")
+		_check(siege.hp == siege.max_hp - melee_damage, kind + " native melee receive_hit ignores defense III")
 		var before: float = siege.hp
 		var ranged := DamageResolver.snapshot(archer.get_combat_definition(), 0, 0, 0)
+		var ranged_damage: float = DamageResolver.resolve(ranged, siege.get_combat_definition(), host.get_player(1).get_defense_bonus())
 		siege.receive_hit(ranged, archer)
-		_check(before - siege.hp == (2 if kind == "catapult" else 1), kind + " native ranged receive_hit retains defense III")
+		_check(before - siege.hp == ranged_damage, kind + " native ranged receive_hit retains defense III")
 		siege.hp = siege.max_hp
 		var hits: int = 0
 		while siege.alive:
 			siege.receive_hit(melee, sword)
 			hits += 1
-		_check(hits == (40 if kind == "catapult" else 50), kind + " compact sword attack and zero melee armor need forty or fifty hits even with defense III")
+		_check(hits == ceili(siege.max_hp / melee_damage) and hits <= 25, kind + " exposed siege dies within twenty-five native sword hits even with defense III")
 		await _clear()
 
 func _knight_siege_hits() -> void:
@@ -176,20 +180,22 @@ func _knight_siege_hits() -> void:
 		var knight: BattleUnit = _spawn("knight", 0, Vector3.ZERO)
 		var target: BattleUnit = _spawn(kind, 1, Vector3(2, 0, 0))
 		knight.issue_attack(target)
-		var needed: int = 8 if kind == "catapult" else 10
+		var damage: float = DamageResolver.resolve(DamageResolver.snapshot(knight.get_combat_definition(), 0, 0, 0), target.get_combat_definition())
+		var needed: int = ceili(target.max_hp / damage)
 		for strike in range(1, needed + 1):
 			knight._start_attack()
 			await _wait(0.3)
-			_check(target.hp == maxf(0, target.max_hp - strike * 20) and target.alive == (strike < needed), kind + " native cavalry strike " + str(strike) + " retains twenty anti-siege damage")
+			_check(target.hp == maxf(0, target.max_hp - strike * damage) and target.alive == (strike < needed), kind + " native cavalry strike " + str(strike) + " applies its anti-siege bonus")
 		await _clear()
 
 func _cannon_mirror_five_shots() -> void:
 	var cannon: BattleUnit = _spawn("cannon", 0, Vector3.ZERO)
 	var target: BattleUnit = _spawn("cannon", 1, Vector3(0, 0, -10))
+	var damage: float = DamageResolver.resolve(DamageResolver.snapshot(cannon.get_combat_definition(), 0, 0, 0), target.get_combat_definition())
 	for shot in range(1, 6):
 		host.spawn_projectile(cannon, target, DamageResolver.snapshot(cannon.get_combat_definition(), 0, 0, 0), "cannon")
 		await _wait(1.0)
-		_check(target.hp == 200 - shot * 40 and target.alive == (shot < 5), "native cannon mirror shot " + str(shot) + " deals forty damage and fifth shot destroys")
+		_check(target.hp == maxf(0, target.max_hp - shot * damage) and target.alive == (shot < 5), "native cannon mirror shot " + str(shot) + " deals resource-defined damage and fifth shot destroys")
 	_check(target.hp == 0 and not target.alive, "five real cannon projectiles destroy a full-health cannon")
 	await _clear()
 

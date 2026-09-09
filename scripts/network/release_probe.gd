@@ -64,6 +64,7 @@ func _run() -> void:
 			# Native export may convert scenes/resources to binary and remap them.
 			check(FileAccess.file_exists(path) if relative.ends_with(".json") else ResourceLoader.exists(path), "catalogue_resource_" + relative)
 	validate_resource_values()
+	resource_value_checks += validate_special_upgrade_values()
 	check(FileAccess.file_exists(RelayClient.CERTIFICATE_PATH), "packaged_public_trust_certificate_exists")
 	var endpoint := read_dictionary(ENDPOINT_PATH)
 	check(endpoint.get("address") is String and not endpoint.get("address", "").is_empty() and NetworkProtocol.integer(endpoint.get("port"), 1, 65535), "packaged_public_endpoint_exists")
@@ -111,7 +112,7 @@ func validate_resource_values() -> void:
 	var began := checks
 	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "archer", "knight"],
 		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
-	var defensive_damage := {"headquarters": 10, "enemy_keep": 10, "defense_tower": 14, "tower": 14}
+	var defensive_damage := {"headquarters": 10, "enemy_keep": 10, "defense_tower": 13, "tower": 14}
 	for kind: String in production:
 		var building := BalanceCatalog.building(kind)
 		check(Array(building.produces) == production[kind], "packaged_production_members_" + kind)
@@ -122,44 +123,46 @@ func validate_resource_values() -> void:
 		check(unit.id == StringName(kind) and unit.hp > 0.0 and is_finite(unit.hp) and unit.cost > 0 and unit.speed > 0.0
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
-	check(not farmer.military and farmer.hp == 150 and farmer.damage == 3 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0, "packaged_farmer_health_and_training_contract")
+	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
 	var training_seconds := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
-	for pair: Array in [["knight", "archer", 6], ["knight", "swordsman", 20], ["swordsman", "knight", 6],
-		["swordsman", "archer", 15], ["archer", "knight", 40], ["archer", "swordsman", 12]]:
+	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 15], ["swordsman", "knight", 6],
+		["swordsman", "archer", 8], ["archer", "knight", 20], ["archer", "swordsman", 9]]:
 		var defender := BalanceCatalog.unit(pair[1])
 		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
 		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
 	var archer := BalanceCatalog.unit("archer")
 	var swordsman := BalanceCatalog.unit("swordsman")
-	check(archer.damage == 9 and archer.hp == 60 and archer.ranged_armor == 3 and archer.bonuses.is_empty() and archer.sight == 13
+	check(archer.damage == 12 and archer.hp == 60 and archer.ranged_armor == 3 and archer.bonuses.is_empty() and archer.sight == 14
 		and swordsman.ranged_armor == 0 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
-		and swordsman.damage == 4 and swordsman.bonuses == {&"cavalry": 18},
+		and swordsman.damage == 8 and swordsman.bonuses == {&"cavalry": 14} and swordsman.sight == 11,
 		"packaged_archer_values_and_swordsman_anti_cavalry_bonus")
-	check(BalanceCatalog.unit("knight").sight == 15 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
+	check(BalanceCatalog.unit("knight").sight == 16 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
-	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 6 and knight.melee_armor == 2 and knight.damage == 7
-		and knight.bonuses == {&"archer": 3, &"siege": 13}, "packaged_knight_price_ranged_armor_and_class_bonuses")
+	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 6 and knight.melee_armor == 2 and knight.damage == 9
+		and knight.bonuses == {&"archer": 3, &"siege": 11} and knight.supply == 1, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")
 	check(catapult.range == 13 and catapult.damage == 18
 		and catapult.bonuses == {&"infantry": 6, &"building": 50}
-		and catapult.cost == 200 and catapult.hp == 160 and catapult.cooldown == 3 and catapult.min_range == 3,
+		and catapult.cost == 200 and catapult.hp == 140 and catapult.ranged_armor == 2 and catapult.cooldown == 3 and catapult.min_range == 3 and catapult.sight == 20,
 		"packaged_catapult_reach_damage_and_class_bonuses")
 	var stone := DamageResolver.snapshot(catapult, 0, 0, 0)
 	check(DamageResolver.resolve(stone, swordsman) == 24 and DamageResolver.resolve(stone, archer) == 15
 		and ceili(swordsman.hp / 24.0) == 5 and ceili(archer.hp / 15.0) == 4,
 		"packaged_catapult_needs_five_swordsman_hits_and_four_archer_hits")
 	var cannon := BalanceCatalog.unit("cannon")
-	check(cannon.damage == 46 and cannon.bonuses == {&"building": 150}, "packaged_cannon_base_damage_and_building_only_bonus")
+	check(cannon.damage == 26 and cannon.bonuses == {&"siege": 12, &"building": 150} and cannon.ranged_armor == 2, "packaged_cannon_base_damage_siege_and_building_bonus")
 	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
-	check(cannon_damage == 40 and ceili(cannon.hp / cannon_damage) == 5
+	check(cannon_damage == 36 and ceili(cannon.hp / cannon_damage) == 5
 		and is_equal_approx((cannon.hp - 4 * cannon_damage) / cannon.hp, 0.2), "packaged_cannon_five_mirror_hits_to_destroy")
-	check(cannon.hp == 200 and cannon.cost == 250 and cannon.range == 14 and cannon.min_range == 2.5
+	check(cannon.hp == 180 and cannon.cost == 250 and cannon.range == 13 and cannon.min_range == 2.5 and cannon.sight == 21
 		and is_equal_approx(cannon.cooldown, 3.2), "packaged_cannon_health_price_and_reach")
 	var defense_tower := BalanceCatalog.building("defense_tower")
 	check(defense_tower.cost == 150 and defense_tower.hp == 1000 and defense_tower.build_seconds == 20
-		and defense_tower.range == cannon.range and catapult.range == cannon.range - 1,
+		and defense_tower.range == cannon.range and catapult.range == cannon.range
+		and defense_tower.bonuses == {&"infantry": 3, &"cavalry": 9}
+		and Array(defense_tower.cost_progression) == [150, 185, 225, 255, 280, 270],
 		"packaged_tower_price_health_time_and_siege_reach_relationship")
 	for siege: UnitDefinition in [catapult, cannon]:
 		check(siege.melee_armor == 0 and not siege.melee_defense_upgrades
@@ -167,7 +170,7 @@ func validate_resource_values() -> void:
 			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.RANGED, 3) == siege.ranged_armor + 3,
 			"packaged_" + String(siege.id) + "_zero_melee_armor_after_defense_research")
 		var knight_damage := DamageResolver.resolve(DamageResolver.snapshot(knight, 0, 0, 0), siege)
-		check(knight_damage == 20 and ceili(siege.hp / knight_damage) == (8 if siege.id == &"catapult" else 10),
+		check(knight_damage == 20 and ceili(siege.hp / knight_damage) == (7 if siege.id == &"catapult" else 9),
 			"packaged_knight_extended_hits_against_" + String(siege.id))
 	var technology_bonuses := {"attack": [1, 2, 4], "defense": [1, 2, 3]}
 	for track: String in ["attack", "defense"]:
@@ -198,6 +201,23 @@ func validate_resource_values() -> void:
 		check(is_equal_approx(player.get_mining_rate_multiplier(), 1.0 + level * 0.1) and player.get_supply_limit() == 100
 			and player.get_worker_limit() == 12 and player.get_attack_bonus() == 0 and player.get_defense_bonus() == 0, "packaged_mining_state_%d" % level)
 	resource_value_checks = checks - began
+
+func validate_special_upgrade_values() -> int:
+	var began: int = checks
+	check(BalanceCatalog.UPGRADE_TRACKS.get(&"cannon_range") == 1 and BalanceCatalog.UPGRADE_TRACKS.get(&"recovery") == 1, "packaged_two_special_upgrade_tracks")
+	var cannon_range := BalanceCatalog.upgrade(&"cannon_range_1")
+	var recovery := BalanceCatalog.upgrade(&"recovery_1")
+	check(cannon_range.track == &"cannon_range" and cannon_range.level == 1 and cannon_range.cost == 240 and cannon_range.research_seconds == 30.0 and cannon_range.total_bonus == 1, "packaged_cannon_range_research_contract")
+	check(recovery.track == &"recovery" and recovery.level == 1 and recovery.cost == 100 and recovery.research_seconds == 20.0 and recovery.total_bonus == 1 and BattleUnit.RECOVERY_DELAY == 10.0, "packaged_recovery_research_contract")
+	var player := PlayerState.new()
+	check(player.get_cannon_range_bonus() == 0.0 and player.get_recovery_per_second() == 0.0, "packaged_special_research_initially_disabled")
+	player.complete_upgrade(cannon_range)
+	check(player.get_cannon_range_bonus() == 1.0 and player.get_recovery_per_second() == 0.0 and BalanceCatalog.unit(&"cannon").range + player.get_cannon_range_bonus() == 14.0, "packaged_cannon_range_upgrade_reaches_fourteen")
+	player.complete_upgrade(recovery)
+	check(player.get_recovery_per_second() == 1.0 and player.get_cannon_range_bonus() == 1.0, "packaged_recovery_is_independent_of_range")
+	var private_state := player.private_state()
+	check(private_state.cannon_range_level == 1 and private_state.recovery_level == 1 and not player.public_state().has("recovery_level"), "packaged_special_tech_state_is_private")
+	return checks - began
 
 func until(predicate: Callable, duration: float) -> bool:
 	var deadline := Time.get_ticks_msec() + int(duration * 1000)

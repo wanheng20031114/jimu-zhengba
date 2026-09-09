@@ -125,7 +125,7 @@ func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 	if entity is BattleUnit:
 		var unit := entity as BattleUnit
 		var animation: AnimationPlayer = unit._attack_animation
-		state.merge({"category": "unit", "kind": unit.unit_type, "moving": unit._moving,
+		state.merge({"category": "unit", "kind": unit.unit_type, "moving": unit._moving, "attack_range": unit.attack_range,
 			"working": unit._working, "work": unit.work_progress,
 			"anim": String(animation.current_animation) if animation.is_playing() else "",
 			"phase": animation.current_animation_position if animation.is_playing() else 0.0})
@@ -140,6 +140,7 @@ func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 			"construction": building.under_construction, "progress": building.construction_progress,
 			"rotation": vector_data(building.rotation)})
 		if building.owner_id == recipient:
+			state["actual_paid_gold"] = building.actual_paid_gold
 			state["production"] = building.production.snapshot()
 			state["rally"] = vector_data(building.rally_point)
 			state["rally_mine"] = building.production.rally_mine.entity_id if is_instance_valid(building.production.rally_mine) else 0
@@ -392,6 +393,7 @@ func _apply_entity(entity: Node3D, state: Dictionary) -> void:
 	if entity.owner_id == game.local_owner_id:
 		entity.order_name = state.order_name
 	if entity is BattleUnit:
+		entity.attack_range = float(state.attack_range)
 		if entity.owner_id == game.local_owner_id:
 			entity.order = int(state.order)
 			entity.set_meta("replica_queue_count", int(state.queued_count))
@@ -409,6 +411,7 @@ func _apply_entity(entity: Node3D, state: Dictionary) -> void:
 			entity._update_construction_visuals()
 		entity.get_node("DamageSmoke").emitting = entity.hp < entity.max_hp * 0.55
 		if entity.owner_id == game.local_owner_id:
+			entity.actual_paid_gold = int(state.actual_paid_gold)
 			entity.rally_point = vector(state.rally)
 			entity.production.training.assign(state.production.training)
 			entity.production.research_queue.assign(state.production.research_queue)
@@ -457,11 +460,14 @@ func _apply_players(states: Array) -> void:
 		player.reserved_military_supply = int(own.reserved_supply)
 		player.farmers = int(own.farmers)
 		player.reserved_farmers = int(own.reserved_farmers)
+		player.paid_tower_count = int(own.paid_tower_count)
 		player.attack_level = int(own.attack_level)
 		player.defense_level = int(own.defense_level)
 		player.workforce_level = int(own.workforce_level)
 		player.army_capacity_level = int(own.army_capacity_level)
 		player.mining_level = int(own.mining_level)
+		player.cannon_range_level = int(own.cannon_range_level)
+		player.recovery_level = int(own.recovery_level)
 		player.queued_research = own.queued_research.duplicate()
 		player.active_research.clear()
 		for track: String in own.active_research:
@@ -511,8 +517,14 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			return false
 		if state.has("plan") and (state.get("category") != "unit" or int(state.owner) != game.local_owner_id):
 			return false
+		if state.has("actual_paid_gold") and (state.get("category") != "building" or int(state.owner) != game.local_owner_id):
+			return false
 		if state.get("category") == "unit":
 			if not state.get("kind") in BalanceCatalog.UNITS or not state.get("moving") is bool or not state.get("working") is bool:
+				return false
+			var base_range: float = BalanceCatalog.unit(state.kind).range
+			var range_bonus: float = BalanceCatalog.upgrade(&"cannon_range_1").total_bonus if state.kind == "cannon" else 0.0
+			if not _number(state.get("attack_range"), base_range, base_range + range_bonus):
 				return false
 			if not state.get("anim") in ["", "strike", "gather", "build"] or not _number(state.get("phase"), 0, 100) or not _number(state.get("work"), 0, 1):
 				return false
@@ -529,6 +541,8 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			if not state.get("kind") in BalanceCatalog.BUILDINGS or not state.get("construction") is bool or not _number(state.get("progress"), 0, 1) or not _vector(state.get("rotation")):
 				return false
 			if int(state.owner) == game.local_owner_id and not _valid_production(state):
+				return false
+			if int(state.owner) == game.local_owner_id and not NetworkProtocol.integer(state.get("actual_paid_gold"), 0, 1000000):
 				return false
 		else:
 			return false
@@ -560,7 +574,7 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 func _valid_private(value: Variant) -> bool:
 	if not value is Dictionary:
 		return false
-	for key: String in ["gold", "supply", "reserved_supply", "farmers", "reserved_farmers"]:
+	for key: String in ["gold", "supply", "reserved_supply", "farmers", "reserved_farmers", "paid_tower_count"]:
 		if not NetworkProtocol.integer(value.get(key), 0, 2147483647):
 			return false
 	for track: String in BalanceCatalog.UPGRADE_TRACKS:

@@ -106,19 +106,19 @@ func _run() -> void:
 		first.production.recruit("knight")
 	for _index in range(3):
 		second.production.recruit("swordsman")
-	check(first.entity_id < second.entity_id and player.reserved_military_supply == 7, "mixed job durations reserve seven military population")
+	check(first.entity_id < second.entity_id and player.reserved_military_supply == 5, "two knights and three swordsmen reserve five military population")
 	_select([second, first])
 	_key(KEY_ESCAPE)
 	check(game.command_bus.pending.size() == 1 and game.command_bus.pending[0].buildings == [second.entity_id, first.entity_id], "physical cancel carries selected producer IDs to the authority")
 	var before_gold: int = player.gold
 	_tick()
 	check(first.production.training.size() == 2 and second.production.training.size() == 2, "longest item count wins even when a shorter queue takes more seconds")
-	check(player.gold == before_gold + 45 and player.reserved_military_supply == 6, "longest-queue tail refund releases its exact military supply")
+	check(player.gold == before_gold + 45 and player.reserved_military_supply == 4, "longest-queue tail refund releases its exact military supply")
 	before_gold = player.gold
 	_key(KEY_ESCAPE)
 	_tick()
 	check(first.production.training.size() == 1 and second.production.training.size() == 2, "equal queue lengths choose the lower entity ID despite reversed selection order")
-	check(player.gold == before_gold + 80 and player.reserved_military_supply == 4, "tie-selected knight refunds eighty and releases two population")
+	check(player.gold == before_gold + 80 and player.reserved_military_supply == 3, "tie-selected knight refunds eighty and releases one population")
 	_clear_training([first, second])
 
 	academy.production.research("attack_1")

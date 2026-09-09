@@ -116,7 +116,7 @@ func _run() -> void:
 	await process_frame
 	check(strip.visible and hud._queue_actions.size() == 1 and hud._queue_actions[0].upgrade == "attack_1", "research has its own directly cancellable identity")
 	check(hud._queue_buttons[0].get_node("Status").text == "15s" and is_equal_approx(hud._queue_buttons[0].get_node("Progress").value, 0.25), "research slot displays actual time and progress")
-	check(hud._actions.all(func(action): return action.kind == "research"), "research buttons remain in main panel without a large cancel tile")
+	check(hud._actions.all(func(action): return action.kind in ["research", "research_page"]), "research and page buttons remain in main panel without a large cancel tile")
 	if capture:
 		await _capture("research")
 	gold_before = player.gold
@@ -129,7 +129,7 @@ func _run() -> void:
 		check(academy.production.research(id).ok, "queued technology " + id)
 	_select(academy)
 	await process_frame
-	check(hud._queue_actions.size() == 6 and hud._actions.is_empty(), "six paid technologies directly visible while all upgrade levels reserved")
+	check(hud._queue_actions.size() == 6 and hud._actions.all(func(action): return action.kind == "research" and not String(action.id).begins_with("attack_") and not String(action.id).begins_with("defense_")), "six paid military technologies remain visible while independent research routes stay available")
 	check(hud._queue_buttons[0].get_node("Portrait").texture == hud.portraits.attack_upgrade and hud._queue_buttons[1].get_node("Portrait").texture == hud.portraits.defense_upgrade, "queue uses separate attack and shield icons")
 	check(hud._queue_buttons[4].get_node("Level").text == "III", "research queue exposes its technology level")
 	var late_id: int = academy.production.research_queue[2].job_id
@@ -165,7 +165,7 @@ func _run() -> void:
 	hud.refresh()
 	check(barracks.production.training.size() == 10 and barracks2.production.training.size() == 9 and player.gold == gold_before + 45, "second page cancellation targets correct building and refunds once")
 	check(player.reserved_military_supply == 19, "military queue HUD reflects reserved population")
-	check("19 / 60" in hud.army_label.text and "训练中 19" in hud.army_label.tooltip_text, "military population includes training reservations")
+	check("19 / 50" in hud.army_label.text and "训练中 19" in hud.army_label.tooltip_text, "military population includes training reservations against the fifty-supply baseline")
 	for size: Vector2i in [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]:
 		root.size = size
 		await process_frame
@@ -173,14 +173,14 @@ func _run() -> void:
 		_inspect_layout()
 	await _click(hud.get_node("%QueuePrevious"))
 	check(hud._queue_page == 0 and hud._queue_actions[0].target == barracks.entity_id, "previous page restores first building queue")
-	check(not hud.buttons[0].disabled, "full representative barracks does not disable another selected barracks with space")
+	check(not hud.buttons[2].disabled, "full representative barracks does not disable knight production in another selected barracks with space")
 	gold_before = player.gold
-	await _click(hud.buttons[0])
+	await _click(hud.buttons[2])
 	check(game.command_bus.pending.size() == 1 and game.command_bus.pending[0].buildings == [barracks.entity_id, barracks2.entity_id], "native recruit button submits selected producer identities to authority")
 	game.command_bus.tick()
 	hud.refresh()
 	check(barracks.production.training.size() == 10 and barracks2.production.training.size() == 10, "authority routes native recruit click to available selected producer")
-	check(player.gold == gold_before - 45 and player.reserved_military_supply == 20, "multi producer click purchases exactly one unit")
+	check(player.gold == gold_before - 80 and player.reserved_military_supply == 20 and barracks2.production.training.back().kind == "knight", "multi producer click purchases exactly one knight and reserves only one population")
 	game.select_entities([hq, barracks, academy])
 	hud.refresh()
 	check(hud._actions.size() == 1 and hud._actions[0].id == "farmer", "mixed building group starts with headquarters production")
@@ -188,7 +188,7 @@ func _run() -> void:
 	check(game.selected_production() == barracks and hud._actions.size() == 3, "Tab exposes barracks subgroup actions")
 	check(hud.selected_portrait.texture == hud.portraits.barracks and "兵营" in hud.selected_role.text, "active building subgroup has a visible model and label")
 	game.cycle_production_group()
-	check(game.selected_production() == academy and hud._actions.all(func(action): return action.kind == "research"), "Tab exposes academy subgroup research")
+	check(game.selected_production() == academy and hud._actions.all(func(action): return action.kind in ["research", "research_page"]), "Tab exposes academy subgroup research and its page control")
 	hq.production.recruit("farmer")
 	_select(hq)
 	game.finished = true

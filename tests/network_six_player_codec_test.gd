@@ -36,6 +36,7 @@ func _run() -> void:
 		for index in range(112):
 			var state: Dictionary = unit_state.duplicate(true)
 			state.kind = "farmer" if index < 12 else "swordsman"
+			state.attack_range = BalanceCatalog.unit(state.kind).range
 			state.id = 1000 + owner * 112 + index
 			state.p = [owner * 10.0, 0.0, index * 0.5]
 			if owner == 7:

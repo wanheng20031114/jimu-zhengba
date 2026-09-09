@@ -7,6 +7,8 @@ var _actions: Array[Dictionary] = []
 var _queue_actions: Array[Dictionary] = []
 var _queue_buttons: Array[Button] = []
 var _queue_page: int = 0
+var _research_page: int = 0
+var _research_building: int = 0
 var _queue_page_count: int = 1
 var _queue_selection: Array[int] = []
 var game: Node3D
@@ -39,6 +41,8 @@ func _ready() -> void:
 	portraits["workforce_upgrade"] = preload("res://assets/ui/workforce_upgrade.png")
 	portraits["army_capacity_upgrade"] = portraits["knight"]
 	portraits["mining_upgrade"] = portraits["gold_vein"]
+	portraits["cannon_range_upgrade"] = portraits["cannon"]
+	portraits["recovery_upgrade"] = portraits["farmer"]
 	for index in range(buttons.size()):
 		buttons[index].pressed.connect(_on_recruit.bind(index))
 		buttons[index].mouse_entered.connect(func(): _set_preview_hover(_actions[index].portrait if index < _actions.size() else ""))
@@ -243,7 +247,7 @@ func refresh() -> void:
 			if entity.owner_id == game.local_owner_id:
 				var production: BuildingProduction = entity.get_node("Production")
 				if not entity.is_constructed:
-					selected_stats.text = "施工 %d%% · 农民右键接手\n取消返还未完成部分费用" % roundi(entity.construction_progress * 100)
+					selected_stats.text = "施工 %d%% · 农民右键接手\n已付 %d 金 · 取消返还 %d 金" % [roundi(entity.construction_progress * 100), entity.actual_paid_gold, entity.construction_refund()]
 				elif not production.training.is_empty():
 					var queued_unit := BalanceCatalog.unit(production.training[0].kind)
 					selected_stats.text = "%s训练 %.1f / %d 秒\n队列 %d / 10 · 点击格子取消退款" % [queued_unit.name, production.training[0].elapsed, queued_unit.training_seconds, production.training.size()]
@@ -298,7 +302,7 @@ func trigger_action_slot(index: int) -> void:
 	if index < 0 or index >= _actions.size() or buttons[index].disabled or not buttons[index].visible:
 		return
 	# Slots buy or place the action currently displayed; never bind demolition to Q.
-	if _actions[index].kind in ["build", "recruit", "research"]:
+	if _actions[index].kind in ["build", "recruit", "research", "research_page"]:
 		_on_recruit(index)
 
 func _on_recruit(index: int) -> void:
@@ -310,23 +314,37 @@ func _on_recruit(index: int) -> void:
 		"recruit": game.recruit(action.id)
 		"demolish": game.demolish_selected_towers()
 		"research": game.research_selected(action.id)
+		"research_page":
+			_research_page = int(action.page)
+			_refresh_actions()
+			game.get_node("Audio").play_ui(&"select")
 		"cancel_site": game.submit_local({"kind": action.kind, "target": action.target})
 
 func _refresh_actions() -> void:
 	_actions.clear()
 	%BuildPanel.hide()
 	var building: BattleBuilding = game.selected_production()
+	var research_building: int = building.entity_id if building != null and building.building_type == "academy" else 0
+	if research_building != _research_building:
+		_research_page = 0
+		_research_building = research_building
 	var workers: bool = building == null and not game.own_selected_workers().is_empty()
 	$CommandBar/Recruitment/RecruitTitle.text = "建造" if workers else "生产与研究"
 	%RecruitHint.text = "选中农民或生产建筑"
 	if workers:
 		%RecruitHint.text = "Shift 连续指派 · 单人施工"
+		if game.build_mode:
+			%RecruitHint.text = "下一座%s · %d 金 · Shift 连续建造" % [BalanceCatalog.building(game.build_kind).name, game.get_player(game.local_owner_id).get_building_cost(game.build_kind)]
 		for kind: String in BUILD_ORDER:
 			var definition := BalanceCatalog.building(kind)
-			_actions.append({"kind": "build", "id": kind, "portrait": kind, "name": definition.name, "cost": definition.cost, "hint": "%d 秒施工" % definition.build_seconds})
+			var player: PlayerState = game.get_player(game.local_owner_id)
+			var hint: String = "%d 秒施工" % definition.build_seconds
+			if kind == "defense_tower":
+				hint += " · 第 %d 座付费建造 · 取消或摧毁不重置造价" % (player.paid_tower_count + 1)
+			_actions.append({"kind": "build", "id": kind, "portrait": kind, "name": definition.name, "cost": player.get_building_cost(kind), "hint": hint})
 	elif building != null:
 		if not building.is_constructed:
-			_actions.append({"kind": "cancel_site", "id": "", "target": building.entity_id, "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还未完成部分的费用"})
+			_actions.append({"kind": "cancel_site", "id": "", "target": building.entity_id, "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还 %d 金币（实际支付额的未完成部分）" % building.construction_refund()})
 		elif building.building_type == "defense_tower":
 			_actions.append({"kind": "demolish", "id": "", "portrait": "defense_tower", "name": "拆除防御塔", "cost": 0, "hint": game.settings.hotkey_text("rts_destroy") + " · 不返还金币"})
 		elif building.building_type == "academy":
@@ -336,6 +354,14 @@ func _refresh_actions() -> void:
 				if level < BalanceCatalog.UPGRADE_TRACKS[track]:
 					var upgrade := BalanceCatalog.upgrade("%s_%d" % [track, level + 1])
 					_actions.append({"kind": "research", "id": upgrade.id, "portrait": track + "_upgrade", "name": upgrade.name, "cost": upgrade.cost, "hint": _upgrade_hint(upgrade)})
+			if _actions.size() > buttons.size():
+				var page_size: int = buttons.size() - 1
+				var pages: int = ceili(float(_actions.size()) / page_size)
+				_research_page = mini(_research_page, pages - 1)
+				_actions = _actions.slice(_research_page * page_size, (_research_page + 1) * page_size)
+				_actions.append({"kind": "research_page", "id": "", "page": (_research_page + 1) % pages, "portrait": "academy", "name": "更多科技" if _research_page == 0 else "返回科技", "cost": 0, "hint": "查看学院第 %d / %d 页" % [_research_page + 1, pages]})
+			else:
+				_research_page = 0
 		else:
 			for kind: String in building.get_combat_definition().produces:
 				var definition := BalanceCatalog.unit(kind)
@@ -349,8 +375,8 @@ func _refresh_actions() -> void:
 		var action := _actions[index]
 		button.get_node("Portrait").texture = portraits[action.portrait]
 		button.get_node("Name").text = action.name
-		button.get_node("Cost").text = "◈ %d" % action.cost if action.cost > 0 else ("无退款" if action.kind == "demolish" else "退款")
-		var hotkey: String = game.settings.hotkey_text("rts_slot_%d" % (index + 1)) if action.kind in ["build", "recruit", "research"] else ""
+		button.get_node("Cost").text = "◈ %d" % action.cost if action.cost > 0 else ("切换" if action.kind == "research_page" else ("无退款" if action.kind == "demolish" else "退款"))
+		var hotkey: String = game.settings.hotkey_text("rts_slot_%d" % (index + 1)) if action.kind in ["build", "recruit", "research", "research_page"] else ""
 		button.get_node("Hotkey").text = hotkey
 		button.tooltip_text = action.name + " · " + action.hint
 		if not hotkey.is_empty():
@@ -364,6 +390,10 @@ func _refresh_actions() -> void:
 	_refresh_queue(building)
 
 func _upgrade_hint(upgrade: UpgradeDefinition) -> String:
+	if upgrade.track == &"cannon_range":
+		return "%d 秒 · 加农炮射程 +%d，提升至 %d · 现有及未来加农炮生效" % [upgrade.research_seconds, upgrade.total_bonus, BalanceCatalog.unit(&"cannon").range + upgrade.total_bonus]
+	if upgrade.track == &"recovery":
+		return "%d 秒 · 全部可移动单位（含农民、攻城器）10秒未受伤后，每秒恢复%d生命；建筑不受益" % [upgrade.research_seconds, upgrade.total_bonus]
 	if upgrade.track == &"workforce":
 		return "%d 秒 · 农民上限 %d → %d · 仅本玩家生效" % [upgrade.research_seconds, PlayerState.WORKER_LIMIT, PlayerState.WORKER_LIMIT + upgrade.total_bonus]
 	if upgrade.track == &"army_capacity":
@@ -471,6 +501,10 @@ func _set_preview_hover(kind: String) -> void:
 		kind = "knight"
 	elif kind == "mining_upgrade":
 		kind = "gold_vein"
+	elif kind == "cannon_range_upgrade":
+		kind = "cannon"
+	elif kind == "recovery_upgrade":
+		kind = "farmer"
 	_hovered_preview = "" if kind.ends_with("_upgrade") else kind
 
 func toast(message: String, duration: float = 2.0) -> void:

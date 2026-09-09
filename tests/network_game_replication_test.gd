@@ -178,8 +178,8 @@ func _run() -> void:
 	all_research.players[0].private.active_research["workforce"] = 1
 	all_research.players[0].private.active_research["army_capacity"] = 2
 	all_research.players[0].private.active_research["mining"] = 3
-	check(all_research.players[0].private.queued_research.size() == 12 and receiver._valid_snapshot(all_research),
-		"twelve_unique_player_research_reservations_across_academies_are_valid")
+	check(all_research.players[0].private.queued_research.size() == 14 and receiver._valid_snapshot(all_research),
+		"fourteen_unique_player_research_reservations_across_academies_are_valid")
 	all_research.players[0].private.active_research["unknown"] = 1
 	check(not receiver._valid_snapshot(all_research), "unknown_active_research_track_rejected")
 	for bad_plan: Variant in [null, "move", [{"kind": "attack", "at": [NAN, 0, 0]}], [{"kind": "move", "at": [5000, 0, 0]}], [{"kind": "unknown", "at": [1, 0, 1]}], [{"kind": "build", "at": [0, 0, 0], "entity": 5}], [{"kind": "move", "at": [0, 0]}]]:

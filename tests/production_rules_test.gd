@@ -52,6 +52,8 @@ func run() -> void:
 	var legal: Vector3 = game.find_build_location(0, "barracks", game.headquarters.position)
 	check(legal.is_finite(), "legal barracks placement exists")
 	var barracks: BattleBuilding = game.spawn_building("barracks", 0, legal)
+	var factory: BattleBuilding = game.spawn_building("factory", 0, game.find_build_location(0, "factory", game.headquarters.position))
+	factory.production.set_physics_process(false)
 	var academy: BattleBuilding = game.spawn_building("academy", 0, Vector3(-23, 0, -12))
 	var academy2: BattleBuilding = game.spawn_building("academy", 0, Vector3(-12, 0, -24))
 	academy.production.set_physics_process(false)
@@ -63,14 +65,18 @@ func run() -> void:
 	check(not barracks.production.recruit("farmer").ok, "barracks refuses farmers")
 	var supply := player.military_supply
 	check(barracks.production.recruit("knight").ok, "barracks queues knight")
-	check(player.military_supply == supply and player.reserved_military_supply == 2, "knight reserves two supply before training")
+	check(player.military_supply == supply and player.reserved_military_supply == 1, "knight reserves one supply before training")
 	barracks.production.set_physics_process(false)
 	barracks.production._physics_process(10.1)
-	check(player.military_supply == supply + 2 and player.reserved_military_supply == 0, "knight consumes reserved supply after ten seconds")
-	player.military_supply = 60
+	check(player.military_supply == supply + 1 and player.reserved_military_supply == 0, "knight consumes its one reserved supply after ten seconds")
+	player.military_supply = player.get_supply_limit() - 1
+	gold_before = player.gold
+	check(not factory.production.recruit("cannon").ok and player.gold == gold_before, "three-supply cannon cannot fit in the final slot and is not charged")
+	check(barracks.production.recruit("knight").ok and player.used_military_supply() == player.get_supply_limit(), "one-supply knight can reserve the final population slot")
 	gold_before = player.gold
 	check(not barracks.production.recruit("swordsman").ok and player.gold == gold_before, "supply cap rejects purchase")
-	player.military_supply = supply + 2
+	barracks.production.cancel_training(0)
+	player.military_supply = supply + 1
 	check(not academy.production.research("attack_2").ok, "cannot skip tech level")
 	check(academy.production.research("attack_1").ok, "start attack I")
 	check(not academy2.production.research("attack_1").ok, "two academies cannot duplicate research")

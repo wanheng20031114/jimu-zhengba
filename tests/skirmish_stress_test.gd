@@ -79,7 +79,7 @@ func _run() -> void:
 		await physics_frame
 	_check(game.find_recruit_position("farmer", game.headquarters).is_finite(), "authored navigation and dynamic headquarters footprints are ready")
 	await _populate("mixed")
-	await _measure("mixed_supply60_combat", 1.0 if short_check else SAMPLE_SECONDS)
+	await _measure("mixed_roster_combat", 1.0 if short_check else SAMPLE_SECONDS)
 	if not short_check:
 		await _populate("maximum_light")
 		await _measure("maximum_units_combat", SAMPLE_SECONDS)
@@ -114,7 +114,9 @@ func _populate(composition: String) -> void:
 				for index: int in range(int(MIXED_COUNTS[kind])): roster.append(kind)
 		else:
 			for index: int in range(60): roster.append("swordsman" if index % 2 == 0 else "archer")
+		var expected_supply: int = 0
 		for index: int in range(roster.size()):
+			expected_supply += BalanceCatalog.unit(roster[index]).supply
 			var at := Vector3(lane + (float(index % 8) - 3.5) * 2.0, 0, sign_z * (12.0 + float(index / 8) * 2.0))
 			at = NavigationServer3D.map_get_closest_point(nav_map, at)
 			var unit: BattleUnit = game.spawn_unit(roster[index], player.owner_id, at)
@@ -133,7 +135,7 @@ func _populate(composition: String) -> void:
 			worker.hp *= 20.0
 			worker.max_hp *= 20.0
 			worker.issue_gather(mine)
-		_check(player.military_supply == 60 and player.farmers == 10, "owner %d keeps the real sixty-supply / ten-farmer caps" % player.owner_id)
+		_check(player.military_supply == expected_supply and player.farmers == 10, "owner %d population follows current resources without changing the stress roster" % player.owner_id)
 	_check(get_nodes_in_group("units").size() == game.players.size() * (52 if composition == "mixed" else 70), "native unit count matches the declared benchmark composition")
 	game.select_army()
 	await create_timer(1.0 if short_check else WARMUP_SECONDS).timeout
@@ -230,7 +232,7 @@ func _write_report() -> void:
 		"taa": ProjectSettings.get_setting("rendering/anti_aliasing/quality/use_taa"),
 		"shadow_atlas_size": ProjectSettings.get_setting("rendering/lights_and_shadows/directional_shadow/size"),
 		"physics_metric": "physics_logic_ms brackets SceneTree physics callbacks with saved-scene priorities -1000000/+1000000. It excludes PhysicsServer stepping outside the SceneTree. engine_physics_monitor_ms separately reports cached Performance.TIME_PHYSICS_PROCESS. Neither uses tick arrival intervals as logic cost.",
-		"benchmark_conditions": "HQ/maps remain native; bots and passive income stopped; all owners at 60 military supply + 10 farmers; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
+		"benchmark_conditions": "HQ/maps remain native; bots and passive income stopped; unchanged 42-unit mixed army or 60 infantry plus 10 farmers per owner, population derived from current resources; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
 		"checks": checks, "failures": failures, "phases": phases}
 	if is_instance_valid(game):
 		report["shadow_max_distance"] = game.get_node("Sun").directional_shadow_max_distance
