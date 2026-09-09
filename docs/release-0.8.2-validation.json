@@ -1,0 +1,4026 @@
+{
+  "build": "0.8.2",
+  "protocol": 7,
+  "generated_utc": "2026-09-10T06:29:59.283225+08:00",
+  "baseline_commit": "db2ae666eca6ac50e24235fad9719371ca55f587",
+  "server": {
+    "deployed_this_task": false,
+    "restarted_this_task": false,
+    "preserved_build": "0.8.0",
+    "compatibility": "This package is protocol 7 and requires a later coordinated relay upgrade; current production was deliberately not contacted by release probe."
+  },
+  "package": {
+    "path": "builds/AshenCrown-0.8.2-Windows-x64.zip",
+    "bytes": 63476483,
+    "sha256": "c0993ddc0eec4b296ff96ce7f8a4f31cabc5227fbb14bf9c4967dcd222e09b1a",
+    "pck_sha256": "2c0226c52191e2d32100f38925cf6431faf5a3dfe01070e67a869945e77733c5",
+    "zip_crc_ok": true,
+    "entries": [
+      "windows/AshenCrown.exe",
+      "windows/AshenCrown.pck",
+      "windows/START_HERE.txt",
+      "windows/collect_diagnostics.ps1",
+      "windows/COLLECT_DIAGNOSTICS.cmd"
+    ],
+    "old_080_preserved": true
+  },
+  "catalogue_probe": {
+    "passed": true,
+    "summary": {
+      "build": "0.8.2",
+      "catalogue_files": 82,
+      "catalogue_only": true,
+      "checks": 155,
+      "content_hash": "897c8c7dc5351cd9b7e8b8a38ebd03ee8373a3ebf67eabb5327475d48d70641f",
+      "error_codes": [],
+      "exported_template": true,
+      "failures": [],
+      "handshake_msec": -1,
+      "protocol": 7,
+      "resource_value_checks": 68
+    },
+    "resource_value_audit_present": true,
+    "stderr_empty": true,
+    "log_directory": "release-f5d97625"
+  },
+  "balance_report": {
+    "validation": {
+      "checks": 2563,
+      "failures": [],
+      "final_requirements_checked": true
+    },
+    "sha256": "76a5fe616a48a50112de3378796ee9facba1c4debbf4a18115c39a14d0443a0c",
+    "path": "report/balance-0.8.2.md"
+  },
+  "combat": {
+    "pursuit": {
+      "build": "0.8.2",
+      "checks": 466,
+      "failures": [],
+      "pursuits": [
+        {
+          "attack_starts": 7,
+          "attacker": "knight",
+          "first_hit_seconds": 1.4,
+          "hits": 6,
+          "minimum_start_interval_seconds": 1.1,
+          "target": "archer",
+          "tps": 30
+        },
+        {
+          "attack_starts": 3,
+          "attacker": "swordsman",
+          "first_hit_seconds": 5.03333333333333,
+          "hits": 3,
+          "minimum_start_interval_seconds": 1.33333333333333,
+          "target": "archer",
+          "tps": 30
+        },
+        {
+          "attack_starts": 6,
+          "attacker": "farmer",
+          "first_hit_seconds": 1.06666666666667,
+          "hits": 6,
+          "minimum_start_interval_seconds": 1.3,
+          "target": "catapult",
+          "tps": 30
+        },
+        {
+          "attack_starts": 5,
+          "attacker": "archer",
+          "first_hit_seconds": 1.6,
+          "hits": 5,
+          "minimum_start_interval_seconds": 1.53333333333333,
+          "target": "catapult",
+          "tps": 30
+        },
+        {
+          "attack_starts": 2,
+          "attacker": "catapult",
+          "first_hit_seconds": 1.86666666666667,
+          "hits": 2,
+          "minimum_start_interval_seconds": 6.13333333333333,
+          "target": "cannon",
+          "tps": 30
+        },
+        {
+          "attack_starts": 1,
+          "attacker": "cannon",
+          "first_hit_seconds": 0.833333333333333,
+          "hits": 1,
+          "minimum_start_interval_seconds": -1,
+          "target": "cannon",
+          "tps": 30
+        },
+        {
+          "attack_starts": 7,
+          "attacker": "knight",
+          "first_hit_seconds": 1.4,
+          "hits": 6,
+          "minimum_start_interval_seconds": 1.1,
+          "target": "archer",
+          "tps": 60
+        },
+        {
+          "attack_starts": 4,
+          "attacker": "swordsman",
+          "first_hit_seconds": 2.91666666666667,
+          "hits": 4,
+          "minimum_start_interval_seconds": 1.45,
+          "target": "archer",
+          "tps": 60
+        },
+        {
+          "attack_starts": 6,
+          "attacker": "farmer",
+          "first_hit_seconds": 0.866666666666667,
+          "hits": 6,
+          "minimum_start_interval_seconds": 1.31666666666667,
+          "target": "catapult",
+          "tps": 60
+        },
+        {
+          "attack_starts": 5,
+          "attacker": "archer",
+          "first_hit_seconds": 1.5,
+          "hits": 5,
+          "minimum_start_interval_seconds": 1.5,
+          "target": "catapult",
+          "tps": 60
+        },
+        {
+          "attack_starts": 2,
+          "attacker": "catapult",
+          "first_hit_seconds": 1.83333333333333,
+          "hits": 2,
+          "minimum_start_interval_seconds": 5.4,
+          "target": "cannon",
+          "tps": 60
+        },
+        {
+          "attack_starts": 1,
+          "attacker": "cannon",
+          "first_hit_seconds": 0.8,
+          "hits": 1,
+          "minimum_start_interval_seconds": -1,
+          "target": "cannon",
+          "tps": 60
+        }
+      ]
+    },
+    "damage": {
+      "checks": 68,
+      "failures": []
+    },
+    "catapult": {
+      "build_id": "0.8.2",
+      "checks": 255,
+      "failures": [],
+      "samples": [
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "factory",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "academy",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": true,
+          "target": "factory",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": true,
+          "target": "academy",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 0,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 2
+        },
+        {
+          "actual": 16.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 2
+        },
+        {
+          "actual": 14.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 2
+        },
+        {
+          "actual": 38.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 2
+        },
+        {
+          "actual": 17.0,
+          "legacy": true,
+          "owner": 0,
+          "site": false,
+          "target": "archer",
+          "target_owner": 2
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "factory",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "academy",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": true,
+          "target": "factory",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": true,
+          "target": "academy",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 1,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 3
+        },
+        {
+          "actual": 16.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 3
+        },
+        {
+          "actual": 14.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 3
+        },
+        {
+          "actual": 38.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 3
+        },
+        {
+          "actual": 17.0,
+          "legacy": true,
+          "owner": 1,
+          "site": false,
+          "target": "archer",
+          "target_owner": 3
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "factory",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "academy",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": true,
+          "target": "factory",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": true,
+          "target": "academy",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 2,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 0
+        },
+        {
+          "actual": 16.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 0
+        },
+        {
+          "actual": 14.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 0
+        },
+        {
+          "actual": 38.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 0
+        },
+        {
+          "actual": 17.0,
+          "legacy": true,
+          "owner": 2,
+          "site": false,
+          "target": "archer",
+          "target_owner": 0
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "factory",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "academy",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": true,
+          "target": "factory",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": true,
+          "target": "academy",
+          "target_owner": 1
+        },
+        {
+          "actual": 60.0,
+          "legacy": true,
+          "owner": 3,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 1
+        },
+        {
+          "actual": 16.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 1
+        },
+        {
+          "actual": 14.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 1
+        },
+        {
+          "actual": 38.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 1
+        },
+        {
+          "actual": 17.0,
+          "legacy": true,
+          "owner": 3,
+          "site": false,
+          "target": "archer",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "factory",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "academy",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": true,
+          "target": "factory",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": true,
+          "target": "academy",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 0,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 2
+        },
+        {
+          "actual": 14.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 2
+        },
+        {
+          "actual": 12.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 2
+        },
+        {
+          "actual": 24.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 2
+        },
+        {
+          "actual": 15.0,
+          "legacy": false,
+          "owner": 0,
+          "site": false,
+          "target": "archer",
+          "target_owner": 2
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "factory",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "academy",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": true,
+          "target": "factory",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": true,
+          "target": "academy",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 1,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 3
+        },
+        {
+          "actual": 14.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 3
+        },
+        {
+          "actual": 12.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 3
+        },
+        {
+          "actual": 24.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 3
+        },
+        {
+          "actual": 15.0,
+          "legacy": false,
+          "owner": 1,
+          "site": false,
+          "target": "archer",
+          "target_owner": 3
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "factory",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "academy",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": true,
+          "target": "factory",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": true,
+          "target": "academy",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 2,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 0
+        },
+        {
+          "actual": 14.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 0
+        },
+        {
+          "actual": 12.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 0
+        },
+        {
+          "actual": 24.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 0
+        },
+        {
+          "actual": 15.0,
+          "legacy": false,
+          "owner": 2,
+          "site": false,
+          "target": "archer",
+          "target_owner": 0
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "headquarters",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "barracks",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "factory",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "academy",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "defense_tower",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": true,
+          "target": "headquarters",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": true,
+          "target": "barracks",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": true,
+          "target": "factory",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": true,
+          "target": "academy",
+          "target_owner": 1
+        },
+        {
+          "actual": 58.0,
+          "legacy": false,
+          "owner": 3,
+          "site": true,
+          "target": "defense_tower",
+          "target_owner": 1
+        },
+        {
+          "actual": 14.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "catapult",
+          "target_owner": 1
+        },
+        {
+          "actual": 12.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "cannon",
+          "target_owner": 1
+        },
+        {
+          "actual": 24.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "swordsman",
+          "target_owner": 1
+        },
+        {
+          "actual": 15.0,
+          "legacy": false,
+          "owner": 3,
+          "site": false,
+          "target": "archer",
+          "target_owner": 1
+        }
+      ],
+      "uniform_splash_samples": [
+        {
+          "actual": 15.0,
+          "expected": 15.0,
+          "footprint_distance": 0.0,
+          "label": "center",
+          "target": "archer"
+        },
+        {
+          "actual": 15.0,
+          "expected": 15.0,
+          "footprint_distance": 1.08,
+          "label": "inner",
+          "target": "archer"
+        },
+        {
+          "actual": 15.0,
+          "expected": 15.0,
+          "footprint_distance": 2.92999990463257,
+          "label": "edge",
+          "target": "archer"
+        },
+        {
+          "actual": 0.0,
+          "expected": 0.0,
+          "footprint_distance": 3.17999990463257,
+          "label": "outside",
+          "target": "archer"
+        },
+        {
+          "actual": 0.0,
+          "expected": 0.0,
+          "footprint_distance": 0.58,
+          "label": "friendly",
+          "target": "archer"
+        },
+        {
+          "actual": 14.0,
+          "expected": 14.0,
+          "footprint_distance": 2.95,
+          "label": "edge_siege",
+          "target": "catapult"
+        },
+        {
+          "actual": 58.0,
+          "expected": 58.0,
+          "footprint_distance": 3.0,
+          "label": "edge_building",
+          "target": "factory"
+        }
+      ]
+    }
+  },
+  "economy": {
+    "economy-upgrades-082": {
+      "test": "economy_upgrades_test",
+      "exit_code": 0,
+      "elapsed_seconds": 2.115,
+      "result": {
+        "checks": 46,
+        "failures": []
+      },
+      "stdout_sha256": "cc35c373b715d666106f024de001f8750269dfaba9892901dab758e30869f83f",
+      "stderr_bytes": 0
+    },
+    "bot-strategy-082": {
+      "test": "bot_strategy_test",
+      "elapsed_seconds": 1.362,
+      "exit_code": 0,
+      "result": {
+        "checks": 165,
+        "failures": []
+      },
+      "stdout_sha256": "8f9e66c3221402749209f5cbdbc5d060466d8e0407aae9e1697fe12b0426efa0",
+      "stderr_bytes": 0
+    },
+    "timed-production-082": {
+      "test": "timed_production_research_test",
+      "elapsed_seconds": 2.286,
+      "exit_code": 0,
+      "result": {
+        "checks": 117,
+        "failures": []
+      },
+      "stdout_sha256": "8f7a3d5ec79b485db96e1525e4c61aac297fa5d23ab9a45753b131df85108977",
+      "stderr_bytes": 0
+    }
+  },
+  "hud": {
+    "exit_code": 0,
+    "pid": 19564,
+    "seconds": 4.9060000000026776,
+    "stderr_empty": true,
+    "summary": {
+      "build": "0.8.2",
+      "checks": 25,
+      "failures": []
+    }
+  },
+  "network_focused": {
+    "build_id": "0.8.2",
+    "scope": "focused local authority, replication, codec and report compatibility; no public relay session",
+    "checks": {
+      "six_codec": 15,
+      "commands": 193,
+      "replication": 124,
+      "workforce": 63,
+      "historical_081_report": 2529
+    },
+    "failures": [],
+    "wall_seconds": {
+      "six_codec_with_python_compile": 1.856,
+      "commands_and_replication_combined": 5.321,
+      "workforce": 1.984
+    },
+    "codec": {
+      "units": 672,
+      "buildings": 120,
+      "own_plans": 112,
+      "plan_entries": 9,
+      "decoded_bytes": 210440,
+      "wire_bytes": 6597,
+      "primitive_values": 21095,
+      "encode_usec": 14331
+    },
+    "old_081_report_render_unchanged": true,
+    "export_script_check_exit": 0,
+    "log_sha256": {
+      ".local/network/six-codec.stdout.log": "e12b49ed3fc90f1a3a003c37b630ccca19c690c418d08a9478a5002599171bdf",
+      ".local/network/six-codec.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      ".local/network/commands.stdout.log": "08f82d964ca5467e8b6ee51a09b593cf54d2f39fda3e8dd77a1bf490d14c21b0",
+      ".local/network/commands.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      ".local/network/game.stdout.log": "c4cb6c0fc282e455024c3796169db0ce4d94f7e5d9e34072dbbaf09b3e4fa4b0",
+      ".local/network/game.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      ".local/network/workforce.stdout.log": "597638c7d43d794f861ff8e466001ffcea7e71638a2b9c9384e2beb46a0cea8d",
+      ".local/network/workforce.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      ".local/network/balance-export-check.stdout.log": "b16651cbedbab0a7b519f9e5b498eea40cb33bfb72252e264a7f4c2412765d58",
+      ".local/network/balance-export-check.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "six_client_impaired": {
+    "target": "impaired",
+    "mode": "2v2v2",
+    "failures": [],
+    "peers": [
+      {
+        "checks": 31,
+        "coordinator_publish_retries": 1,
+        "elapsed_seconds": 32.416,
+        "error_codes": [],
+        "events": {
+          "bot_takeover": 1,
+          "match_finished": 1,
+          "player_disconnected": 1,
+          "player_reconnected": 1
+        },
+        "failures": [],
+        "match_starts": 1,
+        "network_load": {},
+        "observed_stages": [],
+        "owner": 0,
+        "peer_index": 0,
+        "snapshot_gap_ms": {
+          "samples": 0
+        },
+        "snapshot_rejections": 0,
+        "snapshot_tick_regressions": 0,
+        "snapshots": 0,
+        "transport_states": [
+          "connecting",
+          "connected",
+          "lobby",
+          "match",
+          "finished",
+          "disconnected"
+        ]
+      },
+      {
+        "checks": 21,
+        "coordinator_publish_retries": 0,
+        "elapsed_seconds": 31.347,
+        "error_codes": [],
+        "events": {
+          "bot_takeover": 1,
+          "match_finished": 1,
+          "notice": 1,
+          "player_disconnected": 1,
+          "player_reconnected": 1,
+          "visual_batch": 95
+        },
+        "failures": [],
+        "match_starts": 1,
+        "network_load": {},
+        "observed_stages": [],
+        "owner": 1,
+        "peer_index": 1,
+        "snapshot_gap_ms": {
+          "samples": 0
+        },
+        "snapshot_rejections": 0,
+        "snapshot_tick_regressions": 0,
+        "snapshots": 274,
+        "transport_states": [
+          "connecting",
+          "connected",
+          "lobby",
+          "match",
+          "finished",
+          "disconnected"
+        ]
+      },
+      {
+        "checks": 21,
+        "coordinator_publish_retries": 0,
+        "elapsed_seconds": 30.956,
+        "error_codes": [],
+        "events": {
+          "bot_takeover": 1,
+          "match_finished": 1,
+          "notice": 1,
+          "player_disconnected": 1,
+          "player_reconnected": 1,
+          "visual_batch": 104
+        },
+        "failures": [],
+        "match_starts": 1,
+        "network_load": {},
+        "observed_stages": [],
+        "owner": 2,
+        "peer_index": 2,
+        "snapshot_gap_ms": {
+          "samples": 0
+        },
+        "snapshot_rejections": 0,
+        "snapshot_tick_regressions": 0,
+        "snapshots": 240,
+        "transport_states": [
+          "connecting",
+          "connected",
+          "lobby",
+          "match",
+          "finished",
+          "disconnected"
+        ]
+      },
+      {
+        "checks": 22,
+        "coordinator_publish_retries": 0,
+        "elapsed_seconds": 30.606,
+        "error_codes": [],
+        "events": {
+          "bot_takeover": 1,
+          "match_finished": 1,
+          "notice": 2,
+          "player_disconnected": 1,
+          "player_reconnected": 1,
+          "visual_batch": 94
+        },
+        "failures": [],
+        "match_starts": 1,
+        "network_load": {},
+        "observed_stages": [],
+        "owner": 4,
+        "peer_index": 3,
+        "snapshot_gap_ms": {
+          "samples": 0
+        },
+        "snapshot_rejections": 0,
+        "snapshot_tick_regressions": 0,
+        "snapshots": 264,
+        "transport_states": [
+          "connecting",
+          "connected",
+          "lobby",
+          "match",
+          "finished",
+          "disconnected"
+        ]
+      },
+      {
+        "checks": 21,
+        "coordinator_publish_retries": 0,
+        "elapsed_seconds": 30.354,
+        "error_codes": [],
+        "events": {
+          "bot_takeover": 1,
+          "match_finished": 1,
+          "notice": 1,
+          "player_disconnected": 1,
+          "player_reconnected": 1,
+          "visual_batch": 102
+        },
+        "failures": [],
+        "match_starts": 1,
+        "network_load": {},
+        "observed_stages": [],
+        "owner": 3,
+        "peer_index": 4,
+        "snapshot_gap_ms": {
+          "samples": 0
+        },
+        "snapshot_rejections": 0,
+        "snapshot_tick_regressions": 0,
+        "snapshots": 234,
+        "transport_states": [
+          "connecting",
+          "connected",
+          "lobby",
+          "match",
+          "finished",
+          "disconnected"
+        ]
+      },
+      {
+        "checks": 24,
+        "coordinator_publish_retries": 0,
+        "elapsed_seconds": 30.03,
+        "error_codes": [],
+        "events": {
+          "connection_restored": 1,
+          "match_finished": 1,
+          "notice": 2,
+          "player_reconnected": 1,
+          "visual_batch": 15
+        },
+        "failures": [],
+        "match_starts": 1,
+        "network_load": {},
+        "observed_stages": [],
+        "owner": 5,
+        "peer_index": 5,
+        "snapshot_gap_ms": {
+          "samples": 0
+        },
+        "snapshot_rejections": 0,
+        "snapshot_tick_regressions": 0,
+        "snapshots": 57,
+        "transport_states": [
+          "connecting",
+          "connected",
+          "lobby",
+          "match",
+          "reconnecting",
+          "lobby",
+          "match",
+          "finished",
+          "disconnected"
+        ]
+      }
+    ],
+    "log_directory": "live-2v2v2-impaired-0692b691",
+    "load_units": 0,
+    "load_seconds": 0,
+    "expected_dtls_reorder_diagnostics": 3,
+    "impairment": {
+      "profile": {
+        "seed": 24571,
+        "link_rtt_ms": 150,
+        "link_rtt_jitter_bound_ms": 40,
+        "datagram_loss_probability": 0.04,
+        "extra_reorder_probability": 0.08,
+        "extra_reorder_delay_ms": 90
+      },
+      "flows": 7,
+      "totals": {
+        "received": 7083,
+        "bytes": 4486226,
+        "dropped": 286,
+        "dropped_bytes": 186575,
+        "delivered": 6797,
+        "delivered_bytes": 4299651,
+        "closed_flow_bytes": 0,
+        "reorder_injected": 544,
+        "out_of_order_deliveries": 2233,
+        "actual_loss_percent": 4.038,
+        "received_bytes_per_second": 133729.573,
+        "delivered_bytes_per_second": 128167.973
+      },
+      "directions": [
+        {
+          "received": 2984,
+          "bytes": 2503922,
+          "dropped": 113,
+          "dropped_bytes": 93179,
+          "delivered": 2871,
+          "delivered_bytes": 2410743,
+          "reorder_injected": 234,
+          "out_of_order_deliveries": 1517,
+          "max_delivered_delay_ms": 204.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 0,
+          "direction": "client_to_relay",
+          "actual_loss_percent": 3.787,
+          "mean_delivered_delay_ms": 89.917,
+          "received_bytes_per_second": 74639.223,
+          "delivered_bytes_per_second": 71861.657
+        },
+        {
+          "received": 507,
+          "bytes": 32538,
+          "dropped": 24,
+          "dropped_bytes": 1645,
+          "delivered": 483,
+          "delivered_bytes": 30893,
+          "reorder_injected": 37,
+          "out_of_order_deliveries": 67,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 0,
+          "direction": "relay_to_client",
+          "actual_loss_percent": 4.734,
+          "mean_delivered_delay_ms": 88.573,
+          "received_bytes_per_second": 969.923,
+          "delivered_bytes_per_second": 920.887
+        },
+        {
+          "received": 213,
+          "bytes": 10904,
+          "dropped": 12,
+          "dropped_bytes": 512,
+          "delivered": 201,
+          "delivered_bytes": 10392,
+          "reorder_injected": 19,
+          "out_of_order_deliveries": 12,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 1,
+          "direction": "client_to_relay",
+          "actual_loss_percent": 5.634,
+          "mean_delivered_delay_ms": 91.851,
+          "received_bytes_per_second": 325.037,
+          "delivered_bytes_per_second": 309.774
+        },
+        {
+          "received": 555,
+          "bytes": 466793,
+          "dropped": 26,
+          "dropped_bytes": 23290,
+          "delivered": 529,
+          "delivered_bytes": 443503,
+          "reorder_injected": 42,
+          "out_of_order_deliveries": 85,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 1,
+          "direction": "relay_to_client",
+          "actual_loss_percent": 4.685,
+          "mean_delivered_delay_ms": 88.974,
+          "received_bytes_per_second": 13914.597,
+          "delivered_bytes_per_second": 13220.348
+        },
+        {
+          "received": 221,
+          "bytes": 11203,
+          "dropped": 4,
+          "dropped_bytes": 152,
+          "delivered": 217,
+          "delivered_bytes": 11051,
+          "reorder_injected": 13,
+          "out_of_order_deliveries": 13,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 2,
+          "direction": "client_to_relay",
+          "actual_loss_percent": 1.81,
+          "mean_delivered_delay_ms": 87.465,
+          "received_bytes_per_second": 333.949,
+          "delivered_bytes_per_second": 329.418
+        },
+        {
+          "received": 741,
+          "bytes": 459771,
+          "dropped": 27,
+          "dropped_bytes": 22259,
+          "delivered": 714,
+          "delivered_bytes": 437512,
+          "reorder_injected": 46,
+          "out_of_order_deliveries": 198,
+          "max_delivered_delay_ms": 203.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 2,
+          "direction": "relay_to_client",
+          "actual_loss_percent": 3.644,
+          "mean_delivered_delay_ms": 88.134,
+          "received_bytes_per_second": 13705.279,
+          "delivered_bytes_per_second": 13041.762
+        },
+        {
+          "received": 201,
+          "bytes": 11156,
+          "dropped": 7,
+          "dropped_bytes": 301,
+          "delivered": 194,
+          "delivered_bytes": 10855,
+          "reorder_injected": 19,
+          "out_of_order_deliveries": 17,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 3,
+          "direction": "client_to_relay",
+          "actual_loss_percent": 3.483,
+          "mean_delivered_delay_ms": 90.727,
+          "received_bytes_per_second": 332.548,
+          "delivered_bytes_per_second": 323.576
+        },
+        {
+          "received": 519,
+          "bytes": 431527,
+          "dropped": 25,
+          "dropped_bytes": 19750,
+          "delivered": 494,
+          "delivered_bytes": 411777,
+          "reorder_injected": 44,
+          "out_of_order_deliveries": 90,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 3,
+          "direction": "relay_to_client",
+          "actual_loss_percent": 4.817,
+          "mean_delivered_delay_ms": 90.567,
+          "received_bytes_per_second": 12863.356,
+          "delivered_bytes_per_second": 12274.63
+        },
+        {
+          "received": 211,
+          "bytes": 10834,
+          "dropped": 8,
+          "dropped_bytes": 336,
+          "delivered": 203,
+          "delivered_bytes": 10498,
+          "reorder_injected": 11,
+          "out_of_order_deliveries": 11,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 4,
+          "direction": "client_to_relay",
+          "actual_loss_percent": 3.791,
+          "mean_delivered_delay_ms": 89.764,
+          "received_bytes_per_second": 322.95,
+          "delivered_bytes_per_second": 312.934
+        },
+        {
+          "received": 738,
+          "bytes": 462215,
+          "dropped": 31,
+          "dropped_bytes": 21870,
+          "delivered": 707,
+          "delivered_bytes": 440345,
+          "reorder_injected": 65,
+          "out_of_order_deliveries": 198,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 4,
+          "direction": "relay_to_client",
+          "actual_loss_percent": 4.201,
+          "mean_delivered_delay_ms": 90.777,
+          "received_bytes_per_second": 13778.132,
+          "delivered_bytes_per_second": 13126.211
+        },
+        {
+          "received": 62,
+          "bytes": 5966,
+          "dropped": 2,
+          "dropped_bytes": 698,
+          "delivered": 60,
+          "delivered_bytes": 5268,
+          "reorder_injected": 4,
+          "out_of_order_deliveries": 8,
+          "max_delivered_delay_ms": 188.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 5,
+          "direction": "client_to_relay",
+          "actual_loss_percent": 3.226,
+          "mean_delivered_delay_ms": 89.1,
+          "received_bytes_per_second": 177.84,
+          "delivered_bytes_per_second": 157.033
+        },
+        {
+          "received": 131,
+          "bytes": 79397,
+          "dropped": 7,
+          "dropped_bytes": 2583,
+          "delivered": 124,
+          "delivered_bytes": 76814,
+          "reorder_injected": 10,
+          "out_of_order_deliveries": 17,
+          "max_delivered_delay_ms": 203.0,
+          "closed_flow_errors": 0,
+          "closed_flow_bytes": 0,
+          "peer": 5,
+          "direction": "relay_to_client",
+          "actual_loss_percent": 5.344,
+          "mean_delivered_delay_ms": 91.202,
+          "received_bytes_per_second": 2366.739,
+          "delivered_bytes_per_second": 2289.743
+        }
+      ],
+      "observation_seconds": 33.547,
+      "active_receive_seconds": 32.406,
+      "byte_boundary": "UDP datagram payload: includes native ENet/DTLS and retransmissions; excludes UDP/IP/link headers",
+      "pending_discarded_at_cleanup": 0,
+      "pending_bytes_discarded_at_cleanup": 0,
+      "byte_accounting_balanced": true,
+      "windows": {},
+      "error": null
+    }
+  },
+  "performance": {
+    "actualbuffer_size": 262144,
+    "benchmark_fps_limit": 0,
+    "benchmark_vsync": 0,
+    "build": "0.8.2",
+    "camera_size": 58.0,
+    "checks": 48,
+    "conditions": "Native 3v3 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 144 mixed military +60 workers; researched cap is 600 light military +72 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample.",
+    "failures": [],
+    "geometry_with_instance_uniforms": 8024,
+    "godot": "4.6.3-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "harness_check_only": false,
+    "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+    "mode": "3v3",
+    "msaa_3d": 2,
+    "phases": [
+      {
+        "army_capacity_level": 0,
+        "authority_ticks": 450,
+        "damage_events": 1434,
+        "duration_seconds": 15.003896,
+        "ending_units": 204,
+        "engine_physics_monitor_ms": {
+          "max": 20.69,
+          "mean": 16.9850977777778,
+          "p50": 16.931,
+          "p95": 20.69,
+          "p99": 20.69,
+          "samples": 450
+        },
+        "frame_count": 1151,
+        "frame_ms": {
+          "max": 52.261,
+          "mean": 13.0355247610773,
+          "p50": 7.845,
+          "p95": 33.399,
+          "p99": 38.61,
+          "samples": 1151
+        },
+        "frame_p95_under_16ms": false,
+        "logic_p95_under_33ms": true,
+        "measured_fps": 76.7134083040832,
+        "military_roster_per_player": {
+          "archer": 6,
+          "cannon": 2,
+          "catapult": 2,
+          "knight": 4,
+          "swordsman": 10
+        },
+        "military_supply_limit_per_player": 50,
+        "monitor_samples": [
+          {
+            "active_units": 204,
+            "draw_calls": 771.0,
+            "effects": 53,
+            "memory_mb": 283.072172164917,
+            "nodes": 7787.0,
+            "orphans": 0.0,
+            "pooled_effects": 48,
+            "primitives": 1322296.0,
+            "projectiles": 5,
+            "render_objects": 5702.0,
+            "video_memory_mb": 575.483505249023
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 778.0,
+            "effects": 70,
+            "memory_mb": 283.758955001831,
+            "nodes": 7940.0,
+            "orphans": 0.0,
+            "pooled_effects": 48,
+            "primitives": 1317096.0,
+            "projectiles": 22,
+            "render_objects": 5780.0,
+            "video_memory_mb": 575.487060546875
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 792.0,
+            "effects": 79,
+            "memory_mb": 283.439115524292,
+            "nodes": 7859.0,
+            "orphans": 0.0,
+            "pooled_effects": 66,
+            "primitives": 1310430.0,
+            "projectiles": 13,
+            "render_objects": 5756.0,
+            "video_memory_mb": 575.481414794922
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 824.0,
+            "effects": 97,
+            "memory_mb": 283.447233200073,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 85,
+            "primitives": 1321314.0,
+            "projectiles": 12,
+            "render_objects": 5741.0,
+            "video_memory_mb": 575.487976074219
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 811.0,
+            "effects": 98,
+            "memory_mb": 283.402193069458,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 86,
+            "primitives": 1321326.0,
+            "projectiles": 12,
+            "render_objects": 5733.0,
+            "video_memory_mb": 575.484161376953
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 797.0,
+            "effects": 73,
+            "memory_mb": 283.36269569397,
+            "nodes": 7832.0,
+            "orphans": 0.0,
+            "pooled_effects": 63,
+            "primitives": 1329496.0,
+            "projectiles": 10,
+            "render_objects": 5733.0,
+            "video_memory_mb": 575.48388671875
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 799.0,
+            "effects": 74,
+            "memory_mb": 283.70867729187,
+            "nodes": 7886.0,
+            "orphans": 0.0,
+            "pooled_effects": 58,
+            "primitives": 1335760.0,
+            "projectiles": 16,
+            "render_objects": 5778.0,
+            "video_memory_mb": 575.488540649414
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 796.0,
+            "effects": 92,
+            "memory_mb": 284.206003189087,
+            "nodes": 7994.0,
+            "orphans": 0.0,
+            "pooled_effects": 64,
+            "primitives": 1334634.0,
+            "projectiles": 28,
+            "render_objects": 5870.0,
+            "video_memory_mb": 575.511581420898
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 835.0,
+            "effects": 105,
+            "memory_mb": 283.863111495972,
+            "nodes": 7904.0,
+            "orphans": 0.0,
+            "pooled_effects": 87,
+            "primitives": 1347482.0,
+            "projectiles": 18,
+            "render_objects": 5851.0,
+            "video_memory_mb": 575.911331176758
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 842.0,
+            "effects": 103,
+            "memory_mb": 283.476789474487,
+            "nodes": 7832.0,
+            "orphans": 0.0,
+            "pooled_effects": 93,
+            "primitives": 1348072.0,
+            "projectiles": 10,
+            "render_objects": 5817.0,
+            "video_memory_mb": 575.493881225586
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 818.0,
+            "effects": 93,
+            "memory_mb": 283.378847122192,
+            "nodes": 7814.0,
+            "orphans": 0.0,
+            "pooled_effects": 85,
+            "primitives": 1346624.0,
+            "projectiles": 8,
+            "render_objects": 5781.0,
+            "video_memory_mb": 575.494644165039
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 821.0,
+            "effects": 81,
+            "memory_mb": 283.368844985962,
+            "nodes": 7805.0,
+            "orphans": 0.0,
+            "pooled_effects": 74,
+            "primitives": 1348372.0,
+            "projectiles": 7,
+            "render_objects": 5795.0,
+            "video_memory_mb": 575.925247192383
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 808.0,
+            "effects": 83,
+            "memory_mb": 283.948999404907,
+            "nodes": 7940.0,
+            "orphans": 0.0,
+            "pooled_effects": 61,
+            "primitives": 1338004.0,
+            "projectiles": 22,
+            "render_objects": 5856.0,
+            "video_memory_mb": 575.524429321289
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 815.0,
+            "effects": 84,
+            "memory_mb": 283.865800857544,
+            "nodes": 7922.0,
+            "orphans": 0.0,
+            "pooled_effects": 64,
+            "primitives": 1329374.0,
+            "projectiles": 20,
+            "render_objects": 5863.0,
+            "video_memory_mb": 575.517990112305
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 825.0,
+            "effects": 94,
+            "memory_mb": 283.62696647644,
+            "nodes": 7859.0,
+            "orphans": 0.0,
+            "pooled_effects": 81,
+            "primitives": 1328572.0,
+            "projectiles": 13,
+            "render_objects": 5833.0,
+            "video_memory_mb": 575.530532836914
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 861.0,
+            "effects": 104,
+            "memory_mb": 283.674489974976,
+            "nodes": 7868.0,
+            "orphans": 0.0,
+            "pooled_effects": 90,
+            "primitives": 1339232.0,
+            "projectiles": 14,
+            "render_objects": 5862.0,
+            "video_memory_mb": 575.522109985352
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 846.0,
+            "effects": 97,
+            "memory_mb": 283.683183670044,
+            "nodes": 7868.0,
+            "orphans": 0.0,
+            "pooled_effects": 83,
+            "primitives": 1343472.0,
+            "projectiles": 14,
+            "render_objects": 5857.0,
+            "video_memory_mb": 575.527526855469
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 817.0,
+            "effects": 85,
+            "memory_mb": 283.771226882935,
+            "nodes": 7877.0,
+            "orphans": 0.0,
+            "pooled_effects": 70,
+            "primitives": 1339580.0,
+            "projectiles": 15,
+            "render_objects": 5825.0,
+            "video_memory_mb": 575.922576904297
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 813.0,
+            "effects": 94,
+            "memory_mb": 284.250883102417,
+            "nodes": 7976.0,
+            "orphans": 0.0,
+            "pooled_effects": 68,
+            "primitives": 1342950.0,
+            "projectiles": 26,
+            "render_objects": 5891.0,
+            "video_memory_mb": 575.535842895508
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 838.0,
+            "effects": 100,
+            "memory_mb": 284.014047622681,
+            "nodes": 7922.0,
+            "orphans": 0.0,
+            "pooled_effects": 80,
+            "primitives": 1351986.0,
+            "projectiles": 20,
+            "render_objects": 5901.0,
+            "video_memory_mb": 575.551971435547
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 826.0,
+            "effects": 97,
+            "memory_mb": 283.716901779175,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 85,
+            "primitives": 1342116.0,
+            "projectiles": 12,
+            "render_objects": 5851.0,
+            "video_memory_mb": 575.518753051758
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 833.0,
+            "effects": 98,
+            "memory_mb": 283.465696334839,
+            "nodes": 7805.0,
+            "orphans": 0.0,
+            "pooled_effects": 91,
+            "primitives": 1345076.0,
+            "projectiles": 7,
+            "render_objects": 5836.0,
+            "video_memory_mb": 575.51676940918
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 820.0,
+            "effects": 86,
+            "memory_mb": 283.455472946167,
+            "nodes": 7814.0,
+            "orphans": 0.0,
+            "pooled_effects": 78,
+            "primitives": 1343460.0,
+            "projectiles": 8,
+            "render_objects": 5830.0,
+            "video_memory_mb": 575.519897460938
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 798.0,
+            "effects": 76,
+            "memory_mb": 283.638593673706,
+            "nodes": 7841.0,
+            "orphans": 0.0,
+            "pooled_effects": 65,
+            "primitives": 1341220.0,
+            "projectiles": 11,
+            "render_objects": 5819.0,
+            "video_memory_mb": 575.519973754883
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 797.0,
+            "effects": 86,
+            "memory_mb": 284.09547996521,
+            "nodes": 7949.0,
+            "orphans": 0.0,
+            "pooled_effects": 63,
+            "primitives": 1336150.0,
+            "projectiles": 23,
+            "render_objects": 5900.0,
+            "video_memory_mb": 575.530807495117
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 812.0,
+            "effects": 91,
+            "memory_mb": 283.797803878784,
+            "nodes": 7868.0,
+            "orphans": 0.0,
+            "pooled_effects": 77,
+            "primitives": 1332024.0,
+            "projectiles": 14,
+            "render_objects": 5872.0,
+            "video_memory_mb": 575.932708740234
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 807.0,
+            "effects": 93,
+            "memory_mb": 283.632955551147,
+            "nodes": 7832.0,
+            "orphans": 0.0,
+            "pooled_effects": 83,
+            "primitives": 1327924.0,
+            "projectiles": 10,
+            "render_objects": 5858.0,
+            "video_memory_mb": 575.520690917969
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 811.0,
+            "effects": 105,
+            "memory_mb": 283.69317817688,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 93,
+            "primitives": 1326952.0,
+            "projectiles": 12,
+            "render_objects": 5867.0,
+            "video_memory_mb": 575.518859863281
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 804.0,
+            "effects": 85,
+            "memory_mb": 283.791547775269,
+            "nodes": 7859.0,
+            "orphans": 0.0,
+            "pooled_effects": 72,
+            "primitives": 1336630.0,
+            "projectiles": 13,
+            "render_objects": 5863.0,
+            "video_memory_mb": 575.932861328125
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 802.0,
+            "effects": 93,
+            "memory_mb": 284.01714515686,
+            "nodes": 7913.0,
+            "orphans": 0.0,
+            "pooled_effects": 74,
+            "primitives": 1343962.0,
+            "projectiles": 19,
+            "render_objects": 5877.0,
+            "video_memory_mb": 575.531219482422
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 812.0,
+            "effects": 95,
+            "memory_mb": 284.148550033569,
+            "nodes": 7931.0,
+            "orphans": 0.0,
+            "pooled_effects": 74,
+            "primitives": 1347754.0,
+            "projectiles": 21,
+            "render_objects": 5890.0,
+            "video_memory_mb": 575.544952392578
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 819.0,
+            "effects": 104,
+            "memory_mb": 284.101484298706,
+            "nodes": 7922.0,
+            "orphans": 0.0,
+            "pooled_effects": 84,
+            "primitives": 1343704.0,
+            "projectiles": 20,
+            "render_objects": 5903.0,
+            "video_memory_mb": 575.535491943359
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 816.0,
+            "effects": 93,
+            "memory_mb": 283.793199539185,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 81,
+            "primitives": 1345074.0,
+            "projectiles": 12,
+            "render_objects": 5887.0,
+            "video_memory_mb": 575.5283203125
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 817.0,
+            "effects": 91,
+            "memory_mb": 283.648149490356,
+            "nodes": 7823.0,
+            "orphans": 0.0,
+            "pooled_effects": 82,
+            "primitives": 1348458.0,
+            "projectiles": 9,
+            "render_objects": 5880.0,
+            "video_memory_mb": 575.936904907227
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 813.0,
+            "effects": 89,
+            "memory_mb": 283.776906967163,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 77,
+            "primitives": 1351734.0,
+            "projectiles": 12,
+            "render_objects": 5877.0,
+            "video_memory_mb": 575.534118652344
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 817.0,
+            "effects": 101,
+            "memory_mb": 284.075727462769,
+            "nodes": 7913.0,
+            "orphans": 0.0,
+            "pooled_effects": 82,
+            "primitives": 1354580.0,
+            "projectiles": 19,
+            "render_objects": 5927.0,
+            "video_memory_mb": 575.545562744141
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 815.0,
+            "effects": 95,
+            "memory_mb": 284.038705825806,
+            "nodes": 7904.0,
+            "orphans": 0.0,
+            "pooled_effects": 77,
+            "primitives": 1340488.0,
+            "projectiles": 18,
+            "render_objects": 5921.0,
+            "video_memory_mb": 575.954071044922
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 809.0,
+            "effects": 90,
+            "memory_mb": 283.904314041138,
+            "nodes": 7868.0,
+            "orphans": 0.0,
+            "pooled_effects": 76,
+            "primitives": 1336516.0,
+            "projectiles": 14,
+            "render_objects": 5914.0,
+            "video_memory_mb": 575.536102294922
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 817.0,
+            "effects": 89,
+            "memory_mb": 283.673009872437,
+            "nodes": 7823.0,
+            "orphans": 0.0,
+            "pooled_effects": 80,
+            "primitives": 1339674.0,
+            "projectiles": 9,
+            "render_objects": 5886.0,
+            "video_memory_mb": 575.939270019531
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 821.0,
+            "effects": 96,
+            "memory_mb": 283.690458297729,
+            "nodes": 7832.0,
+            "orphans": 0.0,
+            "pooled_effects": 86,
+            "primitives": 1333438.0,
+            "projectiles": 10,
+            "render_objects": 5886.0,
+            "video_memory_mb": 575.535263061523
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 819.0,
+            "effects": 99,
+            "memory_mb": 284.024423599243,
+            "nodes": 7895.0,
+            "orphans": 0.0,
+            "pooled_effects": 82,
+            "primitives": 1339242.0,
+            "projectiles": 17,
+            "render_objects": 5906.0,
+            "video_memory_mb": 575.559295654297
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 819.0,
+            "effects": 94,
+            "memory_mb": 284.341646194458,
+            "nodes": 7967.0,
+            "orphans": 0.0,
+            "pooled_effects": 69,
+            "primitives": 1360838.0,
+            "projectiles": 25,
+            "render_objects": 5974.0,
+            "video_memory_mb": 575.559906005859
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 844.0,
+            "effects": 102,
+            "memory_mb": 284.247541427612,
+            "nodes": 7931.0,
+            "orphans": 0.0,
+            "pooled_effects": 81,
+            "primitives": 1365356.0,
+            "projectiles": 21,
+            "render_objects": 5976.0,
+            "video_memory_mb": 575.567459106445
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 843.0,
+            "effects": 108,
+            "memory_mb": 284.003568649292,
+            "nodes": 7868.0,
+            "orphans": 0.0,
+            "pooled_effects": 94,
+            "primitives": 1363848.0,
+            "projectiles": 14,
+            "render_objects": 5961.0,
+            "video_memory_mb": 575.971771240234
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 859.0,
+            "effects": 111,
+            "memory_mb": 283.672212600708,
+            "nodes": 7796.0,
+            "orphans": 0.0,
+            "pooled_effects": 105,
+            "primitives": 1364450.0,
+            "projectiles": 6,
+            "render_objects": 5945.0,
+            "video_memory_mb": 575.558609008789
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 843.0,
+            "effects": 94,
+            "memory_mb": 283.661531448364,
+            "nodes": 7805.0,
+            "orphans": 0.0,
+            "pooled_effects": 87,
+            "primitives": 1362560.0,
+            "projectiles": 7,
+            "render_objects": 5944.0,
+            "video_memory_mb": 575.559219360352
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 843.0,
+            "effects": 93,
+            "memory_mb": 284.024408340454,
+            "nodes": 7886.0,
+            "orphans": 0.0,
+            "pooled_effects": 77,
+            "primitives": 1366314.0,
+            "projectiles": 16,
+            "render_objects": 5979.0,
+            "video_memory_mb": 575.573257446289
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 819.0,
+            "effects": 89,
+            "memory_mb": 284.158140182495,
+            "nodes": 7904.0,
+            "orphans": 0.0,
+            "pooled_effects": 71,
+            "primitives": 1360192.0,
+            "projectiles": 18,
+            "render_objects": 5981.0,
+            "video_memory_mb": 575.563034057617
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 859.0,
+            "effects": 113,
+            "memory_mb": 284.118291854858,
+            "nodes": 7886.0,
+            "orphans": 0.0,
+            "pooled_effects": 97,
+            "primitives": 1361068.0,
+            "projectiles": 16,
+            "render_objects": 6009.0,
+            "video_memory_mb": 575.585235595703
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 844.0,
+            "effects": 107,
+            "memory_mb": 283.754457473755,
+            "nodes": 7823.0,
+            "orphans": 0.0,
+            "pooled_effects": 98,
+            "primitives": 1347982.0,
+            "projectiles": 9,
+            "render_objects": 5948.0,
+            "video_memory_mb": 575.555404663086
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 836.0,
+            "effects": 98,
+            "memory_mb": 283.675458908081,
+            "nodes": 7814.0,
+            "orphans": 0.0,
+            "pooled_effects": 90,
+            "primitives": 1338664.0,
+            "projectiles": 8,
+            "render_objects": 5944.0,
+            "video_memory_mb": 575.553421020508
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 822.0,
+            "effects": 82,
+            "memory_mb": 283.767335891724,
+            "nodes": 7841.0,
+            "orphans": 0.0,
+            "pooled_effects": 71,
+            "primitives": 1338180.0,
+            "projectiles": 11,
+            "render_objects": 5953.0,
+            "video_memory_mb": 575.559143066406
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 848.0,
+            "effects": 99,
+            "memory_mb": 284.410127639771,
+            "nodes": 7958.0,
+            "orphans": 0.0,
+            "pooled_effects": 75,
+            "primitives": 1359154.0,
+            "projectiles": 24,
+            "render_objects": 6006.0,
+            "video_memory_mb": 575.581497192383
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 836.0,
+            "effects": 108,
+            "memory_mb": 284.556306838989,
+            "nodes": 7976.0,
+            "orphans": 0.0,
+            "pooled_effects": 82,
+            "primitives": 1359298.0,
+            "projectiles": 26,
+            "render_objects": 5992.0,
+            "video_memory_mb": 575.985504150391
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 862.0,
+            "effects": 117,
+            "memory_mb": 284.289388656616,
+            "nodes": 7913.0,
+            "orphans": 0.0,
+            "pooled_effects": 98,
+            "primitives": 1364598.0,
+            "projectiles": 19,
+            "render_objects": 6010.0,
+            "video_memory_mb": 575.578903198242
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 850.0,
+            "effects": 113,
+            "memory_mb": 283.977697372437,
+            "nodes": 7850.0,
+            "orphans": 0.0,
+            "pooled_effects": 101,
+            "primitives": 1360404.0,
+            "projectiles": 12,
+            "render_objects": 5959.0,
+            "video_memory_mb": 575.567459106445
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 848.0,
+            "effects": 100,
+            "memory_mb": 283.818529129028,
+            "nodes": 7823.0,
+            "orphans": 0.0,
+            "pooled_effects": 91,
+            "primitives": 1365832.0,
+            "projectiles": 9,
+            "render_objects": 5984.0,
+            "video_memory_mb": 575.573867797852
+          },
+          {
+            "active_units": 204,
+            "draw_calls": 851.0,
+            "effects": 98,
+            "memory_mb": 283.900968551636,
+            "nodes": 7841.0,
+            "orphans": 0.0,
+            "pooled_effects": 87,
+            "primitives": 1371916.0,
+            "projectiles": 11,
+            "render_objects": 5999.0,
+            "video_memory_mb": 575.582443237305
+          }
+        ],
+        "name": "standard_144_military_60_workers",
+        "navigation_ms": {
+          "max": 2.848,
+          "mean": 1.91492444444445,
+          "p50": 1.912,
+          "p95": 2.393,
+          "p99": 2.393,
+          "samples": 450
+        },
+        "observed_tps": 29.9922100233166,
+        "path_query_count": {
+          "max": 9.0,
+          "mean": 2.06222222222222,
+          "p50": 2.0,
+          "p95": 5.0,
+          "p99": 7.0,
+          "samples": 450
+        },
+        "path_query_ms": {
+          "max": 3.475,
+          "mean": 0.914066666666666,
+          "p50": 0.831,
+          "p95": 2.205,
+          "p99": 2.891,
+          "samples": 450
+        },
+        "physics_logic_ms": {
+          "max": 15.971,
+          "mean": 9.19234666666667,
+          "p50": 8.859,
+          "p95": 12.354,
+          "p99": 14.349,
+          "samples": 450
+        },
+        "process_ms": {
+          "max": 37.349,
+          "mean": 25.5250078192876,
+          "p50": 23.973,
+          "p95": 37.349,
+          "p99": 37.349,
+          "samples": 1151
+        },
+        "starting_units": 204,
+        "visible_units_in_camera_at_end": 153,
+        "visible_units_in_camera_at_start": 150,
+        "workers_per_player": 10,
+        "workforce_level": 0
+      },
+      {
+        "army_capacity_level": 2,
+        "authority_ticks": 296,
+        "damage_events": 1860,
+        "duration_seconds": 15.261074,
+        "ending_units": 672,
+        "engine_physics_monitor_ms": {
+          "max": 62.002,
+          "mean": 53.6262432432433,
+          "p50": 54.34,
+          "p95": 62.002,
+          "p99": 62.002,
+          "samples": 37
+        },
+        "frame_count": 37,
+        "frame_ms": {
+          "max": 453.263,
+          "mean": 412.459378378379,
+          "p50": 419.796,
+          "p95": 447.327,
+          "p99": 450.418,
+          "samples": 37
+        },
+        "frame_p95_under_16ms": false,
+        "logic_p95_under_33ms": false,
+        "measured_fps": 2.42446894628779,
+        "military_roster_per_player": {
+          "archer": 50,
+          "swordsman": 50
+        },
+        "military_supply_limit_per_player": 100,
+        "monitor_samples": [
+          {
+            "active_units": 672,
+            "draw_calls": 1037.0,
+            "effects": 181,
+            "memory_mb": 341.767466545105,
+            "nodes": 19301.0,
+            "orphans": 0.0,
+            "pooled_effects": 126,
+            "primitives": 2771758.0,
+            "projectiles": 55,
+            "render_objects": 12679.0,
+            "video_memory_mb": 566.614685058594
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1078.0,
+            "effects": 175,
+            "memory_mb": 341.604357719421,
+            "nodes": 19229.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 2794676.0,
+            "projectiles": 47,
+            "render_objects": 12784.0,
+            "video_memory_mb": 566.715850830078
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1064.0,
+            "effects": 178,
+            "memory_mb": 341.666159629822,
+            "nodes": 19256.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 2810498.0,
+            "projectiles": 50,
+            "render_objects": 12781.0,
+            "video_memory_mb": 566.700988769531
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1082.0,
+            "effects": 183,
+            "memory_mb": 342.077170372009,
+            "nodes": 19301.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 2869284.0,
+            "projectiles": 55,
+            "render_objects": 13055.0,
+            "video_memory_mb": 566.757736206055
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1043.0,
+            "effects": 168,
+            "memory_mb": 342.618403434753,
+            "nodes": 19418.0,
+            "orphans": 0.0,
+            "pooled_effects": 100,
+            "primitives": 2885104.0,
+            "projectiles": 68,
+            "render_objects": 13098.0,
+            "video_memory_mb": 566.817276000977
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1022.0,
+            "effects": 187,
+            "memory_mb": 342.398756980896,
+            "nodes": 19337.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 2953048.0,
+            "projectiles": 59,
+            "render_objects": 13447.0,
+            "video_memory_mb": 566.865127563477
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1069.0,
+            "effects": 191,
+            "memory_mb": 342.594019889832,
+            "nodes": 19373.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 2963698.0,
+            "projectiles": 63,
+            "render_objects": 13410.0,
+            "video_memory_mb": 566.927673339844
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1110.0,
+            "effects": 181,
+            "memory_mb": 342.258830070496,
+            "nodes": 19283.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3032184.0,
+            "projectiles": 53,
+            "render_objects": 13747.0,
+            "video_memory_mb": 566.911529541016
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1138.0,
+            "effects": 181,
+            "memory_mb": 342.297968864441,
+            "nodes": 19283.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3098460.0,
+            "projectiles": 53,
+            "render_objects": 13975.0,
+            "video_memory_mb": 566.961120605469
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1090.0,
+            "effects": 146,
+            "memory_mb": 342.590273857117,
+            "nodes": 19346.0,
+            "orphans": 0.0,
+            "pooled_effects": 86,
+            "primitives": 3123102.0,
+            "projectiles": 60,
+            "render_objects": 14059.0,
+            "video_memory_mb": 567.066360473633
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1097.0,
+            "effects": 200,
+            "memory_mb": 343.072932243347,
+            "nodes": 19454.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3142000.0,
+            "projectiles": 72,
+            "render_objects": 14170.0,
+            "video_memory_mb": 567.053131103516
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1155.0,
+            "effects": 196,
+            "memory_mb": 343.071352958679,
+            "nodes": 19418.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3198816.0,
+            "projectiles": 68,
+            "render_objects": 14502.0,
+            "video_memory_mb": 567.108093261719
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1132.0,
+            "effects": 158,
+            "memory_mb": 342.826613426209,
+            "nodes": 19346.0,
+            "orphans": 0.0,
+            "pooled_effects": 98,
+            "primitives": 3240604.0,
+            "projectiles": 60,
+            "render_objects": 14575.0,
+            "video_memory_mb": 567.165115356445
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1193.0,
+            "effects": 174,
+            "memory_mb": 342.328017234802,
+            "nodes": 19220.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3258856.0,
+            "projectiles": 46,
+            "render_objects": 14641.0,
+            "video_memory_mb": 567.182983398438
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1184.0,
+            "effects": 177,
+            "memory_mb": 342.41725063324,
+            "nodes": 19247.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3272744.0,
+            "projectiles": 49,
+            "render_objects": 14598.0,
+            "video_memory_mb": 567.174423217773
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1174.0,
+            "effects": 177,
+            "memory_mb": 342.793246269226,
+            "nodes": 19337.0,
+            "orphans": 0.0,
+            "pooled_effects": 118,
+            "primitives": 3287046.0,
+            "projectiles": 59,
+            "render_objects": 14684.0,
+            "video_memory_mb": 567.20588684082
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1151.0,
+            "effects": 193,
+            "memory_mb": 343.063445091248,
+            "nodes": 19391.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3296056.0,
+            "projectiles": 65,
+            "render_objects": 14737.0,
+            "video_memory_mb": 567.213745117188
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1156.0,
+            "effects": 181,
+            "memory_mb": 342.629542350769,
+            "nodes": 19283.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3314938.0,
+            "projectiles": 53,
+            "render_objects": 14854.0,
+            "video_memory_mb": 567.246276855469
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1199.0,
+            "effects": 176,
+            "memory_mb": 342.47351360321,
+            "nodes": 19238.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3320548.0,
+            "projectiles": 48,
+            "render_objects": 14830.0,
+            "video_memory_mb": 567.236587524414
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1198.0,
+            "effects": 173,
+            "memory_mb": 342.377989768982,
+            "nodes": 19238.0,
+            "orphans": 0.0,
+            "pooled_effects": 125,
+            "primitives": 3321574.0,
+            "projectiles": 48,
+            "render_objects": 14838.0,
+            "video_memory_mb": 567.198501586914
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1113.0,
+            "effects": 143,
+            "memory_mb": 342.594866752625,
+            "nodes": 19274.0,
+            "orphans": 0.0,
+            "pooled_effects": 91,
+            "primitives": 3322406.0,
+            "projectiles": 52,
+            "render_objects": 14783.0,
+            "video_memory_mb": 567.263946533203
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1165.0,
+            "effects": 184,
+            "memory_mb": 342.781329154968,
+            "nodes": 19310.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3327570.0,
+            "projectiles": 56,
+            "render_objects": 14861.0,
+            "video_memory_mb": 567.222473144531
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1200.0,
+            "effects": 181,
+            "memory_mb": 342.857970237732,
+            "nodes": 19283.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3332322.0,
+            "projectiles": 53,
+            "render_objects": 14920.0,
+            "video_memory_mb": 567.249404907227
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1244.0,
+            "effects": 185,
+            "memory_mb": 342.835318565369,
+            "nodes": 19319.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3336014.0,
+            "projectiles": 57,
+            "render_objects": 14972.0,
+            "video_memory_mb": 567.239593505859
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1194.0,
+            "effects": 177,
+            "memory_mb": 342.511004447937,
+            "nodes": 19247.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3332754.0,
+            "projectiles": 49,
+            "render_objects": 14960.0,
+            "video_memory_mb": 567.232299804688
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1204.0,
+            "effects": 180,
+            "memory_mb": 342.710108757019,
+            "nodes": 19292.0,
+            "orphans": 0.0,
+            "pooled_effects": 126,
+            "primitives": 3330596.0,
+            "projectiles": 54,
+            "render_objects": 14910.0,
+            "video_memory_mb": 567.269226074219
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1196.0,
+            "effects": 173,
+            "memory_mb": 342.440421104431,
+            "nodes": 19211.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3336246.0,
+            "projectiles": 45,
+            "render_objects": 14971.0,
+            "video_memory_mb": 567.242752075195
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1193.0,
+            "effects": 172,
+            "memory_mb": 342.380904197693,
+            "nodes": 19202.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3334794.0,
+            "projectiles": 44,
+            "render_objects": 14918.0,
+            "video_memory_mb": 567.254196166992
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1241.0,
+            "effects": 187,
+            "memory_mb": 342.941348075867,
+            "nodes": 19337.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3336106.0,
+            "projectiles": 59,
+            "render_objects": 14954.0,
+            "video_memory_mb": 567.228637695313
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1161.0,
+            "effects": 150,
+            "memory_mb": 342.661234855652,
+            "nodes": 19256.0,
+            "orphans": 0.0,
+            "pooled_effects": 100,
+            "primitives": 3333936.0,
+            "projectiles": 50,
+            "render_objects": 14977.0,
+            "video_memory_mb": 567.246948242188
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1213.0,
+            "effects": 176,
+            "memory_mb": 342.537634849548,
+            "nodes": 19238.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3331824.0,
+            "projectiles": 48,
+            "render_objects": 14985.0,
+            "video_memory_mb": 567.233520507813
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1193.0,
+            "effects": 178,
+            "memory_mb": 342.625224113464,
+            "nodes": 19256.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3333386.0,
+            "projectiles": 50,
+            "render_objects": 14946.0,
+            "video_memory_mb": 567.248779296875
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1242.0,
+            "effects": 170,
+            "memory_mb": 342.421496391296,
+            "nodes": 19184.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3338764.0,
+            "projectiles": 42,
+            "render_objects": 15046.0,
+            "video_memory_mb": 567.228134155273
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1191.0,
+            "effects": 156,
+            "memory_mb": 342.101614952087,
+            "nodes": 19121.0,
+            "orphans": 0.0,
+            "pooled_effects": 121,
+            "primitives": 3335470.0,
+            "projectiles": 35,
+            "render_objects": 14967.0,
+            "video_memory_mb": 567.214813232422
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1213.0,
+            "effects": 179,
+            "memory_mb": 342.67124080658,
+            "nodes": 19265.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3331408.0,
+            "projectiles": 51,
+            "render_objects": 14952.0,
+            "video_memory_mb": 567.227096557617
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1202.0,
+            "effects": 175,
+            "memory_mb": 342.615508079529,
+            "nodes": 19229.0,
+            "orphans": 0.0,
+            "pooled_effects": 128,
+            "primitives": 3324918.0,
+            "projectiles": 47,
+            "render_objects": 15041.0,
+            "video_memory_mb": 567.251510620117
+          },
+          {
+            "active_units": 672,
+            "draw_calls": 1207.0,
+            "effects": 166,
+            "memory_mb": 342.472411155701,
+            "nodes": 19184.0,
+            "orphans": 0.0,
+            "pooled_effects": 124,
+            "primitives": 3312846.0,
+            "projectiles": 42,
+            "render_objects": 14984.0,
+            "video_memory_mb": 567.263641357422
+          }
+        ],
+        "name": "maximum_600_military_72_workers",
+        "navigation_ms": {
+          "max": 8.821,
+          "mean": 7.43724324324324,
+          "p50": 7.453,
+          "p95": 8.066,
+          "p99": 8.066,
+          "samples": 37
+        },
+        "observed_tps": 19.3957515703023,
+        "path_query_count": {
+          "max": 24.0,
+          "mean": 19.1283783783784,
+          "p50": 21.0,
+          "p95": 24.0,
+          "p99": 24.0,
+          "samples": 296
+        },
+        "path_query_ms": {
+          "max": 13.499,
+          "mean": 6.96785135135135,
+          "p50": 7.505,
+          "p95": 9.278,
+          "p99": 10.792,
+          "samples": 296
+        },
+        "physics_logic_ms": {
+          "max": 49.024,
+          "mean": 31.6214797297297,
+          "p50": 31.192,
+          "p95": 38.912,
+          "p99": 42.101,
+          "samples": 296
+        },
+        "process_ms": {
+          "max": 63.976,
+          "mean": 56.572945945946,
+          "p50": 56.653,
+          "p95": 63.534,
+          "p99": 63.976,
+          "samples": 37
+        },
+        "starting_units": 672,
+        "visible_units_in_camera_at_end": 594,
+        "visible_units_in_camera_at_start": 488,
+        "workers_per_player": 12,
+        "workforce_level": 1
+      }
+    ],
+    "physics_interpolation": true,
+    "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+    "physics_ticks_per_second": 30,
+    "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+    "rendered": true,
+    "renderer": "forward_plus",
+    "restored_settings_fps_limit_before_override": 240,
+    "restored_settings_vsync_before_override": 1,
+    "sample_seconds_per_phase": 15.0,
+    "shadow_atlas_size": 4096,
+    "shadow_max_distance": 135.0,
+    "taa": true,
+    "viewport_size": "(1600.0, 900.0)",
+    "warmup_seconds_per_phase": 6.0,
+    "window_size": "(1600, 900)",
+    "run": {
+      "child_pid": 35892,
+      "elapsed_seconds": 52.343,
+      "exit_code": 0,
+      "timed_out": false,
+      "machine_activity_before": {
+        "processes": [
+          {
+            "pid": 31192,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19520,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 33896,
+            "name": "Godot.exe",
+            "role": "user_editor"
+          },
+          {
+            "pid": 30480,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 38012,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19264,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 2544,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 40260,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 1928,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 42612,
+            "name": "python.exe",
+            "role": "background_process"
+          }
+        ],
+        "cpu": "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+      },
+      "machine_activity_after": {
+        "processes": [
+          {
+            "pid": 31192,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19520,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 33896,
+            "name": "Godot.exe",
+            "role": "user_editor"
+          },
+          {
+            "pid": 30480,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 38012,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19264,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 2544,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 40260,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 1928,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 42612,
+            "name": "python.exe",
+            "role": "background_process"
+          }
+        ],
+        "cpu": "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+      },
+      "shared_workstation": true,
+      "user_processes_preserved": true,
+      "notes": "Started only after all other Godot/ENet validation helpers stopped. Existing user game/editor and unrelated background processes were deliberately left running; GPU/CPU contention can affect these sample values.",
+      "script_errors": false,
+      "stderr_empty": true,
+      "helper_cleanup_verified": true
+    },
+    "ok": true
+  },
+  "performance_targets_met": false,
+  "final_packaged_match": {
+    "ok": true,
+    "command": [
+      "C:\\Users\\wh\\Documents\\middle-ages-battle\\builds\\windows-0.8.2\\AshenCrown.exe",
+      "--audio-driver",
+      "Dummy",
+      "--log-file",
+      "C:\\Users\\wh\\Documents\\middle-ages-battle\\artifacts\\release-082-final-match.engine.log",
+      "--headless",
+      "--",
+      "--match-smoke",
+      "--1v1",
+      "--match-smoke-fast"
+    ],
+    "child_pid": 36260,
+    "child_exited": true,
+    "process_exit_code": 0,
+    "wall_seconds": 99.907,
+    "timeout": false,
+    "stderr_clean": true,
+    "result_count": 1,
+    "parse_error": "",
+    "packaged_validation": true,
+    "result": {
+      "build": "0.8.2",
+      "catalogue_probe": {
+        "barracks": {
+          "cached_damage": 0.0,
+          "cached_path": "res://data/buildings/barracks.tres",
+          "cached_produces": [
+            "swordsman",
+            "archer",
+            "knight"
+          ],
+          "cached_type": 34,
+          "fresh_damage": 0.0,
+          "fresh_path": "res://data/buildings/barracks.tres",
+          "fresh_produces": [
+            "swordsman",
+            "archer",
+            "knight"
+          ],
+          "fresh_type": 34,
+          "same_instance": false
+        },
+        "economy": {
+          "cached": {
+            "mining_gold": 4,
+            "mining_seconds": 3.0,
+            "passive_gold_per_second": 1
+          },
+          "fresh": {
+            "mining_gold": 4,
+            "mining_seconds": 3.0,
+            "passive_gold_per_second": 1
+          },
+          "resource_path": "res://data/economy.tres"
+        },
+        "factory": {
+          "cached_damage": 0.0,
+          "cached_path": "res://data/buildings/factory.tres",
+          "cached_produces": [
+            "catapult",
+            "cannon"
+          ],
+          "cached_type": 34,
+          "fresh_damage": 0.0,
+          "fresh_path": "res://data/buildings/factory.tres",
+          "fresh_produces": [
+            "catapult",
+            "cannon"
+          ],
+          "fresh_type": 34,
+          "same_instance": false
+        },
+        "headquarters": {
+          "cached_damage": 10.0,
+          "cached_path": "res://data/buildings/headquarters.tres",
+          "cached_produces": [
+            "farmer"
+          ],
+          "cached_type": 34,
+          "fresh_damage": 10.0,
+          "fresh_path": "res://data/buildings/headquarters.tres",
+          "fresh_produces": [
+            "farmer"
+          ],
+          "fresh_type": 34,
+          "same_instance": false
+        },
+        "training_seconds": {
+          "archer": {
+            "cached": 8.0,
+            "fresh": 8.0
+          },
+          "cannon": {
+            "cached": 20.0,
+            "fresh": 20.0
+          },
+          "catapult": {
+            "cached": 20.0,
+            "fresh": 20.0
+          },
+          "farmer": {
+            "cached": 10.0,
+            "fresh": 10.0
+          },
+          "knight": {
+            "cached": 10.0,
+            "fresh": 10.0
+          },
+          "swordsman": {
+            "cached": 6.0,
+            "fresh": 6.0
+          }
+        }
+      },
+      "checks": 26,
+      "completed": [
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 1,
+          "factory": 1,
+          "headquarters": 1
+        },
+        {
+          "academy": 1,
+          "barracks": 1,
+          "defense_tower": 2,
+          "factory": 1,
+          "headquarters": 1
+        }
+      ],
+      "damage_events": 1587,
+      "diagnostic_only": false,
+      "failures": [],
+      "final_state": {
+        "buildings": [
+          {
+            "at": [
+              32.0,
+              0.0,
+              -32.0
+            ],
+            "built": true,
+            "can_list_farmer": true,
+            "definition_path": "res://data/buildings/headquarters.tres",
+            "farmer_exit_available": true,
+            "id": 12,
+            "kind": "headquarters",
+            "owner": 1,
+            "produces": [
+              "farmer"
+            ],
+            "progress": 1.0,
+            "recruit_farmer_error": "农民上限 12 人（含训练队列）",
+            "recruit_swordsman_error": "请在对应生产建筑招募",
+            "training": []
+          },
+          {
+            "at": [
+              26.0,
+              0.0,
+              -17.0
+            ],
+            "built": true,
+            "can_list_farmer": false,
+            "definition_path": "res://data/buildings/barracks.tres",
+            "farmer_exit_available": false,
+            "id": 18,
+            "kind": "barracks",
+            "owner": 1,
+            "produces": [
+              "swordsman",
+              "archer",
+              "knight"
+            ],
+            "progress": 1.0,
+            "recruit_farmer_error": "请在对应生产建筑招募",
+            "recruit_swordsman_error": "训练队列已满（每座建筑 10 项）",
+            "training": [
+              {
+                "cost": 80,
+                "elapsed": 7.03333333333332,
+                "job_id": 113,
+                "kind": "knight"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 114,
+                "kind": "knight"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 115,
+                "kind": "knight"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 116,
+                "kind": "knight"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 117,
+                "kind": "knight"
+              },
+              {
+                "cost": 60,
+                "elapsed": 0.0,
+                "job_id": 118,
+                "kind": "archer"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 119,
+                "kind": "knight"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 120,
+                "kind": "knight"
+              },
+              {
+                "cost": 80,
+                "elapsed": 0.0,
+                "job_id": 121,
+                "kind": "knight"
+              },
+              {
+                "cost": 45,
+                "elapsed": 0.0,
+                "job_id": 122,
+                "kind": "swordsman"
+              }
+            ]
+          },
+          {
+            "at": [
+              30.0,
+              0.0,
+              -40.0
+            ],
+            "built": true,
+            "can_list_farmer": false,
+            "definition_path": "res://data/buildings/factory.tres",
+            "farmer_exit_available": false,
+            "id": 44,
+            "kind": "factory",
+            "owner": 1,
+            "produces": [
+              "catapult",
+              "cannon"
+            ],
+            "progress": 1.0,
+            "recruit_farmer_error": "请在对应生产建筑招募",
+            "recruit_swordsman_error": "请在对应生产建筑招募",
+            "training": []
+          },
+          {
+            "at": [
+              42.0,
+              0.0,
+              -40.0
+            ],
+            "built": true,
+            "can_list_farmer": false,
+            "definition_path": "res://data/buildings/academy.tres",
+            "farmer_exit_available": false,
+            "id": 54,
+            "kind": "academy",
+            "owner": 1,
+            "produces": [],
+            "progress": 1.0,
+            "recruit_farmer_error": "请在对应生产建筑招募",
+            "recruit_swordsman_error": "请在对应生产建筑招募",
+            "training": []
+          },
+          {
+            "at": [
+              15.0,
+              0.0,
+              -24.0
+            ],
+            "built": true,
+            "can_list_farmer": false,
+            "definition_path": "res://data/buildings/defense_tower.tres",
+            "farmer_exit_available": false,
+            "id": 109,
+            "kind": "defense_tower",
+            "owner": 1,
+            "produces": [],
+            "progress": 1.0,
+            "recruit_farmer_error": "请在对应生产建筑招募",
+            "recruit_swordsman_error": "请在对应生产建筑招募",
+            "training": []
+          }
+        ],
+        "damage_events": 1587,
+        "last_notification": "剑士已出场",
+        "mines": [
+          {
+            "at": [
+              -32.0,
+              0.0,
+              16.0
+            ],
+            "id": 1,
+            "occupied": 0
+          },
+          {
+            "at": [
+              -16.0,
+              0.0,
+              32.0
+            ],
+            "id": 2,
+            "occupied": 0
+          },
+          {
+            "at": [
+              -10.0,
+              0.0,
+              -8.0
+            ],
+            "id": 3,
+            "occupied": 0
+          },
+          {
+            "at": [
+              32.0,
+              0.0,
+              -16.0
+            ],
+            "id": 4,
+            "occupied": 0
+          },
+          {
+            "at": [
+              16.0,
+              0.0,
+              -32.0
+            ],
+            "id": 5,
+            "occupied": 0
+          },
+          {
+            "at": [
+              10.0,
+              0.0,
+              8.0
+            ],
+            "id": 6,
+            "occupied": 0
+          }
+        ],
+        "navigation": {
+          "active": true,
+          "compact_polygons": 1048,
+          "iteration": 13,
+          "pending": 0,
+          "queries": 9620,
+          "rebuilds": 14,
+          "region_enabled": true,
+          "region_polygons": 1048,
+          "walkable_cells": 7143,
+          "worker_task": false
+        },
+        "players": [
+          {
+            "bot_state": "eliminated",
+            "eliminated": true,
+            "gold": 47,
+            "harvested": 13012,
+            "owner": 0,
+            "reserved_supply": 0,
+            "reserved_workers": 0,
+            "supply": 0,
+            "workers": 0
+          },
+          {
+            "bot_state": "attack",
+            "eliminated": false,
+            "gold": 1187,
+            "harvested": 15272,
+            "owner": 1,
+            "reserved_supply": 18,
+            "reserved_workers": 0,
+            "supply": 53,
+            "workers": 12
+          }
+        ],
+        "seconds": 985.066666666428,
+        "workers": [
+          {
+            "at": [
+              30.2107028961182,
+              0.0,
+              -14.8595561981201
+            ],
+            "claimed_mine": false,
+            "destination": [
+              30.2107028961182,
+              0.0,
+              -14.8595561981201
+            ],
+            "id": 14,
+            "nearest_nav": [
+              30.2107028961182,
+              0.0,
+              -14.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 7,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              18.2015514373779,
+              0.0,
+              -33.1939315795898
+            ],
+            "claimed_mine": false,
+            "destination": [
+              18.2015514373779,
+              0.0,
+              -33.1939315795898
+            ],
+            "id": 15,
+            "nearest_nav": [
+              19.0,
+              0.0,
+              -33.1939315795898
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 12,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              29.7372741699219,
+              0.0,
+              -17.1246109008789
+            ],
+            "claimed_mine": false,
+            "destination": [
+              29.7372741699219,
+              0.0,
+              -17.1246109008789
+            ],
+            "id": 16,
+            "nearest_nav": [
+              30.0,
+              0.0,
+              -18.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 2,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              32.1053695678711,
+              0.0,
+              -18.2031497955322
+            ],
+            "claimed_mine": false,
+            "destination": [
+              32.1053695678711,
+              0.0,
+              -18.2031497955322
+            ],
+            "id": 20,
+            "nearest_nav": [
+              32.1053695678711,
+              0.0,
+              -19.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 9,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              33.8900489807129,
+              0.0,
+              -14.9374208450317
+            ],
+            "claimed_mine": false,
+            "destination": [
+              33.8900489807129,
+              0.0,
+              -14.9374208450317
+            ],
+            "id": 22,
+            "nearest_nav": [
+              34.0,
+              0.0,
+              -14.9374208450317
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 7,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              32.1208419799805,
+              0.0,
+              -14.2493677139282
+            ],
+            "claimed_mine": false,
+            "destination": [
+              32.1208419799805,
+              0.0,
+              -14.2493677139282
+            ],
+            "id": 28,
+            "nearest_nav": [
+              32.1208419799805,
+              0.0,
+              -14.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 8,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              34.2412223815918,
+              0.0,
+              -17.4021701812744
+            ],
+            "claimed_mine": false,
+            "destination": [
+              34.2412223815918,
+              0.0,
+              -17.4021701812744
+            ],
+            "id": 56,
+            "nearest_nav": [
+              34.2412223815918,
+              0.0,
+              -18.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 4,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              17.7484397888184,
+              0.0,
+              -31.0312442779541
+            ],
+            "claimed_mine": false,
+            "destination": [
+              17.7484397888184,
+              0.0,
+              -31.0312442779541
+            ],
+            "id": 59,
+            "nearest_nav": [
+              18.0,
+              0.0,
+              -31.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 6,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              16.004207611084,
+              8.67050985107198E-05,
+              -34.0523986816406
+            ],
+            "claimed_mine": false,
+            "destination": [
+              16.004207611084,
+              8.67050985107198E-05,
+              -34.0523986816406
+            ],
+            "id": 78,
+            "nearest_nav": [
+              16.004207611084,
+              0.0,
+              -35.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 8,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              13.7932834625244,
+              -4.86664077925525E-08,
+              -33.2608833312988
+            ],
+            "claimed_mine": false,
+            "destination": [
+              13.7932834625244,
+              -4.86664077925525E-08,
+              -33.2608833312988
+            ],
+            "id": 80,
+            "nearest_nav": [
+              13.7932834625244,
+              0.0,
+              -34.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 10,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              16.0203399658203,
+              0.0,
+              -30.18727684021
+            ],
+            "claimed_mine": false,
+            "destination": [
+              16.0203399658203,
+              0.0,
+              -30.18727684021
+            ],
+            "id": 215,
+            "nearest_nav": [
+              16.0203399658203,
+              0.0,
+              -30.0
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 7,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          },
+          {
+            "at": [
+              14.2327251434326,
+              0.0,
+              -30.9588966369629
+            ],
+            "claimed_mine": false,
+            "destination": [
+              14.2327251434326,
+              0.0,
+              -30.9588966369629
+            ],
+            "id": 218,
+            "nearest_nav": [
+              14.0,
+              0.0,
+              -30.9588966369629
+            ],
+            "order": "坚守阵地",
+            "owner": 1,
+            "path_points": 8,
+            "target": 0,
+            "work_seconds": 0.0,
+            "working": false
+          }
+        ]
+      },
+      "finished": true,
+      "first_damage": 49.0333333333331,
+      "harvested_gold": [
+        13012,
+        15272
+      ],
+      "military_deaths": 213,
+      "mode": "1v1",
+      "observed_step_valid": true,
+      "ok": true,
+      "produced": [
+        {
+          "archer": 24,
+          "cannon": 10,
+          "catapult": 7,
+          "farmer": 24,
+          "knight": 33,
+          "swordsman": 47
+        },
+        {
+          "archer": 33,
+          "cannon": 8,
+          "catapult": 5,
+          "farmer": 18,
+          "knight": 31,
+          "swordsman": 48
+        }
+      ],
+      "remaining_buildings": [
+        0,
+        5
+      ],
+      "rendering": "headless",
+      "simulated_seconds": 985.066666666428,
+      "source_editor_feature": false,
+      "speed": 10,
+      "step_seconds": 0.0333333333333333,
+      "wall_seconds": 98.326,
+      "winner": 1
+    },
+    "stdout_log": "C:\\Users\\wh\\Documents\\middle-ages-battle\\artifacts\\release-082-final-match.stdout.log",
+    "stderr_log": "C:\\Users\\wh\\Documents\\middle-ages-battle\\artifacts\\release-082-final-match.stderr.log",
+    "validated_pck_sha256": "f128cc45383d0a5fbda542e74a4b1e9a8c83a57bbc5977bbf55760e1fabd0b02"
+  },
+  "verification_notes": [
+    "Final combat data and release keys are unchanged from 0.8.1; behavior tests include 30 and 60 TPS native motion.",
+    "Tangential motion and wall-blocked requested velocity were caught in review, reproduced, fixed and included in the final 466 pursuit assertions.",
+    "HUD fixture initially omitted the barracks prerequisite, then used proper match shutdown to drain audio playbacks; final graphical run has empty stderr.",
+    "The six-client impaired test used the new protocol and economy fields; final actual-displacement chase refinement was followed by native combat regression and a fresh final-PCK full match.",
+    "672-unit performance is below budget: harness success does not mean 60 FPS or sustained 30 TPS.",
+    "After the full packaged match, only trailing empty lines in five upgrade resources were removed for git whitespace validation. The content manifest was regenerated and the same gameplay was repacked; final packaged ResourceLoader audit passed all 68 value checks. Gameplay code and values did not change."
+  ],
+  "cleanup": {
+    "checked_utc": "2026-09-09T22:33:35.8724904Z",
+    "validation_godot_count": 0,
+    "remaining_normal_processes": [
+      {
+        "ProcessId": 33896,
+        "Name": "Godot.exe"
+      }
+    ],
+    "removed_text_intermediates": 141,
+    "preserved_artifacts": [
+      "builds/AshenCrown-0.8.2-Windows-x64.zip",
+      "report/balance-0.8.2.md",
+      "report/balance-0.8.2.json",
+      "report/economy-academy-0.8.2.png",
+      "docs/release-0.8.2-validation.json"
+    ]
+  }
+}

@@ -112,9 +112,9 @@ func _run() -> void:
 	barracks.production.destroyed()
 	check(player.reserved_military_supply == 0 and barracks.production.training.is_empty() and player.gold == gold_before, "destroyed training loses paid jobs and releases supply")
 	var living_supply := player.military_supply
-	player.military_supply = 59
+	player.military_supply = 49
 	check(not barracks.production.recruit("knight").ok, "two supply knight rejected with one free slot")
-	check(barracks.production.recruit("swordsman").ok and player.used_military_supply() == 60, "last supply slot can be reserved")
+	check(barracks.production.recruit("swordsman").ok and player.used_military_supply() == 50, "last supply slot can be reserved")
 	check(not factory.production.recruit("cannon").ok and not barracks.production.recruit("archer").ok, "other buildings cannot oversubscribe reserved population")
 	barracks.production.cancel_training(0)
 	player.military_supply = living_supply

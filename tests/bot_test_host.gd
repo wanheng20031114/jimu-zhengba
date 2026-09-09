@@ -126,7 +126,7 @@ func submit_command(command: Dictionary, owner: int = -1) -> Dictionary:
 			var definition: UnitDefinition = BalanceCatalog.unit(command.unit_type)
 			if target == null or not target.is_constructed or not BalanceCatalog.building(target.building_type).produces.has(command.unit_type):
 				return {"ok": false}
-			if definition.military and player.military_supply + definition.supply > PlayerState.SUPPLY_LIMIT:
+			if definition.military and player.used_military_supply() + definition.supply > player.get_supply_limit():
 				return {"ok": false}
 			if not definition.military and not player.can_reserve_farmer(): return {"ok": false}
 			cost = definition.cost
@@ -181,10 +181,10 @@ func advance(seconds: float) -> void:
 				player.active_research.clear()
 	for worker: Node3D in get_tree().get_nodes_in_group("units"):
 		if worker.unit_type != "farmer" or worker.order != BattleUnit.Order.GATHER or not worker._claimed_mine: continue
-		worker.gathering_seconds += seconds
-		while worker.gathering_seconds >= 3.0:
-			worker.gathering_seconds -= 3.0
-			players[worker.owner_id].gold += 3
+		worker.gathering_seconds += seconds * players[worker.owner_id].get_mining_rate_multiplier()
+		while worker.gathering_seconds >= BalanceCatalog.ECONOMY.mining_seconds:
+			worker.gathering_seconds -= BalanceCatalog.ECONOMY.mining_seconds
+			players[worker.owner_id].gold += BalanceCatalog.ECONOMY.mining_gold
 	for id: int in construction.keys():
 		var site: Node3D = entities[id]
 		for worker: Node3D in owned_entities(site.owner_id, "units"):

@@ -64,6 +64,8 @@ func _run() -> void:
 	check(snapshot.mines.size() == 1 and snapshot.mines[0].workers == 1, "visible_mine_occupancy_sent")
 	check(snapshot.players[0].private.gold == 700, "own_economy_sent")
 	check(snapshot.players[0].private.workforce_level == 0, "own_unresearched_workforce_level_sent")
+	check(snapshot.players[0].private.army_capacity_level == 0 and snapshot.players[0].private.mining_level == 0,
+		"own_unresearched_army_and_mining_levels_sent")
 	check(not snapshot.players[1].has("private") and not snapshot.players[2].has("private"), "ally_enemy_economy_private")
 	check(not _state(snapshot, ally_building.entity_id).has("production"), "ally_research_private")
 	check(not _state(snapshot, enemy_building.entity_id).has("rally"), "enemy_orders_private")
@@ -87,6 +89,8 @@ func _run() -> void:
 	check(displayed.is_empty(), "reliable_sound_waits_for_presentation_clock")
 	check(receiver.last_received_tick == 0, "wire_snapshot_valid")
 	check(client.get_player(0).get_worker_limit() == 10, "initial_worker_limit_is_authoritative_ten")
+	check(client.get_player(0).get_supply_limit() == 50 and client.get_player(0).mining_level == 0,
+		"initial_army_limit_and_mining_level_are_authoritative")
 	check(client.entities_by_id.size() == 7, "client_creates_six_replicas_preserves_mine")
 	var remote: BattleUnit = client.entities_by_id[own.entity_id]
 	check(remote.unit_type == "knight" and remote.owner_id == 0, "stable_identity_and_type")
@@ -105,6 +109,8 @@ func _run() -> void:
 	check(client.get_node("FogOfWar").last_applied.owner == 0, "recipient_fog_applied")
 	client.get_player(0).gold = 1
 	client.get_player(0).workforce_level = 1
+	client.get_player(0).army_capacity_level = 2
+	client.get_player(0).mining_level = 3
 	own.global_position.x = 10
 	own.model_pivot.rotation.y = deg_to_rad(-175)
 	own._attack_animation.seek(0.166, true, true)
@@ -124,6 +130,8 @@ func _run() -> void:
 	check(client.get_player(0).gold == 700, "economy_advances_with_authoritative_frame")
 	check(client.get_player(0).workforce_level == 0 and client.get_player(0).get_worker_limit() == 10,
 		"local_workforce_forgery_overwritten_by_authority")
+	check(client.get_player(0).army_capacity_level == 0 and client.get_player(0).get_supply_limit() == 50 and client.get_player(0).mining_level == 0,
+		"local_army_and_mining_forgery_overwritten_by_authority")
 	check(is_equal_approx(remote.global_position.x, 10), "second_frame_exact")
 	receiver.render(3.0)
 	check(is_equal_approx(remote.global_position.x, 10), "packet_stall_never_extrapolates")
@@ -155,13 +163,23 @@ func _run() -> void:
 		receiver.receive_snapshot(invalid)
 		check(receiver.last_received_tick == 2 and client.get_player(0).get_worker_limit() == 10,
 			"invalid_workforce_level_rejected_atomically")
+	for track: String in ["army_capacity", "mining"]:
+		for bad_level: Variant in [null, -1, BalanceCatalog.UPGRADE_TRACKS[track] + 1, 0.5, "1", true, {}, []]:
+			invalid = second.duplicate(true)
+			invalid.tick = 4
+			invalid.players[0].private[track + "_level"] = bad_level
+			receiver.receive_snapshot(invalid)
+			check(receiver.last_received_tick == 2 and client.get_player(0).get_supply_limit() == 50 and client.get_player(0).mining_level == 0,
+				"invalid_" + track + "_level_rejected_atomically")
 	var all_research := second.duplicate(true)
 	all_research.players[0].private.queued_research.clear()
 	for upgrade_id: String in BalanceCatalog.UPGRADES:
 		all_research.players[0].private.queued_research[upgrade_id] = 1
 	all_research.players[0].private.active_research["workforce"] = 1
-	check(all_research.players[0].private.queued_research.size() == 7 and receiver._valid_snapshot(all_research),
-		"seven_unique_player_research_reservations_across_academies_are_valid")
+	all_research.players[0].private.active_research["army_capacity"] = 2
+	all_research.players[0].private.active_research["mining"] = 3
+	check(all_research.players[0].private.queued_research.size() == 12 and receiver._valid_snapshot(all_research),
+		"twelve_unique_player_research_reservations_across_academies_are_valid")
 	all_research.players[0].private.active_research["unknown"] = 1
 	check(not receiver._valid_snapshot(all_research), "unknown_active_research_track_rejected")
 	for bad_plan: Variant in [null, "move", [{"kind": "attack", "at": [NAN, 0, 0]}], [{"kind": "move", "at": [5000, 0, 0]}], [{"kind": "unknown", "at": [1, 0, 1]}], [{"kind": "build", "at": [0, 0, 0], "entity": 5}], [{"kind": "move", "at": [0, 0]}]]:
@@ -186,6 +204,8 @@ func _run() -> void:
 	check(not UnitOrderPlan.valid(excessive), "plan_payload_strictly_bounded")
 	host.visible_ids.clear()
 	host.get_player(0).complete_upgrade(BalanceCatalog.upgrade("workforce_1"))
+	host.get_player(0).complete_upgrade(BalanceCatalog.upgrade("army_capacity_2"))
+	host.get_player(0).complete_upgrade(BalanceCatalog.upgrade("mining_3"))
 	host.simulation_tick = 4
 	host.elapsed = 4.0 / 30.0
 	var third := sender.build_snapshot(0)
@@ -205,8 +225,13 @@ func _run() -> void:
 	receiver.render(0.0)
 	check(client.get_player(0).workforce_level == 1 and client.get_player(0).get_worker_limit() == 12,
 		"completed_workforce_upgrade_applies_from_owner_private_snapshot")
+	check(client.get_player(0).army_capacity_level == 2 and client.get_player(0).get_supply_limit() == 100 and client.get_player(0).mining_level == 3,
+		"completed_army_and_mining_upgrades_apply_from_owner_private_snapshot")
 	check(client.get_player(1).get_worker_limit() == 10 and client.get_player(2).get_worker_limit() == 10,
 		"worker_expansion_never_applies_to_allied_or_enemy_player")
+	check(client.get_player(1).get_supply_limit() == 50 and client.get_player(2).get_supply_limit() == 50
+		and client.get_player(1).mining_level == 0 and client.get_player(2).mining_level == 0,
+		"army_and_mining_technology_never_leaks_to_allied_or_enemy_state")
 	check(not client.entities_by_id.has(enemy.entity_id) and not client.entities_by_id.has(enemy_building.entity_id), "lost_visibility_removes_live_enemy_state")
 	check(client.entities_by_id.has(ally.entity_id), "allies_remain_without_local_vision")
 	check(client.deaths == 0 and client.effects == 0, "visibility_loss_never_calls_death_effects")
@@ -231,6 +256,8 @@ func _run() -> void:
 	check(absf(client.elapsed - 15.08) < 0.001 and remote.global_position.x == 20, "long_outage_resumes_current_timeline")
 	check(remote.get_instance_id() == identity_before_resume, "recovery_preserves_existing_entity_instances")
 	check(client.get_player(0).get_worker_limit() == 12, "reconnect_snapshot_retains_completed_workforce_upgrade")
+	check(client.get_player(0).get_supply_limit() == 100 and client.get_player(0).mining_level == 3,
+		"reconnect_snapshot_retains_both_expansion_and_mining_research")
 	check(displayed.size() == 1, "reconnect_discards_expired_sounds_instead_of_replaying_a_burst")
 	current_scene = host
 	for index in range(276):

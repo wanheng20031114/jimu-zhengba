@@ -53,7 +53,7 @@ func _run() -> void:
 		await _measure("standard_144_military_60_workers", 1.0 if short_check else SAMPLE_SECONDS)
 	if not short_check or maximum_only:
 		await _populate("maximum_light")
-		await _measure("maximum_360_military_72_workers", 1.0 if short_check else SAMPLE_SECONDS)
+		await _measure("maximum_600_military_72_workers", 1.0 if short_check else SAMPLE_SECONDS)
 	await _finish()
 
 func _populate(composition: String) -> void:
@@ -67,15 +67,21 @@ func _populate(composition: String) -> void:
 		effect.queue_free()
 	await physics_frame
 	await physics_frame
-	var worker_count: int = 10 if composition == "mixed" else 12
-	var expected_supply: int = 36 if composition == "mixed" else 60
 	var nav_map: RID = game.get_world_3d().navigation_map
+	var expected_population: int = 0
 	for player: PlayerState in game.players:
 		player.farmers = 0
 		player.military_supply = 0
 		player.reserved_farmers = 0
 		player.reserved_military_supply = 0
-		player.workforce_level = 0 if composition == "mixed" else 1
+		player.workforce_level = 0
+		player.army_capacity_level = 0
+		if composition != "mixed":
+			player.complete_upgrade(BalanceCatalog.upgrade("workforce_1"))
+			player.complete_upgrade(BalanceCatalog.upgrade("army_capacity_2"))
+		var worker_count: int = player.get_worker_limit()
+		var expected_supply: int = 36 if composition == "mixed" else player.get_supply_limit()
+		_check(player.get_supply_limit() == (50 if composition == "mixed" else 100), "owner %d has the real researched population limit" % player.owner_id)
 		var sign_x: float = -1.0 if player.alliance_id == 0 else 1.0
 		var lane: float = -22.0 + float(player.owner_id % 3) * 22.0
 		var roster: Array[String] = []
@@ -84,8 +90,9 @@ func _populate(composition: String) -> void:
 				for index: int in range(int(SIX_PLAYER_MIX[kind])):
 					roster.append(kind)
 		else:
-			for index: int in range(60):
+			for index: int in range(expected_supply):
 				roster.append("swordsman" if index % 2 == 0 else "archer")
+		expected_population += roster.size() + worker_count
 		for index: int in range(roster.size()):
 			var at := Vector3(sign_x * (13.0 + float(index / 8) * 2.4), 0, lane + (float(index % 8) - 3.5) * 2.0)
 			at = NavigationServer3D.map_get_closest_point(nav_map, at)
@@ -107,7 +114,8 @@ func _populate(composition: String) -> void:
 			worker.max_hp *= 100.0
 			worker.issue_gather(mine)
 		_check(player.military_supply == expected_supply and player.farmers == worker_count, "owner %d has the declared military supply and worker count" % player.owner_id)
-	_check(get_nodes_in_group("units").size() == (204 if composition == "mixed" else 432), "population matches the declared six-player load")
+	_check(expected_population == (204 if composition == "mixed" else 672), "live research resources produce the intended standard or maximum roster")
+	_check(get_nodes_in_group("units").size() == expected_population, "population matches the declared six-player load")
 	game.select_army()
 	await create_timer(1.0 if short_check else WARMUP_SECONDS).timeout
 
@@ -122,8 +130,11 @@ func _measure(label: String, seconds: float) -> void:
 	phase["damage_events"] = _damage_events - damage_before
 	phase["visible_units_in_camera_at_start"] = visible_start
 	phase["visible_units_in_camera_at_end"] = _visible_units()
-	phase["workers_per_player"] = 10 if _population_kind == "mixed" else 12
-	phase["military_roster_per_player"] = SIX_PLAYER_MIX.duplicate() if _population_kind == "mixed" else {"swordsman": 30, "archer": 30}
+	phase["workers_per_player"] = game.get_player(0).get_worker_limit()
+	phase["military_supply_limit_per_player"] = game.get_player(0).get_supply_limit()
+	phase["army_capacity_level"] = game.get_player(0).army_capacity_level
+	phase["workforce_level"] = game.get_player(0).workforce_level
+	phase["military_roster_per_player"] = SIX_PLAYER_MIX.duplicate() if _population_kind == "mixed" else {"swordsman": 50, "archer": 50}
 	_check(short_check or int(phase.damage_events) > 0, "sample includes real combat damage events")
 	_check(phase.starting_units == phase.ending_units, "durability override keeps sample population stable")
 
@@ -152,11 +163,12 @@ func _write_report() -> void:
 		"camera_size": 58.0, "sample_seconds_per_phase": SAMPLE_SECONDS, "warmup_seconds_per_phase": WARMUP_SECONDS,
 		"physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
 		"render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
-		"conditions": "Native 3v3 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 144 mixed military +60 workers; cap is 360 light military +72 upgraded workers. No network clients run in this sample.",
+		"conditions": "Native 3v3 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 144 mixed military +60 workers; researched cap is 600 light military +72 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample.",
 		"limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
 		"checks": checks, "failures": failures, "phases": phases}
 	var suffix: String = "-harness" if short_check else ""
-	var file := FileAccess.open("res://artifacts/six-player-performance-080%s.json" % suffix, FileAccess.WRITE)
+	var version_suffix: String = NetworkProtocol.BUILD_ID.replace(".", "")
+	var file := FileAccess.open("res://artifacts/six-player-performance-%s%s.json" % [version_suffix, suffix], FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "  ") + "\n")
 	file.close()
 

@@ -70,6 +70,7 @@ func _run() -> void:
 	check(game.command_bus.submit({"kind": "stop", "seq": 1.0}, 0).ok, "integral_json_sequence_accepted")
 	check(not game.command_bus.submit({"kind": "stop", "seq": 1.0}, 0).ok and game.command_bus.pending.size() == 1, "duplicate_sequence_does_not_append")
 	game.command_bus.pending.clear()
+	await _expanded_economy_commands()
 	game.finished = true
 	bad(recruit, 0, "finished_direct_execute_cannot_purchase")
 	check(not game.command_bus.submit({"kind": "stop", "seq": 2}, 0).ok, "finished_submit_cannot_enqueue")
@@ -79,6 +80,60 @@ func _run() -> void:
 	await process_frame
 	print("NETWORK_COMMAND_VALIDATION_RESULTS " + JSON.stringify({"checks": checks, "failures": failures}))
 	quit(0 if failures.is_empty() else 1)
+
+func _expanded_economy_commands() -> void:
+	var player: PlayerState = game.get_player(0)
+	var academy: BattleBuilding = game.spawn_building("academy", 0, Vector3(0, 0, 20))
+	var ally_academy: BattleBuilding = game.spawn_building("academy", 1, Vector3(10, 0, 20))
+	academy.set_physics_process(false)
+	academy.production.set_physics_process(false)
+	ally_academy.set_physics_process(false)
+	ally_academy.production.set_physics_process(false)
+	for upgrade_id: String in ["army_capacity_1", "mining_1"]:
+		bad({"kind": "research", "target": ally_academy.entity_id, "upgrade": upgrade_id,
+			"owner": 1, "cost": 0}, 0, "ally_" + upgrade_id + "_cannot_be_purchased_by_foreign_owner")
+	bad({"kind": "research", "target": academy.entity_id, "upgrade": "army_capacity_2"}, 0,
+		"capacity_second_level_cannot_skip_prerequisite")
+	bad({"kind": "research", "target": academy.entity_id, "upgrade": "mining_3"}, 0,
+		"mining_third_level_cannot_skip_prerequisites")
+	var before: int = player.gold
+	var command := {"kind": "research", "target": academy.entity_id, "upgrade": "army_capacity_1",
+		"seq": 2, "army_capacity_level": 2, "mining_level": 3, "supply_limit": 100000, "cost": 0}
+	check(game.command_bus.submit(command, 0).ok and not game.command_bus.submit(command, 0).ok,
+		"repeated_capacity_command_sequence_only_queues_one_purchase")
+	game.command_bus.tick()
+	check(player.gold == before - 500 and academy.production.research_queue.size() == 1
+		and academy.production.research_queue[0].cost == 500, "forged_research_price_still_charges_authoritative_500_gold")
+	check(player.get_supply_limit() == 50 and player.mining_level == 0,
+		"command_payload_cannot_grant_capacity_or_mining_completion")
+	check(academy.production.cancel_research().ok and player.gold == before,
+		"capacity_cancellation_refunds_one_real_payment")
+	check(game.command_bus.execute({"kind": "research", "target": academy.entity_id, "upgrade": "mining_1",
+		"cost": 0, "mining_level": 3, "mining_rate": 1000.0}, 0).ok, "mining_purchase_uses_shared_command_authority")
+	check(player.gold == before - 50 and player.mining_level == 0 and is_equal_approx(player.get_mining_rate_multiplier(), 1.0),
+		"mining_purchase_charges_50_without_accepting_forged_efficiency")
+	academy.production.cancel_research()
+	player.complete_upgrade(BalanceCatalog.upgrade("workforce_1"))
+	player.complete_upgrade(BalanceCatalog.upgrade("army_capacity_2"))
+	var owned_ids: Array = game.owned_entities(0, "units").map(func(unit): return unit.entity_id)
+	for index in range(112 - owned_ids.size()):
+		var unit: BattleUnit = game.spawn_unit("farmer" if index < 9 else "swordsman", 0,
+			game.clamp_to_map(Vector3(index % 15, 0, index / 15)))
+		unit.set_physics_process(false)
+		unit.navigation_agent.avoidance_enabled = false
+		owned_ids.append(unit.entity_id)
+	var full_army := {"kind": "hold", "units": owned_ids}
+	var encoded := NetworkProtocol.encode({"op": "command", "payload": full_army})
+	check(NetworkProtocol.decoded_size(encoded) < NetworkProtocol.MAX_COMMAND_BYTES, "112_unit_group_command_fits_existing_four_kib_limit")
+	check(game.command_bus.execute(full_army, 0).ok, "expanded_100_military_and_twelve_workers_can_receive_one_group_order")
+	check(owned_ids.all(func(id): return game.entities_by_id[id].order == BattleUnit.Order.HOLD),
+		"expanded_group_order_reaches_every_owned_entity")
+	var over_limit: Array = owned_ids.duplicate()
+	over_limit.append(worker.entity_id)
+	bad({"kind": "stop", "units": over_limit}, 0, "113_unit_payload_exceeds_authoritative_expanded_limit")
+	var foreign_group: Array = owned_ids.duplicate()
+	foreign_group[0] = ally.entity_id
+	bad({"kind": "stop", "units": foreign_group}, 0, "expanded_group_cannot_include_allied_assets")
 
 func state() -> String:
 	var players: Array = []

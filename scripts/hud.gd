@@ -37,6 +37,8 @@ func _ready() -> void:
 	portraits["attack_upgrade"] = preload("res://assets/ui/attack_upgrade.png")
 	portraits["defense_upgrade"] = preload("res://assets/ui/defense_upgrade.png")
 	portraits["workforce_upgrade"] = preload("res://assets/ui/workforce_upgrade.png")
+	portraits["army_capacity_upgrade"] = portraits["knight"]
+	portraits["mining_upgrade"] = portraits["gold_vein"]
 	for index in range(buttons.size()):
 		buttons[index].pressed.connect(_on_recruit.bind(index))
 		buttons[index].mouse_entered.connect(func(): _set_preview_hover(_actions[index].portrait if index < _actions.size() else ""))
@@ -131,8 +133,10 @@ func refresh_hotkey_labels() -> void:
 		"F12 / %s / %s / %s" % [game.settings.hotkey_text("rts_photo"), game.settings.hotkey_text("rts_fullscreen"), game.settings.hotkey_text("rts_mute")],
 	]
 	$HelpOverlay/Paper/Keys.text = "\n".join(help_keys)
+	$HelpOverlay/Paper/Intro.text = "摧毁敌方全部军事建筑。基础上限：%d 军事人口、%d 农民（含训练），学院可研究扩展。" % [PlayerState.SUPPLY_LIMIT, PlayerState.WORKER_LIMIT]
 	var workforce := BalanceCatalog.upgrade(&"workforce_1")
 	$HelpOverlay/Paper/Economy.text = "训练（秒）：农民%s / 剑士%s / 弓手%s / 骑士%s / 攻城%s · 每矿%d位 · 每人%s秒+%d金\n学院研究：攻击%s，防御%s，攻城近甲固定0；%d金/%d秒扩农民10→12 · 队列可取消退款" % [BalanceCatalog.unit("farmer").training_seconds, BalanceCatalog.unit("swordsman").training_seconds, BalanceCatalog.unit("archer").training_seconds, BalanceCatalog.unit("knight").training_seconds, BalanceCatalog.unit("catapult").training_seconds, ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold, _upgrade_bonus_text("attack"), _upgrade_bonus_text("defense"), workforce.cost, workforce.research_seconds]
+	$HelpOverlay/Paper/Economy.text += "\n学院扩编：%d→%d→%d人口；采矿效率%s%%，保持每次%d金；自然收入不变" % [PlayerState.SUPPLY_LIMIT, PlayerState.SUPPLY_LIMIT + BalanceCatalog.upgrade("army_capacity_1").total_bonus, PlayerState.SUPPLY_LIMIT + BalanceCatalog.upgrade("army_capacity_2").total_bonus, _upgrade_bonus_text("mining"), BalanceCatalog.ECONOMY.mining_gold]
 	# Initial binding precedes match setup; subsequent preference changes refresh the panel.
 	if game._match_ready:
 		refresh()
@@ -171,8 +175,8 @@ func refresh() -> void:
 		return
 	gold_label.text = str(game.gold)
 	var player: PlayerState = game.get_player(game.local_owner_id)
-	army_label.text = "军事 %d / %d" % [player.used_military_supply(), PlayerState.SUPPLY_LIMIT]
-	army_label.tooltip_text = "在场 %d 人口 · 训练中 %d 人口\n训练队列已预留军事人口" % [player.military_supply, player.reserved_military_supply]
+	army_label.text = "军事 %d / %d" % [player.used_military_supply(), player.get_supply_limit()]
+	army_label.tooltip_text = "在场 %d 人口 · 训练中 %d 人口\n训练队列已预留军事人口\n学院可研究军事人口扩编" % [player.military_supply, player.reserved_military_supply]
 	farmers_label.text = "农民 %d / %d" % [player.farmers + player.reserved_farmers, player.get_worker_limit()]
 	farmers_label.tooltip_text = "在场 %d 人 · 训练中 %d 人\n训练中的农民已计入上限\n%s" % [player.farmers, player.reserved_farmers,
 		"农民上限扩展已完成" if player.workforce_level > 0 else "学院可研究农民上限扩展至 12 人"]
@@ -211,7 +215,7 @@ func refresh() -> void:
 			_selected_preview = "gold_vein"
 			selected_role.text = "中立资源 · 金矿"
 			selected_role.modulate = Color("e5c76b")
-			selected_stats.text = "采集位置 %d / %d\n每人每 %s 秒 +%d 金币" % [entity.occupied_slots(), ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
+			selected_stats.text = "采集位置 %d / %d\n你的农民：每 %.2f 秒 +%d 金币" % [entity.occupied_slots(), ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds / player.get_mining_rate_multiplier(), BalanceCatalog.ECONOMY.mining_gold]
 		else:
 			hp_bar.max_value = entity.max_hp
 			hp_bar.value = entity.hp
@@ -229,7 +233,8 @@ func refresh() -> void:
 				DamageResolver.armor_for_channel(definition, CombatDefinition.DamageChannel.RANGED, defense_bonus), entity.order_name]
 			if entity.unit_type == "farmer":
 				var queued_orders: int = int(entity.get_meta("replica_queue_count", 0)) if game.online and not game.is_authority else entity.waypoint_queue.size()
-				selected_stats.text = "采矿 +%d / %s秒 · 建筑面板\n%s%s" % [BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds, entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
+				var mining_rate: float = player.get_mining_rate_multiplier() if own_unit else 1.0
+				selected_stats.text = "%s采矿 +%d / %.2f秒 · 建筑面板\n%s%s" % ["" if own_unit else "基础 ", BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds / mining_rate, entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
 		elif entity.is_in_group("buildings"):
 			var portrait_kind: String = entity.building_type if entity.building_type in portraits else "headquarters"
 			selected_portrait.texture = portraits[portrait_kind]
@@ -361,6 +366,11 @@ func _refresh_actions() -> void:
 func _upgrade_hint(upgrade: UpgradeDefinition) -> String:
 	if upgrade.track == &"workforce":
 		return "%d 秒 · 农民上限 %d → %d · 仅本玩家生效" % [upgrade.research_seconds, PlayerState.WORKER_LIMIT, PlayerState.WORKER_LIMIT + upgrade.total_bonus]
+	if upgrade.track == &"army_capacity":
+		var previous_bonus: int = BalanceCatalog.upgrade("army_capacity_%d" % (upgrade.level - 1)).total_bonus if upgrade.level > 1 else 0
+		return "%d 秒 · 军事人口上限提升至 %d（本级 +%d）· 含排队预留人口" % [upgrade.research_seconds, PlayerState.SUPPLY_LIMIT + upgrade.total_bonus, upgrade.total_bonus - previous_bonus]
+	if upgrade.track == &"mining":
+		return "%d 秒 · 采矿效率总 +%d%% · 每人每 %.2f 秒 +%d 金 · 自然收入不变" % [upgrade.research_seconds, upgrade.total_bonus, BalanceCatalog.ECONOMY.mining_seconds / (1.0 + upgrade.total_bonus / 100.0), BalanceCatalog.ECONOMY.mining_gold]
 	var effect: String = "全军攻击总加成 +%d" % upgrade.total_bonus if upgrade.track == &"attack" else "全军防御总加成 +%d（攻城器仅远甲）" % upgrade.total_bonus
 	return "%d 秒 · %s · 可连续加入队列" % [upgrade.research_seconds, effect]
 
@@ -457,6 +467,10 @@ func _on_building_action() -> void:
 		game.cancel_selected_construction()
 
 func _set_preview_hover(kind: String) -> void:
+	if kind == "army_capacity_upgrade":
+		kind = "knight"
+	elif kind == "mining_upgrade":
+		kind = "gold_vein"
 	_hovered_preview = "" if kind.ends_with("_upgrade") else kind
 
 func toast(message: String, duration: float = 2.0) -> void:

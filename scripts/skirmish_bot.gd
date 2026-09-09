@@ -252,22 +252,37 @@ func _develop_base() -> int:
 	var player: PlayerState = _game.get_player(_owner)
 	if academy == null or not player.active_research.is_empty() or _clock < _next_research_at:
 		return 0
+	# Population is a paid research limit shared with human production. Save for
+	# expansion only near the current cap, when more recruitment is almost blocked.
+	if player.army_capacity_level < int(BalanceCatalog.UPGRADE_TRACKS[&"army_capacity"]) and player.used_military_supply() >= player.get_supply_limit() - 5:
+		var expansion := BalanceCatalog.upgrade("army_capacity_%d" % (player.army_capacity_level + 1))
+		return 0 if _start_research(academy, expansion) else expansion.cost
 	if _can_expand_workforce(player):
 		var workforce := BalanceCatalog.upgrade(&"workforce_1")
-		if _submit({"kind": "research", "target": academy.entity_id, "upgrade": String(workforce.id)}, workforce.cost):
-			_next_research_at = _clock + workforce.research_seconds + (25.0 if _army.size() < 8 else 0.0)
+		if _start_research(academy, workforce):
+			return 0
+	# Economic research uses spare income after a viable army exists. Always leave
+	# enough gold for two swordsmen instead of halting reinforcements to save for it.
+	if player.mining_level < int(BalanceCatalog.UPGRADE_TRACKS[&"mining"]) and _workers.size() >= 6 and _army.size() >= 6:
+		var mining := BalanceCatalog.upgrade("mining_%d" % (player.mining_level + 1))
+		if _budget >= mining.cost + BalanceCatalog.unit(&"swordsman").cost * 2 and _start_research(academy, mining):
 			return 0
 	var track: String = "defense" if player.defense_level <= player.attack_level else "attack"
 	var level: int = player.get_upgrade_level(StringName(track)) + 1
 	if level > int(BalanceCatalog.UPGRADE_TRACKS[track]):
 		return 0
 	var upgrade: UpgradeDefinition = BalanceCatalog.upgrade(StringName("%s_%d" % [track, level]))
-	if _submit({"kind": "research", "target": academy.entity_id, "upgrade": String(upgrade.id)}, upgrade.cost):
-		# A small fighting army gets a reinforcement window between upgrades;
-		# an established eight-unit army can sustain consecutive research.
-		_next_research_at = _clock + upgrade.research_seconds + (25.0 if _army.size() < 8 else 0.0)
+	if _start_research(academy, upgrade):
 		return 0
 	return upgrade.cost
+
+func _start_research(academy: Node3D, upgrade: UpgradeDefinition) -> bool:
+	if not _submit({"kind": "research", "target": academy.entity_id, "upgrade": String(upgrade.id)}, upgrade.cost):
+		return false
+	# A small fighting army gets a reinforcement window between upgrades;
+	# an established eight-unit army can sustain consecutive research.
+	_next_research_at = _clock + upgrade.research_seconds + (25.0 if _army.size() < 8 else 0.0)
+	return true
 
 func _can_expand_workforce(player: PlayerState) -> bool:
 	if player.get_upgrade_level(&"workforce") > 0 or _budget < BalanceCatalog.upgrade(&"workforce_1").cost:
@@ -350,7 +365,8 @@ func _recruit_army(reserve: int) -> void:
 			queued_seconds[building.entity_id] += maxf(0.0, BalanceCatalog.unit(job.kind).training_seconds - float(job.elapsed))
 			if job.kind != "farmer":
 				counts[job.kind] += 1
-	var supply: int = _game.get_player(_owner).used_military_supply()
+	var player: PlayerState = _game.get_player(_owner)
+	var supply: int = player.used_military_supply()
 	for purchase: int in range(3):
 		var kind: String = _choose_recruit(counts)
 		if factory_only:
@@ -362,7 +378,7 @@ func _recruit_army(reserve: int) -> void:
 			if building.is_constructed and building.building_type == String(definition.production_building) and int(queued_counts[building.entity_id]) < BuildingProduction.TRAINING_LIMIT and float(queued_seconds[building.entity_id]) < shortest:
 				producer = building
 				shortest = float(queued_seconds[building.entity_id])
-		if producer == null or _budget - reserve < definition.cost or supply + definition.supply > PlayerState.SUPPLY_LIMIT:
+		if producer == null or _budget - reserve < definition.cost or supply + definition.supply > player.get_supply_limit():
 			return
 		if not _submit({"kind": "recruit", "target": producer.entity_id, "unit_type": kind}, definition.cost):
 			return

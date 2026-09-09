@@ -42,6 +42,8 @@ def source_hashes() -> dict[str, str]:
     files += sorted((ROOT / "data/buildings").glob("*.tres"))
     files += sorted((ROOT / "data/upgrades").glob("*.tres"))
     files += [ROOT / path for path in (
+        "data/economy.tres", "scripts/data/economy_definition.gd",
+        "scripts/battle_unit.gd", "scripts/resource_vein.gd",
         "scripts/player_state.gd", "scripts/combat/damage_resolver.gd",
         "scripts/projectile.gd", "tests/catapult_impact_test.gd",
         "scripts/data/combat_definition.gd", "scripts/data/balance_catalog.gd",
@@ -108,6 +110,39 @@ def validate(data: dict[str, Any], final: bool) -> dict[str, Any]:
     for track, bonuses in (("attack", data["attack_bonuses"]), ("defense", data["defense_bonuses"])):
         for upgrade in (u for u in data["upgrades"] if u["track"] == track):
             check(upgrade["total_bonus"] == bonuses[upgrade["level"]], f"{upgrade['id']}资源总加成与PlayerState实际加成一致")
+    # Historical exports predate these independent economy tracks. Their combat
+    # rows and baseline evidence can still be rendered without inventing values.
+    if "economy" in data:
+        economy = data["economy"]
+        capacities = {row["level"]: row for row in economy["military_capacity_levels"]}
+        mining = {row["level"]: row for row in economy["mining_levels"]}
+        upgrades = {row["id"]: row for row in data["upgrades"]}
+        check(set(capacities) == {0, 1, 2}, "军队扩编导出零至二级实际人口上限")
+        check(set(mining) == {0, 1, 2, 3}, "采矿效率导出零至三级实际效率")
+        check(economy["passive_gold_per_second"] == 1, "自然收入保留每秒一金币")
+        check(economy["mining_gold_per_cycle"] == 4 and economy["mining_base_seconds"] == 3, "基础采矿仍为三秒四金币")
+        check(economy["mine_capacity"] == 6, "单矿保留六个实际采矿槽")
+        check([row["worker_limit"] for row in sorted(economy["worker_limits"], key=lambda row: row["level"])] == [10, 12],
+              "农民上限独立于军队扩编保持十至十二人")
+        for level, row in capacities.items():
+            check(row["military_supply_limit"] == 50 + 25 * level, f"军队扩编{level}实际人口上限为{50 + 25 * level}")
+            if level:
+                upgrade = upgrades[f"army_capacity_{level}"]
+                check(upgrade["cost"] == 500 and upgrade["total_bonus"] == row["military_supply_limit"] - capacities[0]["military_supply_limit"],
+                      f"军队扩编{level}资源成本五百及累计效果与PlayerState一致")
+        for level, row in mining.items():
+            check(abs(row["rate_multiplier"] - (1 + 0.1 * level)) < 1e-8, f"采矿{level}为累计百分比而非复利")
+            check(abs(row["cycle_seconds"] * row["rate_multiplier"] - economy["mining_base_seconds"]) < 1e-8,
+                  f"采矿{level}实际效率正确缩短基础周期")
+            check(abs(row["farmer_gold_per_minute"] - (80 + 8 * level)) < 1e-6, f"采矿{level}每农民每分钟金币符合实际倍率")
+            check(row["full_workers"] == 12 and abs(row["full_economy_gold_per_minute"] - (80 + 8 * level) * 12 - 60) < 1e-6,
+                  f"采矿{level}十二农民加自然收入计算正确")
+            check(abs(row["full_economy_gold_per_second"] * 60 - row["full_economy_gold_per_minute"]) < 1e-6,
+                  f"采矿{level}秒与分钟收入一致")
+            if level:
+                upgrade = upgrades[f"mining_{level}"]
+                check(upgrade["cost"] == (50, 150, 300)[level - 1] and abs(upgrade["total_bonus"] / 100 + 1 - row["rate_multiplier"]) < 1e-8,
+                      f"采矿{level}资源成本及累计效果与PlayerState一致")
     if final:
         base = lambda a, d: matchups[a, d, 0, 0]
         check(base("cannon", "cannon")["hits"] == 5, "无科技加农炮五击摧毁同款")
@@ -141,6 +176,40 @@ def validate(data: dict[str, Any], final: bool) -> dict[str, Any]:
         check(units["archer"]["ranged_armor"] > 0, "弓手具有远程护甲")
         check(units["knight"]["ranged_armor"] > 0, "骑兵具有远程护甲")
     return {"checks": checks, "failures": failures, "final_requirements_checked": final}
+
+
+def render_economy(data: dict[str, Any]) -> list[str]:
+    """Only render recorded authority data; older JSON has no economy section."""
+    if "economy" not in data:
+        return []
+    economy = data["economy"]
+    capacity = {row["level"]: row for row in economy["military_capacity_levels"]}
+    mining = {row["level"]: row for row in economy["mining_levels"]}
+    rows = []
+    for track in ("army_capacity", "mining"):
+        cost = 0
+        seconds = 0
+        for upgrade in sorted((u for u in data["upgrades"] if u["track"] == track), key=lambda u: u["level"]):
+            cost += upgrade["cost"]
+            seconds += upgrade["research_seconds"]
+            level = upgrade["level"]
+            effect = (f"军事人口 {capacity[level]['military_supply_limit']}（总计 +{upgrade['total_bonus']}）" if track == "army_capacity" else
+                      f"采矿效率 +{upgrade['total_bonus']}%（倍率 ×{number(mining[level]['rate_multiplier'])}）")
+            rows.append([upgrade["name"], upgrade["cost"], number(upgrade["research_seconds"]), effect, cost, number(seconds)])
+    parts = ["## 军队扩编与采矿效率科技", "",
+        "两条新路线均在学院依次研究，与军事攻防和农民上限扩展独立。下表为新增的五项升级；费用与时长从实际科技资源读取，完成效果从 `PlayerState` 导出。", "",
+        table(["科技", "本级金币", "本级秒数", "完成后的累计效果", "本路线累计金币", "本路线累计秒数"], rows), "",
+        "军事人口上限为 **50 → 75 → 100**，每级新增 25 人口、各花费 500 金币；存活部队与生产队列预留人口共用上限。这里是人口点数：剑士、弓手各占 1，骑士占 2，攻城器占 3。农民仍使用独立的 10 人上限，完成农民上限扩展后为 12 人。", "",
+        "### 采矿速度与经济收益", "",
+        f"基础采矿每 {number(economy['mining_base_seconds'])} 秒结算 {economy['mining_gold_per_cycle']} 金币；科技提高工作进度推进速度，累计效果为 **+10% / +20% / +30%**，对应 ×1.1 / ×1.2 / ×1.3，不进行逐级复利。每次结算的金币数量保持不变。", "",
+        table(["采矿等级", "速度倍率", "实际倍率对应周期／秒", "每农民金币／分钟", "12 农民＋自然金币／分钟", "12 农民＋自然金币／秒"], [
+            [LEVELS[level], "×" + number(row["rate_multiplier"]), number(row["cycle_seconds"]),
+             number(row["farmer_gold_per_minute"]), number(row["full_economy_gold_per_minute"]),
+             number(row["full_economy_gold_per_second"])] for level, row in sorted(mining.items())]), "",
+        f"自然收入保持 **每秒 {number(economy['passive_gold_per_second'])} 金币**，不受采矿科技影响。单矿最多提供 {economy['mine_capacity']} 个采集位置，12 农民满效率至少需要两处矿脉及足够的实际采矿位置。", "",
+        "研究完成时保留当前已完成的采矿进度，只有剩余工作从下一逻辑步开始按新速度推进；不重置进度，也不回溯增加已结算的金币。改变单位命令等原有工作中断规则保持独立。", "",
+        "表内收入是持续采矿的长期速率，周期由实际 `PlayerState` 倍率与经济资源计算，不计走向矿脉、等待空位或受袭停工。游戏以 30 TPS 推进并按整次周期发放金币，因此任意截取一分钟的实际到账会受起始进度与结算时刻影响，不能保证每个短时间窗口都恰好等于平均值。", ""]
+    return parts
 
 
 def render(data: dict[str, Any]) -> str:
@@ -271,7 +340,9 @@ def render(data: dict[str, Any]) -> str:
         "- 全范围满伤提高了投石命中边缘时的威胁。单台需多次命中，不代表多台齐射密集部队也一定打得慢；散开和躲避仍然必要。",
         "- 延长单位存活会提高持续留场数量；它不会自动改善已有 432 单位极限场景的性能瓶颈。", ""]
     workforce = next(u for u in data["upgrades"] if u["track"] == "workforce")
-    parts += [f"农民上限扩展保持独立经济科技：{workforce['cost']} 金币、{number(workforce['research_seconds'])} 秒、上限增加 {workforce['total_bonus']} 人；不计入以下军事攻防矩阵。", "",
+    parts += [f"农民上限扩展保持独立经济科技：{workforce['cost']} 金币、{number(workforce['research_seconds'])} 秒、上限增加 {workforce['total_bonus']} 人；不计入以下军事攻防矩阵。", ""]
+    parts += render_economy(data)
+    parts += [
         "## 同级科技的完整 6 × 6 速查", "",
         "行是攻击者，列是目标。每格：伤害 / **命中次数** / 首次命中后秒数。", ""]
     for level in range(4):

@@ -34,8 +34,8 @@ func recruit_error(kind: String) -> String:
 		return "金币不足"
 	if not definition.military and not player.can_reserve_farmer():
 		return "农民上限 %d 人（含训练队列）" % player.get_worker_limit()
-	if definition.military and player.used_military_supply() + definition.supply > PlayerState.SUPPLY_LIMIT:
-		return "军事人口上限 60（含训练队列）"
+	if definition.military and player.used_military_supply() + definition.supply > player.get_supply_limit():
+		return "军事人口上限 %d（含训练队列）" % player.get_supply_limit()
 	return ""
 
 func recruit(kind: String) -> Dictionary:

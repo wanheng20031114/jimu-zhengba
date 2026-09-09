@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://tests/balance_combat_host.tscn" id="1_host"]
+
+[sub_resource type="BoxShape3D" id="Shape_wall"]
+size = Vector3(1, 4, 16)
+
+[node name="PursuitAttackHost" instance=ExtResource("1_host")]
+
+[node name="Blocker" type="StaticBody3D" parent="." index="5"]
+position = Vector3(0, -100, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Blocker"]
+shape = SubResource("Shape_wall")

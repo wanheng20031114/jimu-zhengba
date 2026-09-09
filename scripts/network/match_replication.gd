@@ -11,7 +11,9 @@ signal visual_event_due(event: Dictionary)
 const INTERPOLATION_SECONDS: float = 0.12
 const SNAPSHOT_TICKS: int = 2
 const MAX_BUFFERED_SNAPSHOTS: int = 12
-const MAX_VISIBLE_ENTITIES: int = 768
+# Six expanded armies can contain 672 units; leave room for production lines,
+# defenses and rebuilding sites without rejecting an otherwise valid snapshot.
+const MAX_VISIBLE_ENTITIES: int = 1536
 const MAX_CONTINUOUS_GAP: float = 0.5
 const MAX_VISUAL_EVENTS: int = 256
 const MAX_BATCH_EVENTS: int = 96
@@ -458,6 +460,8 @@ func _apply_players(states: Array) -> void:
 		player.attack_level = int(own.attack_level)
 		player.defense_level = int(own.defense_level)
 		player.workforce_level = int(own.workforce_level)
+		player.army_capacity_level = int(own.army_capacity_level)
+		player.mining_level = int(own.mining_level)
 		player.queued_research = own.queued_research.duplicate()
 		player.active_research.clear()
 		for track: String in own.active_research:

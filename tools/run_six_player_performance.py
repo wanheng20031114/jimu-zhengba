@@ -1,15 +1,18 @@
 """Bounded six-player native rendering benchmark; preserve all existing user processes."""
 from __future__ import annotations
 import json
-import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORT = ROOT / "artifacts/six-player-performance-080.json"
-LOG = ROOT / ".local/six-player-performance-080"
+BUILD = re.search(r'const BUILD_ID: String = "([0-9]+\.[0-9]+\.[0-9]+)"',
+                  (ROOT / "scripts/network/network_protocol.gd").read_text(encoding="utf-8")).group(1)
+VERSION_SUFFIX = BUILD.replace(".", "")
+REPORT = ROOT / f"artifacts/six-player-performance-{VERSION_SUFFIX}.json"
+LOG = ROOT / f".local/six-player-performance-{VERSION_SUFFIX}"
 
 
 def machine_activity() -> dict:
@@ -31,14 +34,6 @@ def main() -> int:
     if helpers:
         print(json.dumps({"started": False, "reason": "Other validation helpers are still active; wait before performance sampling.", "helpers": helpers}))
         return 2
-    prior_failure = None
-    if REPORT.exists():
-        previous = json.loads(REPORT.read_text(encoding="utf-8"))
-        if previous.get("ok") is False:
-            previous_errors = LOG.with_suffix(".stderr.log").read_text(encoding="utf-8-sig", errors="replace")
-            prior_failure = {"default_buffer_slots":65536, "native_capacity_errors":previous_errors.count("Too many instances using shader instance variables"), "native_duplicate_allocation_errors":previous_errors.count("instance_buffer_pos.has(p_instance)"), "phases":[{"name":p["name"], "units":p["starting_units"], "logic_p95_ms":p["physics_logic_ms"]["p95"], "frame_p95_ms":p["frame_ms"]["p95"], "frame_p99_ms":p["frame_ms"]["p99"]} for p in previous.get("phases",[])], "interpretation":"Invalid rendering-capacity run, retained as failure evidence rather than a clean FPS baseline. More than4096 instance-uniform geometry objects require more than the default65536 slots at16 slots per instance."}
-            (ROOT / "artifacts/six-player-performance-080-before-fix.json").write_text(json.dumps(previous,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-            LOG.with_suffix(".before-fix.stderr.log").write_text(previous_errors,encoding="utf-8")
     LOG.parent.mkdir(exist_ok=True)
     executable = Path(r"C:/Program Files/Godot/Godot.exe")
     command = [str(executable), "--path", str(ROOT), "--rendering-method", "forward_plus", "--rendering-driver", "vulkan", "--windowed", "--resolution", "1600x900", "--log-file", str(LOG.with_suffix(".engine.log")), "--script", "res://tests/six_player_performance.gd", "--", "--3v3"]
@@ -61,13 +56,11 @@ def main() -> int:
     errors = LOG.with_suffix(".stderr.log").read_text(encoding="utf-8-sig", errors="replace")
     after = machine_activity()
     report = json.loads(REPORT.read_text(encoding="utf-8")) if REPORT.exists() else {}
-    if prior_failure is not None:
-        report["before_capacity_fix"] = prior_failure
     report["run"] = {"child_pid": process.pid, "elapsed_seconds": round(time.monotonic()-started,3), "exit_code": process.returncode, "timed_out": timed_out, "machine_activity_before": before, "machine_activity_after": after, "shared_workstation": True, "user_processes_preserved": True, "notes": "Started only after all other Godot/ENet validation helpers stopped. Existing user game/editor and unrelated background processes were deliberately left running; GPU/CPU contention can affect these sample values."}
     report["run"]["script_errors"] = "SCRIPT ERROR:" in output or "SCRIPT ERROR:" in errors
     report["run"]["stderr_empty"] = not errors.strip()
     report["run"]["helper_cleanup_verified"] = not any(p["pid"] == process.pid for p in after["processes"])
-    report["ok"] = process.returncode == 0 and not timed_out and not errors.strip() and "SCRIPT ERROR:" not in output and len(report.get("phases",[])) == 2 and not report.get("failures",[]) and "SKIRMISH_STRESS_RESULT 3v3" in output
+    report["ok"] = process.returncode == 0 and not timed_out and not errors.strip() and "SCRIPT ERROR:" not in output and report.get("build") == BUILD and [phase["starting_units"] for phase in report.get("phases",[])] == [204, 672] and not report.get("failures",[]) and "SKIRMISH_STRESS_RESULT 3v3" in output
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     print(json.dumps({"ok":report["ok"], "report":str(REPORT), "phases":[{"name":p["name"],"units":p["starting_units"],"ending_units":p["ending_units"],"fps":p["measured_fps"],"tps":p["observed_tps"],"logic_p95_ms":p["physics_logic_ms"]["p95"],"frame_p95_ms":p["frame_ms"]["p95"],"frame_p99_ms":p["frame_ms"]["p99"]} for p in report.get("phases",[])]},ensure_ascii=False))
     return 0 if report["ok"] else 1

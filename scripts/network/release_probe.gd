@@ -152,6 +152,21 @@ func validate_resource_values() -> void:
 	check(player.get_worker_limit() == 10, "packaged_default_worker_limit_is_ten")
 	player.complete_upgrade(workforce)
 	check(player.get_worker_limit() == 12 and player.attack_level == 0 and player.defense_level == 0, "packaged_workforce_research_expands_only_worker_limit_to_twelve")
+	check(player.get_supply_limit() == 50 and player.get_mining_rate_multiplier() == 1.0, "packaged_default_army_and_mining_limits")
+	for level in range(1, 3):
+		var upgrade := BalanceCatalog.upgrade("army_capacity_%d" % level)
+		check(upgrade.track == &"army_capacity" and upgrade.level == level and upgrade.cost == 500
+			and upgrade.research_seconds == 30 and upgrade.total_bonus == 25 * level, "packaged_army_capacity_resource_%d" % level)
+		player.complete_upgrade(upgrade)
+		check(player.get_supply_limit() == 50 + level * 25 and player.get_worker_limit() == 12
+			and player.get_attack_bonus() == 0 and player.get_defense_bonus() == 0, "packaged_army_capacity_state_%d" % level)
+	for level in range(1, 4):
+		var upgrade := BalanceCatalog.upgrade("mining_%d" % level)
+		check(upgrade.track == &"mining" and upgrade.level == level and upgrade.cost == [50, 150, 300][level - 1]
+			and upgrade.research_seconds == [15, 25, 35][level - 1] and upgrade.total_bonus == level * 10, "packaged_mining_resource_%d" % level)
+		player.complete_upgrade(upgrade)
+		check(is_equal_approx(player.get_mining_rate_multiplier(), 1.0 + level * 0.1) and player.get_supply_limit() == 100
+			and player.get_worker_limit() == 12 and player.get_attack_bonus() == 0 and player.get_defense_bonus() == 0, "packaged_mining_state_%d" % level)
 	resource_value_checks = checks - began
 
 func until(predicate: Callable, duration: float) -> bool:

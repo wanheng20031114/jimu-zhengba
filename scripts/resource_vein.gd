@@ -12,7 +12,7 @@ const MAX_CONTACT_APPROACH: float = 1.25
 const alive: bool = true
 const display_name: String = "黄金矿脉"
 var order_name: String:
-	get: return "每位农民每%.1f秒采集%d金币 · 无需运输" % [BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
+	get: return "基础采集：每位农民每%.1f秒获得%d金币 · 学院可提升效率" % [BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
 var selected: bool = false
 var entity_id: int = 0
 var _miners: Array[WeakRef] = []

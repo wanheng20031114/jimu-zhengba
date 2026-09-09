@@ -3,7 +3,7 @@ extends RefCounted
 ## Mutable match state is owned by the authority, separate from shared definitions.
 
 const WORKER_LIMIT := 10
-const SUPPLY_LIMIT := 60
+const SUPPLY_LIMIT := 50
 
 var owner_id: int
 var alliance_id: int
@@ -18,6 +18,8 @@ var reserved_farmers: int = 0
 var attack_level: int = 0
 var defense_level: int = 0
 var workforce_level: int = 0
+var army_capacity_level: int = 0
+var mining_level: int = 0
 var active_research: Dictionary = {}
 var queued_research: Dictionary = {}
 var last_command_sequence: int = 0
@@ -40,11 +42,19 @@ func can_reserve_farmer() -> bool:
 func get_worker_limit() -> int:
 	return WORKER_LIMIT + (BalanceCatalog.upgrade(&"workforce_1").total_bonus if workforce_level == 1 else 0)
 
+func get_supply_limit() -> int:
+	return SUPPLY_LIMIT + (BalanceCatalog.upgrade("army_capacity_%d" % army_capacity_level).total_bonus if army_capacity_level > 0 else 0)
+
+func get_mining_rate_multiplier() -> float:
+	return 1.0 + (BalanceCatalog.upgrade("mining_%d" % mining_level).total_bonus / 100.0 if mining_level > 0 else 0.0)
+
 func get_upgrade_level(track: StringName) -> int:
 	match track:
 		&"attack": return attack_level
 		&"defense": return defense_level
 		&"workforce": return workforce_level
+		&"army_capacity": return army_capacity_level
+		&"mining": return mining_level
 	assert(false, "Unknown upgrade track: %s" % track)
 	return 0
 
@@ -53,6 +63,8 @@ func complete_upgrade(upgrade: UpgradeDefinition) -> void:
 		&"attack": attack_level = upgrade.level
 		&"defense": defense_level = upgrade.level
 		&"workforce": workforce_level = upgrade.level
+		&"army_capacity": army_capacity_level = upgrade.level
+		&"mining": mining_level = upgrade.level
 		_: assert(false, "Unknown upgrade track: %s" % upgrade.track)
 
 func used_military_supply() -> int:
@@ -85,4 +97,5 @@ func public_state() -> Dictionary:
 func private_state() -> Dictionary:
 	return {"gold": gold, "supply": military_supply, "reserved_supply": reserved_military_supply, "farmers": farmers, "reserved_farmers": reserved_farmers,
 		"queued_research": queued_research.duplicate(),
-		"attack_level": attack_level, "defense_level": defense_level, "workforce_level": workforce_level}
+		"attack_level": attack_level, "defense_level": defense_level, "workforce_level": workforce_level,
+		"army_capacity_level": army_capacity_level, "mining_level": mining_level}

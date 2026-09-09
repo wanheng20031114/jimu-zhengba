@@ -67,9 +67,10 @@ func _export() -> void:
 			for defense_level: int in range(LEVELS):
 				defense_matchups.append(_matchup(building, defender, 0, defense_level, 0,
 					defense_bonuses[defense_level] if defender.military else 0))
-	var report := {"schema_version": 1, "build_id": NetworkProtocol.BUILD_ID,
-		"source": "BalanceCatalog + PlayerState + DamageResolver (Godot)",
+	var report := {"schema_version": 2, "build_id": NetworkProtocol.BUILD_ID,
+		"source": "BalanceCatalog + PlayerState + DamageResolver + ResourceVein (Godot)",
 		"units": unit_data, "buildings": building_data, "upgrades": upgrades,
+		"economy": _economy_data(),
 		"attack_bonuses": attack_bonuses, "defense_bonuses": defense_bonuses,
 		"matchups": matchups, "building_matchups": building_matchups,
 		"defense_matchups": defense_matchups}
@@ -106,6 +107,37 @@ func _export() -> void:
 	file.close()
 	print("BALANCE_REPORT_EXPORT ", matchups.size(), " unit + ", building_matchups.size(), " siege + ", defense_matchups.size(), " defense rows")
 	quit(0)
+
+func _economy_data() -> Dictionary:
+	var definition := BalanceCatalog.ECONOMY
+	var worker_state := PlayerState.new(0, 0)
+	var worker_limits: Array[Dictionary] = []
+	for level in range(int(BalanceCatalog.UPGRADE_TRACKS[&"workforce"]) + 1):
+		worker_state.workforce_level = level
+		worker_limits.append({"level": level, "worker_limit": worker_state.get_worker_limit()})
+	var full_worker_limit: int = worker_state.get_worker_limit()
+	var capacity_levels: Array[Dictionary] = []
+	for level in range(int(BalanceCatalog.UPGRADE_TRACKS[&"army_capacity"]) + 1):
+		var state := PlayerState.new(0, 0)
+		state.army_capacity_level = level
+		capacity_levels.append({"level": level, "military_supply_limit": state.get_supply_limit()})
+	var mining_levels: Array[Dictionary] = []
+	for level in range(int(BalanceCatalog.UPGRADE_TRACKS[&"mining"]) + 1):
+		var state := PlayerState.new(0, 0)
+		state.mining_level = level
+		var rate: float = state.get_mining_rate_multiplier()
+		var cycle: float = definition.mining_seconds / rate
+		var gold_per_minute: float = definition.mining_gold * 60.0 / cycle
+		var full_income_per_minute: float = gold_per_minute * full_worker_limit + definition.passive_gold_per_second * 60.0
+		mining_levels.append({"level": level, "rate_multiplier": rate, "cycle_seconds": cycle,
+			"farmer_gold_per_minute": gold_per_minute, "full_workers": full_worker_limit,
+			"full_economy_gold_per_minute": full_income_per_minute,
+			"full_economy_gold_per_second": full_income_per_minute / 60.0})
+	return {"resource_path": definition.resource_path,
+		"passive_gold_per_second": definition.passive_gold_per_second,
+		"mining_base_seconds": definition.mining_seconds, "mining_gold_per_cycle": definition.mining_gold,
+		"mine_capacity": ResourceVein.CAPACITY, "worker_limits": worker_limits,
+		"military_capacity_levels": capacity_levels, "mining_levels": mining_levels}
 
 func _combat_data(definition: CombatDefinition) -> Dictionary:
 	return {"id": definition.id, "name": definition.name, "description": definition.description,

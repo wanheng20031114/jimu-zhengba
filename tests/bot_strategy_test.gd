@@ -64,6 +64,8 @@ func _run() -> void:
 	await _retreat_and_ally_case()
 	await _technology_and_lane_search_case()
 	await _workforce_expansion_case()
+	await _army_expansion_case()
+	await _mining_research_case()
 	await _deferred_and_client_case()
 	await _physics_frequency_case()
 	await _takeover_without_headquarters_case()
@@ -110,10 +112,10 @@ func _siege_and_supply_case() -> void:
 	await _fresh()
 	_ready_base(["swordsman", "archer", "knight"])
 	host.players[0].gold = 1000
-	host.players[0].military_supply = 59
+	host.players[0].military_supply = 49
 	bot = BOT.new(host, 0)
 	bot.tick(1.0)
-	_check(host.players[0].military_supply <= 60, "AI accounts for cavalry/siege supply weights at the cap")
+	_check(host.players[0].military_supply <= 50, "AI accounts for cavalry/siege supply weights at the default cap")
 
 func _defense_tower_budget_case() -> void:
 	await _fresh()
@@ -174,15 +176,15 @@ func _deferred_and_client_case() -> void:
 func _technology_and_lane_search_case() -> void:
 	await _fresh()
 	_ready_base(["swordsman", "swordsman", "swordsman", "swordsman", "archer", "archer", "knight", "knight"])
-	host.players[0].gold = 5000
+	host.players[0].gold = 20000
 	host.players[0].active_research.clear()
 	var bot: RefCounted = BOT.new(host, 0)
-	for second: int in range(250):
+	for second: int in range(400):
 		bot.tick(1.0)
 		host.advance(1.0)
-	var research: Array = host.commands.filter(func(c: Dictionary) -> bool: return c.kind == "research")
+	var research: Array = host.commands.filter(func(c: Dictionary) -> bool: return c.kind == "research" and BalanceCatalog.upgrade(c.upgrade).track in [&"attack", &"defense"])
 	var expected: Array[String] = ["defense_1", "attack_1", "defense_2", "attack_2", "defense_3", "attack_3"]
-	_check(research.size() == 6, "developed economy researches exactly six nonduplicate upgrades")
+	_check(research.size() == 6, "developed economy researches exactly six nonduplicate combat upgrades alongside expansion")
 	for index: int in range(mini(research.size(), expected.size())):
 		_check(research[index].upgrade == expected[index], "research step %d obeys the sequential attack/defense plan" % index)
 	_check(host.players[0].attack_level == 3 and host.players[0].defense_level == 3, "bot completes both military technology branches")
@@ -299,7 +301,7 @@ func _timed_queue_case() -> void:
 	_check(recruits.size() == 3 and recruits.all(func(c): return c.target == second.entity_id), "bot directs military purchases to the nonfull second barracks")
 	_check(recruits[0].unit_type != "swordsman", "already queued swordsmen count toward desired army composition")
 	host.commands.clear()
-	host.players[0].reserved_military_supply = 60
+	host.players[0].reserved_military_supply = 50
 	bot.tick(1.0)
 	_check(not host.commands.any(func(c): return c.kind == "recruit" and c.unit_type != "farmer"), "reserved military supply blocks further bot purchases")
 	host.players[0].reserved_military_supply = 20
@@ -342,3 +344,59 @@ func _workforce_expansion_case() -> void:
 	_check(host.players[0].farmers == 12 and host.players[0].reserved_farmers == 0, "expanded bot trains the eleventh and twelfth farmers normally")
 	_check(host.commands.filter(func(c): return c.kind == "research" and c.upgrade == "workforce_1").size() == 1, "bot never researches the one-time expansion twice")
 	_check(host.players[1].get_worker_limit() == 10 and host.players[2].get_worker_limit() == 10, "bot expansion does not improve allies or opponents")
+
+func _army_expansion_case() -> void:
+	await _fresh()
+	_ready_base(["swordsman", "swordsman", "archer", "archer", "knight", "knight", "swordsman", "archer"])
+	var player: PlayerState = host.players[0]
+	player.active_research.clear()
+	player.military_supply = 45
+	player.gold = 499
+	var bot: RefCounted = BOT.new(host, 0)
+	bot.tick(1.0)
+	_check(host.total_spent == 0 and player.gold == 499, "near-cap bot saves for the 500-gold expansion without overspending")
+	player.gold = 500
+	bot.tick(1.0)
+	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "army_capacity_1" and c.cost == 500), "near-cap bot orders paid army expansion I")
+	_check(player.get_supply_limit() == 50, "queued expansion gives no early military population")
+	host.advance(29.0)
+	_check(player.get_supply_limit() == 50, "army expansion waits its full thirty seconds")
+	host.advance(1.0)
+	_check(player.get_supply_limit() == 75, "army expansion I completes at seventy-five population")
+	player.military_supply = 70
+	player.gold = 500
+	bot.tick(30.0)
+	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "army_capacity_2" and c.cost == 500), "near second cap bot orders the second paid expansion")
+	host.advance(30.0)
+	_check(player.get_supply_limit() == 100 and host.players[1].get_supply_limit() == 50, "second expansion reaches one hundred for its owner only")
+	player.military_supply = 100
+	player.gold = 1000
+	var count_before: int = host.commands.size()
+	bot.tick(30.0)
+	var latest: Array = host.commands.slice(count_before)
+	_check(not latest.any(func(c): return c.kind == "recruit" or (c.kind == "research" and String(c.upgrade).begins_with("army_capacity"))), "fully expanded bot neither researches a third level nor overproduces")
+
+func _mining_research_case() -> void:
+	await _fresh()
+	_ready_base(["swordsman", "swordsman", "archer", "archer", "knight", "knight", "swordsman", "archer"])
+	var player: PlayerState = host.players[0]
+	player.active_research.clear()
+	player.farmers = 0
+	for index in range(6):
+		host.add_unit("farmer", 0, Vector3(-24, 0, index * 0.5))
+	host.add_mine(Vector3(-24, 0, -8))
+	player.gold = 139
+	var bot: RefCounted = BOT.new(host, 0)
+	bot.tick(1.0)
+	_check(not host.commands.any(func(c): return c.kind == "research" and String(c.upgrade).begins_with("mining")), "mining research preserves a ninety-gold reinforcement budget")
+	var costs: Array[int] = [50, 150, 300]
+	var seconds: Array[float] = [15.0, 25.0, 35.0]
+	for level in range(1, 4):
+		player.gold = costs[level - 1] + 90
+		bot.tick(1.0 if level == 1 else seconds[level - 2])
+		var id := "mining_%d" % level
+		_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == id and c.cost == costs[level - 1]), "developed bot researches " + id + " at its catalog price")
+		_check(player.mining_level == level - 1, "mining upgrade does not apply before completion " + id)
+		host.advance(seconds[level - 1])
+		_check(player.mining_level == level and is_equal_approx(player.get_mining_rate_multiplier(), 1.0 + level * 0.1), "completed mining upgrade applies its total percentage " + id)
+	_check(host.players[1].mining_level == 0 and host.players[2].mining_level == 0, "mining research remains independent between owners and allies")

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"army_capacity_1"
+name = "军队扩编 I"
+track = &"army_capacity"
+level = 1
+cost = 500
+research_seconds = 30.0
+total_bonus = 25

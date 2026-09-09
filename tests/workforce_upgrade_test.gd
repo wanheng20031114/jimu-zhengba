@@ -76,10 +76,10 @@ func _run() -> void:
 	other.production.cancel_research()
 	check(player.queued_research.is_empty() and player.gold == 100000, "all seven cancelled projects refund their own costs and clear tracks")
 	var oversized_before: Array[int] = []
-	oversized_before.resize(71)
+	oversized_before.resize(61)
 	oversized_before.fill(game.owned_entities(0, "units")[0].entity_id)
 	var unupgraded_command: Dictionary = game.command_bus.execute({"kind": "stop", "units": oversized_before}, 0)
-	check(not unupgraded_command.ok and unupgraded_command.error == "无效单位列表", "before research a 71-entry unit command exceeds the owner's maximum roster")
+	check(not unupgraded_command.ok and unupgraded_command.error == "无效单位列表", "before research a 61-entry unit command exceeds fifty military and ten worker slots")
 	var production: BuildingProduction = hq.production
 	for index in range(10 - player.farmers):
 		check(production.recruit("farmer").ok, "reserve initial worker slot %d" % index)
@@ -139,7 +139,7 @@ func _run() -> void:
 		var unit: BattleUnit = game.spawn_unit("farmer", 0, game.clamp_to_map(hq.position + Vector3(player.farmers * 1.2, 0, 8)))
 		unit.set_physics_process(false)
 		unit.navigation_agent.avoidance_enabled = false
-	for index in range(60):
+	for index in range(50):
 		var unit: BattleUnit = game.spawn_unit("swordsman", 0, game.clamp_to_map(hq.position + Vector3((index % 10) * 1.2, 0, 12 + (index / 10) * 1.2)))
 		unit.set_physics_process(false)
 		unit.navigation_agent.avoidance_enabled = false
@@ -147,13 +147,13 @@ func _run() -> void:
 	var ids: Array[int] = []
 	for unit: BattleUnit in roster:
 		ids.append(unit.entity_id)
-	check(roster.size() == 72 and player.farmers == 12 and player.military_supply == 60, "expanded roster contains 72 actual authored units within population caps")
-	check(game.command_bus.execute({"kind": "move", "units": ids, "at": [0, 0, 0]}, 0).ok and roster.all(func(unit): return unit.order == BattleUnit.Order.MOVE), "one move command reaches all 72 owned units")
-	check(game.command_bus.execute({"kind": "stop", "units": ids}, 0).ok and roster.all(func(unit): return unit.order == BattleUnit.Order.IDLE), "one stop command reaches all 72 owned units")
+	check(roster.size() == 62 and player.farmers == 12 and player.military_supply == 50, "expanded workforce roster contains 62 actual authored units at the base military cap")
+	check(game.command_bus.execute({"kind": "move", "units": ids, "at": [0, 0, 0]}, 0).ok and roster.all(func(unit): return unit.order == BattleUnit.Order.MOVE), "one move command reaches all 62 owned units")
+	check(game.command_bus.execute({"kind": "stop", "units": ids}, 0).ok and roster.all(func(unit): return unit.order == BattleUnit.Order.IDLE), "one stop command reaches all 62 owned units")
 	var oversized_after: Array[int] = ids.duplicate()
 	oversized_after.append(ids[0])
 	var excessive: Dictionary = game.command_bus.execute({"kind": "move", "units": oversized_after, "at": [0, 0, 0]}, 0)
-	check(not excessive.ok and excessive.error == "无效单位列表" and roster.all(func(unit): return unit.order == BattleUnit.Order.IDLE), "73-entry command is rejected atomically after research")
+	check(not excessive.ok and excessive.error == "无效单位列表" and roster.all(func(unit): return unit.order == BattleUnit.Order.IDLE), "63-entry command is rejected atomically without military expansion research")
 	var mixed_owners: Array[int] = ids.duplicate()
 	mixed_owners[0] = game.owned_entities(allied_owner, "units")[0].entity_id
 	check(not game.command_bus.execute({"kind": "move", "units": mixed_owners, "at": [0, 0, 0]}, 0).ok and roster.all(func(unit): return unit.order == BattleUnit.Order.IDLE), "expanded command capacity never permits commands to allied units")

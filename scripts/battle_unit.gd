@@ -20,6 +20,10 @@ const STATS: Dictionary = BalanceCatalog.UNITS
 
 enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
 const MAX_QUEUED_ORDERS: int = 64
+const CHASE_PREDICTION_SECONDS: float = 0.55
+# A small contact tolerance (about one knight step at the authoritative 30 TPS),
+# rather than the former 1.4-meter extension. Faster targets can still escape.
+const MELEE_CONTACT_TOLERANCE: float = 0.2
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var owner_id: int = -1
@@ -67,6 +71,7 @@ var _strike_target: Node3D
 var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
 var _moving: bool = false
+var _observed_velocity := Vector3.ZERO
 var _move_retaliation: Node3D
 var _retaliation_time: float = 0.0
 var _corpse_meshes: Array[GeometryInstance3D] = []
@@ -175,35 +180,22 @@ func _physics_process(delta: float) -> void:
 	elif _valid_target(target):
 		var to_target: Vector3 = target.global_position - global_position
 		to_target.y = 0.0
-		if _within_attack_range(target):
+		var can_start_strike: bool = _can_start_strike(target)
+		if can_start_strike:
 			_face_direction(to_target, delta)
-			if _attack_cooldown <= 0.000001:
+			if _attack_cooldown <= 0.000001 and attack_windup.is_stopped():
 				_start_attack()
-		elif order != Order.HOLD and order != Order.MOVE:
-			if _repath_time <= 0.0 or _path_budget.is_finished(self):
-				_repath_time = randf_range(0.4, 0.55)
-				var attack_point: Vector3 = target.get_attack_position(global_position) if target.is_in_group("buildings") else target.global_position
-				var approach: Vector3 = global_position - attack_point
-				approach.y = 0.0
-				if approach.length_squared() < 0.01:
-					approach = Vector3.RIGHT
-				var target_radius: float = 0.0 if target.is_in_group("buildings") else target.radius
-				var stop_distance: float = target_radius + radius + attack_range * 0.6
-				var chase_destination: Vector3 = attack_point + approach.normalized() * stop_distance
-				# Small target motion keeps the current corridor. A finished route
-				# refreshes immediately instead of waiting for the chase interval.
-				if _path_budget.is_finished(self) or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
-					_set_navigation_target(chase_destination)
-			desired_velocity = _path_velocity()
+		var melee_windup: bool = not attack_windup.is_stopped() and String(_stats.projectile).is_empty()
+		var can_chase: bool = order != Order.HOLD and order != Order.MOVE
+		# Windup owns its locked target and release time. Melee may take a
+		# pursuit step during that swing; ranged weapons plant until release.
+		# Recovery can pursue again without restarting the attack cooldown.
+		var chase_needed: bool = not can_start_strike
+		if melee_windup:
+			chase_needed = not _within_attack_range(target, -attack_range * 0.4)
+		if can_chase and chase_needed and (attack_windup.is_stopped() or melee_windup):
+			desired_velocity = _chase_velocity(target)
 			path_velocity_requested = true
-			if target.is_in_group("buildings") and String(_stats.projectile).is_empty() and _path_budget.is_finished(self):
-				# A padded navigation mesh ends before the physical wall. Complete the
-				# last contact step through CharacterBody3D so swords can reach it.
-				var contact_direction: Vector3 = target.get_attack_position(global_position) - global_position
-				contact_direction.y = 0.0
-				var contact_distance: float = attack_range + radius + 1.0
-				if contact_direction.length_squared() <= contact_distance * contact_distance:
-					desired_velocity = contact_direction.normalized() * speed
 	elif order in [Order.MOVE, Order.ATTACK_MOVE]:
 		if global_position.distance_squared_to(destination) < pow(maxf(0.65, radius * 0.8), 2.0):
 			_complete_waypoint()
@@ -236,6 +228,33 @@ func _physics_process(delta: float) -> void:
 	else:
 		_apply_velocity(desired_velocity)
 
+func _chase_velocity(entity: Node3D) -> Vector3:
+	var building: bool = entity.is_in_group("buildings")
+	var attack_point: Vector3 = entity.get_attack_position(global_position) if building else entity.global_position
+	var approach: Vector3 = global_position - attack_point
+	approach.y = 0.0
+	if approach.length_squared() < 0.01:
+		approach = Vector3.RIGHT
+	if _repath_time <= 0.0 or _path_budget.is_finished(self):
+		_repath_time = randf_range(0.4, CHASE_PREDICTION_SECONDS)
+		var target_radius: float = 0.0 if building else entity.radius
+		var spacing: float = maxf(attack_range * 0.6, min_attack_range + 0.35)
+		var chase_destination: Vector3 = attack_point + approach.normalized() * (target_radius + radius + spacing)
+		if entity is BattleUnit:
+			# A retreating target must not leave us parked at yesterday's contact
+			# point. Predict only one replan interval using observed velocity;
+			# native corridors, collision and the shared path budget remain in use.
+			chase_destination += entity._observed_velocity * CHASE_PREDICTION_SECONDS
+		if _path_budget.is_finished(self) or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
+			_set_navigation_target(chase_destination)
+	var desired_velocity: Vector3 = _path_velocity()
+	if building and String(_stats.projectile).is_empty() and _path_budget.is_finished(self):
+		# Finish contact with physical walls beyond a padded navigation edge.
+		var contact_distance: float = attack_range + radius + 1.0
+		if approach.length_squared() <= contact_distance * contact_distance:
+			desired_velocity = -approach.normalized() * speed
+	return desired_velocity
+
 func _path_velocity() -> Vector3:
 	var next_position: Vector3 = _path_budget.next_position(self)
 	var direction: Vector3 = next_position - global_position
@@ -253,9 +272,14 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 	velocity.y = 0.0
 	if velocity.length_squared() < 0.001:
 		velocity = Vector3.ZERO
+		_observed_velocity = Vector3.ZERO
 		return
 	var previous_position: Vector3 = global_position
 	move_and_slide()
+	# In floating motion mode velocity can retain the requested speed while
+	# pressing against a wall. Native displacement reports the actual motion.
+	_observed_velocity = get_real_velocity()
+	_observed_velocity.y = 0.0
 	if absf(global_position.y) > 0.001:
 		global_position.y = 0.0
 	# Footsteps follow actual displacement, including RVO and walls.
@@ -289,6 +313,24 @@ func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
 	var reach: float = attack_range + radius + (0.0 if building else entity.radius) + extra
 	var minimum: float = min_attack_range + radius + (0.0 if building else entity.radius) if min_attack_range > 0.0 else 0.0
 	return distance.length_squared() <= reach * reach and distance.length_squared() >= minimum * minimum
+
+func _can_start_strike(entity: Node3D) -> bool:
+	if not _within_attack_range(entity):
+		return false
+	if String(_stats.projectile).is_empty() or not entity is BattleUnit:
+		return true
+	# Ranged weapons plant during windup. Enter a release window before
+	# stopping so a steadily retreating target does not cause endless misses
+	# at maximum range. Only radial motion changes that window: extending a
+	# tangent vector would invent retreat for a target circling within reach
+	# and leave HOLD units waiting forever. Real release still checks distance.
+	var direction: Vector3 = entity.global_position - global_position
+	direction.y = 0.0
+	var radial_speed: float = entity._observed_velocity.dot(direction.normalized())
+	var release_distance: float = direction.length() + radial_speed * (_windup_seconds() + get_physics_process_delta_time())
+	var reach: float = attack_range + radius + entity.radius
+	var minimum: float = min_attack_range + radius + entity.radius if min_attack_range > 0.0 else 0.0
+	return release_distance <= reach and release_distance >= minimum
 
 func _refresh_target() -> void:
 	# Workers finish economic orders even under fire. An explicit attack still
@@ -345,19 +387,28 @@ func _start_attack() -> void:
 	_model.strike()
 	if unit_type in ["swordsman", "knight"]:
 		sound_requested.emit(&"sword_swing", global_position + Vector3.UP)
-	var windup: float = 0.22
+	attack_windup.start(_windup_seconds())
+
+func _windup_seconds() -> float:
 	match unit_type:
-		"knight": windup = 0.2
-		"archer": windup = 0.27
-		"catapult": windup = 0.48
-		"cannon": windup = 0.25
-	attack_windup.start(windup)
+		"knight": return 0.2
+		"archer": return 0.27
+		"catapult": return 0.48
+		"cannon": return 0.25
+	return 0.22
+
+func _cancel_attack() -> void:
+	attack_windup.stop()
+	_strike_target = null
+	# Cancellation consumes the existing cycle. Orders cannot skip recovery.
 
 func _on_attack_windup_timeout() -> void:
-	if not alive or not _valid_target(_strike_target):
+	var strike_target: Variant = _strike_target
+	_strike_target = null
+	if not alive or not _valid_target(strike_target):
 		return
 	var kind: String = _stats.projectile
-	if not _within_attack_range(_strike_target, 1.4):
+	if not _within_attack_range(strike_target, MELEE_CONTACT_TOLERANCE if kind.is_empty() else 0.0):
 		return
 	# The Timer can run a few milliseconds before AnimationPlayer in the same frame.
 	# Apply the authored release pose before reading the moving weapon socket.
@@ -367,14 +418,14 @@ func _on_attack_windup_timeout() -> void:
 	var upgrade_bonus: float = _game.get_player(owner_id).get_attack_bonus() if _stats.military else 0.0
 	var payload: DamagePayload = DamageResolver.snapshot(_stats, upgrade_bonus, owner_id, alliance_id)
 	if kind.is_empty():
-		var effect_kind: String = _strike_target.get_hit_effect() if _strike_target.is_in_group("buildings") else "hit"
-		var contact: Vector3 = _strike_target.get_attack_position(global_position) if _strike_target.is_in_group("buildings") else _strike_target.global_position
-		_strike_target.receive_hit(payload, self)
+		var effect_kind: String = strike_target.get_hit_effect() if strike_target.is_in_group("buildings") else "hit"
+		var contact: Vector3 = strike_target.get_attack_position(global_position) if strike_target.is_in_group("buildings") else strike_target.global_position
+		strike_target.receive_hit(payload, self)
 		_game.spawn_effect(contact + Vector3.UP * 1.1, effect_kind, Color("f5d691"))
 	else:
 		if kind != "cannon":
 			sound_requested.emit(&"bow_release" if kind == "arrow" else &"catapult_release", get_projectile_origin())
-		_game.spawn_projectile(self, _strike_target, payload, kind)
+		_game.spawn_projectile(self, strike_target, payload, kind)
 		if kind == "cannon":
 			_game.spawn_effect(get_projectile_origin(), "muzzle", Color("ffd898"))
 
@@ -421,7 +472,7 @@ func _begin_work(entity: Node3D, work_order: Order) -> void:
 	work_target = entity
 	target = null
 	_move_retaliation = null
-	attack_windup.stop()
+	_cancel_attack()
 	_repath_time = 0.0
 	order_name = "前往矿脉" if order == Order.GATHER else "前往工地"
 	_update_work_destination()
@@ -493,8 +544,11 @@ func _work_velocity(delta: float) -> Vector3:
 			return Vector3.ZERO
 	_set_working(true)
 	if order == Order.GATHER:
-		order_name = "采集黄金 · +%d / %.1f秒" % [BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds]
-		_work_seconds += delta
+		var mining_rate: float = _game.get_player(owner_id).get_mining_rate_multiplier()
+		order_name = "采集黄金 · +%d / %.2f秒" % [BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds / mining_rate]
+		# Progress stores completed base work, so researching mid-cycle preserves
+		# the work already done. Fractional ticks carry into the next payout.
+		_work_seconds += delta * mining_rate
 		work_progress = minf(_work_seconds / BalanceCatalog.ECONOMY.mining_seconds, 1.0)
 		if _work_seconds + 0.000001 >= BalanceCatalog.ECONOMY.mining_seconds:
 			_work_seconds -= BalanceCatalog.ECONOMY.mining_seconds
@@ -577,7 +631,7 @@ func _begin_move(at: Vector3, attack_move: bool) -> void:
 	destination = _game.clamp_to_map(at)
 	target = null
 	_move_retaliation = null
-	attack_windup.stop()
+	_cancel_attack()
 	_scan_time = 0.0
 	_set_navigation_target(destination)
 
@@ -606,7 +660,7 @@ func _begin_attack(entity: Node3D) -> void:
 		return
 	target = entity
 	_repath_time = 0.0
-	attack_windup.stop()
+	_cancel_attack()
 
 func stop() -> void:
 	if not alive:
@@ -658,13 +712,14 @@ func _finish_order() -> void:
 	destination = global_position
 	_home_position = global_position
 	_scan_time = 0.0
-	attack_windup.stop()
+	_cancel_attack()
 	# Stop presentation state synchronously: battle completion may disable
 	# physics and avoidance before another velocity callback can arrive.
 	_moving = false
 	_model.set_motion(false)
 	_path_budget.cancel(self)
 	velocity = Vector3.ZERO
+	_observed_velocity = Vector3.ZERO
 	NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), Vector3.ZERO)
 
 func get_combat_definition() -> CombatDefinition:
@@ -710,9 +765,10 @@ func _die() -> void:
 	order_name = "阵亡"
 	set_selected(false)
 	health_bar.hide()
-	attack_windup.stop()
+	_cancel_attack()
 	navigation_agent.avoidance_enabled = false
 	velocity = Vector3.ZERO
+	_observed_velocity = Vector3.ZERO
 	collision_layer = 0
 	collision_mask = 0
 	$CollisionShape3D.set_deferred("disabled", true)
