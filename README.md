@@ -10,6 +10,8 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/AshenCrown-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
+当前版本 **0.7.0**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.0.md)。
+
 ## 对局
 
 - 1v1 琥珀十字路（96×96），2v2 双谷争锋（128×112）；对称出生、主路与侧路、6/10处永久矿脉。
@@ -69,6 +71,6 @@ python tests/network_game_live_runner.py local
 powershell -ExecutionPolicy Bypass -File tools/profile_skirmish.ps1
 ```
 
-实现与验收记录：[生产与科技队列](docs/production-queues.md)、[遭遇战实施](docs/skirmish-implementation.md)、[0.6性能实测](docs/performance-0.6.0.md)、[联网验收](docs/network-validation.md)、[发布包完整对局](docs/release-match-validation.md)。0.6历史测试中，标准混编2v2显示帧P95为16.46ms、P99为24.86ms；最坏280人混战不能锁定60FPS。这些历史值不代表后续版本，完整数据与统计边界保留在对应报告中。
+实现与验收记录：[生产与科技队列](docs/production-queues.md)、[遭遇战实施历史](docs/skirmish-implementation.md)、[0.7性能实测](docs/performance-0.7.0.md)、[联网验收](docs/network-validation.md)、[发布包完整对局](docs/release-match-validation.md)。本轮标准混编2v2显示帧P95为15.81ms、P99为24.23ms；280人密集混战P95为31.92ms，仍不能锁定60FPS。完整采样条件与限制在性能报告中，另保留[0.6历史对照](docs/performance-0.6.0.md)。
 
 建模脚本为 `tools/build_units.py`、`tools/build_environment.py`、`tools/build_skirmish_maps.py`；离线建模需要 Python、NumPy、SciPy、trimesh、Shapely，运行游戏无需这些依赖。

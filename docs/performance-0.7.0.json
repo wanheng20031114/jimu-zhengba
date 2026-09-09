@@ -1,0 +1,331 @@
+{
+  "version": "0.7.0",
+  "source_commit": "1ef6113f9ddef233a17651e4b0a318966e595517",
+  "captured_at_utc": "2026-09-09T16:29:05.590761+00:00",
+  "source_report": "artifacts/skirmish_stress_2v2.json",
+  "source_report_sha256": "7597ce2ca22519cc84382f3c5f484c8169e5981bbcecee08b6174cb4dedb67b1",
+  "command": "tools/profile_skirmish.ps1 -Mode 2v2",
+  "hardware": {
+    "cpu": "Intel Core i9-10900KF @ 3.70GHz",
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "gpu_memory_mib": 10240,
+    "gpu_driver": "616.56",
+    "whole_gpu_utilization_before_percent": 41,
+    "whole_gpu_utilization_after_percent": 37,
+    "other_apps": "User editor and desktop apps remained running; no parallel verification, export, server or client helpers."
+  },
+  "environment": {
+    "mode": "2v2",
+    "rendered": true,
+    "godot": "4.6.3-stable (official)",
+    "renderer": "forward_plus",
+    "physics_ticks_per_second": 30,
+    "window_size": "(1600, 900)",
+    "viewport_size": "(1600.0, 900.0)",
+    "physics_interpolation": true,
+    "msaa_3d": 2,
+    "taa": true,
+    "shadow_atlas_size": 4096,
+    "shadow_max_distance": 135.0,
+    "shadow_mode": 0,
+    "restored_settings_fps_limit_before_benchmark_override": 120,
+    "restored_settings_vsync_before_benchmark_override": 1,
+    "benchmark_fps_limit": 0,
+    "benchmark_vsync": 0
+  },
+  "warmup_seconds_per_phase": 6,
+  "sample_seconds_per_phase": 15,
+  "conditions": "HQ/maps remain native; bots and passive income stopped; all owners at 60 military supply + 10 farmers; benchmark-only health x20 stabilizes combat crowds; damage, cooldowns, shadows and AA unchanged.",
+  "physics_metric": "physics_logic_ms brackets SceneTree physics callbacks with saved-scene priorities -1000000/+1000000. It excludes PhysicsServer stepping outside the SceneTree. engine_physics_monitor_ms separately reports cached Performance.TIME_PHYSICS_PROCESS. Neither uses tick arrival intervals as logic cost.",
+  "checks": 39,
+  "failures": [],
+  "stderr_bytes": 0,
+  "process_cleanup": {
+    "owned_processes_exited": true,
+    "verified_remaining_godot_processes": "User editor only"
+  },
+  "phases": [
+    {
+      "name": "mixed_supply60_combat",
+      "duration_seconds": 15.002033,
+      "starting_units": 208,
+      "ending_units": 206,
+      "frame_count": 1951,
+      "authority_ticks": 450,
+      "observed_tps": 29.9959345510039,
+      "measured_fps": 130.049040686686,
+      "frame_ms": {
+        "max": 26.95,
+        "mean": 7.68940389543825,
+        "p50": 5.094,
+        "p95": 15.805,
+        "p99": 24.229,
+        "samples": 1951
+      },
+      "physics_logic_ms": {
+        "max": 10.014,
+        "mean": 6.9526,
+        "p50": 6.716,
+        "p95": 8.812,
+        "p99": 9.505,
+        "samples": 450
+      },
+      "engine_physics_monitor_ms": {
+        "max": 13.517,
+        "mean": 11.9358133333334,
+        "p50": 11.726,
+        "p95": 12.851,
+        "p99": 13.517,
+        "samples": 450
+      },
+      "navigation_ms": {
+        "max": 1.724,
+        "mean": 1.40510666666667,
+        "p50": 1.345,
+        "p95": 1.724,
+        "p99": 1.724,
+        "samples": 450
+      },
+      "path_query_ms": {
+        "max": 3.332,
+        "mean": 0.483657777777777,
+        "p50": 0.45,
+        "p95": 1.097,
+        "p99": 1.428,
+        "samples": 450
+      },
+      "path_query_count": {
+        "max": 17.0,
+        "mean": 2.17555555555556,
+        "p50": 2.0,
+        "p95": 5.0,
+        "p99": 7.0,
+        "samples": 450
+      },
+      "logic_p95_under_33ms": true,
+      "frame_p95_under_16ms": true,
+      "monitor_ranges": {
+        "active_units": {
+          "min": 206,
+          "max": 208
+        },
+        "draw_calls": {
+          "min": 690.0,
+          "max": 803.0
+        },
+        "primitives": {
+          "min": 1264535.0,
+          "max": 1349509.0
+        },
+        "memory_mb": {
+          "min": 272.50193977356,
+          "max": 273.656122207642
+        },
+        "video_memory_mb": {
+          "min": 557.152816772461,
+          "max": 557.66569519043
+        },
+        "effects": {
+          "min": 69,
+          "max": 107
+        },
+        "nodes": {
+          "min": 7340.0,
+          "max": 7556.0
+        },
+        "orphans": {
+          "min": 0.0,
+          "max": 0.0
+        }
+      }
+    },
+    {
+      "name": "maximum_units_combat",
+      "duration_seconds": 15.004709,
+      "starting_units": 280,
+      "ending_units": 275,
+      "frame_count": 1114,
+      "authority_ticks": 450,
+      "observed_tps": 29.9905849556962,
+      "measured_fps": 74.2433592014347,
+      "frame_ms": {
+        "max": 40.713,
+        "mean": 13.4692118491921,
+        "p50": 7.491,
+        "p95": 31.918,
+        "p99": 34.834,
+        "samples": 1114
+      },
+      "physics_logic_ms": {
+        "max": 17.294,
+        "mean": 10.1907533333333,
+        "p50": 9.804,
+        "p95": 12.708,
+        "p99": 14.165,
+        "samples": 450
+      },
+      "engine_physics_monitor_ms": {
+        "max": 21.965,
+        "mean": 17.5279822222223,
+        "p50": 17.117,
+        "p95": 21.965,
+        "p99": 21.965,
+        "samples": 450
+      },
+      "navigation_ms": {
+        "max": 3.426,
+        "mean": 2.25571333333333,
+        "p50": 2.145,
+        "p95": 3.426,
+        "p99": 3.426,
+        "samples": 450
+      },
+      "path_query_ms": {
+        "max": 5.226,
+        "mean": 1.19339333333333,
+        "p50": 1.094,
+        "p95": 2.118,
+        "p99": 4.749,
+        "samples": 450
+      },
+      "path_query_count": {
+        "max": 24.0,
+        "mean": 5.71111111111111,
+        "p50": 5.0,
+        "p95": 10.0,
+        "p99": 24.0,
+        "samples": 450
+      },
+      "logic_p95_under_33ms": true,
+      "frame_p95_under_16ms": false,
+      "monitor_ranges": {
+        "active_units": {
+          "min": 275,
+          "max": 280
+        },
+        "draw_calls": {
+          "min": 630.0,
+          "max": 694.0
+        },
+        "primitives": {
+          "min": 1464721.0,
+          "max": 1514267.0
+        },
+        "memory_mb": {
+          "min": 283.641479492188,
+          "max": 284.478466033936
+        },
+        "video_memory_mb": {
+          "min": 557.373504638672,
+          "max": 558.017654418945
+        },
+        "effects": {
+          "min": 86,
+          "max": 127
+        },
+        "nodes": {
+          "min": 9105.0,
+          "max": 9354.0
+        },
+        "orphans": {
+          "min": 0.0,
+          "max": 0.0
+        }
+      }
+    },
+    {
+      "name": "maximum_units_marching",
+      "duration_seconds": 15.002776,
+      "starting_units": 280,
+      "ending_units": 280,
+      "frame_count": 2330,
+      "authority_ticks": 450,
+      "observed_tps": 29.9944490273,
+      "measured_fps": 155.304591630242,
+      "frame_ms": {
+        "max": 36.852,
+        "mean": 6.43895708154506,
+        "p50": 4.101,
+        "p95": 15.181,
+        "p99": 23.49,
+        "samples": 2330
+      },
+      "physics_logic_ms": {
+        "max": 15.363,
+        "mean": 5.88865777777778,
+        "p50": 5.432,
+        "p95": 8.295,
+        "p99": 11.497,
+        "samples": 450
+      },
+      "engine_physics_monitor_ms": {
+        "max": 20.032,
+        "mean": 13.1415444444444,
+        "p50": 12.236,
+        "p95": 20.032,
+        "p99": 20.032,
+        "samples": 450
+      },
+      "navigation_ms": {
+        "max": 3.379,
+        "mean": 2.62134444444444,
+        "p50": 2.538,
+        "p95": 3.379,
+        "p99": 3.379,
+        "samples": 450
+      },
+      "path_query_ms": {
+        "max": 7.862,
+        "mean": 0.598175555555555,
+        "p50": 0.474,
+        "p95": 1.191,
+        "p99": 5.133,
+        "samples": 450
+      },
+      "path_query_count": {
+        "max": 24.0,
+        "mean": 2.54888888888889,
+        "p50": 2.0,
+        "p95": 5.0,
+        "p99": 24.0,
+        "samples": 450
+      },
+      "logic_p95_under_33ms": true,
+      "frame_p95_under_16ms": true,
+      "monitor_ranges": {
+        "active_units": {
+          "min": 280,
+          "max": 280
+        },
+        "draw_calls": {
+          "min": 458.0,
+          "max": 664.0
+        },
+        "primitives": {
+          "min": 937737.0,
+          "max": 1494549.0
+        },
+        "memory_mb": {
+          "min": 282.69002532959,
+          "max": 284.395042419434
+        },
+        "video_memory_mb": {
+          "min": 557.096008300781,
+          "max": 557.459060668945
+        },
+        "effects": {
+          "min": 0,
+          "max": 100
+        },
+        "nodes": {
+          "min": 9046.0,
+          "max": 9298.0
+        },
+        "orphans": {
+          "min": 0.0,
+          "max": 0.0
+        }
+      }
+    }
+  ]
+}

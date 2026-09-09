@@ -23,9 +23,9 @@ def main() -> int:
     executable = args.executable.resolve(strict=True)
     prefix = args.output.resolve()
     prefix.parent.mkdir(parents=True, exist_ok=True)
-    stdout_path = prefix.with_suffix(".stdout.log")
-    stderr_path = prefix.with_suffix(".stderr.log")
-    report_path = prefix.with_suffix(".json")
+    stdout_path = prefix.parent / (prefix.name + ".stdout.log")
+    stderr_path = prefix.parent / (prefix.name + ".stderr.log")
+    report_path = prefix.parent / (prefix.name + ".json")
     command = [str(executable), "--audio-driver", "Dummy"]
     if args.project:
         command += ["--path", str(args.project.resolve(strict=True))]

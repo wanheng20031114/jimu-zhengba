@@ -30,11 +30,24 @@
 | 命令参数边界 | 172/172 | `commands-0.7-run.log` |
 | 重连期限 | 19/19 | `expiry-0.7-run.log` |
 | 统一源码发布入口 | 102/102 | `.local/network/release-9fe529b3` |
+| 最终实际 Windows EXE | 102/102 | `.local/network/release-02b7cb06` |
 
-本地与公网对局各约 52.5 秒。排除刻意断线阶段，公网三名客户端快照间隔 P95 分别为 72、83、75 ms，最大间隔 134 ms。此处是标准场景的网络间隔观测，不代替既有 280 单位性能报告；本轮没有重复长时间 280 单位压测。
+本地与公网对局各约 52.5 秒。排除刻意断线阶段，公网三名客户端快照间隔 P95 分别为 72、83、75 ms，最大间隔 134 ms。此处是标准场景的网络间隔观测；本轮另外独立进行的 208／280 单位显示与逻辑采样见 [0.7.0 性能报告](performance-0.7.0.md)，没有将其当作本场联网流量或延迟数据。
 
 期限边界测试通过移动本机单调时钟期限验证，不声称实际等待了完整 30/120 秒。实际四客户端场景中的普通玩家 10 秒接管等待未加速。
 
-源码发布入口逐项检查 43 项资源、44 项实际数值、公开信任证书、清单、0.7.0/协议 3，并通过上海真实房间创建、开局和结算。Windows 导出包由主任务完成后执行相同入口，结果另行补入。
+源码与最终 Windows EXE 均通过同一个发布入口：逐项检查 43 项资源、44 项实际数值、公开信任证书、清单、0.7.0/协议 3，并通过上海真实房间创建、开局和结算。最终 EXE 返回 `exported_template=true`，共 102 项通过，错误列表为空、stderr 为空；此次公网握手耗时 551 ms。实际包验证命令为 `python tests/network_release_runner.py builds/windows/AshenCrown.exe`，未修改或重新导出发布文件。
+
+## 最终发布文件
+
+对应阶段提交 `1ef6113` 导出的实际文件：
+
+| 文件 | 大小（字节） | SHA256 |
+|---|---:|---|
+| `builds/windows/AshenCrown.exe` | 104588800 | `bbc13da88af02bd5c6d32e8fc12ddff60e48e1c0864f022f3be3bf897732f69b` |
+| `builds/windows/AshenCrown.pck` | 19463164 | `cd1401612d316efb9fe58d7eca41ed08d50b38e92a13b4e3037a226b0bdf6f62` |
+| `builds/AshenCrown-Windows-x64.zip` | 52212524 | `683ef2bdf08b6b6fee1b5ed7b7bf3ca606d5fa5390576214a24d8bb0102540bb` |
+
+验证结果与文件指纹另保存在忽略的 `.local/network/release-exe-0.7-run.log`、`.local/network/release-0.7-artifacts.json`。本次包验证启动的 EXE 和 Python runner 已退出，CIM 核实无残留。
 
 以上所有测试 stderr 为空。Runner 正常关闭自己启动的四客户端、临时中继及代理，最后的 CIM 检查仅剩用户编辑器 PID 19228；上海生产中继继续运行。
