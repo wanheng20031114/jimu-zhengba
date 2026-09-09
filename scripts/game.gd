@@ -1100,7 +1100,7 @@ func _setup_match() -> void:
 		var base := spawn_building("headquarters", player.owner_id, at)
 		var mine := nearest_mine(at)
 		base.production.rally_mine = mine
-		base.rally_point = at.move_toward(Vector3.ZERO, 9)
+		base.rally_point = mine.global_position
 		for index in range(3):
 			var direction: Vector3 = (mine.global_position - at).normalized()
 			var worker: BattleUnit = spawn_unit("farmer", player.owner_id, at + direction * 7 + Vector3(direction.z, 0, -direction.x) * (index - 1) * 1.7)

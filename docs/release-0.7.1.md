@@ -30,7 +30,7 @@
 | 战场暂停／设置原生输入 | 无头60，Vulkan62（含两张截图） |
 | 生产／研究队列原生界面与分辨率布局 | Vulkan494（含六张截图） |
 | 原有上下文生产键 | 39/39 |
-| 新建筑集结旗和线 | 无头20，Vulkan22（含两张截图） |
+| 新建筑集结旗和线 | 无头21，Vulkan22（含两张截图） |
 | 原单位任务路线反馈 | 37/37 |
 | 大厅原生按钮与状态 | 无头47，Vulkan51（含截图） |
 | 实际ENet/DTLS 2v2房间与真人/Bot席位 | 28/28 |
@@ -44,3 +44,19 @@
 43项资源清单SHA256：`85d66402fee91207aaa032087e93506c49501a32fe0ff9e1b2a8c91e0080bc60`。
 
 本轮没有重复完整对局或性能压测；0.7.0的时长与帧率报告继续作为对应版本历史，不能当作削弱弓手后新的胜率或对局节奏结论。
+
+## 最终 Windows 包
+
+最终导出后，实际 `AshenCrown.exe` 的上海发布入口 **104/104通过**，确认 `exported_template=true`、版本0.7.1／协议4、43项目录资源与46项实际数值，错误列表为空、stderr为空。记录：`.local/network/release-384fbc21`。末次修正还统一了开局采矿集结的旗帜目标和实际优先出兵方向，集结回归21项通过；最终实际包包含该修正。
+
+发布EXE另用Vulkan实际启动主菜单、战场并截图，均正常退出、stderr为空；`artifacts/release-visual.json`记录各自PID与退出结果，截图为`artifacts/release-lobby.png`、`artifacts/release-battlefield.png`。README战场图同步为这次实际包的正常开局。
+
+| 文件 | 字节 | SHA256 |
+|---|---:|---|
+| `builds/windows/AshenCrown.exe` | 104588800 | `3fe37d8e9e6ed842b9d7d0bc7e753796eb6c63c12dbbb9e526e3bb964c2b1976` |
+| `builds/windows/AshenCrown.pck` | 19478368 | `de24a96f934a11b82684da6e1af3bdad4d6fd10ecb2616445dbd25f520d8708f` |
+| `builds/AshenCrown-Windows-x64.zip` | 52220366 | `0162ae1dda6a4ed6ed753fb8f664cae0e0d38d9a46f3bd604363b475437f3fe6` |
+
+解压ZIP后运行`windows/AshenCrown.exe`，EXE与PCK保持同目录。用户原有项目、音频与导出配置改动保留；导出配置仅提交本轮必需的版本号更新。
+
+全部验收结束后，CIM核实本地Godot无头／检查、发布截图、房间和联网runner辅助进程数量为0；保留用户Godot项目管理器PID40244。上海正式中继继续运行。

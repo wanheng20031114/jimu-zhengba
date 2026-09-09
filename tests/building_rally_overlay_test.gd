@@ -33,6 +33,7 @@ func run() -> void:
 	var academy: BattleBuilding = game.spawn_building("academy", 0, home + Vector3(-10, 0, 0))
 	academy.set_physics_process(false)
 	var mine: ResourceVein = game.nearest_mine(home)
+	check(headquarters.production.rally_mine == mine and headquarters.rally_point == mine.global_position, "initial_mining_flag_matches_the_actual_preferred_spawn_direction")
 	var ally: BattleBuilding = game.owned_entities(1, "buildings")[0]
 	var enemy: BattleBuilding = game.owned_entities(2, "buildings")[0]
 	var overlay := game.get_node("OrderPlanOverlay")
