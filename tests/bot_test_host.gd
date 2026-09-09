@@ -25,6 +25,9 @@ func register_entity(entity: Node3D) -> void:
 func get_player(owner: int) -> PlayerState:
 	return players[owner]
 
+func get_spawn_marker(owner: int) -> Marker3D:
+	return get_node("SpawnPoints/Player%d" % owner)
+
 func owned_entities(owner: int, group: String) -> Array:
 	var result: Array = []
 	for entity: Node3D in get_tree().get_nodes_in_group(group):

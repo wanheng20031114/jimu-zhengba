@@ -99,12 +99,12 @@ func _ready() -> void:
 	attack_damage = _stats.damage
 	min_attack_range = _stats.min_range
 	# Keep the common picking layer; dedicated faction layers filter native queries.
-	collision_layer = 4 | (16 if team == 0 else 8)
+	collision_layer = 4 | CombatLayers.UNIT_LAYERS[alliance_id]
 	var sight_shape := SphereShape3D.new()
 	sight_shape.radius = float(_stats.sight) + radius
 	_target_query = PhysicsShapeQueryParameters3D.new()
 	_target_query.shape = sight_shape
-	_target_query.collision_mask = (8 | 64) if team == 0 else (16 | 32)
+	_target_query.collision_mask = CombatLayers.hostile_entities(alliance_id)
 	_space_state = get_world_3d().direct_space_state
 	_game = get_tree().current_scene
 	_path_budget = _game.get_node("PathBudget")

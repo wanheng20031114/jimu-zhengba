@@ -205,7 +205,7 @@ def deploy() -> None:
                 upload(sftp, release + "/" + path, content)
             upload(sftp, BASE + "/config/relay-private.key", KEY.read_bytes(), 0o600)
             upload(sftp, BASE + "/config/relay.crt", CERT.read_bytes())
-            relay_config = '[relay]\nbind="*"\nport=24571\nmax_rooms=1\nmax_humans=4\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
+            relay_config = '[relay]\nbind="*"\nport=24571\nmax_rooms=1\nmax_humans=6\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
             upload(sftp, BASE + "/config/relay.cfg", relay_config.encode(), 0o600)
             unit = f"""[Unit]
 Description=Ashen Crown encrypted match relay

@@ -176,7 +176,7 @@ func refresh() -> void:
 	if _preview_alliance != preview_relation:
 		_preview_alliance = preview_relation
 		$ModelPreviews.set_team(_preview_alliance)
-	$TopLeft/Location.text = game.map_definition.display_name + "  ·  " + ("2v2 队伍战" if game.match_config.mode == "2v2" else "1v1 遭遇战")
+	$TopLeft/Location.text = game.map_definition.display_name + "  ·  " + NetworkProtocol.MODES[game.match_config.mode].label
 	$MapFrame/MapTitle.text = game.map_definition.display_name
 	timer_label.text = "%02d:%02d" % [int(game.elapsed) / 60, int(game.elapsed) % 60]
 	objective_label.text = "摧毁敌队全部军事建筑"

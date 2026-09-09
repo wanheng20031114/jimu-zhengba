@@ -1,12 +1,14 @@
-"""Author the skirmish buildings and two native, editable Godot battlefields.
+"""Author the skirmish buildings and native, editable Godot battlefields.
 
 Run this offline, then run tests/skirmish_maps_bake.gd once with Godot. Geometry
 is saved as native ArrayMesh resources; no meshes or navigation are built in a
-match. Placement is deterministic and exactly invariant under a half turn.
+match. New maps can be authored independently with --maps ID --skip-models;
+their seeded obstacle layouts obey the map's two, three or sixfold symmetry.
 """
 from __future__ import annotations
 
 import json
+import argparse
 import math
 from collections import deque
 from pathlib import Path
@@ -302,6 +304,63 @@ MAP_DEFINITIONS=[
 ]
 
 
+def rotate_point(point, angle):
+    """Godot's positive Y rotation in the X/Z authoring plane."""
+    x,z=point
+    return [round(x*math.cos(angle)+z*math.sin(angle),6),
+            round(-x*math.sin(angle)+z*math.cos(angle),6)]
+
+
+def six_player_definitions():
+    front={"id":"three_frontiers_3v3","title":"三线烽火","size":[160,144],
+           "symmetry":2,"seed":80303,
+           "spawns":[[-58,-40,0],[-58,0,0],[-58,40,0],[58,40,1],[58,0,1],[58,-40,1]],
+           "starting_towers":[[-66,-61],[-66,-21],[-66,19],[66,61],[66,21],[66,-19]],
+           "mines":[[-60,-55],[-60,-15],[-60,25],[60,55],[60,15],[60,-25],
+                    [-26,-60],[-26,-20],[-26,20],[26,60],[26,20],[26,-20],[-10,-20],[10,20]],
+           "roads":[{"width":12,"points":[[-58,z],[58,z]]} for z in (-40,0,40)] +
+                   [{"width":8,"points":[[x,-40],[x,40]]} for x in (-44,0,44)]}
+    radial=[]
+    for name,title,size,radius,teams,symmetry,seed in [
+        ("triad_basin_2v2v2","三盟盆地",176,66,[0,0,1,1,2,2],3,80222),
+        ("crownfall_ffa","落冠荒原",160,59,[0,1,2,3,4,5],6,80601),
+    ]:
+        spawns=[];birth_mines=[];towers=[];expansions=[];roads=[]
+        # Clockwise consecutive owners make the adjacent two seats one team.
+        angles=[math.radians(150-i*60) for i in range(6)]
+        for owner,angle in enumerate(angles):
+            outward=np.array([math.cos(angle),math.sin(angle)])
+            front_dir=-outward;left=np.array([front_dir[1],-front_dir[0]])
+            spawn=outward*radius
+            birth=spawn+outward*5+left*14
+            tower=birth+left*8
+            expansion=outward*34+left*13
+            spawns.append([*np.round(spawn,6).tolist(),teams[owner]])
+            birth_mines.append(np.round(birth,6).tolist())
+            towers.append(np.round(tower,6).tolist())
+            expansions.append(np.round(expansion,6).tolist())
+            roads.append({"width":12,"points":[np.round(spawn,6).tolist(),[0,0]]})
+        # The ring connects adjacent lanes; reserves a second tactical route
+        # without crossing the inward expansion mines on either side.
+        ring_radius=56 if size==176 else 52
+        ring=[[round(math.cos(a)*ring_radius,6),round(math.sin(a)*ring_radius,6)] for a in angles]
+        roads.extend({"width":8,"points":[ring[i],ring[(i+1)%6]]} for i in range(6))
+        # Three evenly spaced contested veins lie between radial main lanes.
+        contested=[[round(math.cos(math.radians(120-i*120))*22,6),
+                    round(math.sin(math.radians(120-i*120))*22,6)] for i in range(3)]
+        if symmetry==6:
+            contested=[[round(math.cos(math.radians(120-i*60))*22,6),
+                        round(math.sin(math.radians(120-i*60))*22,6)] for i in range(6)]
+        radial.append({"id":name,"title":title,"size":[size,size],"symmetry":symmetry,"seed":seed,
+                       "spawns":spawns,"starting_towers":towers,"mines":birth_mines+expansions+contested,
+                       "mine_rotations":[i*math.pi/3 for i in range(6)]*2+
+                                        [i*math.tau/len(contested) for i in range(len(contested))],"roads":roads})
+    return [front,*radial]
+
+
+MAP_DEFINITIONS.extend(six_player_definitions())
+
+
 def road_union(definition,padding=0):
     return unary_union([LineString(r["points"]).buffer(r["width"]/2+padding,cap_style=1,join_style=1) for r in definition["roads"]])
 
@@ -383,15 +442,22 @@ def natural_layout(definition):
         radius=math.hypot(width,depth)*scale/2
         # Keep foliage outside development/mining clearances as well as trunks.
         visual=max(radius,2.5*scale if kind=="tree_oak" else 1.85*scale if kind=="tree_pine" else radius)
-        shape=Point(x,z).buffer(visual)
-        if abs(x)+visual>w/2-.65 or abs(z)+visual>d/2-.65:return False
-        if reserved.intersects(shape) or any(shape.distance(p)<.35 for p in occupied):return False
-        for sign in (1,-1):
-            placements.append({"name":f"{kind}_{len(placements):03d}","model":kind,"position":[sign*x,0,sign*z],
-                               "rotation_y":angle+(math.pi if sign<0 else 0),"scale":scale,
+        symmetry=definition.get("symmetry",2)
+        orbit=[]
+        for index in range(symmetry):
+            turn=math.tau*index/symmetry
+            px,pz=rotate_point((x,z),turn)
+            shape=Point(px,pz).buffer(visual)
+            if abs(px)+visual>w/2-.65 or abs(pz)+visual>d/2-.65:return False
+            if reserved.intersects(shape) or any(shape.distance(p)<.35 for p in occupied):return False
+            if any(shape.distance(p[3])<.35 for p in orbit):return False
+            orbit.append((px,pz,turn,shape))
+        for px,pz,turn,shape in orbit:
+            placements.append({"name":f"{kind}_{len(placements):03d}","model":kind,"position":[px,0,pz],
+                               "rotation_y":angle+turn,"scale":scale,
                                "size":[width*scale,height*scale,depth*scale],
                                "collision":scaled_collision(collisions[kind],scale)})
-            occupied.append(Point(sign*x,sign*z).buffer(visual))
+            occupied.append(shape)
         return True
     # Art-directed clusters around road islands, then a denser boundary frame.
     candidates=[]
@@ -429,9 +495,10 @@ def navigation(definition,obstacles):
             points.append((x+dx*math.cos(a)+dz*math.sin(a),z-dx*math.sin(a)+dz*math.cos(a)))
         solid.append(Polygon(points).buffer(1.15,join_style=1))
     ore=collision_geometry("gold_vein",art.gold_vein())
-    for x,z in definition["mines"]:
-        sign=1 if x<0 else -1
-        solid.append(Polygon([(x+sign*px,z+sign*pz) for px,pz in ore["footprint"]]).buffer(1.15))
+    for index,(x,z) in enumerate(definition["mines"]):
+        angle=definition["mine_rotations"][index] if "mine_rotations" in definition else (0 if x<0 else math.pi)
+        points=[rotate_point(p,angle) for p in ore["footprint"]]
+        solid.append(Polygon([(x+px,z+pz) for px,pz in points]).buffer(1.15))
     blocked=unary_union(solid)
     vertices=[];lookup={};polygons=[];walkable=set()
     # One polygon per integer cell is the source contract of dynamic building
@@ -442,14 +509,14 @@ def navigation(definition,obstacles):
             walkable.add((x,z))
     # Tiny pockets between inflated rocks are not valid destination islands.
     # Keep the shared battlefield component, never disconnected navigable dots.
-    start=tuple(definition["spawns"][0][:2]);reachable={start};pending=deque([start])
+    start=tuple(math.floor(v) for v in definition["spawns"][0][:2]);reachable={start};pending=deque([start])
     assert start in walkable
     while pending:
         x,z=pending.popleft()
         for neighbor in [(x-1,z),(x+1,z),(x,z-1),(x,z+1)]:
             if neighbor in walkable and neighbor not in reachable:
                 reachable.add(neighbor);pending.append(neighbor)
-    for x,z,_ in definition["spawns"]:assert (x,z) in reachable,"Spawn disconnected"
+    for x,z,_ in definition["spawns"]:assert (math.floor(x),math.floor(z)) in reachable,"Spawn disconnected"
     for z in range(-d//2+2,d//2-2):
         for x in range(-w//2+2,w//2-2):
             if (x,z) not in reachable:continue
@@ -500,22 +567,49 @@ def write_map(definition,obstacles,nav):
         lines.append(f'[node name="Player{i}" type="Marker3D" parent="SpawnPoints"]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)\nmetadata/alliance_id = {alliance}\nmetadata/player_id = {i}\nmetadata/starting_tower_position = Vector3({tower_x},0,{tower_z})')
     lines.append('[node name="Resources" type="Node3D" parent="."]')
     for i,(x,z) in enumerate(definition["mines"]):
-        lines.append(f'[node name="GoldVein{i}" parent="Resources" instance=ExtResource("4_mine")]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{0 if x<0 else math.pi:.6f},0)')
+        angle=definition["mine_rotations"][i] if "mine_rotations" in definition else (0 if x<0 else math.pi)
+        lines.append(f'[node name="GoldVein{i}" parent="Resources" instance=ExtResource("4_mine")]\nposition = Vector3({x},0,{z})\nrotation = Vector3(0,{angle:.6f},0)')
     art.write_asset(MAPS/f"{name}.tscn","\n\n".join(lines)+"\n")
     report={**definition,"navigation_cell_size":1,"navigation_polygons":len(nav["polygons"]),
             "base_clearance_radius":11.5,"mine_clearance_radius":5.1,"obstacles":obstacles}
     art.write_asset(MAPS/f"{name}_layout.json",json.dumps(report,ensure_ascii=False,indent=2))
+    if len(definition["spawns"])==6:
+        art.write_asset(ROOT/f"data/maps/{name}.tres",f'''[gd_resource type="Resource" script_class="MapDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/map_definition.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/maps/{name}.tscn" id="scene"]
+
+[resource]
+script = ExtResource("script")
+id = &"{name}"
+display_name = "{definition['title']}"
+size = Vector2({w}, {d})
+slots = 6
+scene = ExtResource("scene")
+''')
     print(f'{name}: {len(obstacles)} obstacles, {len(nav["polygons"])} connected-grid polygons, {len(definition["mines"])} mines')
 
 
 def main():
+    global RNG
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--maps",nargs="+",choices=[item["id"] for item in MAP_DEFINITIONS],help="Only author these maps.")
+    parser.add_argument("--skip-models",action="store_true",help="Leave every existing building and ore mesh unchanged.")
+    args=parser.parse_args()
     MAPS.mkdir(parents=True,exist_ok=True);LOCAL.mkdir(parents=True,exist_ok=True)
-    ore=collision_geometry("gold_vein",art.gold_vein())
-    points=", ".join(f"{value:.6f}" for point in ore["points"] for value in point)
-    art.write_asset(MODEL_DIR/"gold_vein_collision.tres",'[gd_resource type="ConvexPolygonShape3D" format=3]\n\n[resource]\npoints = PackedVector3Array('+points+')\nmargin = 0.01\n')
-    for name,builder,limit in [("headquarters",art.headquarters,None),("defense_tower",player_defense_tower,None),("factory",factory,6.0),("academy",academy,6.0),("player_barracks",player_barracks,6.0)]:
-        native_model(builder(),f"res://assets/models/environment/{name}.tscn",limit)
+    if not args.skip_models:
+        ore=collision_geometry("gold_vein",art.gold_vein())
+        points=", ".join(f"{value:.6f}" for point in ore["points"] for value in point)
+        art.write_asset(MODEL_DIR/"gold_vein_collision.tres",'[gd_resource type="ConvexPolygonShape3D" format=3]\n\n[resource]\npoints = PackedVector3Array('+points+')\nmargin = 0.01\n')
+        for name,builder,limit in [("headquarters",art.headquarters,None),("defense_tower",player_defense_tower,None),("factory",factory,6.0),("academy",academy,6.0),("player_barracks",player_barracks,6.0)]:
+            native_model(builder(),f"res://assets/models/environment/{name}.tscn",limit)
     for definition in MAP_DEFINITIONS:
+        if args.maps and definition["id"] not in args.maps:continue
+        if "seed" in definition:
+            # Reset both authoring streams so a selected map is byte-for-byte
+            # reproducible independently of which earlier maps were requested.
+            RNG=np.random.default_rng(definition["seed"])
+            art.RNG=np.random.default_rng(definition["seed"]+1000000)
         name=definition["id"]
         for mine in definition["mines"]:
             for road in definition["roads"]:

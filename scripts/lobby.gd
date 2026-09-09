@@ -3,14 +3,18 @@ extends Node3D
 
 const ENDPOINT_PATH: String = "res://data/relay_endpoint.json"
 const PREFERENCES_PATH: String = "user://lobby_preferences.cfg"
-const MAPS := {
-	"1v1": preload("res://data/maps/amber_crossroads_1v1.tres"),
-	"2v2": preload("res://data/maps/twin_valleys_2v2.tres"),
+const MODE_DESCRIPTIONS: Dictionary = {
+	"1v1": "与一位电脑对手交锋。",
+	"2v2": "与一位电脑盟友并肩，迎战两位对手。",
+	"3v3": "三位将领组成联盟，在三条战线上协同进攻。",
+	"2v2v2": "三支双人联盟争夺战场，消灭另外两个联盟。",
+	"ffa": "六位将领各自为战，没有队友。成为最后的胜者。",
 }
-const MODE_INFO: Dictionary = {
-	"1v1": ["琥珀十字路", "与一位电脑对手交锋。", "96 × 96   ·   六座矿脉"],
-	"2v2": ["双谷盟约", "与电脑盟友并肩，迎战两位对手。", "128 × 112   ·   十座矿脉"],
+const MODE_BUTTONS: Dictionary = {
+	"1v1": "Mode1v1", "2v2": "Mode2v2", "3v3": "Mode3v3",
+	"2v2v2": "Mode2v2v2", "ffa": "ModeFFA",
 }
+const ALLIANCE_NAMES: PackedStringArray = ["联盟一", "联盟二", "联盟三"]
 
 var mode: String = "1v1"
 var room: Dictionary = {}
@@ -32,9 +36,13 @@ func _ready() -> void:
 	%Version.text = "v%s   /   即时战略" % NetworkProtocol.BUILD_ID
 	var arguments: PackedStringArray = OS.get_cmdline_user_args()
 	if "--lobby-capture" not in arguments:
-		for flag: String in ["--capture", "--smoke-test", "--ui-smoke", "--2v2"]:
+		for flag: String in ["--capture", "--smoke-test", "--ui-smoke", "--2v2", "--3v3", "--2v2v2", "--ffa"]:
 			if flag in arguments:
-				call_deferred("_launch_compatibility_mode", "2v2" if "--2v2" in arguments else "1v1")
+				var launch_mode: String = "1v1"
+				for candidate: String in NetworkProtocol.MODES:
+					if "--" + candidate in arguments:
+						launch_mode = candidate
+				call_deferred("_launch_compatibility_mode", launch_mode)
 				return
 	_load_preferences()
 	set_mode("1v1")
@@ -43,7 +51,7 @@ func _ready() -> void:
 	relay.connection_state_changed.connect(_on_connection_state_changed)
 	relay.error_received.connect(_on_error_received)
 	relay.event_received.connect(_on_relay_event)
-	for owner: int in 4:
+	for owner: int in NetworkProtocol.MAX_PLAYERS:
 		var row: HBoxContainer = rows.get_child(owner)
 		row.get_node("Kind").pressed.connect(_on_slot_bot_pressed.bind(owner))
 		row.get_node("Team").item_selected.connect(_on_slot_team_selected.bind(owner))
@@ -78,22 +86,18 @@ func _capture_lobby() -> void:
 
 func set_mode(value: String) -> void:
 	mode = value
-	%Mode1v1.set_pressed_no_signal(mode == "1v1")
-	%Mode2v2.set_pressed_no_signal(mode == "2v2")
-	%OnlineMode1v1.set_pressed_no_signal(mode == "1v1")
-	%OnlineMode2v2.set_pressed_no_signal(mode == "2v2")
-	%MapTitle.text = MAPS[mode].display_name
-	%MapDetail.text = MODE_INFO[mode][2]
-	%SoloDescription.text = MODE_INFO[mode][1]
-	%CreateRoom.text = "创建 " + mode + " 房间"
+	for candidate: String in MODE_BUTTONS:
+		get_node("%" + MODE_BUTTONS[candidate]).set_pressed_no_signal(mode == candidate)
+		get_node("%Online" + MODE_BUTTONS[candidate]).set_pressed_no_signal(mode == candidate)
+	var map: MapDefinition = load(NetworkProtocol.map_path(mode))
+	%MapTitle.text = map.display_name
+	%MapDetail.text = "%d × %d   ·   %d 位将领" % [int(map.size.x), int(map.size.y), map.slots]
+	%SoloDescription.text = MODE_DESCRIPTIONS[mode]
+	%CreateRoom.text = "创建 %s 房间" % ("乱斗" if mode == "ffa" else mode)
 
-func _on_mode_1v1() -> void:
+func _on_mode_selected(value: String) -> void:
 	if not _pending_request and room.is_empty():
-		set_mode("1v1")
-
-func _on_mode_2v2() -> void:
-	if not _pending_request and room.is_empty():
-		set_mode("2v2")
+		set_mode(value)
 
 func _on_solo_start() -> void:
 	if _transitioning:
@@ -190,10 +194,9 @@ func _on_request_timeout() -> void:
 func _refresh_request_buttons() -> void:
 	%CreateRoom.disabled = _pending_request
 	%JoinRoom.disabled = _pending_request
-	%Mode1v1.disabled = _pending_request or not room.is_empty()
-	%Mode2v2.disabled = _pending_request or not room.is_empty()
-	%OnlineMode1v1.disabled = %Mode1v1.disabled
-	%OnlineMode2v2.disabled = %Mode2v2.disabled
+	for button: String in MODE_BUTTONS.values():
+		get_node("%" + button).disabled = _pending_request or not room.is_empty()
+		get_node("%Online" + button).disabled = _pending_request or not room.is_empty()
 	%ServerAddress.editable = not _pending_request
 	%Nickname.editable = not _pending_request
 	%InviteInput.editable = not _pending_request
@@ -241,9 +244,9 @@ func _on_room_changed(value: Dictionary) -> void:
 	%OnlinePanel.show()
 	set_mode(room.mode)
 	%InviteCode.text = room.code
-	%RoomMode.text = room.mode + "   /   " + MAPS[room.mode].display_name
+	%RoomMode.text = NetworkProtocol.MODES[room.mode].label + "   /   " + %MapTitle.text
 	_set_message("")
-	for owner: int in 4:
+	for owner: int in NetworkProtocol.MAX_PLAYERS:
 		var row: HBoxContainer = rows.get_child(owner)
 		row.visible = owner < room.slots.size()
 		if not row.visible:
@@ -258,22 +261,41 @@ func _on_room_changed(value: Dictionary) -> void:
 		row.get_node("Name").tooltip_text = slot.name
 		row.get_node("Kind").text = "添加电脑" if slot.kind == "open" else "移除电脑" if slot.kind == "bot" else "真人玩家"
 		row.get_node("Kind").tooltip_text = "让电脑占用这个空位" if slot.kind == "open" else "腾出席位，让朋友加入" if slot.kind == "bot" else "不能替换已加入的真人"
-		row.get_node("Team").select(int(slot.team_id))
-		row.get_node("Team").disabled = not relay.is_host
+		var team: OptionButton = row.get_node("Team")
+		team.clear()
+		if room.mode == "ffa":
+			team.add_item("无队伍", int(slot.owner_id))
+			team.select(0)
+		else:
+			for alliance: int in int(NetworkProtocol.MODES[room.mode].teams):
+				team.add_item(ALLIANCE_NAMES[alliance], alliance)
+			team.select(int(slot.team_id))
+		team.disabled = not relay.is_host or room.mode == "ffa"
+		var ally: bool = int(slot.team_id) == int(room.slots[relay.owner_id].team_id)
+		row.get_node("Name").modulate = Color("79bcec") if local else Color("e5ca72") if ally else Color("e5a18f")
+		if slot.kind == "open":
+			row.get_node("Name").modulate = Color("a59a84")
 		var state: Label = row.get_node("State")
 		state.text = "等待加入" if slot.kind == "open" else "电脑就绪" if slot.kind == "bot" else "连接中" if not slot.connected else "已就绪" if slot.ready else "未准备"
 		state.modulate = Color("ddbf78") if slot.ready else Color("a59a84")
 	%Ready.set_pressed_no_signal(bool(room.slots[relay.owner_id].ready))
-	var team_seats: Array[PackedStringArray] = [PackedStringArray(), PackedStringArray()]
-	for slot: Dictionary in room.slots:
-		team_seats[int(slot.team_id)].append(str(int(slot.owner_id) + 1))
-	%TeamSummary.text = "联盟一：席位 %s    对阵    联盟二：席位 %s" % ["、".join(team_seats[0]), "、".join(team_seats[1])]
+	if room.mode == "ffa":
+		%TeamSummary.text = "无队伍 · 所有其他将领都是敌人 · 最后一方获胜"
+	else:
+		var alliances: PackedStringArray = []
+		for alliance: int in int(NetworkProtocol.MODES[room.mode].teams):
+			var seats: PackedStringArray = []
+			for slot: Dictionary in room.slots:
+				if int(slot.team_id) == alliance:
+					seats.append(str(int(slot.owner_id) + 1))
+			alliances.append("%s：%s" % [ALLIANCE_NAMES[alliance], "、".join(seats)])
+		%TeamSummary.text = "    /    ".join(alliances)
 	_refresh_room_controls()
 
 func _refresh_room_controls() -> void:
 	var in_lobby: bool = relay.connection_state == "lobby" and room.status == "lobby"
 	%StartMatch.visible = relay.is_host
-	%StartMatch.text = "开始 %s 对战" % room.mode
+	%StartMatch.text = "开始乱斗" if room.mode == "ffa" else "开始 %s 对战" % room.mode
 	%Ready.visible = not relay.is_host
 	%FillBots.visible = relay.is_host
 	%FillBots.disabled = not in_lobby or not _pending_slots.is_empty() or not room.slots.any(func(slot): return slot.kind == "open")
@@ -289,18 +311,26 @@ func _refresh_room_controls() -> void:
 	for owner: int in room.slots.size():
 		var row: HBoxContainer = rows.get_child(owner)
 		row.get_node("Kind").disabled = not in_lobby or not relay.is_host or room.slots[owner].kind == "human" or _pending_slots.has(owner)
-		row.get_node("Team").disabled = not in_lobby or not relay.is_host or _pending_slots.has(owner)
+		row.get_node("Team").disabled = not in_lobby or not relay.is_host or room.mode == "ffa" or _pending_slots.has(owner)
 
 func _start_block_reason() -> String:
-	var teams: Array[int] = [0, 0]
+	var definition: Dictionary = NetworkProtocol.MODES[room.mode]
+	var teams: PackedInt32Array = []
+	teams.resize(int(definition.teams))
+	if room.slots.size() != int(definition.slots):
+		return "等待服务器更新完整席位。"
 	for slot: Dictionary in room.slots:
 		if slot.kind == "open":
 			return "等待朋友加入，或点击空位的“添加电脑”。也可以一键补齐电脑。"
-		teams[int(slot.team_id)] += 1
+		var alliance: int = int(slot.team_id)
+		if alliance < 0 or alliance >= teams.size() or (room.mode == "ffa" and alliance != int(slot.owner_id)):
+			return "席位阵营设置无效，请等待服务器更新。"
+		teams[alliance] += 1
 		if slot.kind == "human" and (not slot.connected or not slot.ready):
 			return "等待所有玩家准备就绪。"
-	if teams[0] != teams[1]:
-		return "请将两个联盟设置为相同人数。"
+	for members: int in teams:
+		if members != int(definition.team_size):
+			return "请将每个联盟设置为相同人数（每队 %d 人）。" % int(definition.team_size)
 	return ""
 
 func _on_slot_bot_pressed(owner: int) -> void:
@@ -324,7 +354,7 @@ func _request_slot_change(owner: int, kind: String, team: int) -> void:
 	_refresh_room_controls()
 
 func _on_slot_team_selected(index: int, owner: int) -> void:
-	if not _can_configure_slot(owner) or index not in [0, 1] or int(room.slots[owner].team_id) == index:
+	if not _can_configure_slot(owner) or room.mode == "ffa" or index < 0 or index >= int(NetworkProtocol.MODES[room.mode].teams) or int(room.slots[owner].team_id) == index:
 		return
 	_request_slot_change(owner, room.slots[owner].kind, index)
 

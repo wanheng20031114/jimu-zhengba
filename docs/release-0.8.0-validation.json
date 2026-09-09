@@ -1,0 +1,1016 @@
+{
+  "version": "0.8.0",
+  "protocol": 5,
+  "modes": {
+    "1v1": {
+      "slots": 2,
+      "teams": 2
+    },
+    "2v2": {
+      "slots": 4,
+      "teams": 2
+    },
+    "3v3": {
+      "slots": 6,
+      "teams": 2
+    },
+    "2v2v2": {
+      "slots": 6,
+      "teams": 3
+    },
+    "ffa": {
+      "slots": 6,
+      "teams": 6
+    }
+  },
+  "checks": {
+    "lobby_headless": 86,
+    "lobby_forward_plus": 92,
+    "launch_modes": 3,
+    "maps_native": 1522,
+    "multi_alliance_gameplay": 214,
+    "fog_regression": 273,
+    "bot_strategy_regression": 140
+  },
+  "opening": {
+    "3v3": {
+      "checks": 282,
+      "failures": [],
+      "mode": "3v3",
+      "navigation_wait_ticks": 0
+    },
+    "2v2v2": {
+      "checks": 279,
+      "failures": [],
+      "mode": "2v2v2",
+      "navigation_wait_ticks": 0
+    },
+    "ffa": {
+      "checks": 279,
+      "failures": [],
+      "mode": "ffa",
+      "navigation_wait_ticks": 0
+    }
+  },
+  "complete_matches": {
+    "ffa": {
+      "ok": true,
+      "checks": 50,
+      "simulated_seconds": 1067.73333333302,
+      "winner": 5,
+      "remaining_buildings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        5
+      ],
+      "first_damage": 48.0333333333332,
+      "damage_events": 1894,
+      "military_deaths": 379,
+      "wall_seconds": 106.608,
+      "observed_step_valid": true,
+      "failures": [],
+      "packaged": true,
+      "stderr_clean": true
+    },
+    "2v2v2": {
+      "ok": true,
+      "checks": 50,
+      "simulated_seconds": 820.266666666578,
+      "winner": 2,
+      "remaining_buildings": [
+        0,
+        0,
+        10
+      ],
+      "first_damage": 47.0333333333332,
+      "damage_events": 1646,
+      "military_deaths": 376,
+      "wall_seconds": 83.967,
+      "observed_step_valid": true,
+      "failures": [],
+      "packaged": true,
+      "stderr_clean": true
+    },
+    "3v3": {
+      "ok": true,
+      "checks": 50,
+      "simulated_seconds": 544.533333333495,
+      "winner": 0,
+      "remaining_buildings": [
+        15,
+        0
+      ],
+      "first_damage": 55.0333333333328,
+      "damage_events": 1040,
+      "military_deaths": 192,
+      "wall_seconds": 56.161,
+      "observed_step_valid": true,
+      "failures": [],
+      "packaged": true,
+      "stderr_clean": true
+    }
+  },
+  "deployment": {
+    "version": "0.8.0",
+    "protocol": 5,
+    "services": {
+      "bot-jump-relay.service": {
+        "MainPID": "270544",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "ashen-crown-relay.service": {
+        "MainPID": "281904",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "files_match": {
+      "scripts/network/network_protocol.gd": true,
+      "data/content_manifest.json": true,
+      "server/relay_server.gd": true
+    },
+    "udp_listeners": {
+      "24570": true,
+      "24571": true
+    },
+    "release": "e8c4755416ed03f4",
+    "preflight": "0.7.8 DTLS temporary room created and closed before upgrade; no active match interrupted"
+  },
+  "public_package_probe": {
+    "passed": true,
+    "summary": {
+      "build": "0.8.0",
+      "catalogue_files": 77,
+      "checks": 149,
+      "content_hash": "f58342de63f4ec24a404992d1016cdd1d1ff0a1179b598dcd4be8974aa88f303",
+      "error_codes": [],
+      "exported_template": true,
+      "failures": [],
+      "handshake_msec": 539,
+      "protocol": 5,
+      "resource_value_checks": 57
+    },
+    "resource_value_audit_present": true,
+    "stderr_empty": true,
+    "log_directory": "release-949392cf"
+  },
+  "files": {
+    "builds/AshenCrown-Windows-x64.zip": {
+      "bytes": 62083838,
+      "sha256": "ccc16e7fee1ccc19035ca846bab4ff3a21c29a66364ff2a53b8fea6d03f04473"
+    },
+    "builds/windows/AshenCrown.exe": {
+      "bytes": 104588800,
+      "sha256": "88b50044892f421f813969594e43e3be349293de252024894340595d4446b1b2"
+    },
+    "builds/windows/AshenCrown.pck": {
+      "bytes": 38968132,
+      "sha256": "83a09df00a2036436c6c38c7b1c45aa001b665f4b70d702733bd1f449a1d31b3"
+    },
+    "data/content_manifest.json": {
+      "bytes": 8820,
+      "sha256": "f58342de63f4ec24a404992d1016cdd1d1ff0a1179b598dcd4be8974aa88f303"
+    }
+  },
+  "package_entries": [
+    "windows/AshenCrown.exe",
+    "windows/AshenCrown.pck",
+    "windows/START_HERE.txt",
+    "windows/collect_diagnostics.ps1",
+    "windows/COLLECT_DIAGNOSTICS.cmd"
+  ],
+  "cleanup": {
+    "verified": true,
+    "godot_validation_helpers": 0,
+    "python_validation_helpers": 0,
+    "remaining_owned_text_files": 0,
+    "preserved_user_editor_pid": 33896,
+    "preserved_user_game_pid": 41332,
+    "root_text_intermediates_removed": 36,
+    "network_agent_text_intermediates_removed": 327,
+    "retained_binary_temp_files": [
+      "AshenCrown.exe~RF7135e44.TMP",
+      "AshenCrown.exe~RF7283ab8.TMP"
+    ],
+    "binary_temp_reason": "Automatic approval rejected deletion with blocked by policy; no alternative deletion attempted after rejection; excluded from ZIP and Git."
+  },
+  "network": {
+    "build": "0.8.0",
+    "protocol": 5,
+    "protocol_regression": {
+      "checks": 88,
+      "failed": 0
+    },
+    "new_mode_dtls_rooms": {
+      "checks": 196,
+      "failures": []
+    },
+    "maximum_population_codec": {
+      "buildings": 12,
+      "checks": 11,
+      "decoded_bytes": 190109,
+      "encode_usec": 11721,
+      "failures": [],
+      "fog_cells": 9216,
+      "memories": 512,
+      "units": 432,
+      "wire_bytes": 7145
+    },
+    "live": [
+      {
+        "mode": "3v3",
+        "target": "local",
+        "checks": 126,
+        "failures": [],
+        "peers": [
+          {
+            "owner": 0,
+            "checks": 29,
+            "failures": [],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 18.236
+          },
+          {
+            "owner": 1,
+            "checks": 19,
+            "failures": [],
+            "snapshots": 204,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 17.099
+          },
+          {
+            "owner": 2,
+            "checks": 19,
+            "failures": [],
+            "snapshots": 205,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.708
+          },
+          {
+            "owner": 3,
+            "checks": 19,
+            "failures": [],
+            "snapshots": 203,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.328
+          },
+          {
+            "owner": 4,
+            "checks": 19,
+            "failures": [],
+            "snapshots": 205,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 15.925
+          },
+          {
+            "owner": 5,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 45,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 15.598
+          }
+        ],
+        "local_directory": "live-3v3-local-3af429e0",
+        "status": "passed"
+      },
+      {
+        "mode": "2v2v2",
+        "target": "local",
+        "checks": 140,
+        "failures": [],
+        "peers": [
+          {
+            "owner": 0,
+            "checks": 31,
+            "failures": [],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 18.631
+          },
+          {
+            "owner": 1,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 207,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 17.525
+          },
+          {
+            "owner": 2,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 209,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 17.161
+          },
+          {
+            "owner": 3,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 207,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.8
+          },
+          {
+            "owner": 4,
+            "checks": 22,
+            "failures": [],
+            "snapshots": 209,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.449
+          },
+          {
+            "owner": 5,
+            "checks": 24,
+            "failures": [],
+            "snapshots": 47,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.083
+          }
+        ],
+        "local_directory": "live-2v2v2-local-89c320ef",
+        "status": "passed"
+      },
+      {
+        "mode": "ffa",
+        "target": "local",
+        "checks": 139,
+        "failures": [],
+        "peers": [
+          {
+            "owner": 0,
+            "checks": 31,
+            "failures": [],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 18.207
+          },
+          {
+            "owner": 1,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 209,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 17.062
+          },
+          {
+            "owner": 2,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 208,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.711
+          },
+          {
+            "owner": 3,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 209,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 16.346
+          },
+          {
+            "owner": 4,
+            "checks": 22,
+            "failures": [],
+            "snapshots": 208,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 15.98
+          },
+          {
+            "owner": 5,
+            "checks": 23,
+            "failures": [],
+            "snapshots": 49,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 15.679
+          }
+        ],
+        "local_directory": "live-ffa-local-f3be69f8",
+        "status": "passed"
+      },
+      {
+        "mode": "2v2",
+        "target": "local",
+        "checks": 215,
+        "failures": [],
+        "peers": [
+          {
+            "owner": 0,
+            "checks": 97,
+            "failures": [],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 78.733
+          },
+          {
+            "owner": 1,
+            "checks": 53,
+            "failures": [],
+            "snapshots": 1110,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 77.84
+          },
+          {
+            "owner": 2,
+            "checks": 32,
+            "failures": [],
+            "snapshots": 1120,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 77.514
+          },
+          {
+            "owner": 3,
+            "checks": 33,
+            "failures": [],
+            "snapshots": 960,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 77.065
+          }
+        ],
+        "local_directory": "live-2v2-local-45984aa4",
+        "status": "passed"
+      },
+      {
+        "mode": "2v2v2",
+        "target": "impaired",
+        "checks": 140,
+        "failures": [],
+        "peers": [
+          {
+            "owner": 0,
+            "checks": 31,
+            "failures": [],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 44.981
+          },
+          {
+            "owner": 3,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 326,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 44.016
+          },
+          {
+            "owner": 1,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 369,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 43.681
+          },
+          {
+            "owner": 5,
+            "checks": 24,
+            "failures": [],
+            "snapshots": 58,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 43.34
+          },
+          {
+            "owner": 4,
+            "checks": 22,
+            "failures": [],
+            "snapshots": 339,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 42.926
+          },
+          {
+            "owner": 2,
+            "checks": 21,
+            "failures": [],
+            "snapshots": 318,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 42.564
+          }
+        ],
+        "local_directory": "live-2v2v2-impaired-b5dc9116",
+        "impairment": {
+          "profile": {
+            "seed": 24571,
+            "link_rtt_ms": 150,
+            "link_rtt_jitter_bound_ms": 40,
+            "datagram_loss_probability": 0.04,
+            "extra_reorder_probability": 0.08,
+            "extra_reorder_delay_ms": 90
+          },
+          "totals": {
+            "received": 9766,
+            "bytes": 5914479,
+            "dropped": 383,
+            "dropped_bytes": 200593,
+            "delivered": 9383,
+            "delivered_bytes": 5713886,
+            "closed_flow_bytes": 0,
+            "reorder_injected": 756,
+            "out_of_order_deliveries": 3246,
+            "actual_loss_percent": 3.922,
+            "received_bytes_per_second": 129148.375,
+            "delivered_bytes_per_second": 124768.233
+          },
+          "byte_accounting_balanced": true,
+          "out_of_order_deliveries": 3246
+        },
+        "status": "passed"
+      },
+      {
+        "mode": "ffa",
+        "target": "remote",
+        "checks": 13,
+        "failures": [
+          "peer_0_exit_1",
+          "peer_0_assertions",
+          "peer_1_exit_1",
+          "peer_1_assertions",
+          "peer_2_exit_1",
+          "peer_2_assertions",
+          "peer_3_exit_1",
+          "peer_3_assertions",
+          "peer_4_exit_1",
+          "peer_4_assertions",
+          "peer_5_exit_1",
+          "peer_5_assertions"
+        ],
+        "peers": [
+          {
+            "owner": -1,
+            "checks": 3,
+            "failures": [
+              "unexpected_transport_error_capacity",
+              "create_room"
+            ],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 10.61
+          },
+          {
+            "owner": -1,
+            "checks": 2,
+            "failures": [
+              "read_invitation"
+            ],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 24.606
+          },
+          {
+            "owner": -1,
+            "checks": 2,
+            "failures": [
+              "read_invitation"
+            ],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 24.602
+          },
+          {
+            "owner": -1,
+            "checks": 2,
+            "failures": [
+              "read_invitation"
+            ],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 24.607
+          },
+          {
+            "owner": -1,
+            "checks": 2,
+            "failures": [
+              "read_invitation"
+            ],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 24.61
+          },
+          {
+            "owner": -1,
+            "checks": 2,
+            "failures": [
+              "read_invitation"
+            ],
+            "snapshots": 0,
+            "snapshot_rejections": 0,
+            "elapsed_seconds": 24.603
+          }
+        ],
+        "local_directory": "live-ffa-remote-2d6aae92",
+        "status": "blocked_by_existing_public_room_capacity_no_match_created_or_joined"
+      }
+    ],
+    "cleanup": {
+      "network_helper_process_count_verified": 0,
+      "preserved_user_editor_pid": 33896,
+      "preserved_user_game_pid": 41332,
+      "task_temporary_text_files_removed": 327,
+      "summary_retained": true
+    },
+    "test_corrections": [
+      "Authored rotated tower positions must use <=1cm comparison against existing presentation quantization.",
+      "Explicitly invoke victory with tests_running temporarily disabled for elimination case."
+    ],
+    "notes": [
+      "The 432 unit payload is constructed from authored primitive examples; its compressed size and one encode sample are not network throughput or full-game performance measurements.",
+      "Public six-client gameplay was not executed because another room occupied the configured capacity."
+    ]
+  },
+  "performance": {
+    "ok": true,
+    "build": "0.8.0",
+    "godot": "4.6.3-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "mode": "3v3",
+    "renderer": "forward_plus",
+    "rendered": true,
+    "viewport_size": "(1600.0, 900.0)",
+    "window_size": "(1600, 900)",
+    "physics_ticks_per_second": 30,
+    "physics_interpolation": true,
+    "actualbuffer_size": 262144,
+    "checks": 34,
+    "failures": [],
+    "conditions": "Native 3v3 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 144 mixed military +60 workers; cap is 360 light military +72 upgraded workers. No network clients run in this sample.",
+    "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+    "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+    "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+    "run": {
+      "child_pid": 16996,
+      "elapsed_seconds": 49.516,
+      "exit_code": 0,
+      "timed_out": false,
+      "machine_activity_before": {
+        "processes": [
+          {
+            "pid": 31192,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19520,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 33896,
+            "name": "Godot.exe",
+            "role": "user_editor"
+          },
+          {
+            "pid": 30480,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 38012,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19264,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 2544,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 40580,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 42484,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 41332,
+            "name": "AshenCrown.exe",
+            "role": "user_game"
+          },
+          {
+            "pid": 40056,
+            "name": "python.exe",
+            "role": "background_process"
+          }
+        ],
+        "cpu": "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+      },
+      "machine_activity_after": {
+        "processes": [
+          {
+            "pid": 31192,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19520,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 33896,
+            "name": "Godot.exe",
+            "role": "user_editor"
+          },
+          {
+            "pid": 30480,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 38012,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 19264,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 2544,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 40580,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 42484,
+            "name": "python.exe",
+            "role": "background_process"
+          },
+          {
+            "pid": 41332,
+            "name": "AshenCrown.exe",
+            "role": "user_game"
+          },
+          {
+            "pid": 40056,
+            "name": "python.exe",
+            "role": "background_process"
+          }
+        ],
+        "cpu": "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+      },
+      "shared_workstation": true,
+      "user_processes_preserved": true,
+      "notes": "Started only after all other Godot/ENet validation helpers stopped. Existing user game/editor and unrelated background processes were deliberately left running; GPU/CPU contention can affect these sample values.",
+      "script_errors": false,
+      "stderr_empty": true,
+      "helper_cleanup_verified": true
+    },
+    "phases": [
+      {
+        "authority_ticks": 450,
+        "damage_events": 1697,
+        "duration_seconds": 15.007049,
+        "ending_units": 204,
+        "engine_physics_monitor_ms": {
+          "max": 13.134,
+          "mean": 11.4914,
+          "p50": 11.08,
+          "p95": 13.134,
+          "p99": 13.134,
+          "samples": 450
+        },
+        "frame_count": 1419,
+        "frame_ms": {
+          "max": 39.155,
+          "mean": 10.5757878787879,
+          "p50": 7.243,
+          "p95": 25.744,
+          "p99": 30.173,
+          "samples": 1419
+        },
+        "frame_p95_under_16ms": false,
+        "logic_p95_under_33ms": true,
+        "measured_fps": 94.555565188066,
+        "military_roster_per_player": {
+          "archer": 6,
+          "cannon": 2,
+          "catapult": 2,
+          "knight": 4,
+          "swordsman": 10
+        },
+        "name": "standard_144_military_60_workers",
+        "navigation_ms": {
+          "max": 1.747,
+          "mean": 0.889533333333335,
+          "p50": 0.772,
+          "p95": 1.747,
+          "p99": 1.747,
+          "samples": 450
+        },
+        "observed_tps": 29.9859086220082,
+        "path_query_count": {
+          "max": 1.0,
+          "mean": 0.0444444444444444,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 1.0,
+          "samples": 450
+        },
+        "path_query_ms": {
+          "max": 0.65,
+          "mean": 0.0198888888888889,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.457,
+          "samples": 450
+        },
+        "physics_logic_ms": {
+          "max": 10.642,
+          "mean": 6.38353111111111,
+          "p50": 6.12,
+          "p95": 8.443,
+          "p99": 10.068,
+          "samples": 450
+        },
+        "process_ms": {
+          "max": 29.839,
+          "mean": 23.2080824524316,
+          "p50": 22.145,
+          "p95": 29.839,
+          "p99": 29.839,
+          "samples": 1419
+        },
+        "starting_units": 204,
+        "visible_units_in_camera_at_end": 148,
+        "visible_units_in_camera_at_start": 148,
+        "workers_per_player": 10
+      },
+      {
+        "authority_ticks": 451,
+        "damage_events": 2539,
+        "duration_seconds": 15.022242,
+        "ending_units": 432,
+        "engine_physics_monitor_ms": {
+          "max": 34.815,
+          "mean": 28.9836293103448,
+          "p50": 28.106,
+          "p95": 33.316,
+          "p99": 34.815,
+          "samples": 232
+        },
+        "frame_count": 232,
+        "frame_ms": {
+          "max": 113.203,
+          "mean": 64.7510043103448,
+          "p50": 62.351,
+          "p95": 100.118,
+          "p99": 107.873,
+          "samples": 232
+        },
+        "frame_p95_under_16ms": false,
+        "logic_p95_under_33ms": true,
+        "measured_fps": 15.4437666494788,
+        "military_roster_per_player": {
+          "archer": 30,
+          "swordsman": 30
+        },
+        "name": "maximum_360_military_72_workers",
+        "navigation_ms": {
+          "max": 4.926,
+          "mean": 3.84915086206897,
+          "p50": 3.735,
+          "p95": 4.926,
+          "p99": 4.926,
+          "samples": 232
+        },
+        "observed_tps": 30.0221498229093,
+        "path_query_count": {
+          "max": 13.0,
+          "mean": 5.28381374722838,
+          "p50": 5.0,
+          "p95": 10.0,
+          "p99": 12.0,
+          "samples": 451
+        },
+        "path_query_ms": {
+          "max": 5.307,
+          "mean": 1.93884257206208,
+          "p50": 1.804,
+          "p95": 3.666,
+          "p99": 4.405,
+          "samples": 451
+        },
+        "physics_logic_ms": {
+          "max": 27.885,
+          "mean": 15.9862062084257,
+          "p50": 15.482,
+          "p95": 20.016,
+          "p99": 23.52,
+          "samples": 451
+        },
+        "process_ms": {
+          "max": 37.377,
+          "mean": 34.2560043103449,
+          "p50": 33.853,
+          "p95": 37.377,
+          "p99": 37.377,
+          "samples": 232
+        },
+        "starting_units": 432,
+        "visible_units_in_camera_at_end": 372,
+        "visible_units_in_camera_at_start": 355,
+        "workers_per_player": 12
+      }
+    ],
+    "geometry_with_instance_uniforms": 5264,
+    "before_capacity_fix": {
+      "default_buffer_slots": 65536,
+      "native_capacity_errors": 1210,
+      "native_duplicate_allocation_errors": 208,
+      "phases": [
+        {
+          "name": "standard_144_military_60_workers",
+          "units": 204,
+          "logic_p95_ms": 8.712,
+          "frame_p95_ms": 26.395,
+          "frame_p99_ms": 29.916
+        },
+        {
+          "name": "maximum_360_military_72_workers",
+          "units": 432,
+          "logic_p95_ms": 20.225,
+          "frame_p95_ms": 82.428,
+          "frame_p99_ms": 100.048
+        }
+      ],
+      "interpretation": "Invalid rendering-capacity run, retained as failure evidence rather than a clean FPS baseline. More than4096 instance-uniform geometry objects require more than the default65536 slots at16 slots per instance."
+    },
+    "capacity_diagnosis": {
+      "default_slots": 65536,
+      "slots_per_geometry": 16,
+      "default_instance_capacity": 4096,
+      "observed_geometry_with_instance_uniforms": 5264,
+      "observed_required_slots": 84224,
+      "configured_slots": 262144,
+      "configured_instance_capacity": 16384,
+      "buffer_storage_bytes": 4194304,
+      "single_spawn_after_fix": {
+        "checks": 19,
+        "native_errors": 0,
+        "geometry_with_instance_uniforms": 5264,
+        "configured_slots": 262144
+      },
+      "sources": [
+        "https://docs.godotengine.org/en/4.6/classes/class_projectsettings.html#class-projectsettings-property-rendering-limits-global-shader-variables-buffer-size",
+        "https://github.com/godotengine/godot/blob/4.6-stable/servers/rendering/renderer_rd/storage_rd/material_storage.cpp",
+        "https://github.com/godotengine/godot/blob/4.6-stable/servers/rendering/shader_language.h"
+      ],
+      "resolution": "Parent added only the native buffer-size setting; after-fix full run has no engine/script errors. This fixes rendering capacity, not the remaining large-battle frame-time limitation."
+    },
+    "rendered_screenshots_reviewed": [
+      "skirmish_stress_3v3_standard_144_military_60_workers.png",
+      "skirmish_stress_3v3_maximum_360_military_72_workers.png"
+    ],
+    "msaa_3d": 2,
+    "taa": true,
+    "shadow_atlas_size": 4096,
+    "shadow_max_distance": 135.0,
+    "warmup_seconds_per_phase": 6.0,
+    "sample_seconds_per_phase": 15.0
+  },
+  "final_packaged_render": {
+    "ok": true,
+    "pid": 34508,
+    "exit": 0,
+    "native_errors": false,
+    "startup": {
+      "audio": "WASAPI",
+      "display": "Windows",
+      "engine": "4.6.3-stable (official)",
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "renderer": "forward_plus",
+      "shader_uniform_slots": 262144
+    },
+    "shutdown_complete": true,
+    "seconds": 6.76,
+    "image": "artifacts/final-080-3v3.png"
+  },
+  "capacity_fix": {
+    "setting": "rendering/limits/global_shader_variables/buffer_size",
+    "before_slots": 65536,
+    "after_slots": 262144,
+    "measured_instance_uniform_geometries": 5264,
+    "native_errors_after_fix": 0,
+    "scope": "Forward+ native instance parameter capacity; no visual quality reduction"
+  }
+}

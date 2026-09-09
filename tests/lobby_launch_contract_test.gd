@@ -20,7 +20,10 @@ func _run() -> void:
 	current_scene = lobby
 	for frame: int in 3:
 		await process_frame
-	var expected: String = "2v2" if "--2v2" in OS.get_cmdline_user_args() else "1v1"
+	var expected: String = "1v1"
+	for mode: String in NetworkProtocol.MODES:
+		if "--" + mode in OS.get_cmdline_user_args():
+			expected = mode
 	var correct: bool = session.offline_modes == [expected] and session.relay.calls.is_empty()
 	if not correct:
 		printerr("FAIL legacy launch should immediately request offline ", expected)

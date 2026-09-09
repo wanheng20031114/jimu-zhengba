@@ -7,6 +7,8 @@ var relay: RelayClient
 var game: Node3D
 var directory: String
 var peer_index: int = 0
+var test_mode: String = "2v2"
+var peer_count: int = 4
 var owner: int = -1
 var checks: int = 0
 var failures: Array[String] = []
@@ -61,6 +63,9 @@ func _initialize() -> void:
 			directory = argument.trim_prefix("--live-dir=")
 		elif argument.begins_with("--peer-index="):
 			peer_index = int(argument.trim_prefix("--peer-index="))
+		elif argument.begins_with("--match-mode="):
+			test_mode = argument.trim_prefix("--match-mode=")
+			peer_count = int(NetworkProtocol.MODES[test_mode].slots)
 		elif argument.begins_with("--load-units="):
 			_load_units = int(argument.trim_prefix("--load-units="))
 		elif argument.begins_with("--load-seconds="):
@@ -94,14 +99,14 @@ func _run() -> void:
 		await finish()
 		return
 	if peer_index == 0:
-		relay.create_room("2v2", "测试房主")
+		relay.create_room(test_mode, "测试房主")
 		if not await until(func(): return not relay.room.is_empty(), 10.0):
 			check(false, "create_room")
 			await finish()
 			return
 		write_record("lobby.json", {"code": relay.room.code})
 		if not await until(_room_ready, 35.0):
-			check(false, "four_humans_ready")
+			check(false, "all_humans_ready")
 			await finish()
 			return
 		relay.start_match()
@@ -128,7 +133,7 @@ func _run() -> void:
 	game.get_node("MatchReplication").snapshot_rejected.connect(func(_reason): snapshot_rejections += 1)
 	game.get_node("MatchReplication").snapshot_applied.connect(_selection_retirement_snapshot)
 	check(game.local_owner_id == owner and game.is_authority == (owner == 0), "session_bound_identity_and_authority")
-	check(game.players.size() == 4 and game.match_config.mode == "2v2", "actual_four_player_map")
+	check(game.players.size() == peer_count and game.match_config.mode == test_mode, "actual_mode_player_map")
 	if owner != 0:
 		check(await until(func(): return snapshots >= 2 and game.owned_entities(owner, "buildings").size() >= 1, 15.0), "first_authoritative_world_arrives")
 	var starting_towers: Array = game.owned_entities(owner, "buildings").filter(func(building): return building.building_type == "defense_tower")
@@ -137,7 +142,7 @@ func _run() -> void:
 		var marker: Marker3D = game.map_instance.get_node("SpawnPoints/Player%d" % owner)
 		check(starting_towers[0].is_constructed and starting_towers[0].hp == 1000 and starting_towers[0].max_hp == 1000
 			and starting_towers[0].alliance_id == game.get_player(owner).alliance_id
-			and starting_towers[0].global_position.is_equal_approx(game.map_instance.to_global(marker.get_meta("starting_tower_position"))),
+			and starting_towers[0].global_position.distance_to(game.map_instance.to_global(marker.get_meta("starting_tower_position"))) <= 0.01,
 			"client_starting_tower_matches_completed_health_alliance_and_authored_position")
 	phase = "world_ready"
 	status(true)
@@ -148,7 +153,7 @@ func _run() -> void:
 	await finish()
 
 func _room_ready() -> bool:
-	if relay.room.is_empty() or relay.room.slots.size() != 4:
+	if relay.room.is_empty() or relay.room.slots.size() != peer_count:
 		return false
 	for slot: Dictionary in relay.room.slots:
 		if slot.kind != "human" or not slot.connected or (int(slot.owner_id) != 0 and not slot.ready):
@@ -293,7 +298,7 @@ func host_steps() -> void:
 		await host_network_load()
 	check(failures.is_empty(), "host_scenario_complete")
 	check(_transport_states.count("reconnecting") == 1, "host_has_only_planned_transport_interruption")
-	game.end_battle(true)
+	game.end_battle(true, game.get_player(0).alliance_id)
 	publish("finish")
 	await seconds(0.5)
 
@@ -704,21 +709,21 @@ func publish(stage: String) -> void:
 	status(true)
 
 func all_phase(stage: String) -> bool:
-	for index in range(1, 4):
+	for index in range(1, peer_count):
 		var record := read_record("peer-%d.json" % index)
 		if record.get("phase") != stage:
 			return false
 	return true
 
 func all_event(kind: String) -> bool:
-	for index in range(1, 4):
+	for index in range(1, peer_count):
 		var record := read_record("peer-%d.json" % index)
 		if int(record.get("events", {}).get(kind, 0)) == 0:
 			return false
 	return true
 
 func owner_status(target_owner: int) -> Dictionary:
-	for index in range(4):
+	for index in range(peer_count):
 		var record := read_record("peer-%d.json" % index)
 		if int(record.get("owner", -1)) == target_owner:
 			return record

@@ -14,6 +14,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("executable", type=Path, help="AshenCrown.exe; or Godot_console.exe with --project")
     parser.add_argument("--project", type=Path, help="Source validation only: Godot project directory")
+    parser.add_argument("--mode", choices=("1v1", "2v2", "3v3", "2v2v2", "ffa"), default="1v1")
     parser.add_argument("--fast", action="store_true", help="10x wall-clock speed; same 1/30-second simulation delta")
     parser.add_argument("--headless", action="store_true", help="Use native Dummy renderer instead of a visible game window")
     parser.add_argument("--diagnose", action="store_true", help="Observe only 120 simulation seconds; always fails acceptance")
@@ -31,7 +32,7 @@ def main() -> int:
         command += ["--path", str(args.project.resolve(strict=True))]
     if args.headless:
         command += ["--headless"]
-    command += ["--", "--match-smoke"]
+    command += ["--", "--match-smoke", "--" + args.mode]
     if args.fast:
         command += ["--match-smoke-fast"]
     if args.diagnose:
@@ -70,7 +71,8 @@ def main() -> int:
     accepted = (
         not timed_out and process.returncode == 0 and stderr_clean and isinstance(result, dict)
         and result.get("ok") is True and result.get("finished") is True
-        and result.get("observed_step_valid") is True and result.get("winner") in (0, 1)
+        and result.get("observed_step_valid") is True and result.get("winner") in range({"1v1": 2, "2v2": 2, "3v3": 2, "2v2v2": 3, "ffa": 6}[args.mode])
+        and result.get("mode") == args.mode
         and result.get("checks", 0) >= 22 and result.get("failures") == []
         and (bool(args.project) or result.get("source_editor_feature") is False)
         and "SCRIPT ERROR:" not in stdout_text and "ERROR:" not in stdout_text

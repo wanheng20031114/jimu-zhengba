@@ -75,8 +75,8 @@ func click(target: Control) -> void:
 
 func room_state(mode: String = "2v2") -> Dictionary:
 	var slots: Array = []
-	for owner: int in (4 if mode == "2v2" else 2):
-		slots.append({"owner_id": owner, "team_id": owner / 2 if mode == "2v2" else owner,
+	for owner: int in int(NetworkProtocol.MODES[mode].slots):
+		slots.append({"owner_id": owner, "team_id": NetworkProtocol.default_alliance(mode, owner),
 			"kind": "human" if owner in [0, 2] else "bot", "name": "指挥官" if owner == 0 else "远征盟友" if owner == 2 else "王国将领",
 			"ready": true, "connected": owner in [0, 2], "bot_takeover": false})
 	return {"code": "ABCD2345", "mode": mode, "status": "lobby", "host_owner": 0, "slots": slots}
@@ -122,7 +122,7 @@ func _run() -> void:
 	check(control("Version").text.begins_with("v" + NetworkProtocol.BUILD_ID), "lobby version follows the actual network build")
 	check(Engine.max_fps == previous_limit, "lobby retains the player chosen frame limit")
 	check(not control("OnlinePanel").visible, "initial canvas gives the local match one clear primary action")
-	check(control("Slots").get_child_count() == 4, "room owns exactly four saved native slot rows")
+	check(control("Slots").get_child_count() == NetworkProtocol.MAX_PLAYERS, "room owns six saved native slot rows")
 	await capture("lobby-home")
 	await click(control("Mode2v2"))
 	check(lobby.mode == "2v2" and control("MapTitle").text == "双谷争锋", "native mode input uses the authoritative map resource title")
@@ -207,7 +207,8 @@ func _run() -> void:
 	check(not control("FillBots").visible, "guest cannot invoke host bulk bot controls")
 	var guest_readonly: bool = true
 	for slot_row: HBoxContainer in control("Slots").get_children():
-		guest_readonly = guest_readonly and slot_row.get_node("Kind").disabled and slot_row.get_node("Team").disabled
+		if slot_row.visible:
+			guest_readonly = guest_readonly and slot_row.get_node("Kind").disabled and slot_row.get_node("Team").disabled
 	check(guest_readonly, "all four guest slot configuration rows are read-only")
 	await click(control("Ready"))
 	check(fake.relay.calls[-1] == {"op": "ready", "value": false}, "native guest ready toggle forwards desired readiness")
@@ -226,7 +227,54 @@ func _run() -> void:
 	lobby.get_node("%RequestTimeout").timeout.emit()
 	check(not control("JoinRoom").disabled and control("Message").text.contains("暂未回应"), "request timeout stops the pending transport and restores retry")
 	await publish_room(room_state("1v1"))
-	check(not control("Slots").get_child(2).visible and not control("Slots").get_child(3).visible, "one-versus-one hides only the two unused saved slots")
+	check(not control("Slots").get_child(2).visible and not control("Slots").get_child(3).visible, "one-versus-one hides unused saved slots")
+	# Every added mode is selected through native buttons, then driven by the
+	# same authoritative room state that the real relay broadcasts.
+	for new_mode: String in ["3v3", "2v2v2", "ffa"]:
+		await click(control("LeaveRoom"))
+		var suffix: String = "FFA" if new_mode == "ffa" else new_mode
+		await click(control("OnlineMode" + suffix))
+		check(lobby.mode == new_mode and control("Mode" + suffix).button_pressed, new_mode + " native selectors stay in sync")
+		var config: Dictionary = load("res://scripts/session.gd").offline_config(new_mode)
+		check(config.players.size() == 6 and config.players.filter(func(player): return player.controller == "bot").size() == 5, new_mode + " offline fills five Bot seats")
+		check(config.players.map(func(player): return int(player.team_id)) == room_state(new_mode).slots.map(func(slot): return int(slot.team_id)), new_mode + " offline and online use the same alliances")
+		state = room_state(new_mode)
+		await publish_room(state)
+		check(control("Slots").get_children().all(func(slot): return slot.visible), new_mode + " exposes all six native seats")
+		check(not control("StartMatch").disabled, new_mode + " complete balanced roster can start")
+		check(control("StartMatch").get_global_rect().end.y < root.size.y and control("Slots").get_global_rect().end.y < control("StartMatch").get_global_rect().position.y, new_mode + " sixth seat and primary start stay onscreen without overlap")
+		var last_team: OptionButton = control("Slots").get_child(5).get_node("Team")
+		if new_mode == "ffa":
+			check(last_team.disabled and last_team.text == "无队伍" and control("TeamSummary").text.contains("无队伍"), "FFA has no editable teams")
+			var before: int = fake.relay.calls.size()
+			lobby._on_slot_team_selected(0, 5)
+			check(fake.relay.calls.size() == before, "FFA cannot issue a team reassignment")
+			state.slots[5].team_id = 4
+			check(not _valid_lobby_roster(state), "FFA rejects two owners sharing an alliance")
+			state = room_state(new_mode)
+		else:
+			check(last_team.item_count == int(NetworkProtocol.MODES[new_mode].teams), new_mode + " exposes its exact alliance count")
+			state.slots[5].team_id = 0
+			await publish_room(state)
+			check(control("StartMatch").disabled and control("RoomHint").text.contains("相同人数"), new_mode + " rejects an unbalanced alliance")
+			state = room_state(new_mode)
+		state.slots[5].kind = "human"
+		state.slots[5].connected = true
+		await publish_room(state, 5)
+		check(control("Ready").visible and control("Slots").get_child(5).get_node("Name").text.ends_with(" · 你"), new_mode + " sixth player gets local readiness and identity")
+		check(control("Slots").get_children().all(func(slot): return slot.get_node("Team").disabled and slot.get_node("Kind").disabled), new_mode + " guest cannot configure any seat")
+		await capture("lobby-room-" + new_mode)
+		await publish_room(state)
+		if new_mode == "2v2v2":
+			check(control("TeamSummary").text.contains("联盟三：5、6"), "three-alliance summary clearly identifies the third team")
+		state.slots[5].kind = "open"
+		state.slots[5].ready = false
+		await publish_room(state)
+		check(control("StartMatch").disabled, new_mode + " sixth open seat blocks start")
+		await click(control("FillBots"))
+		check(fake.relay.calls[-1] == {"op": "slot", "owner": 5, "kind": "bot", "team": NetworkProtocol.default_alliance(new_mode, 5)}, new_mode + " fills sixth seat without changing alliance")
+		state = room_state(new_mode)
+		await publish_room(state)
 	await click(control("LeaveRoom"))
 	check(fake.relay.calls[-1].op == "leave" and control("Setup").visible, "native leave restores the setup flow")
 	await click(control("CloseOnline"))
@@ -259,3 +307,10 @@ func _run() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(preference_path))
 	print("LOBBY_UI_RESULT ", checks, " checks / ", failures.size(), " failures")
 	quit(0 if failures.is_empty() else 1)
+
+func _valid_lobby_roster(state: Dictionary) -> bool:
+	var previous: Dictionary = lobby.room
+	lobby.room = state
+	var valid: bool = lobby._start_block_reason().is_empty()
+	lobby.room = previous
+	return valid

@@ -1,4 +1,4 @@
-"""Four independent headless main scenes over a local or deployed DTLS relay."""
+"""Four or six independent main scenes over a local or deployed DTLS relay."""
 from __future__ import annotations
 
 import argparse
@@ -72,7 +72,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
     config = directory / "relay.cfg"
-    config.write_text('[relay]\nbind="127.0.0.1"\nport=%d\nmax_rooms=1\nmax_humans=4\n[tls]\nprivate_key=%s\ncertificate=%s\n'
+    config.write_text('[relay]\nbind="127.0.0.1"\nport=%d\nmax_rooms=1\nmax_humans=6\n[tls]\nprivate_key=%s\ncertificate=%s\n'
                       % (port, json.dumps(key_path.as_posix()), json.dumps(cert_path.as_posix())), encoding="utf-8")
     out = (directory / "relay.stdout.log").open("wb")
     err = (directory / "relay.stderr.log").open("wb")
@@ -96,6 +96,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("target", choices=("local", "remote", "impaired"))
+    parser.add_argument("--mode", choices=("2v2", "3v3", "2v2v2", "ffa"), default="2v2")
     parser.add_argument("--seed", type=int, default=24571)
     parser.add_argument("--loss", type=float, choices=(0.03, 0.04, 0.05), default=0.04)
     parser.add_argument("--steady-seconds", type=float, default=15)
@@ -109,7 +110,10 @@ def main() -> int:
         parser.error("--steady-seconds must be between 0 and 30")
     if not 5 <= args.load_seconds <= 60:
         parser.error("--load-seconds must be between 5 and 60")
-    directory = LOCAL / ("live-" + args.target + "-" + uuid.uuid4().hex[:8])
+    peer_count = 4 if args.mode == "2v2" else 6
+    if peer_count == 6 and args.load_units:
+        parser.error("six-player validation uses the bounded multiplayer scenario; load suite remains four-player")
+    directory = LOCAL / ("live-" + args.mode + "-" + args.target + "-" + uuid.uuid4().hex[:8])
     directory.mkdir(parents=True)
     children: list[subprocess.Popen] = []
     peers: list[subprocess.Popen] = []
@@ -121,19 +125,19 @@ def main() -> int:
         endpoint = local_server(directory, children, handles) if args.target != "remote" else json.loads((LOCAL / "endpoint.json").read_text(encoding="utf-8"))
         (directory / "endpoint.json").write_text(json.dumps(endpoint), encoding="utf-8")
         if args.target == "impaired" or args.load_units:
-            impairment = ImpairedRelay((endpoint["address"], endpoint["port"]), seed=args.seed, loss=args.loss).start() if args.target == "impaired" else ImpairedRelay(
-                (endpoint["address"], endpoint["port"]), seed=args.seed, rtt_ms=0, rtt_jitter_ms=0, loss=0, reorder=0).start()
+            impairment = ImpairedRelay((endpoint["address"], endpoint["port"]), peers=peer_count, seed=args.seed, loss=args.loss).start() if args.target == "impaired" else ImpairedRelay(
+                (endpoint["address"], endpoint["port"]), peers=peer_count, seed=args.seed, rtt_ms=0, rtt_jitter_ms=0, loss=0, reorder=0).start()
             for index, port in enumerate(impairment.ports):
                 # The public certificate still authenticates the actual relay;
                 # forwarding never parses, decrypts, or substitutes DTLS records.
                 record = dict(endpoint, address="127.0.0.1", port=port, impaired=args.target == "impaired", steady_seconds=args.steady_seconds)
                 (directory / ("endpoint-%d.json" % index)).write_text(json.dumps(record), encoding="utf-8")
-        for index in range(4):
+        for index in range(peer_count):
             out = (directory / ("peer-%d.stdout.log" % index)).open("wb")
             err = (directory / ("peer-%d.stderr.log" % index)).open("wb")
             handles.extend((out, err))
-            command = [str(args.godot), "--headless", "--log-file", str(directory / ("peer-%d.engine.log" % index)), "--audio-driver", "Dummy", "--path", str(ROOT), "--script", "res://tests/network_game_live.gd", "--",
-                       "--live-dir=" + directory.as_posix(), "--peer-index=" + str(index),
+            command = [str(args.godot), "--headless", "--log-file", str(directory / ("peer-%d.engine.log" % index)), "--audio-driver", "Dummy", "--path", str(ROOT), "--script", "res://tests/network_game_live.gd" if peer_count == 4 else "res://tests/network_multiplayer_live.gd", "--",
+                       "--live-dir=" + directory.as_posix(), "--match-mode=" + args.mode, "--peer-index=" + str(index),
                        "--load-units=" + str(args.load_units), "--load-seconds=" + str(args.load_seconds)]
             process = subprocess.Popen(command, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
             children.append(process)
@@ -181,7 +185,7 @@ def main() -> int:
             expected_dtls_diagnostics += expected
             if unexpected:
                 failed.append("local_relay_stderr")
-        report = {"target": args.target, "failures": failed, "peers": results, "log_directory": directory.name,
+        report = {"target": args.target, "mode": args.mode, "failures": failed, "peers": results, "log_directory": directory.name,
                   "load_units": args.load_units, "load_seconds": args.load_seconds if args.load_units else 0,
                   "expected_dtls_reorder_diagnostics": expected_dtls_diagnostics}
         if impairment is not None:

@@ -70,13 +70,13 @@ func _ready() -> void:
 	max_hp = _stats.hp
 	hp = max_hp
 	radius = _stats.radius
-	collision_layer = 2 | (32 if team == 0 else 64)
+	collision_layer = 2 | CombatLayers.BUILDING_LAYERS[alliance_id]
 	var sight_shape := SphereShape3D.new()
 	var half_diagonal: float = Vector2(_stats.size.x, _stats.size.z).length() * 0.5
 	sight_shape.radius = float(_stats.range) + half_diagonal
 	_target_query = PhysicsShapeQueryParameters3D.new()
 	_target_query.shape = sight_shape
-	_target_query.collision_mask = 8 if team == 0 else 16
+	_target_query.collision_mask = CombatLayers.hostile_units(alliance_id)
 	_space_state = get_world_3d().direct_space_state
 	add_to_group("entities")
 	add_to_group("buildings")

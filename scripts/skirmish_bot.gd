@@ -42,7 +42,7 @@ func _init(game: Node, owner: int) -> void:
 	_owner = owner
 
 func tick(delta: float) -> void:
-	if not _game.is_authority:
+	if not _game.is_authority or _game.get_player(_owner).eliminated:
 		return
 	_clock += delta
 	_decision_time += delta
@@ -106,7 +106,7 @@ func _refresh_own_army() -> void:
 	_allied_center = allied_center
 	_front = (-allied_center).normalized()
 	if _front.length_squared() < 0.01:
-		_front = Vector3.RIGHT if _game.get_player(_owner).alliance_id == 0 else Vector3.LEFT
+		_front = (-_home).normalized() if _home.length_squared() >= 0.01 else Vector3.FORWARD
 
 func _observe() -> void:
 	_visible_enemies.clear()
@@ -413,10 +413,7 @@ func _attack_target(from: Vector3, reach: float) -> Node3D:
 	return best
 
 func _strategic_objective() -> Vector3:
-	var search_offsets: Array[float] = [0.0, -20.0, 20.0]
-	var enemy_front: Vector3 = _game.clamp_to_map(-_allied_center)
-	var flank: Vector3 = _front.cross(Vector3.UP)
-	var goal: Vector3 = _game.clamp_to_map(enemy_front + flank * search_offsets[_search_lane])
+	var goal := Vector3.ZERO
 	var distance: float = INF
 	for record: Dictionary in _memory.values():
 		if not record.building:
@@ -425,14 +422,25 @@ func _strategic_objective() -> Vector3:
 		if candidate < distance:
 			distance = candidate
 			goal = record.position
-	# A 2v2 army reaching the empty space between the two enemy bases must keep
-	# scouting their public lanes, without looking up hidden headquarters transforms.
-	if is_inf(distance):
-		for unit: Node3D in _army:
-			if unit.global_position.distance_squared_to(goal) < 36.0:
-				_search_lane = (_search_lane + 1) % search_offsets.size()
-				goal = _game.clamp_to_map(enemy_front + flank * search_offsets[_search_lane])
-				break
+	if not is_inf(distance):
+		return goal
+	# Start locations are public map data. Search each opposing territory rather
+	# than mirroring our own base, which misses factions on three/six-way maps.
+	# Never inspect hidden enemy entities to choose the next scouting destination.
+	var starts: Array[Vector3] = []
+	for player: PlayerState in _game.players:
+		if player.alliance_id != _game.get_player(_owner).alliance_id and not player.eliminated:
+			starts.append(_game.get_spawn_marker(player.owner_id).global_position)
+	starts.sort_custom(func(a: Vector3, b: Vector3): return _allied_center.distance_squared_to(a) < _allied_center.distance_squared_to(b))
+	if starts.is_empty():
+		return goal
+	_search_lane %= starts.size()
+	goal = starts[_search_lane]
+	for unit: Node3D in _army:
+		if unit.global_position.distance_squared_to(goal) < 36.0:
+			_search_lane = (_search_lane + 1) % starts.size()
+			goal = starts[_search_lane]
+			break
 	return goal
 
 func _order_army(kind: String, at: Vector3, target: int = 0, attack_move: bool = false) -> void:

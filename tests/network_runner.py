@@ -13,29 +13,29 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("suite", choices=("local", "remote", "certificate", "game", "expiry", "commands"))
+    parser.add_argument("suite", choices=("local", "remote", "certificate", "game", "expiry", "commands", "multiplayer", "six-codec"))
     parser.add_argument("--godot", type=Path, default=Path(r"C:/Program Files/Godot/Godot.exe"))
     args = parser.parse_args()
     local = ROOT / ".local/network"
-    stage = ROOT if args.suite in ("game", "expiry", "commands") else local / ("suite-" + args.suite)
+    stage = ROOT if args.suite in ("game", "expiry", "commands", "six-codec") else local / ("suite-" + args.suite)
     stage.mkdir(parents=True, exist_ok=True)
     files = ["scripts/network/network_protocol.gd", "scripts/network/relay_client.gd", "scripts/network/relay_trust.crt"]
-    script = {"local": "network_relay_test.gd", "remote": "network_remote_test.gd", "certificate": "network_certificate_test.gd", "game": "network_game_replication_test.gd", "expiry": "network_game_expiry_test.gd", "commands": "network_command_validation_test.gd"}[args.suite]
+    script = {"local": "network_relay_test.gd", "remote": "network_remote_test.gd", "certificate": "network_certificate_test.gd", "game": "network_game_replication_test.gd", "expiry": "network_game_expiry_test.gd", "commands": "network_command_validation_test.gd", "multiplayer": "network_multiplayer_test.gd", "six-codec": "network_six_player_codec_test.gd"}[args.suite]
     files.append("tests/" + script)
-    if args.suite == "local":
+    if args.suite in ("local", "multiplayer"):
         files.append("server/relay_server.gd")
         spec = importlib.util.spec_from_file_location("relay_deploy", ROOT / "tools/deploy_relay.py")
         deploy = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(deploy)
         engine = deploy.runtime("win64.exe")
-    elif args.suite not in ("game", "expiry", "commands"):
+    elif args.suite not in ("game", "expiry", "commands", "six-codec"):
         files.append(".local/network/endpoint.json")
         engine = args.godot
     else:
         engine = args.godot
     if (ROOT / "data/content_manifest.json").exists():
         files.append("data/content_manifest.json")
-    if args.suite not in ("game", "expiry", "commands"):
+    if args.suite not in ("game", "expiry", "commands", "six-codec"):
         for relative in files:
             destination = stage / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -65,7 +65,7 @@ def main() -> int:
     stderr = err_path.read_text(encoding="utf-8", errors="replace")
     # Emit only intentionally sanitized summaries, never raw engine endpoint diagnostics.
     for line in stdout.splitlines():
-        if line.startswith(("NETWORK_RESULTS ", "NETWORK_REMOTE_RESULTS ", "NETWORK_REMOTE_METRICS ", "NETWORK_CERTIFICATE_RESULTS ", "NETWORK_GAME_RESULTS ", "NETWORK_GAME_METRICS ", "NETWORK_GAME_QUANTIZATION_METRICS ", "NETWORK_GAME_EXPIRY_RESULTS ", "NETWORK_COMMAND_VALIDATION_RESULTS ")):
+        if line.startswith(("NETWORK_RESULTS ", "NETWORK_REMOTE_RESULTS ", "NETWORK_REMOTE_METRICS ", "NETWORK_CERTIFICATE_RESULTS ", "NETWORK_GAME_RESULTS ", "NETWORK_GAME_METRICS ", "NETWORK_GAME_QUANTIZATION_METRICS ", "NETWORK_GAME_EXPIRY_RESULTS ", "NETWORK_COMMAND_VALIDATION_RESULTS ", "NETWORK_MULTIPLAYER_RESULTS ", "NETWORK_SIX_CODEC_RESULTS ")):
             print(line)
     if args.suite != "certificate" and stderr.strip():
         print("NETWORK_SUITE_HAS_STDERR " + args.suite)

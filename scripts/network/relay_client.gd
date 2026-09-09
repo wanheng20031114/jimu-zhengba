@@ -112,7 +112,7 @@ func send_command(command: Dictionary) -> Error:
 func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 	if not is_host or _match.is_empty() or connection_state != "match":
 		return ERR_UNAUTHORIZED
-	if owner < 0 or owner > 3:
+	if owner < 0 or owner >= _match.players.size():
 		return ERR_INVALID_PARAMETER
 	if _peer == null or not _peer.is_active() or _peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
 		return ERR_UNAVAILABLE

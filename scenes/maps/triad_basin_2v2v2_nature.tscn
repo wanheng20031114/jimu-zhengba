@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/triad_basin_2v2v2_nature_timber.res" id="1_8pqph"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/triad_basin_2v2v2_nature_foliage.res" id="2_bi63d"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/triad_basin_2v2v2_nature_stone.res" id="3_0kmhf"]
+
+[node name="TriadBasin2v2v2Nature" type="Node3D" unique_id=1827596337]
+
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=2088804]
+mesh = ExtResource("1_8pqph")
+
+[node name="Foliage" type="MeshInstance3D" parent="." unique_id=1586931069]
+mesh = ExtResource("2_bi63d")
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=596618042]
+mesh = ExtResource("3_0kmhf")

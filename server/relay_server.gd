@@ -8,8 +8,8 @@ const BOT_GRACE_MS: int = 10000
 const REJOIN_GRACE_MS: int = 120000
 const IDLE_ROOM_MS: int = 900000
 const MAX_PEERS: int = 16
-const VISUAL_EVENT_RATE: float = 60.0
-const VISUAL_EVENT_BURST: float = 90.0
+const VISUAL_EVENT_RATE: float = 100.0
+const VISUAL_EVENT_BURST: float = 150.0
 const CRITICAL_EVENT_RATE: float = 30.0
 const CRITICAL_EVENT_BURST: float = 45.0
 const THROTTLE_INTERVAL_MS: int = 500
@@ -17,7 +17,7 @@ const THROTTLE_ACCELERATION: int = 4
 const THROTTLE_DECELERATION: int = 1
 
 var max_rooms: int = 1
-var max_humans: int = 4
+var max_humans: int = Protocol.MAX_PLAYERS
 var content_hash: String = Protocol.content_hash()
 var running: bool = false
 var rejected_packets: int = 0
@@ -128,7 +128,7 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 		_hello(peer, message, now)
 		return
 	if op == "snapshot":
-		if not Protocol.integer(message.get("to"), 0, 3) or channel != Protocol.SNAPSHOT_CHANNEL + int(message.to):
+		if not Protocol.integer(message.get("to"), 0, Protocol.MAX_PLAYERS - 1) or channel != Protocol.SNAPSHOT_CHANNEL + int(message.to):
 			_reject(peer, "invalid_channel", "快照通道不正确")
 			return
 	elif op == "event":
@@ -177,8 +177,13 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 		"command": _command(peer, session, room, message)
 		"snapshot", "event": _host_packet(peer, session, room, message, now)
 		"finish":
-			if int(session.owner) == 0 and room.status in ["match", "paused"] and message.get("result") is Dictionary:
-				_end_room(room, {"kind": "match_finished", "result": message.result})
+			if int(session.owner) != 0:
+				_reject(peer, "host_only", "仅房主可以发布对局结果")
+			elif room.status in ["match", "paused"]:
+				if not message.get("result") is Dictionary or not Protocol.integer(message.result.get("winner"), -1, int(Protocol.MODES[room.mode].teams) - 1):
+					_reject(peer, "invalid_result", "无效的胜方阵营")
+				else:
+					_end_room(room, {"kind": "match_finished", "result": message.result})
 		"leave": _leave(peer, session, room, now)
 		_: _reject(peer, "unknown_operation", "未知网络操作")
 
@@ -230,13 +235,13 @@ func _create(peer: ENetPacketPeer, message: Dictionary, now: int) -> void:
 	if rooms.size() >= max_rooms:
 		_reject(peer, "capacity", "中继当前对局已满，请稍后重试")
 		return
-	if message.get("mode") not in ["1v1", "2v2"]:
+	if message.get("mode") not in Protocol.MODES:
 		_reject(peer, "mode", "无效的对局模式")
 		return
-	var count: int = 2 if message.mode == "1v1" else 4
+	var count: int = Protocol.MODES[message.mode].slots
 	var slots: Array = []
 	for owner in range(count):
-		slots.append({"owner_id": owner, "team_id": owner if count == 2 else owner / 2, "kind": "open", "token": ""})
+		slots.append({"owner_id": owner, "team_id": Protocol.default_alliance(message.mode, owner), "kind": "open", "token": ""})
 	var code := _code()
 	var room := {"code": code, "match_id": _crypto.generate_random_bytes(16).hex_encode(), "mode": message.mode, "slots": slots, "status": "lobby", "touched": now, "seed": _crypto.generate_random_bytes(4).decode_u32(0) & 0x7fffffff}
 	rooms[code] = room
@@ -283,8 +288,11 @@ func _configure_slot(peer: ENetPacketPeer, session: Dictionary, room: Dictionary
 	if int(session.owner) != 0 or room.status != "lobby":
 		_reject(peer, "host_only", "仅房主可以设置房间")
 		return
-	if not Protocol.integer(message.get("owner"), 0, room.slots.size() - 1) or not Protocol.integer(message.get("team"), 0, 1) or message.get("kind") not in ["open", "bot", "human"]:
+	if not Protocol.integer(message.get("owner"), 0, room.slots.size() - 1) or not Protocol.integer(message.get("team"), 0, int(Protocol.MODES[room.mode].teams) - 1) or message.get("kind") not in ["open", "bot", "human"]:
 		_reject(peer, "invalid_slot", "无效的席位设置")
+		return
+	if room.mode == "ffa" and int(message.team) != int(message.owner):
+		_reject(peer, "ffa_independent", "乱斗中每名玩家独立作战，不能加入其他队伍")
 		return
 	var slot: Dictionary = room.slots[int(message.owner)]
 	if (slot.kind == "human") != (message.kind == "human"):
@@ -301,7 +309,10 @@ func _start_match(peer: ENetPacketPeer, session: Dictionary, room: Dictionary) -
 	if int(session.owner) != 0 or room.status != "lobby":
 		_reject(peer, "host_only", "仅房主可以开始对局")
 		return
-	var teams: Array[int] = [0, 0]
+	var mode: Dictionary = Protocol.MODES[room.mode]
+	var teams: Array[int] = []
+	teams.resize(int(mode.teams))
+	teams.fill(0)
 	for slot: Dictionary in room.slots:
 		if slot.kind == "open":
 			_reject(peer, "open_slots", "请等待玩家加入或将空位设置为电脑")
@@ -312,8 +323,8 @@ func _start_match(peer: ENetPacketPeer, session: Dictionary, room: Dictionary) -
 			if occupant.peer == null or not occupant.ready:
 				_reject(peer, "not_ready", "还有玩家未准备")
 				return
-	if teams[0] != room.slots.size() / 2 or teams[1] != room.slots.size() / 2:
-		_reject(peer, "unbalanced_teams", "双方队伍人数必须相同")
+	if not teams.all(func(count): return count == int(mode.team_size)):
+		_reject(peer, "unbalanced_teams", "各队人数必须符合所选模式")
 		return
 	room.status = "match"
 	_broadcast_room(room)
@@ -499,7 +510,7 @@ func _match_config(room: Dictionary) -> Dictionary:
 	for slot: Dictionary in room.slots:
 		var session: Dictionary = sessions.get(slot.token, {})
 		players.append({"owner_id": int(slot.owner_id), "team_id": int(slot.team_id), "controller": "bot" if slot.kind == "bot" or session.get("bot", false) else "human", "name": session.get("name", "电脑")})
-	return {"mode": room.mode, "match_id": room.match_id, "map_id": "duel" if room.mode == "1v1" else "teams", "seed": int(room.seed), "host_owner": 0, "players": players}
+	return {"mode": room.mode, "match_id": room.match_id, "map_id": Protocol.MODES[room.mode].map_id, "seed": int(room.seed), "host_owner": 0, "players": players}
 
 func _room_view(room: Dictionary) -> Dictionary:
 	var view := {"code": room.code, "match_id": room.match_id, "mode": room.mode, "status": room.status, "host_owner": 0, "slots": []}

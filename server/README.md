@@ -2,21 +2,21 @@
 
 中继只管理房间、连接身份和转发，不运行战斗。房主按 30 TPS 模拟，以每客户端 15 Hz 发送按视野筛选的快照；丢包时实收频率会降低，画面插值由游戏层负责。
 
-当前游戏版本为 `0.6.0`、网络协议为 `2`；协议 2 包含每局身份和各收件人独立快照通道，旧服务会在版本握手时明确拒绝，客户端与服务端须同时更新。
+当前游戏版本为 `0.8.0`、网络协议为 `5`；协议 5 支持六玩家、多阵营及公开淘汰状态，并保留每局身份和各收件人独立快照通道，旧服务会在版本握手时明确拒绝，客户端与服务端须同时更新。
 
 ## 接口约定
 
-`RelayClient` 是常驻 `Node`，允许暂停时继续收发。`owner_id` 由中继分配，房主恒为 0；玩家所有权与 `team_id` 分开。1v1 默认两人各一队，2v2 默认 0/1 与 2/3 组队。
+`RelayClient` 是常驻 `Node`，允许暂停时继续收发。`owner_id` 由中继分配，房主恒为 0；玩家所有权与 `team_id` 分开。模式由 `NetworkProtocol.MODES` 统一定义：1v1 为两人；2v2 为四人；3v3、2v2v2、乱斗均为六席，可由真人与 Bot 填满。3v3 每队三人，2v2v2 三队各两人；乱斗每个 owner 独立阵营，服务端拒绝组队。房主可调整团队模式队伍，但开局必须满足各队人数。
 
 - `connect_relay(address, port=24571)` 后调用 `create_room(mode, nickname)` 或 `join_room(code, nickname)`；握手未完成时创建/加入意图保留。
 - 房主 `configure_slot(owner, kind, team)` 设置空位/电脑及队伍，不能覆盖真人。真人 `set_ready(true)`，房主 `start_match()`；人数、准备状态、协议版本、游戏版本和内容清单 SHA256 均需一致。
-- `match_started(config)` 仅首次进入对局触发。配置包含 `mode/map_id/match_id/seed/host_owner/players`，地图 ID 为 `duel` 或 `teams`。
+- `match_started(config)` 仅首次进入对局触发。配置包含 `mode/map_id/match_id/seed/host_owner/players`，地图 ID 分别为 `duel`、`teams`、`trios`、`triad`、`free_for_all`。
 - `send_command(Dictionary)` → 房主 `command_received(owner, command)`。`owner` 来自已验证连接，游戏层仍须验证单位归属、资源、射程和可见目标，不能使用载荷自报的 owner。
 - 房主 `snapshot_to(owner, snapshot)` → 指定玩家 `snapshot_received(snapshot)`；禁止快照广播。`send_event(owner, event)` 为可靠事件，`owner=-1` 仅适用于可公开的信息。
-- `finish_match(result)` 释放房间；`leave_room()` 退出席位；`disconnect_relay()` 完全断开。
+- `finish_match(result)` 仅房主可调用，`winner` 必须为该模式合法阵营或平局 `-1`，释放房间；`leave_room()` 退出席位；`disconnect_relay()` 完全断开。
 - 重连不会重载世界。`connection_restored` 表示本机通道恢复；房主收到 `player_reconnected` 后必须向该玩家发送全量恢复状态，并结束对应 Bot 的控制。
 
-通道 0 用于可靠指令/房间，通道 1 用于可靠事件；房主到中继的有序不可靠快照按收件人使用通道 2–5，中继到单个客户端则使用通道 2。独立的序号窗口避免后发给另一玩家的快照淘汰本玩家乱序到达的快照。消息仅接受 JSON 基础值，向量须转成数组；不反序列化 Godot Object/Resource。每指令 4 KiB、每事件 32 KiB、每快照 128 KiB、嵌套 12 层；100 指令/秒、每目标最多 20 快照/秒，附带总包数及总字节上限。快照允许 ENet 不可靠分片：丢片会丢弃旧快照，不阻塞可靠命令。游戏应优先发送紧凑字段和变化数据，128 KiB 是防护上限，不是带宽预算。
+通道 0 用于可靠指令/房间，通道 1 用于可靠事件；房主到中继的有序不可靠快照按收件人使用通道 2–7，中继到单个客户端则使用通道 2。独立的序号窗口避免后发给另一玩家的快照淘汰本玩家乱序到达的快照。消息仅接受 JSON 基础值，向量须转成数组；不反序列化 Godot Object/Resource。每指令 4 KiB、每事件 32 KiB、每快照 512 KiB、嵌套 12 层、最多 40000 个基础值；100 指令/秒、每目标最多 20 快照/秒，附带总包数及总字节上限。快照允许 ENet 不可靠分片：丢片会丢弃旧快照，不阻塞可靠命令。游戏应优先发送紧凑字段和变化数据，512 KiB 是防护上限，不是带宽预算。
 
 512 字节以上消息使用 Godot 原生 Zstd 整包压缩。固定 ACN1 帧头携带解压长度与压缩标记；接收端先核实长度上限和发送权限，再分配有界缓冲并解析基础值。每通道大小限制按解压后内容判断，压缩不会绕过指令上限；未压缩的小消息保留相同帧头。
 
@@ -28,7 +28,7 @@
 
 ## 游戏状态复制
 
-`scenes/match_replication.tscn` 保存独立的 `MatchReplication` 节点。对局用 `configure(game, relay)` 绑定，房主每个物理帧末调用 `tick(delta)`，客户端每个显示帧调用 `render(delta)`。房主每两个 30 TPS 模拟帧为每个客户端发送一次快照，三个收件人错开到两个发送相位，降低单帧序列化峰值；既有单位、建筑与地图矿脉使用稳定的 `entity_id`。
+`scenes/match_replication.tscn` 保存独立的 `MatchReplication` 节点。对局用 `configure(game, relay)` 绑定，房主每个物理帧末调用 `tick(delta)`，客户端每个显示帧调用 `render(delta)`。房主每两个 30 TPS 模拟帧为每个客户端发送一次快照，最多五个收件人错开到两个发送相位（每步最多三个快照），降低单帧序列化峰值；既有单位、建筑与地图矿脉使用稳定的 `entity_id`。
 
 每个收件人的快照含自己和盟友实体，以及当前可见的敌方实体。训练队列、学院研究、集结点、金币和升级状态只发给所属玩家；矿脉占槽数只在该位置可见时发送。战争迷雾携带 Base64 网格和最后一次看到的建筑信息，隐藏建筑的当前生命与坐标不会混入记忆。接收层校验完整结构后再修改场景，也不允许网络实体覆盖地图矿脉 ID。
 
@@ -36,7 +36,7 @@
 
 可见的弹道、音效和命中交给 `queue_host_visual(owner, event)`，由复制层自动添加模拟时间并按 15 Hz 聚合为可靠 `visual_batch`，最多 96 条且不超过事件字节上限。客户端在同一展示时间线发出 `visual_event_due(event)`，游戏再播放表现，避免声音比攻击动作提前。每个收件人的表现积压最多 256 条；断线恢复跳到最新快照并保留已有实体，超过半秒的旧表现丢弃，不重放音效洪流。生命周期和界面通知使用普通可靠事件立即处理。
 
-脚步、马蹄、轮声和灰尘使用 4 米网格、0.2 秒去重窗口，每批最多 16 条装饰项，投射物与战斗表现优先；过期装饰及短时缓存会清理。中继对视觉使用 60 次/秒、突发 90 次的令牌桶，对关键事件单独使用 30 次/秒、突发 45 次，避免可靠重传聚簇挤占暂停或通知预算。视觉越限只丢表现并计数；它仍需通过身份、对局、结构、通道及全局包数/字节上限检查。关键事件保留超限拒绝规则。
+脚步、马蹄、轮声和灰尘使用 4 米网格、0.2 秒去重窗口，每批最多 16 条装饰项，投射物与战斗表现优先；过期装饰及短时缓存会清理。中继对视觉使用 100 次/秒、突发 150 次的令牌桶，对关键事件单独使用 30 次/秒、突发 45 次，避免可靠重传聚簇挤占暂停或通知预算。视觉越限只丢表现并计数；它仍需通过身份、对局、结构、通道及全局包数/字节上限检查。关键事件保留超限拒绝规则。
 
 ## 断线行为
 
@@ -48,7 +48,7 @@
 
 `python tools/deploy_relay.py --certificate` 初始化私钥及公开信任证书。私钥仅在忽略的 `.local/network/`；仓库只包含 `scripts/network/relay_trust.crt`。客户端使用受信证书及固定 TLS 身份 `ashen-crown-relay`，不关闭证书验证，也不要求公网域名。更换信任证书必须配合客户端更新，默认有效期三年。
 
-`python tools/deploy_relay.py --deploy` 通过 Python 内存读取明确授权的 `shanghai` 凭据块，上传到独立 `/opt/ashen-crown-relay` 并启动 `ashen-crown-relay.service`。专用用户、只读系统目录和 384 MiB 内存上限；默认同时 1 个房间、最多 4 个真人，可在服务端配置中调整。保留旧服务，绝不修改 UDP 24570；新服务只监听 UDP 24571。云安全组需开放此端口，客户端网络须允许 UDP。
+`python tools/deploy_relay.py --deploy` 通过 Python 内存读取明确授权的 `shanghai` 凭据块，上传到独立 `/opt/ashen-crown-relay` 并启动 `ashen-crown-relay.service`。专用用户、只读系统目录和 384 MiB 内存上限；默认同时 1 个房间、最多 6 个真人，可在服务端配置中调整。保留旧服务，绝不修改 UDP 24570；新服务只监听 UDP 24571。云安全组需开放此端口，客户端网络须允许 UDP。
 
 服务端使用隔离、校验 SHA256 的官方 Godot 4.7.2 稳定运行时。客户端仍兼容项目当前 4.6.3；不修改用户安装。4.6.3 的 DTLS Cookie 析构具有上游已确认的重复释放诊断，服务端需使用包含 [Godot #120371](https://github.com/godotengine/godot/pull/120371) 的版本。原生 [ENetConnection](https://docs.godotengine.org/en/4.6/classes/class_enetconnection.html) 提供 DTLS 和独立通道传输。
 
@@ -79,3 +79,11 @@
 最终部署为 `fbe783b025ab4cb0`，协议 2、版本 0.6.0，42 项资源清单 SHA256 为 `286abc7c071ae8e26a580d136f2974a20db5a2a1d2c8aea1710650b9122f608a`。只读审计确认远端清单和服务端代码与本地一致，新服务持有 UDP 24571，旧服务仍持有 UDP 24570，均为 active/running、自动重启次数 0；部署前后旧服务 PID 未变。
 
 中继在原生 `EVENT_CONNECT` 后设置 `throttle_configure(500, 4, 1)`，可靠同步两端，保留拥塞降速。它修复了默认 5 秒 RTT 参考在首次大规模负载变化时令房主快照发送系数持续归零的问题；不会绕过应用的 15 Hz 发送目标、消息大小、令牌桶和身份检查。原生协议 88/88、最终四端 280 单位本地及 4% 丢包各 118/118 通过。20 秒实测房主上传约 266–288 KB/s；高丢包下完整快照实收 7.3–7.7 Hz、最长间隔 622ms，因此不能把目标发送频率当作实际接收频率。精确字节边界、原生指标、性能长尾及可重复命令见 [联网验收文档](../docs/network-validation.md)。
+
+## 六玩家模式验证
+
+`python tests/network_runner.py multiplayer` 创建六个独立 ENet/DTLS 客户端，逐一验证三种新增模式的六真人和五 Bot 配置、队伍人数、乱斗禁止组队、第五/第六收件人私有路由、绑定身份与重复命令过滤。
+
+`python tests/network_game_live_runner.py local --mode 2v2v2` 运行六个实际主场景；`--mode 3v3` 和 `--mode ffa` 运行另两种模式。短流程覆盖开局塔、真实远程移动、资产权限、原始快照隐私、第六玩家 Bot 接管/认证重连、三方/乱斗中的单方淘汰与最终胜负。默认不带 `--mode` 仍运行原四端完整生产/研究回归，`--load-units 280` 仍只用于该四端压测。
+
+`python tests/network_runner.py six-codec` 用少量原生单位作为模板，构建 432 单位、12 初始建筑、9216 迷雾格和 512 建筑记忆的完整 primitive 快照，验证 512 KiB/40000 值预算、owner5 及联盟不可变/淘汰布尔字段约束；不生成 432 个场景节点，不把合成压缩字节当作实测网络吞吐。

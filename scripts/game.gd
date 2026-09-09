@@ -66,6 +66,7 @@ var _outgoing_sequences: Dictionary = {}
 var map_instance: Node3D
 var map_definition: MapDefinition
 var match_config: Dictionary = {}
+var _spawn_indices: Dictionary = {}
 var bots: Dictionary = {}
 var _fog_ready: bool = false
 var _match_ready: bool = false
@@ -752,10 +753,11 @@ func on_entity_died(entity: Node3D) -> void:
 func _on_income() -> void:
 	if not finished and is_authority:
 		for player: PlayerState in players:
-			player.gold += BalanceCatalog.ECONOMY.passive_gold_per_second
+			if not player.eliminated:
+				player.gold += BalanceCatalog.ECONOMY.passive_gold_per_second
 
 func debug_add_gold() -> void:
-	if online:
+	if online or get_player(local_owner_id).eliminated:
 		return
 	gold += 100
 	$Audio.play_ui("coin")
@@ -848,10 +850,12 @@ func toggle_sound() -> void:
 		$Audio.play_ui(&"select")
 	hud.toast("声音已关闭" if is_muted else "声音已开启", 1.5)
 
-func end_battle(victory: bool) -> void:
-	if online and is_authority and not finished:
+func end_battle(victory: bool, winner: int = -2) -> void:
+	if winner == -2 and victory:
+		winner = get_player(local_owner_id).alliance_id
+	if online and is_authority and not finished and winner >= -1:
 		replication.flush_visual()
-		Session.relay.finish_match({"winner": get_player(local_owner_id).alliance_id if victory else 1 - get_player(local_owner_id).alliance_id, "time": elapsed})
+		Session.relay.finish_match({"winner": winner, "time": elapsed})
 	if finished:
 		return
 	Session.record_diagnostic("match_finished", {"victory": victory, "online": online, "tick": simulation_tick})
@@ -870,6 +874,9 @@ func end_battle(victory: bool) -> void:
 		if effect is BattleProjectile:
 			effect.queue_free()
 	hud.show_result(victory, elapsed, kills)
+	if winner == -1:
+		hud.get_node("%ResultHeading").text = "平局"
+		hud.get_node("%ResultBody").text = "所有阵营的军事建筑均已被摧毁。"
 	$Audio.play_ui(&"victory" if victory else &"defeat")
 
 func restart() -> void:
@@ -1093,27 +1100,35 @@ func _setup_match() -> void:
 	if online:
 		is_authority = Session.relay.is_host
 		local_owner_id = Session.relay.owner_id
-	var mode := "2v2" if "--2v2" in OS.get_cmdline_user_args() else "1v1"
+	var mode := "1v1"
+	for candidate: String in NetworkProtocol.MODES:
+		if "--" + candidate in OS.get_cmdline_user_args():
+			mode = candidate
 	if match_config.is_empty():
 		match_config = {"mode": mode, "players": []}
-		for owner in range(4 if mode == "2v2" else 2):
-			match_config.players.append({"owner_id": owner, "team_id": owner / 2 if mode == "2v2" else owner, "controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
+		for owner in range(int(NetworkProtocol.MODES[mode].slots)):
+			match_config.players.append({"owner_id": owner, "team_id": NetworkProtocol.default_alliance(mode, owner), "controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
 	players.clear()
 	for slot: Dictionary in match_config.players:
 		var player := PlayerState.new(int(slot.owner_id), int(slot.team_id))
 		player.controller = slot.controller
 		player.display_name = slot.name
 		players.append(player)
-	var map_id: String = "twin_valleys_2v2" if match_config.mode == "2v2" else "amber_crossroads_1v1"
-	map_definition = load("res://data/maps/%s.tres" % map_id)
+	# Physical starts follow alliances even when the host rearranges room teams.
+	# Owner IDs remain stable for commands, economy and network recipients.
+	var spawn_order := players.duplicate()
+	spawn_order.sort_custom(func(a: PlayerState, b: PlayerState): return a.alliance_id < b.alliance_id if a.alliance_id != b.alliance_id else a.owner_id < b.owner_id)
+	for index: int in range(spawn_order.size()):
+		_spawn_indices[spawn_order[index].owner_id] = index
+	map_definition = load(NetworkProtocol.map_path(match_config.mode))
 	map_size = map_definition.size
 	map_instance = map_definition.scene.instantiate()
 	$MapContainer.add_child(map_instance)
 	if not is_authority:
-		camera_rig.focus_at(map_instance.get_node("SpawnPoints/Player%d" % local_owner_id).global_position, true)
+		camera_rig.focus_at(get_spawn_marker(local_owner_id).global_position, true)
 		return
 	for player: PlayerState in players:
-		var spawn: Marker3D = map_instance.get_node("SpawnPoints/Player%d" % player.owner_id)
+		var spawn: Marker3D = get_spawn_marker(player.owner_id)
 		var at: Vector3 = spawn.global_position
 		var base := spawn_building("headquarters", player.owner_id, at)
 		# Maps author a clear tower site beside each player's left starting mine.
@@ -1130,24 +1145,54 @@ func _setup_match() -> void:
 			bots[player.owner_id] = SkirmishBot.new(self, player.owner_id)
 	camera_rig.focus_at(headquarters.position.move_toward(Vector3.ZERO, 5), true)
 
+func get_spawn_marker(owner: int) -> Marker3D:
+	return map_instance.get_node("SpawnPoints/Player%d" % int(_spawn_indices[owner]))
+
 func check_victory() -> void:
 	if finished or not _match_ready or not is_authority or tests_running:
 		return
-	var counts := [0, 0]
-	var cores := [0, 0]
+	var counts: Dictionary = {}
+	var cores: Dictionary = {}
+	for player: PlayerState in players:
+		counts[player.alliance_id] = 0
+		cores[player.alliance_id] = 0
 	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
 		if not building.alive:
 			continue
 		counts[building.alliance_id] += 1
 		if building.is_constructed and building.building_type in ["headquarters", "barracks", "factory"]:
 			cores[building.alliance_id] += 1
-	for alliance in range(2):
+	var remaining: Array[int] = []
+	var newly_eliminated: Array[int] = []
+	for alliance: int in counts:
 		if cores[alliance] == 0 and alliance not in _revealed_alliances:
 			_revealed_alliances.append(alliance)
 			$FogOfWar.reveal_alliance_buildings(alliance)
-		if counts[alliance] == 0:
-			end_battle(alliance != get_player(local_owner_id).alliance_id)
-			return
+		if counts[alliance] > 0:
+			remaining.append(alliance)
+		else:
+			for player: PlayerState in players:
+				if player.alliance_id == alliance and not player.eliminated:
+					player.eliminated = true
+					bots.erase(player.owner_id)
+					if alliance not in newly_eliminated:
+						newly_eliminated.append(alliance)
+	if remaining.size() <= 1:
+		var winner: int = remaining[0] if not remaining.is_empty() else -1
+		end_battle(winner == get_player(local_owner_id).alliance_id, winner)
+		return
+	# An eliminated faction cannot rebuild after losing every military building.
+	# Other factions continue; losing the host's faction does not stop simulation.
+	for alliance: int in newly_eliminated:
+		for unit: BattleUnit in get_tree().get_nodes_in_group("units"):
+			if unit.alive and unit.alliance_id == alliance:
+				unit.receive_damage(unit.hp)
+		for player: PlayerState in players:
+			if player.alliance_id == alliance:
+				var message := "你的阵营已出局 · 比赛继续，可返回大厅"
+				if online and player.owner_id == local_owner_id:
+					message = "你的阵营已出局 · 请保持房间开启，其他玩家继续对战"
+				notify_owner(player.owner_id, message)
 
 func play_world_sound(kind: StringName, at: Vector3) -> void:
 	queue_visible_visual(at, {"kind": "sound", "sound": String(kind), "at": vector_data(at)})
@@ -1170,7 +1215,7 @@ func _on_network_event(event: Dictionary) -> void:
 		"notice": hud.toast(str(event.get("text", "")), 2.5)
 		"bot_takeover":
 			var owner: int = int(event.owner)
-			if is_authority and owner >= 0 and owner < players.size():
+			if is_authority and owner >= 0 and owner < players.size() and not get_player(owner).eliminated:
 				get_player(owner).controller = "bot"
 				bots[owner] = SkirmishBot.new(self, owner)
 		"player_reconnected":
@@ -1188,7 +1233,7 @@ func _on_network_event(event: Dictionary) -> void:
 		"match_finished":
 			var result: Dictionary = event.result
 			elapsed = float(result.get("time", elapsed))
-			end_battle(int(result.get("winner", -1)) == get_player(local_owner_id).alliance_id)
+			end_battle(int(result.get("winner", -1)) == get_player(local_owner_id).alliance_id, int(result.get("winner", -1)))
 		"match_aborted":
 			set_match_paused(false)
 			end_battle(false)

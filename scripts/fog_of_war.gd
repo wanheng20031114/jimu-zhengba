@@ -1,13 +1,14 @@
 class_name FogOfWar
 extends Node3D
-## Authoritative two-alliance vision, persistent exploration and frozen building memories.
+## Authoritative per-alliance vision, persistent exploration and frozen building memories.
 ## Cell states: 0 unknown, 1 remembered terrain, 2 currently visible.
 
 signal visibility_updated(revision: int)
 
 const CELL_SIZE: float = 2.0
 const UPDATE_SECONDS: float = 0.2
-const ALLIANCES: int = 2
+const MAX_GRID_CELLS: int = 9216
+var alliance_count: int = 2
 const REVEAL_KINDS: Array[String] = ["headquarters", "barracks", "factory", "academy", "defense_tower", "enemy_keep", "tower"]
 const MEMORY_MODELS: Dictionary = {
 	"headquarters": preload("res://assets/models/environment/headquarters.tscn"),
@@ -26,8 +27,8 @@ var grid_size: Vector2i = Vector2i.ZERO
 var map_size: Vector2 = Vector2.ZERO
 var _game: Node3D
 var _cells: Array[PackedByteArray] = []
-var _last_seen: Array[Dictionary] = [{}, {}]
-var _revealed: PackedByteArray = PackedByteArray([0, 0])
+var _last_seen: Array[Dictionary] = []
+var _revealed: PackedByteArray = PackedByteArray()
 var _tick_time: float = 0.0
 var _local_owner: int = -1
 var _applied_revision: int = -1
@@ -48,15 +49,21 @@ func configure(game: Node3D, size: Vector2) -> void:
 	_game = game
 	map_size = size
 	grid_size = Vector2i(ceili(size.x / CELL_SIZE), ceili(size.y / CELL_SIZE))
-	assert(grid_size.x * grid_size.y <= 4096, "The supported skirmish fog grid is at most 4096 cells per alliance")
+	assert(grid_size.x * grid_size.y <= MAX_GRID_CELLS, "Fog exceeds the supported map size")
+	alliance_count = 0
+	for player: PlayerState in game.players:
+		alliance_count = maxi(alliance_count, player.alliance_id + 1)
+	assert(alliance_count > 0 and alliance_count <= NetworkProtocol.MAX_PLAYERS)
 	_cells.clear()
-	for alliance: int in range(ALLIANCES):
+	_last_seen.clear()
+	_revealed.resize(alliance_count)
+	_revealed.fill(0)
+	for alliance: int in range(alliance_count):
 		var mask := PackedByteArray()
 		mask.resize(grid_size.x * grid_size.y)
 		mask.fill(0)
 		_cells.append(mask)
-	_last_seen = [{}, {}]
-	_revealed = PackedByteArray([0, 0])
+		_last_seen.append({})
 	_display_nodes.clear()
 	_clear_memory_models()
 	revision = 0
@@ -84,7 +91,7 @@ func tick(delta: float) -> void:
 
 func _recompute() -> void:
 	var sources: Array[Node] = _game.get_tree().get_nodes_in_group("entities")
-	for alliance: int in range(ALLIANCES):
+	for alliance: int in range(alliance_count):
 		var previous: PackedByteArray = _cells[alliance]
 		var mask := PackedByteArray()
 		mask.resize(previous.size())
@@ -167,13 +174,13 @@ func visible_entities(owner: int) -> Array[Node3D]:
 	return result
 
 func reveal_alliance_buildings(alliance: int) -> void:
-	assert(alliance >= 0 and alliance < ALLIANCES)
+	assert(alliance >= 0 and alliance < alliance_count)
 	_revealed[alliance] = 1
 	if _configured and _game.is_authority:
 		_recompute()
 
 func _remember_buildings(entities: Array[Node]) -> void:
-	for alliance: int in range(ALLIANCES):
+	for alliance: int in range(alliance_count):
 		var observed: Dictionary = {}
 		for entity: Node3D in entities:
 			if not entity.is_in_group("buildings") or entity.alliance_id == alliance or not _entity_visible_to_alliance(alliance, entity):
@@ -294,7 +301,7 @@ func snapshot_for(owner: int) -> Dictionary:
 	return {"owner_id": owner, "alliance_id": alliance, "map_size": [map_size.x, map_size.y],
 		"width": grid_size.x, "height": grid_size.y, "revision": revision,
 		"cells": Marshalls.raw_to_base64(_cells[alliance]), "buildings": _last_seen[alliance].values().duplicate(true),
-		"revealed_building_alliances": [int(_revealed[0]), int(_revealed[1])]}
+		"revealed_building_alliances": Array(_revealed)}
 
 func apply_snapshot(data: Dictionary) -> bool:
 	if not _configured or _game.is_authority:
@@ -310,7 +317,7 @@ func apply_snapshot(data: Dictionary) -> bool:
 		return false
 	var owner: int = int(data.owner_id)
 	var alliance: int = int(data.alliance_id)
-	if owner < 0 or owner >= _game.players.size() or alliance < 0 or alliance >= ALLIANCES or _game.get_player(owner).alliance_id != alliance:
+	if owner < 0 or owner >= _game.players.size() or alliance < 0 or alliance >= alliance_count or _game.get_player(owner).alliance_id != alliance:
 		return false
 	if int(data.width) != grid_size.x or int(data.height) != grid_size.y or int(data.revision) <= _received_revision or int(data.revision) > 2147483647:
 		return false
@@ -339,7 +346,7 @@ func apply_snapshot(data: Dictionary) -> bool:
 			"alliance_id": int(record.alliance_id), "position": record.position.duplicate(), "rotation": record.rotation.duplicate(),
 			"radius": float(record.radius), "construction_progress": float(record.construction_progress),
 			"last_seen_revision": int(record.last_seen_revision)}
-	if not data.revealed_building_alliances is Array or data.revealed_building_alliances.size() != ALLIANCES:
+	if not data.revealed_building_alliances is Array or data.revealed_building_alliances.size() != alliance_count:
 		return false
 	for value: Variant in data.revealed_building_alliances:
 		if not _wire_integer(value) or int(value) < 0 or int(value) > 1:

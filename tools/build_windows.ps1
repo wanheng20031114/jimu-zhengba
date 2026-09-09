@@ -1,4 +1,4 @@
-param([string]$GodotPath = 'C:/Program Files/Godot/Godot_console.exe')
+param([string]$GodotPath = 'C:/Program Files/Godot/Godot_console.exe', [switch]$PackOnly)
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -9,7 +9,17 @@ $archive = Join-Path $projectRoot 'builds/AshenCrown-Windows-x64.zip'
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 $exportLog = Join-Path $projectRoot '.local/windows-export.engine.log'
 New-Item -ItemType Directory -Path (Split-Path -Parent $exportLog) -Force | Out-Null
-& $GodotPath --headless --path $projectRoot --log-file $exportLog --export-release 'Windows Desktop' $executable
+if ($PackOnly) {
+    # Reuse the current version's launcher when only project resources changed.
+    # This also avoids replacing an identical EXE while the user is playing it.
+    if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) { throw 'Pack-only export requires an existing Windows launcher from this version.' }
+    $releaseVersionMatch = [regex]::Match((Get-Content -LiteralPath (Join-Path $projectRoot 'export_presets.cfg') -Raw -Encoding UTF8), '(?m)^application/file_version="([^"]+)"')
+    $launcherVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable).FileVersion
+    if (-not $releaseVersionMatch.Success -or $launcherVersion -ne $releaseVersionMatch.Groups[1].Value) { throw 'Launcher version differs from the export preset; run a full export first.' }
+    & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-pack 'Windows Desktop' (Join-Path $buildRoot 'AshenCrown.pck')
+} else {
+    & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-release 'Windows Desktop' $executable
+}
 if ($LASTEXITCODE -ne 0) { throw 'Godot Windows export failed.' }
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/windows-readme.txt') -Destination (Join-Path $buildRoot 'START_HERE.txt') -Force
 foreach ($supportFile in @('collect_diagnostics.ps1', 'COLLECT_DIAGNOSTICS.cmd')) {

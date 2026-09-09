@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/crownfall_ffa_nature_timber.res" id="1_uj2i3"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/crownfall_ffa_nature_foliage.res" id="2_8aj6o"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/crownfall_ffa_nature_stone.res" id="3_vshtm"]
+
+[node name="CrownfallFfaNature" type="Node3D" unique_id=888677774]
+
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=1787850267]
+mesh = ExtResource("1_uj2i3")
+
+[node name="Foliage" type="MeshInstance3D" parent="." unique_id=987144349]
+mesh = ExtResource("2_8aj6o")
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=1934243597]
+mesh = ExtResource("3_vshtm")

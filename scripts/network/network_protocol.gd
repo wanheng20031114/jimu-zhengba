@@ -2,8 +2,8 @@ class_name NetworkProtocol
 extends RefCounted
 ## Explicit JSON primitives only: never decode network bytes into Godot objects.
 
-const VERSION: int = 4
-const BUILD_ID: String = "0.7.8"
+const VERSION: int = 5
+const BUILD_ID: String = "0.8.0"
 const TLS_NAME: String = "ashen-crown-relay"
 const PORT: int = 24571
 const CONTROL_CHANNEL: int = 0
@@ -12,15 +12,32 @@ const SNAPSHOT_CHANNEL: int = 2
 # Host -> relay uses channels 2 + recipient. Separate sequence windows prevent
 # one recipient's newer packet from discarding another recipient's reordered one.
 # Relay -> each client uses channel 2 because that connection has one recipient.
-const CHANNEL_COUNT: int = 6
+const CHANNEL_COUNT: int = 8
 const MAX_COMMAND_BYTES: int = 4096
 const MAX_EVENT_BYTES: int = 32768
-const MAX_PACKET_BYTES: int = 131072
+const MAX_PACKET_BYTES: int = 524288
 const SNAPSHOT_HZ: int = 15
 const MAX_DEPTH: int = 12
-const MAX_VALUES: int = 20000
+const MAX_VALUES: int = 40000
 const MAGIC: int = 0x314e4341 # ACN1, little endian.
 const HEADER_BYTES: int = 9
+
+# Shared by lobby, authority and relay. Owner IDs are dense slot indices;
+# alliance IDs are independent and only FFA fixes each owner to its own alliance.
+const MAX_PLAYERS: int = 6
+const MODES: Dictionary = {
+	"1v1": {"slots": 2, "teams": 2, "team_size": 1, "map_id": "duel", "map_resource": "amber_crossroads_1v1", "label": "1v1 遭遇战"},
+	"2v2": {"slots": 4, "teams": 2, "team_size": 2, "map_id": "teams", "map_resource": "twin_valleys_2v2", "label": "2v2 团队战"},
+	"3v3": {"slots": 6, "teams": 2, "team_size": 3, "map_id": "trios", "map_resource": "three_frontiers_3v3", "label": "3v3 团队战"},
+	"2v2v2": {"slots": 6, "teams": 3, "team_size": 2, "map_id": "triad", "map_resource": "triad_basin_2v2v2", "label": "2v2v2 三方混战"},
+	"ffa": {"slots": 6, "teams": 6, "team_size": 1, "map_id": "free_for_all", "map_resource": "crownfall_ffa", "label": "乱斗 · 各自为战"},
+}
+
+static func default_alliance(mode: String, owner: int) -> int:
+	return owner / int(MODES[mode].team_size)
+
+static func map_path(mode: String) -> String:
+	return "res://data/maps/%s.tres" % MODES[mode].map_resource
 
 static func content_hash() -> String:
 	const MANIFEST := "res://data/content_manifest.json"
@@ -39,7 +56,7 @@ static func encode_snapshot(snapshot: Dictionary, recipient: int, sequence: int,
 	# fields from typed game state, never copies a received command dictionary.
 	# Do not use this path for commands, events, decoded packets or relay forwarding.
 	# All receivers still apply decode()'s full untrusted-value budget and schema.
-	if recipient < 0 or recipient > 3 or sequence < 1 or sequence > 2147483647 or match_id.length() != 32:
+	if recipient < 0 or recipient >= MAX_PLAYERS or sequence < 1 or sequence > 2147483647 or match_id.length() != 32:
 		return PackedByteArray()
 	return _encode_json({"op": "snapshot", "match": match_id, "to": recipient, "sequence": sequence, "payload": snapshot})
 

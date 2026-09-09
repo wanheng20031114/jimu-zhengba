@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/crownfall_ffa_ground_stone.res" id="1_5lbxt"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/crownfall_ffa_ground_earth.res" id="2_3j5qo"]
+
+[node name="CrownfallFfaGround" type="Node3D" unique_id=2016920427]
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=210699336]
+cast_shadow = 0
+mesh = ExtResource("1_5lbxt")
+
+[node name="Earth" type="MeshInstance3D" parent="." unique_id=427165554]
+cast_shadow = 0
+mesh = ExtResource("2_3j5qo")

@@ -19,7 +19,10 @@ func check(value: bool, label: String) -> void:
 		push_error(label)
 
 func _run() -> void:
-	var mode: String = "2v2" if "--2v2" in OS.get_cmdline_user_args() else "1v1"
+	var mode := "1v1"
+	for candidate: String in NetworkProtocol.MODES:
+		if "--" + candidate in OS.get_cmdline_user_args():
+			mode = candidate
 	root.get_node("Session").start_offline(mode)
 	await scene_changed
 	game = current_scene
@@ -28,7 +31,7 @@ func _run() -> void:
 	game.camera_rig.edge_scroll = false
 	game.get_node("IncomeTimer").stop()
 	game.get_node("EnemyTimer").stop()
-	check(game.players.size() == (4 if mode == "2v2" else 2), "all_mode_player_slots_created")
+	check(game.players.size() == int(NetworkProtocol.MODES[mode].slots), "all_mode_player_slots_created")
 	check(game.bots.size() == game.players.size() - 1, "default_human_and_bot_players_share_opening_rules")
 	_opening_state()
 	for unit: BattleUnit in get_nodes_in_group("units"):
@@ -79,7 +82,7 @@ func _opening_state() -> void:
 		check(tower.alive and tower.is_constructed and tower.construction_progress == 1.0, "owner_%d_tower_completed_on_first_frame" % owner)
 		check(tower.hp == BalanceCatalog.building("defense_tower").hp and tower.hp == tower.max_hp, "owner_%d_tower_starts_at_full_current_hp" % owner)
 		check(tower.owner_id == owner and tower.alliance_id == player.alliance_id, "owner_%d_tower_has_correct_ownership_and_alliance" % owner)
-		var spawn: Marker3D = game.map_instance.get_node("SpawnPoints/Player%d" % owner)
+		var spawn: Marker3D = game.get_spawn_marker(owner)
 		var authored: Vector3 = game.map_instance.to_global(spawn.get_meta("starting_tower_position"))
 		check(tower.global_position.is_equal_approx(authored), "owner_%d_tower_uses_native_authored_map_position" % owner)
 		var front: Vector3 = -base.global_position.normalized()
@@ -90,9 +93,10 @@ func _opening_state() -> void:
 		var foreign_owner: int = (owner + 1) % game.players.size()
 		var denied: Dictionary = game.command_bus.execute({"kind": "destroy", "targets": [tower.entity_id]}, foreign_owner)
 		check(not denied.ok and tower.alive, "owner_%d_other_player_cannot_destroy_opening_tower" % owner)
-	var half: int = towers.size() / 2
-	for owner: int in range(half):
-		check(towers[owner].global_position.is_equal_approx(-towers[owner + half].global_position), "opposing_tower_sites_remain_half_turn_symmetric_%d" % owner)
+	if game.match_config.mode in ["1v1", "2v2", "3v3"]:
+		var half: int = towers.size() / 2
+		for owner: int in range(half):
+			check(towers[owner].global_position.is_equal_approx(-towers[owner + half].global_position), "opposing_tower_sites_remain_half_turn_symmetric_%d" % owner)
 
 func _geometry_and_paths(owner: int) -> void:
 	var tower: BattleBuilding = towers[owner]

@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/three_frontiers_3v3_nature_timber.res" id="1_n4u8y"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/three_frontiers_3v3_nature_foliage.res" id="2_l1ujq"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/three_frontiers_3v3_nature_stone.res" id="3_pplwv"]
+
+[node name="ThreeFrontiers3v3Nature" type="Node3D" unique_id=1833861176]
+
+[node name="Timber" type="MeshInstance3D" parent="." unique_id=1202457019]
+mesh = ExtResource("1_n4u8y")
+
+[node name="Foliage" type="MeshInstance3D" parent="." unique_id=2003433292]
+mesh = ExtResource("2_l1ujq")
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=602425423]
+mesh = ExtResource("3_pplwv")

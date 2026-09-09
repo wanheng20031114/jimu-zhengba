@@ -8,6 +8,7 @@ var online: bool = false
 func _ready() -> void:
 	record_diagnostic("startup", {"engine": Engine.get_version_info().string, "display": DisplayServer.get_name(),
 		"renderer": RenderingServer.get_current_rendering_method(), "audio": AudioServer.get_driver_name(),
+		"shader_uniform_slots": ProjectSettings.get_setting("rendering/limits/global_shader_variables/buffer_size"),
 		"gpu": RenderingServer.get_video_adapter_name() if DisplayServer.get_name() != "headless" else "headless"})
 	if "--network-smoke" in OS.get_cmdline_user_args():
 		get_tree().change_scene_to_file.call_deferred("res://scripts/network/release_probe.tscn")
@@ -17,11 +18,15 @@ func _ready() -> void:
 func start_offline(mode: String) -> void:
 	record_diagnostic("load_match", {"online": false, "mode": mode})
 	online = false
-	config = {"mode": mode, "players": []}
-	for owner in range(4 if mode == "2v2" else 2):
-		config.players.append({"owner_id": owner, "team_id": owner / 2 if mode == "2v2" else owner,
-			"controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
+	config = offline_config(mode)
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+static func offline_config(mode: String) -> Dictionary:
+	var match_data: Dictionary = {"mode": mode, "players": []}
+	for owner: int in int(NetworkProtocol.MODES[mode].slots):
+		match_data.players.append({"owner_id": owner, "team_id": NetworkProtocol.default_alliance(mode, owner),
+			"controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
+	return match_data
 
 func start_online(match_data: Dictionary) -> void:
 	record_diagnostic("load_match", {"online": true, "mode": match_data.mode})

@@ -10,6 +10,7 @@ var owner_id: int
 var alliance_id: int
 var display_name: String
 var controller: String = "human"
+var eliminated: bool = false
 var gold: int = 320
 var military_supply: int = 0
 var reserved_military_supply: int = 0
@@ -80,7 +81,7 @@ func spend(amount: int) -> bool:
 	return true
 
 func public_state() -> Dictionary:
-	return {"owner_id": owner_id, "alliance_id": alliance_id, "name": display_name, "controller": controller}
+	return {"owner_id": owner_id, "alliance_id": alliance_id, "name": display_name, "controller": controller, "eliminated": eliminated}
 
 func private_state() -> Dictionary:
 	return {"gold": gold, "supply": military_supply, "reserved_supply": reserved_military_supply, "farmers": farmers, "reserved_farmers": reserved_farmers,

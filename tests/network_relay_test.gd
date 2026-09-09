@@ -37,7 +37,7 @@ func _run() -> void:
 	var ordinary_packet := Protocol.encode({"op": "snapshot", "match": snapshot_epoch, "to": 1, "sequence": 2, "payload": trusted_payload})
 	_check("trusted snapshot bytes retain wire contract", trusted_packet == ordinary_packet)
 	_check("trusted snapshot passes complete receiver validation", Protocol.decode(trusted_packet).payload.entities[0].hp == 100.0)
-	_check("trusted snapshot rejects invalid envelope", Protocol.encode_snapshot(trusted_payload, 4, 2, snapshot_epoch).is_empty() and Protocol.encode_snapshot(trusted_payload, 1, 0, snapshot_epoch).is_empty() and Protocol.encode_snapshot(trusted_payload, 1, 2, "").is_empty())
+	_check("trusted snapshot rejects invalid envelope", Protocol.encode_snapshot(trusted_payload, Protocol.MAX_PLAYERS, 2, snapshot_epoch).is_empty() and Protocol.encode_snapshot(trusted_payload, 1, 0, snapshot_epoch).is_empty() and Protocol.encode_snapshot(trusted_payload, 1, 2, "").is_empty())
 	_check("trusted snapshot retains uncompressed size cap", Protocol.encode_snapshot({"padding": "x".repeat(Protocol.MAX_PACKET_BYTES)}, 1, 2, snapshot_epoch).is_empty())
 	_check("receiver depth remains untrusted after sender optimization", Protocol.decode(Protocol.encode_snapshot(deep, 1, 2, snapshot_epoch)).is_empty())
 	var many: Array = []
@@ -75,10 +75,10 @@ func _run() -> void:
 	_check("valid fifteen-Hz arrival clusters survive jitter", clustered_ok)
 	var event_state := {"event_buckets": {}}
 	var visual_burst := 0
-	for _index in range(100):
+	for _index in range(160):
 		visual_burst += int(relay._event_allowed(event_state, true, 1000))
-	_check("reliable visual burst bounded at ninety", visual_burst == 90)
-	_check("visual refill retains sixty per second boundary", not relay._event_allowed(event_state, true, 1016) and relay._event_allowed(event_state, true, 1017))
+	_check("reliable visual burst bounded at one hundred fifty", visual_burst == 150)
+	_check("visual refill retains hundred per second boundary", not relay._event_allowed(event_state, true, 1009) and relay._event_allowed(event_state, true, 1010))
 	var critical_burst := 0
 	for _index in range(60):
 		critical_burst += int(relay._event_allowed(event_state, false, 1017))
@@ -138,9 +138,9 @@ func _run() -> void:
 	var visual_message := {"op": "event", "match": clients[0]._match.match_id, "to": 1,
 		"payload": {"kind": "visual_batch", "events": [{"kind": "sound", "sound": "footstep_dirt", "time": 1.0, "at": [0, 0, 0]}]}}
 	var visual_packet := Protocol.encode(visual_message)
-	for _index in range(91):
+	for _index in range(151):
 		relay._receive(host_peer, visual_packet, Protocol.EVENT_CHANNEL, receive_time)
-	_check("ninety-one visual burst only expires excess presentation", relay.dropped_visual_batches == 1 and int(host_state.strikes) == strikes_before)
+	_check("one hundred fifty-one visual burst only expires excess presentation", relay.dropped_visual_batches == 1 and int(host_state.strikes) == strikes_before)
 	for step in range(1, 11):
 		for _index in range(20):
 			relay._receive(host_peer, visual_packet, Protocol.EVENT_CHANNEL, receive_time + step * 100)
@@ -252,7 +252,7 @@ func _run() -> void:
 	clients[2]._send({"op": "command", "match": "wrong-match-epoch", "sequence": 999, "payload": {"kind": "stale"}})
 	await _frames(8)
 	_check("wrong match command never reaches authority", messages.size() == stale_command_count)
-	clients[0].finish_match({"winner_team": 0})
+	clients[0].finish_match({"winner": 0})
 	await _until(func(): return relay.rooms.is_empty())
 	_check("finished room releases capacity", relay.rooms.is_empty())
 	var errors_before_tail := errors.size()
@@ -264,7 +264,7 @@ func _run() -> void:
 	clients[0].create_room("1v1", "房主")
 	await _until(func(): return clients[0].connection_state == "lobby")
 	_check("new room has an independent random match identity", clients[0].room.match_id.length() == 32 and clients[0].room.match_id != old_match)
-	clients[0]._send({"op": "finish", "match": old_match, "result": {"winner_team": 1}})
+	clients[0]._send({"op": "finish", "match": old_match, "result": {"winner": 1}})
 	await _frames(8)
 	_check("old finish cannot close the next room", relay.rooms.size() == 1)
 	clients[0].configure_slot(1, "bot", 1)

@@ -75,7 +75,7 @@ func tick(_delta: float) -> void:
 	for player: PlayerState in game.players:
 		if player.owner_id != game.local_owner_id and player.controller == "human":
 			# Every recipient still gets 15 Hz; offset the two phases so a full
-			# four-human match never serializes three large snapshots in one tick.
+			# six-human match sends at most three large snapshots in one tick.
 			if current_tick % SNAPSHOT_TICKS != (player.owner_id - 1) % SNAPSHOT_TICKS:
 				continue
 			_flush_visual(player.owner_id)
@@ -433,6 +433,10 @@ func _apply_players(states: Array) -> void:
 		var player: PlayerState = game.get_player(int(state.owner_id))
 		player.display_name = state.name
 		player.controller = state.controller
+		var newly_eliminated: bool = bool(state.eliminated) and not player.eliminated
+		player.eliminated = bool(state.eliminated)
+		if newly_eliminated and player.owner_id == game.local_owner_id:
+			game.notify_owner(player.owner_id, "你的阵营已出局 · 比赛继续，可返回大厅")
 		if player.owner_id != game.local_owner_id:
 			continue
 		var own: Dictionary = state.private
@@ -518,11 +522,13 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			return false
 	var owners: Dictionary = {}
 	for state: Variant in snapshot.players:
-		if not state is Dictionary or not NetworkProtocol.integer(state.get("owner_id"), 0, 3) or owners.has(int(state.owner_id)):
+		if not state is Dictionary or not NetworkProtocol.integer(state.get("owner_id"), 0, game.players.size() - 1) or owners.has(int(state.owner_id)):
 			return false
 		var owner := int(state.owner_id)
 		owners[owner] = true
-		if owner >= game.players.size() or not state.get("name") is String or not state.get("controller") in ["human", "bot"]:
+		if owner >= game.players.size() or not state.get("name") is String or not state.get("controller") in ["human", "bot"] or not state.get("eliminated") is bool:
+			return false
+		if not NetworkProtocol.integer(state.get("alliance_id"), 0, NetworkProtocol.MAX_PLAYERS - 1) or int(state.alliance_id) != game.get_player(owner).alliance_id:
 			return false
 		if owner == game.local_owner_id:
 			if not _valid_private(state.get("private")):

@@ -47,7 +47,7 @@ func initialize(source: Node3D, target: Node3D, payload: DamagePayload, kind: St
 		blast_shape.radius = _blast_radius + 0.25
 		_blast_query = PhysicsShapeQueryParameters3D.new()
 		_blast_query.shape = blast_shape
-		_blast_query.collision_mask = (8 | 64) if payload.alliance_id == 0 else (16 | 32)
+		_blast_query.collision_mask = CombatLayers.hostile_entities(payload.alliance_id)
 	_start = source.get_projectile_origin()
 	_end = target.global_position + Vector3.UP * (2.0 if target.is_in_group("buildings") else 1.0)
 	var direction: Vector3 = (_end - _start).normalized()
