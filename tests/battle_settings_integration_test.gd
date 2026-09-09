@@ -94,17 +94,27 @@ func _run() -> void:
 	await process_frame
 	check(settings.is_open() and paused, "native SettingsButton opens preferences over paused battle")
 	await _capture("settings_menu")
-	await _key(KEY_Q)
+	settings.menu.begin_rebind("rts_select_army")
 	await _key(KEY_F5)
-	check(paused and settings.is_open() and game.command_bus.pending.is_empty() and game.gold == initial_gold, "settings modal blocks production and pause input")
+	check(paused and settings.is_open() and settings.menu.rebinding_action == "rts_select_army", "binding capture owns F5 and shows its conflict without resuming the match")
+	await _key(KEY_ESCAPE)
+	check(paused and settings.is_open() and settings.menu.rebinding_action.is_empty(), "Esc cancels the capture before leaving settings")
+	await _key(KEY_Q)
+	check(paused and settings.is_open() and game.command_bus.pending.is_empty() and game.gold == initial_gold, "settings modal blocks production input")
 	await _key(KEY_ESCAPE)
 	check(not settings.is_open() and paused and hud.get_node("%PauseOverlay").visible, "Esc closes settings without unpausing or closing underlying battle menu")
 	await _key(KEY_F5)
 	check(not paused and not hud.get_node("%PauseOverlay").visible and not audio._world_paused, "paused HUD F5 path resumes exactly once")
 	await _key(KEY_P)
-	check(paused, "P alias pauses")
-	await _key(KEY_P)
-	check(not paused, "P alias resumes through HUD")
+	check(not paused, "old P alias no longer pauses")
+	await _key(KEY_ESCAPE)
+	check(not paused and not hud.get_node("%PauseOverlay").visible, "Esc on an empty production queue does not open the menu")
+	game.command_bus.tick()
+	await _key(KEY_F5)
+	_click(hud.get_node("%SettingsButton"))
+	await process_frame
+	await _key(KEY_F5)
+	check(not settings.is_open() and not paused and not hud.get_node("%PauseOverlay").visible, "F5 resumes from the settings screen exactly once")
 	var preferences: Dictionary = settings.snapshot()
 	preferences.bindings.rts_pause = [KEY_F8]
 	settings.apply_preferences(preferences)
@@ -116,9 +126,9 @@ func _run() -> void:
 	check(paused, "old F5 cannot resume a paused game after rebinding")
 	await _key(KEY_F8)
 	check(not paused, "custom pause key resumes through the HUD path")
-	preferences.bindings.rts_pause = [KEY_F5, KEY_P]
+	preferences.bindings.rts_pause = [KEY_F5]
 	settings.apply_preferences(preferences)
-	await _key(KEY_ESCAPE)
+	await _key(KEY_F5)
 	_click(hud.get_node("%SettingsButton"))
 	await process_frame
 	var child_bus_gains: Dictionary = {}
@@ -148,20 +158,24 @@ func _run() -> void:
 	# are exercised with online ownership flags and real received-event application.
 	game.online = true
 	game.is_authority = false
-	await _key(KEY_ESCAPE)
-	check(game._local_menu and not paused, "online Esc opens local menu without pausing simulation")
+	await _key(KEY_F5)
+	check(game._local_menu and not paused, "client F5 opens local menu without pausing simulation")
 	_click(hud.get_node("%SettingsButton"))
 	await process_frame
 	await _key(KEY_Q)
-	await _key(KEY_F5)
 	check(settings.is_open() and not paused and game.command_bus.pending.is_empty(), "online settings prevents production and global pause input")
 	await _key(KEY_ESCAPE)
 	check(not settings.is_open() and game._local_menu and not paused, "online settings Esc preserves local menu and running match")
 	await _key(KEY_ESCAPE)
-	check(not game._local_menu and not paused, "second online Esc returns to battle")
+	check(game._local_menu and not paused, "Esc does not toggle the battle menu")
+	await _key(KEY_F5)
+	check(not game._local_menu and not paused, "F5 closes the client's local menu")
 	await _key(KEY_F5)
 	check(not paused and game._local_menu and not game._network_paused, "ordinary client F5 cannot pause the match")
-	await _key(KEY_ESCAPE)
+	_click(hud.get_node("%SettingsButton"))
+	await process_frame
+	await _key(KEY_F5)
+	check(not settings.is_open() and not game._local_menu and not paused, "client settings F5 returns to the running battle")
 	game._on_network_event({"kind": "pause", "paused": true})
 	check(paused and game._network_paused and audio._world_paused, "client applies host pause event to simulation and world audio")
 	await _key(KEY_F5)
@@ -169,14 +183,14 @@ func _run() -> void:
 	game._on_network_event({"kind": "pause", "paused": false})
 	check(not paused and not game._network_paused and not audio._world_paused, "client applies host resume event")
 	if game._local_menu:
-		await _key(KEY_ESCAPE)
+		await _key(KEY_F5)
 	game.is_authority = true
 	await _key(KEY_F5)
 	check(paused and game._network_paused and audio._world_paused, "host F5 enters shared-pause authority path")
 	await _key(KEY_F5)
 	check(not paused and not game._network_paused and not audio._world_paused, "host F5 resumes shared pause through HUD")
 	game.online = false
-	await _key(KEY_ESCAPE)
+	await _key(KEY_F5)
 	var game_reference: WeakRef = weakref(game)
 	_click(hud.get_node("%MenuButton"))
 	check(game._closing and game.finished and audio._stopping and game.get_node("IncomeTimer").is_stopped(), "native MenuButton enters prepare_shutdown before changing scenes")

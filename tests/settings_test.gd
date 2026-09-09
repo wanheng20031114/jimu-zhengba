@@ -36,11 +36,16 @@ func run() -> void:
 	check(not settings.binding_error("rts_select_army", KEY_Q, settings.bindings).is_empty(), "duplicate keys report the conflicting action")
 	check(not settings.binding_error("rts_select_army", KEY_ESCAPE, settings.bindings).is_empty(), "Esc cannot be stolen")
 	check(not settings.binding_error("rts_select_army", KEY_F12, settings.bindings).is_empty(), "F12 cannot be stolen")
+	check(settings.binding_error("rts_cancel", KEY_ESCAPE, settings.bindings).is_empty(), "Esc is allowed for the cancellation action")
+	check(settings.resolve_key(key_event(KEY_P)) == KEY_NONE, "pause defaults to F5 without the previous P alias")
 	settings.open_menu()
 	check(settings.is_open() and not paused, "opening settings does not pause a match")
 	settings.menu.begin_rebind("rts_select_army")
 	settings.menu._input(key_event(KEY_ESCAPE, false))
 	check(settings.is_open() and settings.menu.rebinding_action.is_empty(), "Esc cancels key capture before closing the menu")
+	settings.menu.begin_rebind("rts_cancel")
+	settings.menu._input(key_event(KEY_ESCAPE, false))
+	check(settings.is_open() and settings.menu.draft.bindings.rts_cancel == [KEY_ESCAPE] and settings.menu.rebinding_action.is_empty(), "cancel action can be rebound to its native Esc key")
 	settings.menu.begin_rebind("rts_select_army")
 	settings.menu._input(key_event(KEY_J, false))
 	check(settings.menu.draft.bindings.rts_select_army == [KEY_J], "native key capture edits the pending binding")
@@ -64,6 +69,18 @@ func run() -> void:
 	root.add_child(restored)
 	check(restored.bindings.rts_select_army == [KEY_J] and restored.muted and restored.fps_limit == 90, "a fresh native settings scene loads the saved configuration")
 	restored.queue_free()
+	await process_frame
+	# Simulate the previous complete preferences file: keep custom controls and
+	# audio, add the new cancel action, and migrate only the old pause defaults.
+	saved.set_value("hotkeys", "rts_pause", [KEY_F5, KEY_P])
+	saved.erase_section_key("hotkeys", "rts_cancel")
+	check(saved.save(settings.settings_path) == OK, "legacy preference fixture saved in the isolated test path")
+	var migrated: GameSettings = load("res://scenes/settings_menu.tscn").instantiate()
+	migrated.settings_path = settings.settings_path
+	root.add_child(migrated)
+	check(migrated.bindings.rts_pause == [KEY_F5] and migrated.bindings.rts_cancel == [KEY_ESCAPE], "old F5/P default migrates while adding Esc cancellation")
+	check(migrated.bindings.rts_select_army == [KEY_J] and migrated.muted and migrated.fps_limit == 90, "migration preserves unrelated player preferences and custom hotkeys")
+	migrated.queue_free()
 	await process_frame
 	var before := settings.snapshot()
 	var candidate := before.duplicate(true)

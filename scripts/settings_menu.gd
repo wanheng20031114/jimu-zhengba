@@ -57,7 +57,7 @@ func refresh(values: Dictionary) -> void:
 	%ZoomSpeed.set_value_no_signal(draft.zoom_speed)
 	_update_labels()
 	_update_hotkeys()
-	%Status.text = ""
+	%Status.text = "Esc 返回上层 · 对局中 %s 暂停 / 继续" % settings.hotkey_text("rts_pause")
 	_refreshing = false
 
 func _update_labels() -> void:
@@ -98,19 +98,24 @@ func show_page(page: String) -> void:
 func begin_rebind(action: String) -> void:
 	rebinding_action = action
 	_update_hotkeys()
-	set_status("请按下「%s」的新按键；Esc 取消。" % GameSettings.ACTIONS[action][0])
+	set_status("请按下「%s」的新按键；%s" % [GameSettings.ACTIONS[action][0], "Esc 可绑定取消，点击分类可退出捕获。" if action == "rts_cancel" else "Esc 取消绑定。"])
 
 func _input(event: InputEvent) -> void:
 	if not visible: return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var pressed_key: Key = event.physical_keycode if event.physical_keycode != KEY_NONE else event.keycode
+		if rebinding_action.is_empty() and settings.resolve_key(event) == KEY_F5:
+			settings.close_menu()
+			get_viewport().set_input_as_handled()
+			settings.pause_requested.emit()
+			return
 		if %DisplayConfirm.visible:
 			if pressed_key == KEY_ESCAPE:
 				settings.revert_display()
 				get_viewport().set_input_as_handled()
 			return
 		if not rebinding_action.is_empty():
-			if pressed_key == KEY_ESCAPE:
+			if pressed_key == KEY_ESCAPE and rebinding_action != "rts_cancel":
 				rebinding_action = ""
 				set_status("已取消按键绑定。")
 			else:

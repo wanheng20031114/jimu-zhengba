@@ -6,9 +6,9 @@
 script = ExtResource("1_definition")
 id = &"archer"
 name = "弓箭手"
-description = "远程齐射克制骑兵，需要保护以避免被近战突袭。"
+description = "远程齐射对骑兵有额外伤害，需要前排保护，避免近战突袭。"
 hp = 60
-damage = 14
+damage = 12
 melee_armor = 0
 ranged_armor = 0
 damage_channel = 1

@@ -1,6 +1,6 @@
 {
-  "build": "0.7.0",
-  "protocol": 3,
+  "build": "0.7.1",
+  "protocol": 4,
   "files": {
     "data/buildings/academy.tres": "f868bc59ee251b7885d2499e81db0b2135c752b063e841ec3a7d97003e69f45e",
     "data/buildings/barracks.tres": "4a13370285e021173dd8c8325b3c8a239a9c9f974f9682f2827ef71eccfd3c83",
@@ -13,11 +13,11 @@
     "data/economy.tres": "d0ab97480feb0b304402566e7e75a3fc4756b4f1bc3ac955b63ed7e1661b4d99",
     "data/maps/amber_crossroads_1v1.tres": "f526bbbb08c51c221933227bc642676eec2d137f13f41ea51afd5968775f1e13",
     "data/maps/twin_valleys_2v2.tres": "501ef02a0d2631ee77764fff317876fa1edea7a81aa06d7834a8dcc954bfdb87",
-    "data/units/archer.tres": "d24ced99b613137c8e29a055132d4c2c9cfd5e6d55d14448c6a7d369a1d2fb29",
+    "data/units/archer.tres": "feb9668c99d2c0252b7433d9032b047a607dc567b321f7abc3efa0482cd201cd",
     "data/units/cannon.tres": "9646a55af87e11b2b268574854a4ca2c8eb6a02f07a8185a76dbc24da4e5954f",
     "data/units/catapult.tres": "9febb3e1aa61b5c9d6130eef84307a501c994e4c0e166860a98980de90e70682",
     "data/units/farmer.tres": "d33bcdfa6b7fb71aa253a333eaf80068750b6f61df5a3130bb1386858782dc7b",
-    "data/units/knight.tres": "637fe5e263bebb235b74ccfc6bbfda3896ba685cf4a9e5f7bdddb730d0f3ef9b",
+    "data/units/knight.tres": "6251c28b581041266bf7abe5c573abdf8221624856b00d043b7e9b094d53e180",
     "data/units/swordsman.tres": "4651a992f22ef18a0b5c43727ad9e45f2afaff6f5a58673c1828c1ef66509f1e",
     "data/upgrades/attack_1.tres": "b1135a7f5c80d1a65ab4df8501adc2759c7dee71afccba6d13cbeeebabca884c",
     "data/upgrades/attack_2.tres": "79f08f587246485cf3326364db7ffdd81fe69c2156d0796582bb07c5926f4e6a",

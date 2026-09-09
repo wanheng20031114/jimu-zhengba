@@ -100,6 +100,7 @@ func _ready() -> void:
 	_fog_ready = true
 	$FogOfWar.apply_visibility(local_owner_id)
 	_match_ready = true
+	settings.pause_requested.connect(handle_pause_action)
 	if online:
 		replication.configure(self, Session.relay)
 		replication.visual_event_due.connect(_play_network_visual)
@@ -159,7 +160,6 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	if online and not is_authority:
 		replication.render(delta)
-	$RallyMarker.visible = is_instance_valid(headquarters) and headquarters.alive and headquarters in selection
 	if _fog_ready:
 		$FogOfWar.apply_visibility(local_owner_id)
 	_ui_accumulator += delta
@@ -187,7 +187,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var key: Key = settings.resolve_key(event)
 		if key == KEY_F5 and not finished:
-			request_match_pause() if online else toggle_pause()
+			handle_pause_action()
 			get_viewport().set_input_as_handled()
 			return
 		if event.is_action_pressed("debug_gold"):
@@ -207,15 +207,15 @@ func _input(event: InputEvent) -> void:
 			settings.toggle_fullscreen()
 			get_viewport().set_input_as_handled()
 			return
-		if event.physical_keycode == KEY_ESCAPE:
+		if key == KEY_ESCAPE:
 			if build_mode:
 				set_build_mode(false)
 			elif attack_mode:
 				set_attack_mode(false)
 			elif hud.help_visible():
 				hud.toggle_help()
-			else:
-				toggle_pause()
+			elif not get_tree().paused and not _local_menu and not finished:
+				cancel_selected_queue()
 			get_viewport().set_input_as_handled()
 			return
 	if get_tree().paused or finished or _local_menu:
@@ -294,7 +294,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_V: set_build_mode(not build_mode)
 			KEY_DELETE: destroy_selected()
 			KEY_PERIOD: select_idle_worker()
-			KEY_P: request_match_pause() if online else toggle_pause()
 			KEY_M:
 				toggle_sound()
 
@@ -525,7 +524,6 @@ func destroy_selected() -> void:
 func command_move(destination: Vector3, assault: bool = false, queued: bool = false) -> void:
 	if not own_selected_buildings().is_empty():
 		submit_local({"kind": "rally", "buildings": selected_building_ids(), "at": vector_data(clamp_to_map(destination))})
-		$RallyMarker.position = destination
 	if not own_selected_units().is_empty():
 		submit_local({"kind": "move", "units": selected_ids(), "at": vector_data(clamp_to_map(destination)), "attack_move": assault, "queued": queued})
 	spawn_effect(destination, "attack" if assault else "move", Color("ee9e57") if assault else Color("91d0ee"))
@@ -766,6 +764,33 @@ func enemy_count() -> int:
 		if unit.alive and unit.alliance_id != get_player(local_owner_id).alliance_id and can_see_entity(local_owner_id, unit):
 			count += 1
 	return count
+
+func cancel_selected_queue() -> void:
+	var active := selected_production()
+	if active == null:
+		return
+	var ids: Array = []
+	for building: BattleBuilding in own_selected_buildings():
+		if building.building_type == active.building_type and building.is_constructed:
+			ids.append(building.entity_id)
+	if not ids.is_empty():
+		submit_local({"kind": "cancel_queue", "buildings": ids})
+
+func handle_pause_action() -> void:
+	if finished:
+		return
+	if settings.is_open():
+		settings.close_menu()
+	dragging = false
+	camera_rig.dragging = false
+	overlay.box_visible = false
+	if online:
+		request_match_pause()
+		if is_authority:
+			_local_menu = get_tree().paused
+			hud.show_pause(_local_menu)
+	else:
+		toggle_pause()
 
 func toggle_pause() -> void:
 	if finished:

@@ -207,6 +207,21 @@ func host_steps() -> void:
 		check(building.production.training.size() == 2 and game.get_player(target_owner).reserved_military_supply == 2, "host_reserves_two_training_population_" + str(target_owner))
 		check(academy.production.research_queue.size() == 2, "host_research_queue_from_remote_commands_" + str(target_owner))
 		check(game.get_player(target_owner).military_supply == 1, "military_training_is_not_instant_" + str(target_owner))
+	# Keep a real paid host queue present so owner 1's teammate-cancellation
+	# probe would have an observable effect if authority ownership checks failed.
+	for index in 2:
+		game.submit_local({"kind": "recruit", "target": int(bases["0"]), "unit_type": "farmer"})
+	var host_base: BattleBuilding = game.entities_by_id[int(bases["0"])]
+	check(await until(func(): return host_base.production.training.size() == 2, 2.0), "host_has_paid_training_for_foreign_cancel_probe")
+	publish("cancel_queues")
+	check(await until(func(): return all_phase("cancel_queues"), 10.0), "remote_tail_cancellations_and_replacements_complete")
+	check(host_base.production.training.size() == 2, "guest_cannot_cancel_teammate_host_training")
+	for target_owner in range(1, 4):
+		var building: BattleBuilding = game.entities_by_id[int(barracks[str(target_owner)])]
+		var academy: BattleBuilding = game.entities_by_id[int(academies[str(target_owner)])]
+		check(int(_command_marks.get("foreign_cancel_%d" % target_owner, 0)) == 1, "foreign_cancel_reached_authority_validator_" + str(target_owner))
+		check(building.production.training.size() == 2 and int(building.production.training[0].job_id) == 1 and int(building.production.training[1].job_id) == 3, "only_owned_training_tail_replaced_" + str(target_owner))
+		check(academy.production.research_queue.size() == 2 and int(academy.production.research_queue[0].job_id) == 1 and int(academy.production.research_queue[1].job_id) == 3, "only_owned_research_tail_replaced_" + str(target_owner))
 	check(await until(func(): return [1, 2, 3].all(func(id): return game.get_player(id).military_supply == 3 and game.get_player(id).reserved_military_supply == 0), 16.0), "two_sequential_six_second_training_jobs_really_complete")
 	if _steady_seconds > 0:
 		publish("steady")
@@ -368,6 +383,26 @@ func client_steps() -> void:
 				phase = stage
 			"queues_done":
 				check(await until(func(): return game.get_player(owner).attack_level == 1 and game.get_player(owner).defense_level == 1 and game.get_player(owner).reserved_military_supply == 0 and game.entities_by_id[int(directive.academies[str(owner)])].production.research_queue.is_empty(), 10.0), "completed_research_and_reservations_replicate")
+				phase = stage
+			"cancel_queues":
+				var barracks_id: int = int(directive.barracks[str(owner)])
+				var academy_id: int = int(directive.academies[str(owner)])
+				var ally_building: int = int(directive.bases["0"]) if owner == 1 else int(directive.barracks["3" if owner == 2 else "2"])
+				game.submit_local({"kind": "cancel_queue", "buildings": [ally_building], "owner": 0, "test_marker": "foreign_cancel_%d" % owner})
+				var before_gold: int = game.get_player(owner).gold
+				game.submit_local({"kind": "cancel_queue", "buildings": [barracks_id]})
+				check(await until(func(): return game.entities_by_id[barracks_id].production.training.size() == 1 and game.get_player(owner).reserved_military_supply == 1, 3.0), "cancel_training_tail_releases_reserved_population")
+				# Natural income continues; the refund must arrive in addition to
+				# the last observed balance, rather than assuming time is stopped.
+				check(game.get_player(owner).gold >= before_gold + BalanceCatalog.unit("swordsman").cost, "cancel_training_refund_arrives_over_transport")
+				game.submit_local({"kind": "recruit", "buildings": [barracks_id], "unit_type": "swordsman"})
+				check(await until(func(): return game.entities_by_id[barracks_id].production.training.size() == 2 and game.get_player(owner).reserved_military_supply == 2, 3.0), "replacement_training_reserves_population_again")
+				before_gold = game.get_player(owner).gold
+				game.submit_local({"kind": "cancel_queue", "buildings": [academy_id]})
+				check(await until(func(): return game.entities_by_id[academy_id].production.research_queue.size() == 1, 3.0), "cancel_research_removes_only_tail")
+				check(game.get_player(owner).gold >= before_gold + BalanceCatalog.upgrade("defense_1").cost, "cancel_research_refund_arrives_over_transport")
+				game.submit_local({"kind": "research", "buildings": [academy_id], "upgrade": "defense_1"})
+				check(await until(func(): return game.entities_by_id[academy_id].production.research_queue.size() == 2, 3.0), "replacement_research_preserves_running_head")
 				phase = stage
 			"guest_drop":
 				if owner == 3:

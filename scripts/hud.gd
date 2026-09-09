@@ -63,8 +63,8 @@ func _ready() -> void:
 	%TowerPortrait.texture = portraits.defense_tower
 	%HelpButton.pressed.connect(toggle_help)
 	%CloseHelp.pressed.connect(toggle_help)
-	%PauseButton.pressed.connect(func(): game.toggle_pause())
-	%ResumeButton.pressed.connect(func(): game.toggle_pause())
+	%PauseButton.pressed.connect(func(): game.handle_pause_action())
+	%ResumeButton.pressed.connect(func(): game.handle_pause_action())
 	%RestartButton.pressed.connect(func(): game.restart())
 	%SettingsButton.pressed.connect(func(): game.open_settings())
 	%MenuButton.pressed.connect(func(): game.return_to_menu())
@@ -107,7 +107,8 @@ func refresh_hotkey_labels() -> void:
 	%CancelSiteButton.text = "取消施工  [" + game.settings.hotkey_text("rts_destroy") + "]"
 	%IdleWorkerButton.text = "空闲农民  [" + game.settings.hotkey_text("rts_idle_worker") + "]"
 	%HelpButton.tooltip_text = "战地手册  [" + game.settings.hotkey_text("rts_help") + "]"
-	%PauseButton.tooltip_text = "战场菜单 / 设置  [Esc] · 暂停  [" + game.settings.hotkey_text("rts_pause") + "]"
+	%PauseButton.tooltip_text = "暂停 / 战场菜单 / 设置  [" + game.settings.hotkey_text("rts_pause") + "]"
+	%ResumeButton.text = ("返回战场" if game.online and not game.is_authority else "继续战斗") + "  [" + game.settings.hotkey_text("rts_pause") + "]"
 	%SoundMute.tooltip_text = "静音  [" + game.settings.hotkey_text("rts_mute") + "]"
 	$BottomHint.text = "框选部队    右键移动 / 攻击    中键拖动视角    滚轮缩放    %s 操作说明" % game.settings.hotkey_text("rts_help")
 	$Groups/GroupHint.text = "Ctrl + 编队键  建队    Shift + 编队键  追加"
@@ -125,7 +126,7 @@ func refresh_hotkey_labels() -> void:
 		"窗口边缘 / 中键 / 镜头方向键", "滚轮 / " + game.settings.hotkey_text("rts_focus"),
 		"%s / %s / %s" % [game.settings.hotkey_text("rts_select_base"), game.settings.hotkey_text("rts_select_army"), game.settings.hotkey_text("rts_idle_worker")],
 		" / ".join(slot_keys), game.settings.hotkey_text("rts_build_tower"), game.settings.hotkey_text("rts_destroy"),
-		"Esc / " + game.settings.hotkey_text("rts_pause"), "训练与研究队列 / 设置",
+		game.settings.hotkey_text("rts_cancel") + " / " + game.settings.hotkey_text("rts_pause"), "训练与研究队列 / 设置",
 		"F12 / %s / %s / %s" % [game.settings.hotkey_text("rts_photo"), game.settings.hotkey_text("rts_fullscreen"), game.settings.hotkey_text("rts_mute")],
 	]
 	$HelpOverlay/Paper/Keys.text = "\n".join(help_keys)
@@ -147,11 +148,8 @@ func _input(event: InputEvent) -> void:
 		return
 	if get_tree().paused and event is InputEventKey and event.pressed and not event.echo:
 		var key: Key = game.settings.resolve_key(event)
-		if event.physical_keycode == KEY_ESCAPE or key == KEY_F5:
-			if game.online and key == KEY_F5:
-				game.request_match_pause()
-			else:
-				game.toggle_pause()
+		if key == KEY_F5:
+			game.handle_pause_action()
 			get_viewport().set_input_as_handled()
 		elif key == KEY_M:
 			game.toggle_sound()
@@ -390,7 +388,8 @@ func _refresh_queue(_building: BattleBuilding) -> void:
 	%QueueStrip.visible = not items.is_empty()
 	$CommandBar/Recruitment/RecruitTitle.visible = items.is_empty()
 	%RecruitHint.visible = items.is_empty()
-	%QueueStrip.get_node("Caption").text = "队列 %d 项 · 点击取消" % items.size()
+	%QueueStrip.get_node("Caption").text = "%d项 · %s取消" % [items.size(), game.settings.hotkey_text("rts_cancel")]
+	%QueueStrip.tooltip_text = "点击格子取消指定项目；%s 取消当前建筑类别中最长队列的末项，每次一项。" % game.settings.hotkey_text("rts_cancel")
 	%QueuePrevious.visible = _queue_page_count > 1
 	%QueueNext.visible = _queue_page_count > 1
 	%QueuePage.visible = _queue_page_count > 1
@@ -462,7 +461,7 @@ func show_pause(value: bool) -> void:
 	$PauseOverlay/Paper/Eyebrow.text = ("全局已暂停 · 房主按 %s 继续" % game.settings.hotkey_text("rts_pause") if get_tree().paused else "联机菜单 · 打开菜单不会暂停对局") if game.online else "ASHEN CROWN"
 	%RestartButton.text = "返回大厅" if game.online else "重新开始"
 	%RestartButton.visible = not game.online
-	%ResumeButton.text = "返回战场  [Esc]" if game.online else "继续战斗  [Esc / %s]" % game.settings.key_label(KEY_F5)
+	%ResumeButton.text = ("返回战场" if game.online and not game.is_authority else "继续战斗") + "  [" + game.settings.hotkey_text("rts_pause") + "]"
 	%PauseOverlay.visible = value
 
 func show_result(victory: bool, duration: float, defeated: int) -> void:

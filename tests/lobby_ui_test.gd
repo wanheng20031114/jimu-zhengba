@@ -119,16 +119,22 @@ func _run() -> void:
 	if visual:
 		await create_timer(0.75).timeout
 	check(lobby.mode == "1v1", "default mode is the immediate one-versus-bot game")
-	check(Engine.max_fps == 60, "lobby limits static presentation rendering")
+	check(control("Version").text.begins_with("v" + NetworkProtocol.BUILD_ID), "lobby version follows the actual network build")
+	check(Engine.max_fps == previous_limit, "lobby retains the player chosen frame limit")
 	check(not control("OnlinePanel").visible, "initial canvas gives the local match one clear primary action")
 	check(control("Slots").get_child_count() == 4, "room owns exactly four saved native slot rows")
 	await capture("lobby-home")
 	await click(control("Mode2v2"))
 	check(lobby.mode == "2v2" and control("MapTitle").text == "双谷争锋", "native mode input uses the authoritative map resource title")
+	check(control("OnlineMode2v2").button_pressed, "main mode selection also updates the multiplayer scale selector")
 	await click(control("Multiplayer"))
 	check(control("OnlinePanel").visible and control("Setup").visible, "native multiplayer click reveals setup")
 	if visual:
 		await create_timer(0.25).timeout
+	await click(control("OnlineMode1v1"))
+	check(lobby.mode == "1v1" and control("Mode1v1").button_pressed, "multiplayer panel can choose 1v1 without returning to main menu")
+	await click(control("OnlineMode2v2"))
+	check(lobby.mode == "2v2" and control("CreateRoom").text.contains("2v2"), "multiplayer panel can explicitly create a four seat room")
 	control("ServerAddress").text = ""
 	await click(control("CreateRoom"))
 	check(fake.relay.calls.is_empty() and not control("Message").text.is_empty(), "missing address is actionable and does not start a connection")
@@ -152,15 +158,36 @@ func _run() -> void:
 	check(control("InviteCode").text == "ABCD2345", "room invitation is shown for copying")
 	check(control("StartMatch").disabled and control("RoomHint").text.contains("空位"), "host cannot launch a match with an open seat")
 	var row: HBoxContainer = control("Slots").get_child(3)
-	var kind: OptionButton = row.get_node("Kind")
-	kind.select(1)
-	kind.item_selected.emit(1)
-	check(fake.relay.calls[-1] == {"op": "slot", "owner": 3, "kind": "bot", "team": 1}, "host bot selector preserves the slot alliance")
-	check(kind.is_item_disabled(2), "host cannot synthesize an occupied human player")
+	var kind: Button = row.get_node("Kind")
+	check(kind.text == "添加电脑" and not kind.disabled, "empty seat has a directly visible add bot action")
+	await click(kind)
+	check(fake.relay.calls[-1] == {"op": "slot", "owner": 3, "kind": "bot", "team": 1}, "host add bot preserves the slot alliance")
+	var pending_count: int = fake.relay.calls.size()
+	await click(kind)
+	check(fake.relay.calls.size() == pending_count and kind.disabled, "pending add bot prevents duplicate native input")
+	check(control("Slots").get_child(0).get_node("Kind").disabled, "occupied human seat cannot become a bot")
+	state.slots[3].kind = "bot"
+	state.slots[3].ready = true
+	await publish_room(state)
+	check(kind.text == "移除电脑" and not kind.disabled, "server confirmed bot has a direct remove action")
+	await click(kind)
+	check(fake.relay.calls[-1] == {"op": "slot", "owner": 3, "kind": "open", "team": 1}, "remove bot reopens the same seat")
+	state.slots[3].kind = "open"
+	state.slots[3].ready = false
+	await publish_room(state)
+	await click(control("FillBots"))
+	check(fake.relay.calls[-1] == {"op": "slot", "owner": 3, "kind": "bot", "team": 1}, "fill bots only touches open seats and retains both humans")
+	state.slots[3].kind = "bot"
+	state.slots[3].ready = true
+	await publish_room(state)
+	check(control("FillBots").disabled and lobby._pending_slots.is_empty(), "acknowledged complete room has no pending or refill action")
+	check(control("TeamSummary").text.contains("1、2") and control("TeamSummary").text.contains("3、4"), "default two versus two alliances are explicit in the room")
 	var team: OptionButton = control("Slots").get_child(1).get_node("Team")
 	team.select(1)
 	team.item_selected.emit(1)
 	check(fake.relay.calls[-1] == {"op": "slot", "owner": 1, "kind": "bot", "team": 1}, "host alliance selector preserves the slot controller")
+	state.slots[1].team_id = 1
+	await publish_room(state)
 	state = room_state()
 	state.slots[2].ready = false
 	await publish_room(state)
@@ -177,6 +204,7 @@ func _run() -> void:
 	check(fake.relay.calls[-1].op == "start", "native start forwards one authoritative room request")
 	await publish_room(state, 2)
 	check(control("Ready").visible and not control("StartMatch").visible, "guest receives readiness controls rather than host actions")
+	check(not control("FillBots").visible, "guest cannot invoke host bulk bot controls")
 	var guest_readonly: bool = true
 	for slot_row: HBoxContainer in control("Slots").get_children():
 		guest_readonly = guest_readonly and slot_row.get_node("Kind").disabled and slot_row.get_node("Team").disabled

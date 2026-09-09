@@ -10,7 +10,7 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/AshenCrown-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
-当前版本 **0.7.0**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.0.md)。
+当前版本 **0.7.1**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.1.md)。
 
 ## 对局
 
@@ -36,14 +36,15 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 | 销毁所选己方单位或建筑 | Delete；完工资产不退款，工地返还未完成部分 |
 | 视角移动、缩放、定位所选对象 | 窗口边缘/中键/方向键、滚轮、空格；窗口仍有焦点时，鼠标移出窗口仍可边缘移动 |
 | 大本营、全军、空闲农民 | B、F2（或 G）、句点 |
-| 操作帮助、菜单与设置 | F1、Esc；主菜单和战场菜单都有“设置” |
-| 暂停或继续 | F5（或 P）；联机仅房主生效，Esc 联机菜单不暂停比赛 |
+| 操作帮助、菜单与设置 | F1、F5；主菜单和战场菜单都有“设置” |
+| 取消当前指派或所选生产类别的队尾项目 | Esc；空队列不暂停 |
+| 暂停或继续 | F5；联机全局暂停仅房主生效，普通客户端只打开本地菜单 |
 | 全屏、隐藏界面、静音 | F11、F10、M |
 | 单机调试金币 | F12，+100 |
 
 快捷键依据当前面板从左向右排列：大本营 Q 农民；兵营 Q 剑士、W 弓手、E 骑士；军工厂 Q 投石车、W 加农炮。农民建造与学院研究同样从 Q 开始；取消施工和拆除操作不会占用生产快捷键。多选同类生产建筑时，订单自动交给可用且队列时间最短的建筑。
 
-设置包含窗口/无边框全屏/独占全屏、分辨率、垂直同步、帧率上限、音量与静音、边缘移动开关、镜头与缩放速度，以及34项可重新绑定的操作。显示模式或分辨率变更需在15秒内保留，否则自动恢复；界面按钮、编队与帮助提示同步显示实际热键。设置保存在本机，重新启动后保留。
+设置包含窗口/无边框全屏/独占全屏、分辨率、垂直同步、帧率上限、音量与静音、边缘移动开关、镜头与缩放速度，以及35项可重新绑定的操作。显示模式或分辨率变更需在15秒内保留，否则自动恢复；界面按钮、编队与帮助提示同步显示实际热键。设置保存在本机，重新启动后保留。
 
 ## 联机与工程
 
@@ -71,6 +72,6 @@ python tests/network_game_live_runner.py local
 powershell -ExecutionPolicy Bypass -File tools/profile_skirmish.ps1
 ```
 
-实现与验收记录：[生产与科技队列](docs/production-queues.md)、[遭遇战实施历史](docs/skirmish-implementation.md)、[0.7性能实测](docs/performance-0.7.0.md)、[联网验收](docs/network-validation.md)、[发布包完整对局](docs/release-match-validation.md)。本轮标准混编2v2显示帧P95为15.81ms、P99为24.23ms；280人密集混战P95为31.92ms，仍不能锁定60FPS。完整采样条件与限制在性能报告中，另保留[0.6历史对照](docs/performance-0.6.0.md)。
+实现与验收记录：[生产与科技队列](docs/production-queues.md)、[遭遇战实施历史](docs/skirmish-implementation.md)、[0.7性能实测](docs/performance-0.7.0.md)、[联网验收](docs/network-validation.md)、[发布包完整对局](docs/release-match-validation.md)。0.7.0版本的标准混编2v2显示帧P95为15.81ms、P99为24.23ms；280人密集混战P95为31.92ms，仍不能锁定60FPS。完整采样条件与限制在性能报告中，另保留[0.6历史对照](docs/performance-0.6.0.md)。
 
 建模脚本为 `tools/build_units.py`、`tools/build_environment.py`、`tools/build_skirmish_maps.py`；离线建模需要 Python、NumPy、SciPy、trimesh、Shapely，运行游戏无需这些依赖。

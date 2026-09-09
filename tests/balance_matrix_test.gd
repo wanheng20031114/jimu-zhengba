@@ -4,18 +4,18 @@ extends SceneTree
 const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult", &"cannon", &"farmer"]
 const EXPECTED_DAMAGE: Array = [
 	[18, 20, 24, 20, 20, 20],
-	[10, 14, 24, 10, 8, 14],
+	[8, 12, 22, 8, 6, 12],
 	[17, 22, 17, 19, 19, 19],
 	[34, 20, 40, 16, 14, 20],
 	[26, 30, 28, 126, 124, 30],
 	[6, 8, 6, 8, 8, 8],
 ]
 const EXPECTED_HITS: Array = [
-	[6, 3, 5, 10, 13, 4], [10, 5, 5, 20, 33, 6],
+	[6, 3, 5, 10, 13, 4], [13, 5, 6, 25, 44, 7],
 	[6, 3, 8, 11, 14, 4], [3, 3, 3, 13, 19, 4],
 	[4, 2, 5, 2, 3, 3], [17, 8, 20, 25, 33, 10],
 ]
-const BUILDING_DAMAGE: Array[int] = [10, 4, 9, 60, 220, 1]
+const BUILDING_DAMAGE: Array[int] = [10, 2, 9, 60, 220, 1]
 const BONUS: Array[int] = [0, 1, 2, 4]
 var checks: int = 0
 var failures: Array[String] = []
@@ -104,5 +104,6 @@ func _test_production_data() -> void:
 		_check(definition.supply == supply[kind], str(kind) + " approved military supply")
 		_check(BalanceCatalog.building(definition.production_building).produces.has(String(kind)), str(kind) + " production source agrees with building")
 		if definition.military:
-			_check(definition.training_seconds == 0, str(kind) + " military production remains instant")
+			var training: Dictionary = {&"swordsman": 6.0, &"archer": 8.0, &"knight": 10.0, &"catapult": 20.0, &"cannon": 20.0}
+			_check(definition.training_seconds == training[kind], str(kind) + " timed military production")
 	_check(BalanceCatalog.building(&"defense_tower").cost == 100 and BalanceCatalog.building(&"defense_tower").build_seconds == 20, "tower preserves hundred-gold twenty-second contract")

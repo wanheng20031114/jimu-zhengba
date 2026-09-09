@@ -598,6 +598,23 @@ custom_minimum_size = Vector2(175,38)
 text = "—"
 theme_override_font_sizes/font_size = 16
 
+[node name="rts_cancel" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0,40)
+metadata/action = "rts_cancel"
+
+[node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_cancel"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "取消指派 / 队尾生产或研究"
+theme_override_font_sizes/font_size = 17
+
+[node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_cancel"]
+layout_mode = 2
+custom_minimum_size = Vector2(175,38)
+text = "—"
+theme_override_font_sizes/font_size = 16
+
 [node name="rts_pause" type="HBoxContainer" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows"]
 layout_mode = 2
 custom_minimum_size = Vector2(0,40)
@@ -606,7 +623,7 @@ metadata/action = "rts_pause"
 [node name="Label" type="Label" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pause"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "暂停 / 继续"
+text = "暂停 / 战场菜单 / 继续"
 theme_override_font_sizes/font_size = 17
 
 [node name="Bind" type="Button" parent="Menu/Center/Panel/Layout/Body/Content/Pages/Hotkeys/HotkeyRows/rts_pause"]

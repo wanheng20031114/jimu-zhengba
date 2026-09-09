@@ -19,6 +19,7 @@ var _transitioning: bool = false
 var _entrance: Tween
 var _panel_reveal: Tween
 var _endpoint_port: int = 24571
+var _pending_slots: Dictionary = {}
 
 @onready var session: Node = get_node("/root/Session")
 @onready var relay: RelayClient = session.relay
@@ -28,6 +29,7 @@ var _endpoint_port: int = 24571
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = true
+	%Version.text = "v%s   /   即时战略" % NetworkProtocol.BUILD_ID
 	var arguments: PackedStringArray = OS.get_cmdline_user_args()
 	if "--lobby-capture" not in arguments:
 		for flag: String in ["--capture", "--smoke-test", "--ui-smoke", "--2v2"]:
@@ -43,7 +45,7 @@ func _ready() -> void:
 	relay.event_received.connect(_on_relay_event)
 	for owner: int in 4:
 		var row: HBoxContainer = rows.get_child(owner)
-		row.get_node("Kind").item_selected.connect(_on_slot_kind_selected.bind(owner))
+		row.get_node("Kind").pressed.connect(_on_slot_bot_pressed.bind(owner))
 		row.get_node("Team").item_selected.connect(_on_slot_team_selected.bind(owner))
 	if not relay.room.is_empty():
 		_on_room_changed(relay.room)
@@ -78,16 +80,20 @@ func set_mode(value: String) -> void:
 	mode = value
 	%Mode1v1.set_pressed_no_signal(mode == "1v1")
 	%Mode2v2.set_pressed_no_signal(mode == "2v2")
+	%OnlineMode1v1.set_pressed_no_signal(mode == "1v1")
+	%OnlineMode2v2.set_pressed_no_signal(mode == "2v2")
 	%MapTitle.text = MAPS[mode].display_name
 	%MapDetail.text = MODE_INFO[mode][2]
 	%SoloDescription.text = MODE_INFO[mode][1]
 	%CreateRoom.text = "创建 " + mode + " 房间"
 
 func _on_mode_1v1() -> void:
-	set_mode("1v1")
+	if not _pending_request and room.is_empty():
+		set_mode("1v1")
 
 func _on_mode_2v2() -> void:
-	set_mode("2v2")
+	if not _pending_request and room.is_empty():
+		set_mode("2v2")
 
 func _on_solo_start() -> void:
 	if _transitioning:
@@ -186,6 +192,8 @@ func _refresh_request_buttons() -> void:
 	%JoinRoom.disabled = _pending_request
 	%Mode1v1.disabled = _pending_request or not room.is_empty()
 	%Mode2v2.disabled = _pending_request or not room.is_empty()
+	%OnlineMode1v1.disabled = %Mode1v1.disabled
+	%OnlineMode2v2.disabled = %Mode2v2.disabled
 	%ServerAddress.editable = not _pending_request
 	%Nickname.editable = not _pending_request
 	%InviteInput.editable = not _pending_request
@@ -209,9 +217,12 @@ func _on_connection_state_changed(state: String) -> void:
 
 func _on_error_received(_code: String, detail: String) -> void:
 	_pending_request = false
+	_pending_slots.clear()
 	%RequestTimeout.stop()
 	_set_message(detail, true)
 	_refresh_request_buttons()
+	if not room.is_empty():
+		_refresh_room_controls()
 
 func _on_relay_event(event: Dictionary) -> void:
 	if event.get("kind") == "match_aborted" and not _transitioning:
@@ -238,40 +249,53 @@ func _on_room_changed(value: Dictionary) -> void:
 		if not row.visible:
 			continue
 		var slot: Dictionary = room.slots[owner]
+		if _pending_slots.has(owner):
+			var desired: Dictionary = _pending_slots[owner]
+			if slot.kind == desired.kind and int(slot.team_id) == int(desired.team):
+				_pending_slots.erase(owner)
 		var local: bool = int(slot.owner_id) == relay.owner_id
-		row.get_node("Name").text = slot.name + (" · 你" if local else "")
+		row.get_node("Name").text = ("电脑将领 %d" % (owner + 1) if slot.kind == "bot" else slot.name) + (" · 你" if local else "")
 		row.get_node("Name").tooltip_text = slot.name
-		row.get_node("Kind").select(["open", "bot", "human"].find(slot.kind))
-		row.get_node("Kind").disabled = not relay.is_host or slot.kind == "human"
+		row.get_node("Kind").text = "添加电脑" if slot.kind == "open" else "移除电脑" if slot.kind == "bot" else "真人玩家"
+		row.get_node("Kind").tooltip_text = "让电脑占用这个空位" if slot.kind == "open" else "腾出席位，让朋友加入" if slot.kind == "bot" else "不能替换已加入的真人"
 		row.get_node("Team").select(int(slot.team_id))
 		row.get_node("Team").disabled = not relay.is_host
 		var state: Label = row.get_node("State")
 		state.text = "等待加入" if slot.kind == "open" else "电脑就绪" if slot.kind == "bot" else "连接中" if not slot.connected else "已就绪" if slot.ready else "未准备"
 		state.modulate = Color("ddbf78") if slot.ready else Color("a59a84")
 	%Ready.set_pressed_no_signal(bool(room.slots[relay.owner_id].ready))
+	var team_seats: Array[PackedStringArray] = [PackedStringArray(), PackedStringArray()]
+	for slot: Dictionary in room.slots:
+		team_seats[int(slot.team_id)].append(str(int(slot.owner_id) + 1))
+	%TeamSummary.text = "联盟一：席位 %s    对阵    联盟二：席位 %s" % ["、".join(team_seats[0]), "、".join(team_seats[1])]
 	_refresh_room_controls()
 
 func _refresh_room_controls() -> void:
 	var in_lobby: bool = relay.connection_state == "lobby" and room.status == "lobby"
 	%StartMatch.visible = relay.is_host
+	%StartMatch.text = "开始 %s 对战" % room.mode
 	%Ready.visible = not relay.is_host
+	%FillBots.visible = relay.is_host
+	%FillBots.disabled = not in_lobby or not _pending_slots.is_empty() or not room.slots.any(func(slot): return slot.kind == "open")
 	%Ready.disabled = not in_lobby
 	%Ready.text = "取消准备" if %Ready.button_pressed else "准备就绪"
 	var reason: String = _start_block_reason()
-	%StartMatch.disabled = not in_lobby or not reason.is_empty()
+	%StartMatch.disabled = not in_lobby or not reason.is_empty() or not _pending_slots.is_empty()
 	%RoomHint.text = reason if relay.is_host else "准备后等待房主开始。房间设置改变时需要重新准备。"
 	if relay.is_host and reason.is_empty():
-		%RoomHint.text = "所有席位已就绪，可以开始对战。"
+		%RoomHint.text = "所有席位已就绪，可以开始对战。电脑由房主模拟，无需其他真人加入。"
+	if not _pending_slots.is_empty():
+		%RoomHint.text = "正在更新席位…"
 	for owner: int in room.slots.size():
 		var row: HBoxContainer = rows.get_child(owner)
-		row.get_node("Kind").disabled = not in_lobby or not relay.is_host or room.slots[owner].kind == "human"
-		row.get_node("Team").disabled = not in_lobby or not relay.is_host
+		row.get_node("Kind").disabled = not in_lobby or not relay.is_host or room.slots[owner].kind == "human" or _pending_slots.has(owner)
+		row.get_node("Team").disabled = not in_lobby or not relay.is_host or _pending_slots.has(owner)
 
 func _start_block_reason() -> String:
 	var teams: Array[int] = [0, 0]
 	for slot: Dictionary in room.slots:
 		if slot.kind == "open":
-			return "等待玩家加入，或将空位设为电脑。"
+			return "等待朋友加入，或点击空位的“添加电脑”。也可以一键补齐电脑。"
 		teams[int(slot.team_id)] += 1
 		if slot.kind == "human" and (not slot.connected or not slot.ready):
 			return "等待所有玩家准备就绪。"
@@ -279,22 +303,37 @@ func _start_block_reason() -> String:
 		return "请将两个联盟设置为相同人数。"
 	return ""
 
-func _on_slot_kind_selected(index: int, owner: int) -> void:
-	if not relay.is_host or room.is_empty():
+func _on_slot_bot_pressed(owner: int) -> void:
+	if not _can_configure_slot(owner) or room.slots[owner].kind == "human":
 		return
-	relay.configure_slot(owner, ["open", "bot", "human"][index], int(room.slots[owner].team_id))
+	_request_slot_change(owner, "bot" if room.slots[owner].kind == "open" else "open", int(room.slots[owner].team_id))
+
+func _on_fill_bots() -> void:
+	if room.is_empty() or not relay.is_host or not _pending_slots.is_empty():
+		return
+	for owner: int in room.slots.size():
+		if room.slots[owner].kind == "open" and _can_configure_slot(owner):
+			_request_slot_change(owner, "bot", int(room.slots[owner].team_id))
+
+func _can_configure_slot(owner: int) -> bool:
+	return relay.is_host and not room.is_empty() and relay.connection_state == "lobby" and room.status == "lobby" and owner >= 0 and owner < room.slots.size() and not _pending_slots.has(owner)
+
+func _request_slot_change(owner: int, kind: String, team: int) -> void:
+	_pending_slots[owner] = {"kind": kind, "team": team}
+	relay.configure_slot(owner, kind, team)
+	_refresh_room_controls()
 
 func _on_slot_team_selected(index: int, owner: int) -> void:
-	if not relay.is_host or room.is_empty():
+	if not _can_configure_slot(owner) or index not in [0, 1] or int(room.slots[owner].team_id) == index:
 		return
-	relay.configure_slot(owner, room.slots[owner].kind, index)
+	_request_slot_change(owner, room.slots[owner].kind, index)
 
 func _on_ready_toggled(value: bool) -> void:
 	if not room.is_empty() and not relay.is_host:
 		relay.set_ready(value)
 
 func _on_start_match() -> void:
-	if relay.is_host and _start_block_reason().is_empty():
+	if not room.is_empty() and relay.connection_state == "lobby" and room.status == "lobby" and relay.is_host and _pending_slots.is_empty() and _start_block_reason().is_empty():
 		%StartMatch.disabled = true
 		relay.start_match()
 
@@ -310,6 +349,7 @@ func _on_leave_room() -> void:
 	_set_message("已离开房间。")
 
 func _show_setup() -> void:
+	_pending_slots.clear()
 	%Room.hide()
 	%Setup.show()
 	_refresh_request_buttons()

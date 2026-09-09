@@ -1337,7 +1337,7 @@ offset_left = 38
 offset_top = 169
 offset_right = 283
 offset_bottom = 500
-text = "左键 / 框选 / 双击\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl / Shift + 编队键\n编队键 / 双按 / Tab\n窗口边缘 / 中键 / 镜头方向键\n滚轮 / Space\nB / F2、G / .\nQ / W / E / R / T / Y\nV\nDelete\nEsc / F5、P\n训练与研究队列 / 设置\nF12 / F10 / F11 / M"
+text = "左键 / 框选 / 双击\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl / Shift + 编队键\n编队键 / 双按 / Tab\n窗口边缘 / 中键 / 镜头方向键\n滚轮 / Space\nB / F2、G / .\nQ / W / E / R / T / Y\nV\nDelete\nEsc / F5\n训练与研究队列 / 设置\nF12 / F10 / F11 / M"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 13
@@ -1350,7 +1350,7 @@ offset_left = 283
 offset_top = 169
 offset_right = 700
 offset_bottom = 500
-text = "选择单位或建筑 / 框选 / 同类选择（Shift 追加）\n移动、攻击、采矿、施工、集结 / 排队执行\n攻击前进 / 停止 / 坚守；Shift 可追加坚守\n覆盖编队 / 追加，单位与建筑均可编入\n召回编队 / 定位 / 切换选中建筑类别\n平移镜头；窗口外仍可边缘移动，可在设置关闭\n缩放 / 定位所选对象\n大本营 / 全部战斗单位 / 空闲农民\n当前面板从左至右生产、建造或研究\n农民快速放置防御塔（Shift 连续建造）\n销毁所选己方单位或建筑，完工资产无退款\n菜单含设置 / 暂停或继续（联机仅房主）\n点击格子取消退款 / 热键均可在设置中修改\n单机金币 +100 / 隐藏界面 / 全屏 / 静音"
+text = "选择单位或建筑 / 框选 / 同类选择（Shift 追加）\n移动、攻击、采矿、施工、集结 / 排队执行\n攻击前进 / 停止 / 坚守；Shift 可追加坚守\n覆盖编队 / 追加，单位与建筑均可编入\n召回编队 / 定位 / 切换选中建筑类别\n平移镜头；窗口外仍可边缘移动，可在设置关闭\n缩放 / 定位所选对象\n大本营 / 全部战斗单位 / 空闲农民\n当前面板从左至右生产、建造或研究\n农民快速放置防御塔（Shift 连续建造）\n销毁所选己方单位或建筑，完工资产无退款\n取消指派或队尾项目 / 暂停菜单（联机仅房主）\n点击格子取消指定项目 / 设置可重绑按键\n单机金币 +100 / 隐藏界面 / 全屏 / 静音"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 13
@@ -1437,7 +1437,7 @@ theme_override_constants/separation = 10
 [node name="ResumeButton" type="Button" parent="PauseOverlay/Paper/Actions"]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
-text = "继续战斗  [Esc]"
+text = "继续战斗  [F5]"
 unique_name_in_owner = true
 focus_mode = 0
 

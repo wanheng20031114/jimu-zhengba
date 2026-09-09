@@ -167,7 +167,7 @@ func _mining_slots() -> void:
 		worker.set_physics_process(true)
 	_check(mine.occupied_slots() == 6 and not miners[6]._claimed_mine, "six active jobs claim all slots; seventh farmer cannot claim")
 	await _wait(3.15)
-	_check(host.gathered_gold == 18, "only six workers earn three gold after a three-second cycle")
+	_check(host.gathered_gold == 24, "only six workers earn four gold after a three-second cycle")
 	_check(miners[6].work_progress == 0 and not miners[6]._working, "waiting worker receives no progress or income")
 	miners[0].stop()
 	_check(mine.occupied_slots() == 5, "stop immediately releases one mine slot")

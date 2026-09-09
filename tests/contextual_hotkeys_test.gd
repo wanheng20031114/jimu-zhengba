@@ -134,9 +134,9 @@ func _run() -> void:
 	await _key(KEY_Z)
 	check(hud._actions.is_empty() and game.command_bus.pending.is_empty(), "enemy building selection cannot purchase through remapped hotkeys")
 	settings._apply_values(original, false)
-	check(GameSettings.ACTIONS.size() == 34, "context slots retain 34 rebindable actions")
+	check(GameSettings.ACTIONS.size() == 35, "context slots include 35 rebindable actions")
 	var hotkey_rows: Node = settings.menu.get_node("%HotkeyRows")
-	check(hotkey_rows.get_child_count() == 34, "native settings scene has exactly one row for every action")
+	check(hotkey_rows.get_child_count() == 35, "native settings scene has exactly one row for every action")
 	for index in range(1, 7):
 		check(hotkey_rows.get_node("rts_slot_%d" % index).get_meta("action") == "rts_slot_%d" % index, "native slot binding row %d owns the matching action" % index)
 	if "--capture-hotkeys" in OS.get_cmdline_user_args():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
@@ -20,7 +20,6 @@
 
 
 
-[ext_resource type="PackedScene" path="res://scenes/rally_marker.tscn" id="rally"]
 
 [ext_resource type="PackedScene" path="res://scenes/audio.tscn" id="audio"]
 
@@ -127,9 +126,6 @@ rotation_degrees = Vector3(0,-45,0)
 script = ExtResource("construction_nav")
 
 [node name="BuildingPreview" parent="." instance=ExtResource("ghost")]
-visible = false
-
-[node name="RallyMarker" parent="." instance=ExtResource("rally")]
 visible = false
 
 [node name="FogOfWar" parent="." instance=ExtResource("fog")]

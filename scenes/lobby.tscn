@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="script"]
 
@@ -44,6 +44,8 @@ content_margin_right = 18.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
 
+
+[sub_resource type="ButtonGroup" id="OnlineModes"]
 
 [sub_resource type="ButtonGroup" id="Modes"]
 
@@ -331,7 +333,7 @@ grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="CanvasLayer/UI/OnlinePanel"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 12
 
 [node name="Heading" type="HBoxContainer" parent="CanvasLayer/UI/OnlinePanel/Content"]
 layout_mode = 2
@@ -361,7 +363,36 @@ theme_override_colors/font_color = Color(0.65,0.58,0.45,1)
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
+
+[node name="OnlineModeRow" type="HBoxContainer" parent="CanvasLayer/UI/OnlinePanel/Content/Setup"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/UI/OnlinePanel/Content/Setup/OnlineModeRow"]
+layout_mode = 2
+text = "房间规模"
+theme_override_font_sizes/font_size = 16
+
+[node name="OnlineMode1v1" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Setup/OnlineModeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 45)
+size_flags_horizontal = 3
+text = "1v1 · 双方对决"
+toggle_mode = true
+button_group = SubResource("OnlineModes")
+theme_override_font_sizes/font_size = 16
+
+[node name="OnlineMode2v2" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Setup/OnlineModeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 45)
+size_flags_horizontal = 3
+text = "2v2 · 四人组队"
+toggle_mode = true
+button_group = SubResource("OnlineModes")
+theme_override_font_sizes/font_size = 16
 
 [node name="NicknameLabel" type="Label" parent="CanvasLayer/UI/OnlinePanel/Content/Setup"]
 layout_mode = 2
@@ -433,7 +464,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 18
+theme_override_constants/separation = 12
 
 [node name="RoomMode" type="Label" parent="CanvasLayer/UI/OnlinePanel/Content/Room"]
 unique_name_in_owner = true
@@ -462,10 +493,17 @@ theme_override_font_sizes/font_size = 16
 [node name="Divider" type="HSeparator" parent="CanvasLayer/UI/OnlinePanel/Content/Room"]
 layout_mode = 2
 
+[node name="TeamSummary" type="Label" parent="CanvasLayer/UI/OnlinePanel/Content/Room"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "联盟一：席位 1、2    对阵    联盟二：席位 3、4"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.82,0.73,0.54,1)
+
 [node name="Slots" type="VBoxContainer" parent="CanvasLayer/UI/OnlinePanel/Content/Room"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 10
 
 [node name="Slot0" type="HBoxContainer" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots"]
 layout_mode = 2
@@ -487,18 +525,11 @@ text = "等待加入"
 text_overrun_behavior = 3
 theme_override_font_sizes/font_size = 17
 
-[node name="Kind" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot0"]
+[node name="Kind" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot0"]
 layout_mode = 2
-custom_minimum_size = Vector2(110,45)
-item_count = 3
-selected = 0
-popup/item_0/text = "空位"
-popup/item_0/id = 0
-popup/item_1/text = "电脑"
-popup/item_1/id = 1
-popup/item_2/text = "玩家"
-popup/item_2/id = 2
-popup/item_2/disabled = true
+custom_minimum_size = Vector2(118,45)
+text = "添加电脑"
+theme_override_font_sizes/font_size = 16
 
 [node name="Team" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot0"]
 layout_mode = 2
@@ -536,18 +567,11 @@ text = "等待加入"
 text_overrun_behavior = 3
 theme_override_font_sizes/font_size = 17
 
-[node name="Kind" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot1"]
+[node name="Kind" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot1"]
 layout_mode = 2
-custom_minimum_size = Vector2(110,45)
-item_count = 3
-selected = 0
-popup/item_0/text = "空位"
-popup/item_0/id = 0
-popup/item_1/text = "电脑"
-popup/item_1/id = 1
-popup/item_2/text = "玩家"
-popup/item_2/id = 2
-popup/item_2/disabled = true
+custom_minimum_size = Vector2(118,45)
+text = "添加电脑"
+theme_override_font_sizes/font_size = 16
 
 [node name="Team" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot1"]
 layout_mode = 2
@@ -585,18 +609,11 @@ text = "等待加入"
 text_overrun_behavior = 3
 theme_override_font_sizes/font_size = 17
 
-[node name="Kind" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot2"]
+[node name="Kind" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot2"]
 layout_mode = 2
-custom_minimum_size = Vector2(110,45)
-item_count = 3
-selected = 0
-popup/item_0/text = "空位"
-popup/item_0/id = 0
-popup/item_1/text = "电脑"
-popup/item_1/id = 1
-popup/item_2/text = "玩家"
-popup/item_2/id = 2
-popup/item_2/disabled = true
+custom_minimum_size = Vector2(118,45)
+text = "添加电脑"
+theme_override_font_sizes/font_size = 16
 
 [node name="Team" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot2"]
 layout_mode = 2
@@ -634,18 +651,11 @@ text = "等待加入"
 text_overrun_behavior = 3
 theme_override_font_sizes/font_size = 17
 
-[node name="Kind" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot3"]
+[node name="Kind" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot3"]
 layout_mode = 2
-custom_minimum_size = Vector2(110,45)
-item_count = 3
-selected = 0
-popup/item_0/text = "空位"
-popup/item_0/id = 0
-popup/item_1/text = "电脑"
-popup/item_1/id = 1
-popup/item_2/text = "玩家"
-popup/item_2/id = 2
-popup/item_2/disabled = true
+custom_minimum_size = Vector2(118,45)
+text = "添加电脑"
+theme_override_font_sizes/font_size = 16
 
 [node name="Team" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/Content/Room/Slots/Slot3"]
 layout_mode = 2
@@ -662,6 +672,14 @@ layout_mode = 2
 custom_minimum_size = Vector2(77,0)
 text = "等待加入"
 theme_override_font_sizes/font_size = 15
+
+[node name="FillBots" type="Button" parent="CanvasLayer/UI/OnlinePanel/Content/Room"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 43)
+text = "一键补齐空位为电脑"
+tooltip_text = "仅填补空席，不替换真人；房主一人也可和三名电脑开始2v2"
+theme_override_font_sizes/font_size = 16
 
 [node name="RoomHint" type="Label" parent="CanvasLayer/UI/OnlinePanel/Content/Room"]
 unique_name_in_owner = true
@@ -732,6 +750,7 @@ theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.45,0.40,0.32,1)
 
 [node name="Version" type="Label" parent="CanvasLayer/UI"]
+unique_name_in_owner = true
 layout_mode = 0
 anchor_left = 1.0
 anchor_top = 1.0
@@ -742,7 +761,7 @@ offset_top = -51.0
 offset_right = -35.0
 offset_bottom = -25.0
 horizontal_alignment = 2
-text = "v0.7.0   /   即时战略"
+text = "即时战略"
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.65,0.56,0.39,1)
 
@@ -786,3 +805,9 @@ one_shot = true
 [connection signal="pressed" from="CanvasLayer/UI/MainMenu/UtilityActions/Settings" to="." method="_on_settings"]
 
 [connection signal="pressed" from="CanvasLayer/UI/MainMenu/UtilityActions/QuitGame" to="." method="_on_quit_game"]
+
+[connection signal="pressed" from="CanvasLayer/UI/OnlinePanel/Content/Setup/OnlineModeRow/OnlineMode1v1" to="." method="_on_mode_1v1"]
+
+[connection signal="pressed" from="CanvasLayer/UI/OnlinePanel/Content/Setup/OnlineModeRow/OnlineMode2v2" to="." method="_on_mode_2v2"]
+
+[connection signal="pressed" from="CanvasLayer/UI/OnlinePanel/Content/Room/FillBots" to="." method="_on_fill_bots"]

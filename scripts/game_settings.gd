@@ -4,6 +4,7 @@ extends CanvasLayer
 signal changed
 signal opened
 signal closed
+signal pause_requested
 
 const FPS_OPTIONS: Array[int] = [30, 60, 90, 120, 144, 165, 240, 0]
 const ACTIONS := {
@@ -14,7 +15,8 @@ const ACTIONS := {
 	"rts_slot_3": ["第三项生产 / 建造 / 研究", KEY_E, [KEY_E]], "rts_slot_4": ["第四项生产 / 建造 / 研究", KEY_R, [KEY_R]],
 	"rts_slot_5": ["第五项生产 / 建造 / 研究", KEY_T, [KEY_T]], "rts_slot_6": ["第六项生产 / 建造 / 研究", KEY_Y, [KEY_Y]],
 	"rts_build_tower": ["放置防御塔", KEY_V, [KEY_V]], "rts_destroy": ["删除所选己方资产", KEY_DELETE, [KEY_DELETE]],
-	"rts_pause": ["暂停 / 继续", KEY_F5, [KEY_F5, KEY_P]], "rts_help": ["操作帮助", KEY_F1, [KEY_F1]],
+	"rts_cancel": ["取消指派 / 队尾生产或研究", KEY_ESCAPE, [KEY_ESCAPE]],
+	"rts_pause": ["暂停 / 战场菜单 / 继续", KEY_F5, [KEY_F5]], "rts_help": ["操作帮助", KEY_F1, [KEY_F1]],
 	"rts_photo": ["隐藏 / 显示界面", KEY_F10, [KEY_F10]], "rts_fullscreen": ["切换全屏", KEY_F11, [KEY_F11]],
 	"rts_mute": ["静音", KEY_M, [KEY_M]], "rts_idle_worker": ["选择空闲农民", KEY_PERIOD, [KEY_PERIOD]],
 	"rts_cycle_buildings": ["切换编队中的建筑", KEY_TAB, [KEY_TAB]],
@@ -55,6 +57,9 @@ func _ready() -> void:
 			if key != "bindings": values[key] = config.get_value("settings", key, values[key])
 		for action: String in ACTIONS:
 			values.bindings[action] = config.get_value("hotkeys", action, values.bindings[action])
+		# Migrate only the previous default alias pair; keep deliberate custom bindings.
+		if values.bindings.rts_pause == [KEY_F5, KEY_P]:
+			values.bindings.rts_pause = [KEY_F5]
 	_apply_values(_sanitize(values), false)
 	# Test/export automation owns its window. Real launches restore the user's display choice.
 	if DisplayServer.get_name() != "headless" and not _automated_launch():
@@ -101,7 +106,7 @@ func _sanitize(values: Dictionary) -> Dictionary:
 				valid = false
 				break
 			for key: Variant in candidate[action]:
-				if not key is int or key <= 0 or key in [KEY_ESCAPE, KEY_F12, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META] or key in used:
+				if not key is int or key <= 0 or key in [KEY_F12, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META] or (key == KEY_ESCAPE and action != "rts_cancel") or key in used:
 					valid = false
 					break
 				used.append(key)
@@ -151,7 +156,7 @@ func resolve_key(event: InputEventKey) -> Key:
 
 func hotkey_text(action: String) -> String:
 	var result := PackedStringArray()
-	for key: int in bindings[action]: result.append(OS.get_keycode_string(key))
+	for key: int in bindings[action]: result.append("Esc" if key == KEY_ESCAPE else OS.get_keycode_string(key))
 	return " / ".join(result)
 
 func key_label(canonical: Key) -> String:
@@ -160,7 +165,8 @@ func key_label(canonical: Key) -> String:
 	return OS.get_keycode_string(canonical)
 
 func binding_error(action: String, key: Key, keys: Dictionary) -> String:
-	if key in [KEY_ESCAPE, KEY_F12]: return "Esc 与 F12 是固定保留键。"
+	if key == KEY_F12: return "F12 保留用于单机金币调试。"
+	if key == KEY_ESCAPE and action != "rts_cancel": return "Esc 仅可用于取消指派 / 队列，菜单中用于返回。"
 	if key in [KEY_NONE, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META]: return "请选择一个按键；Ctrl、Shift 保留用于组合指令。"
 	for other: String in ACTIONS:
 		if other != action and key in keys[other]: return "已用于「%s」，请先修改该操作的按键。" % ACTIONS[other][0]

@@ -2,7 +2,7 @@ class_name MatchCommands
 extends RefCounted
 ## Every human, Bot and remote request crosses the same fixed-tick validator.
 
-const KINDS := ["recruit", "build", "move", "attack", "gather", "work", "stop", "hold", "research", "cancel_research", "cancel_training", "cancel_site", "demolish", "destroy", "rally"]
+const KINDS := ["recruit", "build", "move", "attack", "gather", "work", "stop", "hold", "research", "cancel_research", "cancel_training", "cancel_queue", "cancel_site", "demolish", "destroy", "rally"]
 const MAX_INTEGER: int = 2147483647
 var game: Node3D
 var pending: Array[Dictionary] = []
@@ -96,6 +96,8 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 	if not at.is_finite() or at.distance_squared_to(game.clamp_to_map(at)) > 0.01:
 		return failure("坐标超出地图")
 	match kind:
+		"cancel_queue":
+			return _cancel_queue_tail(buildings)
 		"recruit":
 			var unit_type: String = str(command.get("unit_type", ""))
 			if buildings.is_empty() or not BalanceCatalog.UNITS.has(unit_type):
@@ -234,6 +236,25 @@ func _enqueue_production(buildings: Array[BattleBuilding], id: String, research:
 	if best == null:
 		return failure(error)
 	return best.research(id) if research else best.recruit(id)
+
+func _cancel_queue_tail(buildings: Array[BattleBuilding]) -> Dictionary:
+	# Resolve at the authority tick: two quick key presses cancel two jobs even
+	# when neither client has received the intermediate queue snapshot yet.
+	var best: BuildingProduction
+	var longest := -1
+	for building: BattleBuilding in buildings:
+		if not building.is_constructed:
+			continue
+		var production := building.production
+		var count: int = production.training.size() + production.research_queue.size()
+		if count > 0 and (count > longest or (count == longest and building.entity_id < best.building.entity_id)):
+			longest = count
+			best = production
+	if best == null:
+		return {"ok": true}
+	if not best.training.is_empty():
+		return best.cancel_training_job(int(best.training.back().job_id))
+	return best.cancel_research_job(int(best.research_queue.back().job_id))
 
 static func failure(message: String) -> Dictionary:
 	return {"ok": false, "error": message}
