@@ -10,9 +10,11 @@ var _toast_remaining: float = 0.0
 var _refresh_counter: int = 0
 var _hovered_preview: String = ""
 var _selected_preview: String = "headquarters"
+var _preview_alliance: int = -1
 
 @onready var gold_label: Label = %GoldValue
 @onready var army_label: Label = %ArmyValue
+@onready var farmers_label: Label = %FarmersValue
 @onready var timer_label: Label = %TimeValue
 @onready var objective_label: Label = %Objective
 @onready var selected_name: Label = %SelectedName
@@ -84,7 +86,10 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if get_tree().paused and event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_ESCAPE or event.physical_keycode == KEY_P:
-			game.toggle_pause()
+			if game.online and event.physical_keycode == KEY_P:
+				game.request_match_pause()
+			else:
+				game.toggle_pause()
 			get_viewport().set_input_as_handled()
 		elif event.physical_keycode == KEY_M:
 			game.toggle_sound()
@@ -95,14 +100,22 @@ func refresh() -> void:
 		return
 	gold_label.text = str(game.gold)
 	var player: PlayerState = game.get_player(game.local_owner_id)
-	army_label.text = "%d/60 军队  ·  %d/10 农民" % [player.military_supply, player.farmers + player.reserved_farmers]
+	army_label.text = "军事 %d / %d" % [player.military_supply, PlayerState.SUPPLY_LIMIT]
+	farmers_label.text = "农民 %d / %d" % [player.farmers + player.reserved_farmers, PlayerState.WORKER_LIMIT]
+	farmers_label.tooltip_text = "在场 %d 人 · 训练中 %d 人\n训练中的农民已计入上限" % [player.farmers, player.reserved_farmers]
+	if _preview_alliance != player.alliance_id:
+		_preview_alliance = player.alliance_id
+		$ModelPreviews.set_team(_preview_alliance)
+	$TopLeft/Location.text = game.map_definition.display_name + "  ·  " + ("2v2 队伍战" if game.match_config.mode == "2v2" else "1v1 遭遇战")
+	$MapFrame/MapTitle.text = game.map_definition.display_name
 	timer_label.text = "%02d:%02d" % [int(game.elapsed) / 60, int(game.elapsed) % 60]
 	objective_label.text = "摧毁敌队全部军事建筑"
 	%EnemyCount.text = "已发现敌军 %d    击败 %d" % [game.enemy_count(), game.kills]
 	_refresh_actions()
 	if game.selection.is_empty():
 		selected_name.text = "等待指令"
-		selected_role.text = "蓝旗军团"
+		selected_role.text = "你的军团"
+		selected_role.modulate = Color("90bcda")
 		selected_stats.text = "左键选择 · 拖动框选\n右键行军或攻击"
 		selected_portrait.texture = portraits.headquarters
 		_selected_preview = "headquarters"
@@ -131,10 +144,14 @@ func refresh() -> void:
 			selected_portrait.texture = portraits[entity.unit_type]
 			_selected_preview = entity.unit_type
 			var definition := BalanceCatalog.unit(entity.unit_type)
-			var tech: PlayerState = game.get_player(entity.owner_id)
-			selected_stats.text = "攻击 %d  近甲 %d / 远甲 %d\n%s" % [definition.damage + (tech.get_attack_bonus() if definition.military else 0), definition.melee_armor + (tech.get_defense_bonus() if definition.military else 0), definition.ranged_armor + (tech.get_defense_bonus() if definition.military else 0), entity.order_name]
+			# Only the local player's upgrades are part of their private snapshot.
+			var own_unit: bool = entity.owner_id == game.local_owner_id
+			var attack_bonus: int = player.get_attack_bonus() if own_unit and definition.military else 0
+			var defense_bonus: int = player.get_defense_bonus() if own_unit and definition.military else 0
+			selected_stats.text = "%s攻 %d · 近甲 %d / 远甲 %d\n%s" % ["" if own_unit else "基础 ", definition.damage + attack_bonus, definition.melee_armor + defense_bonus, definition.ranged_armor + defense_bonus, entity.order_name]
 			if entity.unit_type == "farmer":
-				selected_stats.text = "采矿 +3 / 3秒 · 建筑面板\n%s%s" % [entity.order_name, " · 队列 %d" % entity.waypoint_queue.size() if not entity.waypoint_queue.is_empty() else ""]
+				var queued_orders: int = int(entity.get_meta("replica_queue_count", 0)) if game.online and not game.is_authority else entity.waypoint_queue.size()
+				selected_stats.text = "采矿 +3 / 3秒 · 建筑面板\n%s%s" % [entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
 		elif entity.is_in_group("buildings"):
 			var portrait_kind: String = entity.building_type if entity.building_type in portraits else "headquarters"
 			selected_portrait.texture = portraits[portrait_kind]
@@ -152,7 +169,7 @@ func refresh() -> void:
 
 	else:
 		selected_name.text = "%d 支部队" % game.selection.size()
-		selected_role.text = "蓝旗军团 · 联合编队"
+		selected_role.text = "你的军团 · 联合编队"
 		selected_role.modulate = Color("90bcda")
 		var total_hp: float = 0.0
 		var maximum: float = 0.0
@@ -195,6 +212,7 @@ func _on_recruit(index: int) -> void:
 	match action.kind:
 		"build": game.set_build_mode(true, action.id)
 		"recruit": game.recruit(action.id)
+		"demolish": game.demolish_selected_towers()
 		"research": game.submit_local({"kind": "research", "target": game.selected_production().entity_id, "upgrade": action.id})
 		"cancel_training", "cancel_research", "cancel_site": game.submit_local({"kind": action.kind, "target": game.selected_production().entity_id})
 
@@ -213,6 +231,8 @@ func _refresh_actions() -> void:
 	elif building != null:
 		if not building.is_constructed:
 			_actions.append({"kind": "cancel_site", "id": "", "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还未完成部分的费用"})
+		elif building.building_type == "defense_tower":
+			_actions.append({"kind": "demolish", "id": "", "portrait": "defense_tower", "name": "拆除防御塔", "cost": 0, "hint": "Ctrl + Delete · 不返还金币"})
 		elif building.building_type == "academy":
 			var player: PlayerState = game.get_player(game.local_owner_id)
 			for track: String in ["attack", "defense"]:
@@ -237,7 +257,7 @@ func _refresh_actions() -> void:
 		var action := _actions[index]
 		button.get_node("Portrait").texture = portraits[action.portrait]
 		button.get_node("Name").text = action.name
-		button.get_node("Cost").text = "◈ %d" % action.cost if action.cost > 0 else "退款"
+		button.get_node("Cost").text = "◈ %d" % action.cost if action.cost > 0 else ("无退款" if action.kind == "demolish" else "退款")
 		button.get_node("Hotkey").text = ""
 		button.tooltip_text = action.name + " · " + action.hint
 		button.disabled = game.finished or game.gold < action.cost
@@ -270,6 +290,9 @@ func help_visible() -> bool:
 	return %HelpOverlay.visible
 
 func show_pause(value: bool) -> void:
+	$PauseOverlay/Paper/Title.text = "战场菜单" if game.online else "战斗已暂停"
+	$PauseOverlay/Paper/Eyebrow.text = ("全局已暂停 · 房主按 P 继续" if get_tree().paused else "联机菜单 · 打开菜单不会暂停对局") if game.online else "ASHEN CROWN"
+	%RestartButton.text = "返回大厅" if game.online else "重新开始"
 	%PauseOverlay.visible = value
 
 func show_result(victory: bool, duration: float, defeated: int) -> void:

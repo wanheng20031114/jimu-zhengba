@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="灰烬王国 · 中世纪乱斗"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/lobby.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://assets/icon.png"
+
+[autoload]
+
+Session="*res://scenes/session.tscn"
 
 [display]
 

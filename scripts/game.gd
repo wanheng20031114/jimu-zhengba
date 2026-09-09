@@ -69,6 +69,11 @@ var _fog_ready: bool = false
 var _match_ready: bool = false
 var _victory_timer: float = 0.0
 var _revealed_alliances: Array[int] = []
+var online: bool = false
+var _local_menu: bool = false
+var _network_paused: bool = false
+var _notice_after: Dictionary = {}
+@onready var replication: MatchReplication = $MatchReplication
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
@@ -88,11 +93,20 @@ func _ready() -> void:
 	select_entities([headquarters])
 	hud.toast("建立兵营，集结军队 · 摧毁敌队全部军事建筑", 5.0)
 	hud.refresh()
-	game_started = true
+	game_started = not online
 	$FogOfWar.configure(self, map_size)
 	_fog_ready = true
 	$FogOfWar.apply_visibility(local_owner_id)
 	_match_ready = true
+	if online:
+		replication.configure(self, Session.relay)
+		replication.visual_event_due.connect(_play_network_visual)
+		Session.relay.command_received.connect(_on_network_command)
+		Session.relay.event_received.connect(_on_network_event)
+		Session.relay.connection_state_changed.connect(_on_connection_state)
+		replication.snapshot_applied.connect(_on_snapshot_applied)
+		hud.get_node("%RestartButton").text = "返回大厅"
+		hud.get_node("%ResultRestart").text = "返回大厅"
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	# Authored defenders keep their native IDLE order and engage approaching enemies.
@@ -137,8 +151,12 @@ func _physics_process(delta: float) -> void:
 			check_victory()
 		simulation_tick += 1
 		elapsed += delta
+		if online:
+			replication.tick(delta)
 
 func _process(delta: float) -> void:
+	if online and not is_authority:
+		replication.render(delta)
 	$RallyMarker.visible = is_instance_valid(headquarters) and headquarters.alive and headquarters in selection
 	if _fog_ready:
 		$FogOfWar.apply_visibility(local_owner_id)
@@ -163,6 +181,10 @@ func _process(delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_P and online and not finished:
+			request_match_pause()
+			get_viewport().set_input_as_handled()
+			return
 		if event.is_action_pressed("debug_gold"):
 			debug_add_gold()
 			get_viewport().set_input_as_handled()
@@ -192,7 +214,7 @@ func _input(event: InputEvent) -> void:
 				toggle_pause()
 			get_viewport().set_input_as_handled()
 			return
-	if get_tree().paused or finished:
+	if get_tree().paused or finished or _local_menu:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_MIDDLE:
 		camera_rig.dragging = event.pressed
@@ -209,7 +231,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if get_tree().paused or finished:
+	if get_tree().paused or finished or _local_menu:
 		return
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -271,7 +293,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				else:
 					cancel_selected_construction()
 			KEY_PERIOD: select_idle_worker()
-			KEY_P: toggle_pause()
+			KEY_P: request_match_pause() if online else toggle_pause()
 			KEY_M:
 				toggle_sound()
 
@@ -624,19 +646,20 @@ func spawn_projectile(source: Node3D, target: Node3D, damage: DamagePayload, kin
 	var projectile = PROJECTILE_SCENE.instantiate()
 	effect_container.add_child(projectile)
 	projectile.initialize(source, target, damage, kind)
+	if online and is_authority:
+		for player: PlayerState in players:
+			if player.owner_id != local_owner_id and player.controller == "human" and can_see_position(player.owner_id, projectile._start) and can_see_position(player.owner_id, projectile._end):
+				replication.queue_host_visual(player.owner_id, {"kind": "projectile", "projectile": kind, "from": vector_data(projectile._start), "at": vector_data(projectile._end), "duration": projectile._duration, "arc": projectile._arc_height, "target": target.entity_id})
 
 func spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE) -> void:
+	if kind not in ["move", "attack"]:
+		queue_visible_visual(at, {"kind": "effect", "effect": kind, "at": vector_data(at), "color": [color.r, color.g, color.b]})
 	if not can_see_position(local_owner_id, at):
 		return
 	# Sound tails belong to the bounded mixer, independent of visual effect limits.
 	if EFFECT_SOUNDS.has(kind):
-		play_world_sound(EFFECT_SOUNDS[kind], at)
-	if effect_container.get_child_count() > 240:
-		return
-	var effect = EFFECT_SCENE.instantiate()
-	effect_container.add_child(effect)
-	effect.global_position = at
-	effect.initialize(kind, color)
+		$Audio.play_world(EFFECT_SOUNDS[kind], at)
+	$EffectPool.play(at, kind, color)
 
 func on_entity_died(entity: Node3D) -> void:
 	selection.erase(entity)
@@ -663,6 +686,8 @@ func _on_income() -> void:
 			player.gold += 1
 
 func debug_add_gold() -> void:
+	if online:
+		return
 	gold += 100
 	$Audio.play_ui("coin")
 	hud.toast("调试补给 +100 金币", 2.0)
@@ -688,10 +713,14 @@ func enemy_count() -> int:
 func toggle_pause() -> void:
 	if finished:
 		return
-	get_tree().paused = not get_tree().paused
-	$Audio.set_world_paused(get_tree().paused)
+	if online:
+		_local_menu = not _local_menu
+		hud.show_pause(_local_menu)
+	else:
+		get_tree().paused = not get_tree().paused
+		$Audio.set_world_paused(get_tree().paused)
+		hud.show_pause(get_tree().paused)
 	$Audio.play_ui(&"select")
-	hud.show_pause(get_tree().paused)
 
 func toggle_sound() -> void:
 	var is_muted: bool = $Audio.toggle_mute()
@@ -701,6 +730,9 @@ func toggle_sound() -> void:
 	hud.toast("声音已关闭" if is_muted else "声音已开启", 1.5)
 
 func end_battle(victory: bool) -> void:
+	if online and is_authority and not finished:
+		replication.flush_visual()
+		Session.relay.finish_match({"winner": get_player(local_owner_id).alliance_id if victory else 1 - get_player(local_owner_id).alliance_id, "time": elapsed})
 	if finished:
 		return
 	finished = true
@@ -726,10 +758,16 @@ func restart() -> void:
 	_closing = true
 	get_tree().paused = false
 	await prepare_shutdown()
-	get_tree().reload_current_scene()
+	if online:
+		Session.back_to_lobby()
+	else:
+		get_tree().reload_current_scene()
 
 func prepare_shutdown() -> void:
 	finished = true
+	$EffectPool.reset_all()
+	if online:
+		replication.reset()
 	$IncomeTimer.stop()
 	$EnemyTimer.stop()
 	var retiring_playbacks: Array[WeakRef] = []
@@ -802,6 +840,9 @@ func submit_command(command: Dictionary, owner: int = -1) -> Dictionary:
 
 func submit_local(command: Dictionary) -> Dictionary:
 	command["seq"] = next_command_sequence(local_owner_id)
+	if online and not is_authority:
+		var error: Error = Session.relay.send_command(command)
+		return {"ok": error == OK, "error": "网络连接暂不可用" if error != OK else ""}
 	return submit_command(command)
 
 func selected_ids() -> Array:
@@ -883,6 +924,11 @@ func move_formation(army: Array, at: Vector3, assault: bool, queued: bool) -> vo
 func notify_owner(owner: int, message: String) -> void:
 	if owner == local_owner_id:
 		hud.toast(message, 2.5)
+	elif online and is_authority:
+		var now := Time.get_ticks_msec()
+		if now >= int(_notice_after.get(owner, 0)):
+			_notice_after[owner] = now + 200
+			Session.relay.send_event(owner, {"kind": "notice", "text": message})
 
 func nearest_mine(at: Vector3) -> ResourceVein:
 	var nearest: ResourceVein
@@ -904,6 +950,12 @@ func find_build_location(owner: int, kind: String, near: Vector3) -> Vector3:
 	return Vector3.INF
 
 func _setup_match() -> void:
+	online = Session.online
+	if not Session.config.is_empty():
+		match_config = Session.config.duplicate(true)
+	if online:
+		is_authority = Session.relay.is_host
+		local_owner_id = Session.relay.owner_id
 	var mode := "2v2" if "--2v2" in OS.get_cmdline_user_args() else "1v1"
 	if match_config.is_empty():
 		match_config = {"mode": mode, "players": []}
@@ -921,6 +973,7 @@ func _setup_match() -> void:
 	map_instance = map_definition.scene.instantiate()
 	$MapContainer.add_child(map_instance)
 	if not is_authority:
+		camera_rig.focus_at(map_instance.get_node("SpawnPoints/Player%d" % local_owner_id).global_position, true)
 		return
 	for player: PlayerState in players:
 		var at: Vector3 = map_instance.get_node("SpawnPoints/Player%d" % player.owner_id).global_position
@@ -956,5 +1009,98 @@ func check_victory() -> void:
 			return
 
 func play_world_sound(kind: StringName, at: Vector3) -> void:
+	queue_visible_visual(at, {"kind": "sound", "sound": String(kind), "at": vector_data(at)})
 	if can_see_position(local_owner_id, at):
 		$Audio.play_world(kind, at)
+
+
+func _on_network_command(owner: int, command: Dictionary) -> void:
+	if is_authority:
+		submit_command(command, owner)
+
+func _on_snapshot_applied(_tick: int) -> void:
+	if selection.is_empty() and is_instance_valid(headquarters) and not game_started:
+		select_entities([headquarters])
+	game_started = true
+	hud.refresh()
+
+func _on_network_event(event: Dictionary) -> void:
+	match str(event.get("kind", "")):
+		"notice": hud.toast(str(event.get("text", "")), 2.5)
+		"bot_takeover":
+			var owner: int = int(event.owner)
+			if is_authority and owner >= 0 and owner < players.size():
+				get_player(owner).controller = "bot"
+				bots[owner] = SkirmishBot.new(self, owner)
+		"player_reconnected":
+			var owner: int = int(event.owner)
+			if is_authority and owner >= 0 and owner < players.size():
+				get_player(owner).controller = "human"
+				bots.erase(owner)
+		"host_paused":
+			set_match_paused(true)
+			hud.toast("房主连接中断 · 等待恢复（最多 30 秒）", 30)
+		"host_resumed", "connection_restored":
+			set_match_paused(false)
+			hud.toast("连接已恢复", 3)
+		"pause": set_match_paused(event.get("paused", false) == true)
+		"match_finished":
+			var result: Dictionary = event.result
+			elapsed = float(result.get("time", elapsed))
+			end_battle(int(result.get("winner", -1)) == get_player(local_owner_id).alliance_id)
+		"match_aborted":
+			set_match_paused(false)
+			end_battle(false)
+			hud.get_node("%ResultHeading").text = "对局已中断"
+			hud.get_node("%ResultBody").text = "房主未能在 30 秒内恢复连接，本场比赛结束。"
+
+func _on_connection_state(state: String) -> void:
+	if not online or finished:
+		return
+	if state in ["reconnecting", "disconnected"]:
+		if is_authority:
+			set_match_paused(true)
+		hud.toast("连接中断 · 正在尝试恢复", 10)
+	elif state == "match" and _network_paused:
+		set_match_paused(false)
+	elif state == "error":
+		set_match_paused(false)
+		end_battle(false)
+		hud.get_node("%ResultHeading").text = "对局连接已中断"
+		hud.get_node("%ResultBody").text = "未能在重连时限内恢复连接，请返回大厅重新加入对局。"
+
+func request_match_pause() -> void:
+	if not is_authority:
+		toggle_pause()
+		return
+	var value := not get_tree().paused
+	Session.relay.send_event(-1, {"kind": "pause", "paused": value})
+	set_match_paused(value)
+
+func set_match_paused(value: bool) -> void:
+	_network_paused = value
+	get_tree().paused = value
+	$Audio.set_world_paused(value)
+
+func queue_visible_visual(at: Vector3, event: Dictionary) -> void:
+	if not online or not is_authority or not _match_ready:
+		return
+	for player: PlayerState in players:
+		if player.owner_id != local_owner_id and player.controller == "human" and can_see_position(player.owner_id, at):
+			replication.queue_host_visual(player.owner_id, event)
+
+func _play_network_visual(event: Dictionary) -> void:
+	var data: Array = event.at
+	var at := Vector3(float(data[0]), float(data[1]), float(data[2]))
+	if not can_see_position(local_owner_id, at):
+		return
+	match str(event.kind):
+		"effect":
+			var color: Array = event.color
+			spawn_effect(at, str(event.effect), Color(float(color[0]), float(color[1]), float(color[2])))
+		"sound": $Audio.play_world(StringName(event.sound), at)
+		"projectile":
+			var origin: Array = event.from
+			var projectile: BattleProjectile = PROJECTILE_SCENE.instantiate()
+			effect_container.add_child(projectile)
+			projectile.initialize_visual(Vector3(float(origin[0]), float(origin[1]), float(origin[2])), at, str(event.projectile), float(event.duration), float(event.arc), entities_by_id.get(int(event.target)))

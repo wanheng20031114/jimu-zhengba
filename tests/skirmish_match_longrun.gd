@@ -2,7 +2,7 @@ extends SceneTree
 ## Real main-scene economy and combat. No spawned units, free buildings or gold subsidies.
 ## Ten-times wall-clock speed still uses the production 1/30-second simulation step.
 const SPEED: int = 10
-const DURATION: float = 360.0
+var duration: float = 360.0
 var game: Node3D
 var mode: String = "1v1"
 var checks: int = 0
@@ -19,6 +19,9 @@ var started_at: int = 0
 var invariant_failures: Dictionary = {}
 
 func _initialize() -> void:
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--duration="):
+			duration = clampf(float(argument.trim_prefix("--duration=")), 360.0, 1800.0)
 	Engine.physics_ticks_per_second = 30 * SPEED
 	Engine.max_physics_steps_per_frame = 64
 	Engine.time_scale = SPEED
@@ -54,7 +57,7 @@ func _run() -> void:
 		_check(player.gold == 320 and player.farmers == 3 and player.military_supply == 0, "owner %d starts with only the approved economy" % player.owner_id)
 	started_at = Time.get_ticks_msec()
 	var next_sample: float = 0.0
-	while game.elapsed < DURATION and not game.finished:
+	while game.elapsed < duration and not game.finished:
 		await physics_frame
 		_watch_commands()
 		_observe_entities()
@@ -69,7 +72,7 @@ func _run() -> void:
 		_check(false, message)
 	_check(invariant_failures.is_empty(), "all ticks preserve economy, worker, supply, mine and builder invariants")
 	_check(first_damage > 0 and first_damage < 100, "real opposing armies deal damage within 100 simulation seconds")
-	_check(game.elapsed >= DURATION - 0.1 or game.finished, "match simulates six minutes or reaches a legitimate victory")
+	_check(game.elapsed >= duration - 0.1 or game.finished, "match simulates the requested duration or reaches a legitimate victory")
 	_check(statistics.values().any(func(stat): return float(stat.first_research) > 0), "active combat does not permanently starve all technology research")
 	_check(statistics.values().any(func(stat): return int(stat.completed.get("factory", 0)) > 0), "a real paid military factory completes during the match")
 	for owner: int in statistics:
@@ -79,10 +82,12 @@ func _run() -> void:
 		_check(int(stat.gathered_gold) >= 300, "owner %d sustains real mining income" % owner)
 		_check(stat.produced.size() >= 4, "owner %d develops farmers and all three basic military roles" % owner)
 	var report: Dictionary = {"mode": mode, "simulated_seconds": game.elapsed, "wall_seconds": (Time.get_ticks_msec() - started_at) / 1000.0,
+		"requested_seconds": duration, "victory_within_six_to_ten_minutes": game.finished and game.elapsed >= 360.0 and game.elapsed <= 600.0,
 		"simulation_step": game.elapsed / maxi(game.simulation_tick, 1), "finished": game.finished,
 		"first_damage": first_damage, "last_damage": last_damage, "damage_events": damage_events,
 		"checks": checks, "failures": failures, "players": statistics, "samples": samples, "final_entities": _diagnostics()}
-	var file := FileAccess.open("res://artifacts/skirmish_longrun_%s.json" % mode, FileAccess.WRITE)
+	var suffix: String = "_%ds" % int(duration) if duration != 360.0 else ""
+	var file := FileAccess.open("res://artifacts/skirmish_longrun_%s%s.json" % [mode, suffix], FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "  "))
 	file.close()
 	print("SKIRMISH_LONGRUN_RESULT ", mode, " ", checks, " checks; ", failures.size(), " failures; simulated=", game.elapsed, " first_damage=", first_damage)

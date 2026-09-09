@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://tests/fog_test_host.gd" id="1_host"]
 [ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="2_fog"]
+[ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="3_budget"]
 
 [sub_resource type="NavigationMesh" id="Navigation_test"]
 vertices = PackedVector3Array(-64, 0, -56, -64, 0, 56, 64, 0, 56, 64, 0, -56)
@@ -56,3 +57,5 @@ far = 200.0
 current = true
 
 [node name="FogOfWar" parent="." instance=ExtResource("2_fog")]
+
+[node name="PathBudget" parent="." instance=ExtResource("3_budget")]

@@ -1,0 +1,12 @@
+config_version=5
+
+[application]
+config/name="Ashen Crown Relay"
+config/features=PackedStringArray("4.6")
+run/max_fps=60
+
+[application/run]
+disable_stdout=false
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

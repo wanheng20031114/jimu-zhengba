@@ -2,7 +2,41 @@ class_name BattleEffect
 extends Node3D
 ## Reusable authored particle scene. Only the relevant emitters are activated.
 
+signal finished(effect: BattleEffect)
+var pooled: bool = false
+var _tweens: Array[Tween] = []
+var _spark_defaults: Dictionary
+
+func _ready() -> void:
+	_spark_defaults = {"direction": $Sparks.direction, "min": $Sparks.initial_velocity_min, "max": $Sparks.initial_velocity_max}
+
+func _new_tween() -> Tween:
+	var tween := create_tween()
+	_tweens.append(tween)
+	return tween
+
+func reset_effect() -> void:
+	$Lifetime.stop()
+	for tween: Tween in _tweens:
+		if tween.is_valid():
+			tween.kill()
+	_tweens.clear()
+	for particles: CPUParticles3D in [$Sparks, $Dust, $Debris]:
+		particles.emitting = false
+		particles.restart()
+		particles.emitting = false
+	$Sparks.direction = _spark_defaults.direction
+	$Sparks.initial_velocity_min = _spark_defaults.min
+	$Sparks.initial_velocity_max = _spark_defaults.max
+	$Dust.scale = Vector3.ONE
+	$Debris.scale = Vector3.ONE
+	for visual: MeshInstance3D in [$Flash, $Ring, $Direction]:
+		visual.hide()
+		visual.transparency = 0
+	$Direction.position.y = 0.8
+
 func initialize(kind: String, color: Color = Color.WHITE) -> void:
+	reset_effect()
 	var duration: float = 1.4
 	$Sparks.color = color
 	$Ring.material_override.albedo_color = color
@@ -27,7 +61,7 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 			$Dust.scale = Vector3.ONE * 0.55
 			$Dust.restart()
 			$Dust.emitting = true
-			var flash: Tween = create_tween()
+			var flash: Tween = _new_tween()
 			flash.tween_method(_animate_flash.bind(0.8), 0.0, 1.0, 0.16)
 			duration = 1.8
 		"explosion", "stone_hit", "collapse":
@@ -45,14 +79,14 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 				$Sparks.amount = 18
 				$Sparks.restart()
 				$Sparks.emitting = true
-				var flash: Tween = create_tween()
+				var flash: Tween = _new_tween()
 				flash.tween_method(_animate_flash.bind(1.0), 0.0, 1.0, 0.27)
 			duration = 3.0
 		"move", "attack":
 			_show_ring(Color("80d9e7") if kind == "move" else Color("eea176"), 1.5, 0.65)
 			$Direction.show()
 			$Direction.material_override.albedo_color = Color("80d9e7") if kind == "move" else Color("eea176")
-			var marker: Tween = create_tween()
+			var marker: Tween = _new_tween()
 			marker.tween_method(_animate_direction, 0.0, 1.0, 0.65)
 			duration = 0.8
 		"spawn", "heal":
@@ -79,7 +113,7 @@ func _show_ring(color: Color, end_size: float, duration: float) -> void:
 	$Ring.show()
 	$Ring.material_override.albedo_color = color
 	$Ring.scale = Vector3(0.25, 1.0, 0.25)
-	var pulse: Tween = create_tween()
+	var pulse: Tween = _new_tween()
 	pulse.tween_method(_animate_ring.bind(end_size), 0.0, 1.0, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func _animate_ring(amount: float, end_size: float) -> void:
@@ -96,4 +130,7 @@ func _animate_direction(amount: float) -> void:
 	$Direction.transparency = amount
 
 func _on_lifetime_timeout() -> void:
-	queue_free()
+	if pooled:
+		finished.emit(self)
+	else:
+		queue_free()

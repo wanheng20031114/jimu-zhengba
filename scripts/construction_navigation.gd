@@ -1,17 +1,36 @@
 class_name ConstructionNavigation
 extends Node
-## Carve authored grid polygons only when building footprints change.
-## The original meshes remain immutable and demolition patches retain exclusive
-## cell ownership. No per-frame baking and no overlapping replacement regions.
+## Carve the authored one-metre cells, then merge contiguous cells into convex
+## rectangles. Shared edges are split at every T-junction: native paths see the
+## same walkable area with fewer polygons. The first three vertices span a real
+## corner, as Godot uses them to calculate the polygon's projection plane.
+## https://docs.godotengine.org/en/stable/tutorials/navigation/navigation_optimizing_performance.html
 
 const FOOTPRINT_HALF: float = 2.0
 const NAV_PADDING: float = 1.15
+# Bound portal lengths for local path quality and stable float projections.
+const MAX_RECT_EDGE: int = 4
 
 var rebuild_count: int = 0
 var last_rebuild_usec: int = 0
+var compact_polygon_count: int = 0
+var last_request_usec: int = 0
 var _sources: Array[Dictionary] = []
 var _blocked_cells: Dictionary = {}
 var _walkable_cells: Dictionary = {}
+var _revision: int = 0
+var _task_id: int = -1
+var _requested_sources: Array[Dictionary] = []
+var _job: MeshJob
+
+class MeshJob extends RefCounted:
+	var revision: int
+	var sources: Array[Dictionary]
+	var results: Array[NavigationMesh] = []
+	var elapsed_usec: int = 0
+
+func _ready() -> void:
+	set_physics_process(false)
 
 func _cache_sources() -> void:
 	if not _sources.is_empty():
@@ -21,7 +40,6 @@ func _cache_sources() -> void:
 	for region: NavigationRegion3D in regions:
 		var source: NavigationMesh = region.navigation_mesh
 		var vertices: PackedVector3Array = source.get_vertices()
-		var polygons: Array[PackedInt32Array] = []
 		var cells: Array[Vector2i] = []
 		for index: int in source.get_polygon_count():
 			var polygon: PackedInt32Array = source.get_polygon(index)
@@ -29,9 +47,9 @@ func _cache_sources() -> void:
 			for vertex_index: int in polygon:
 				center += vertices[vertex_index]
 			center = region.to_global(center / float(polygon.size()))
-			polygons.append(polygon)
 			cells.append(Vector2i(floori(center.x), floori(center.z)))
-		_sources.append({"region": region, "mesh": source, "polygons": polygons, "cells": cells})
+		cells.sort_custom(func(a: Vector2i, b: Vector2i): return a.y < b.y if a.y != b.y else a.x < b.x)
+		_sources.append({"region": region, "mesh": source, "cells": cells})
 
 func refresh() -> void:
 	_cache_sources()
@@ -41,28 +59,139 @@ func refresh() -> void:
 		if building.alive:
 			for cell: Vector2i in footprint_cells(building.global_position, building.get_combat_definition().size):
 				occupied[cell] = true
-	var changed: bool = occupied != _blocked_cells
+	var changed: bool = occupied != _blocked_cells or rebuild_count == 0
+	if not changed:
+		return
 	_blocked_cells = occupied
 	_walkable_cells.clear()
+	_requested_sources = []
 	for source: Dictionary in _sources:
 		var region: NavigationRegion3D = source.region
-		var replacement: NavigationMesh
-		if changed and not occupied.is_empty():
-			replacement = source.mesh.duplicate()
-			replacement.clear_polygons()
-		for index: int in source.cells.size():
-			var cell: Vector2i = source.cells[index]
+		var walkable: Dictionary = {}
+		for cell: Vector2i in source.cells:
 			if occupied.has(cell):
 				continue
+			walkable[cell] = true
 			if region.enabled:
 				_walkable_cells[cell] = true
-			if replacement != null:
-				replacement.add_polygon(source.polygons[index])
-		if changed:
-			region.navigation_mesh = source.mesh if occupied.is_empty() else replacement
-	if changed:
-		rebuild_count += 1
-	last_rebuild_usec = Time.get_ticks_usec() - started
+		# The worker owns immutable input containers and a new NavigationMesh;
+		# it never accesses a Node, live placement cache or active mesh resource.
+		_requested_sources.append({"mesh": source.mesh, "cells": source.cells, "walkable": walkable})
+	rebuild_count += 1
+	_revision += 1
+	if _task_id < 0: _start_job()
+	last_request_usec = Time.get_ticks_usec() - started
+
+func _start_job() -> void:
+	_job = MeshJob.new()
+	_job.revision = _revision
+	_job.sources = _requested_sources
+	_task_id = WorkerThreadPool.add_task(_build_job.bind(_job), false, "Compact construction navigation")
+	set_physics_process(true)
+
+static func _build_job(job: MeshJob) -> void:
+	var began: int = Time.get_ticks_usec()
+	for source: Dictionary in job.sources:
+		job.results.append(_compact_mesh(source.mesh, source.cells, source.walkable))
+	job.elapsed_usec = Time.get_ticks_usec() - began
+
+func _physics_process(_delta: float) -> void:
+	if not WorkerThreadPool.is_task_completed(_task_id): return
+	# Joining a completed task publishes its results and releases its resources.
+	WorkerThreadPool.wait_for_task_completion(_task_id)
+	_task_id = -1
+	if _job.revision != _revision:
+		# Rapid construction only queues the newest occupancy revision.
+		_start_job()
+		return
+	compact_polygon_count = 0
+	for index: int in _job.results.size():
+		var region: NavigationRegion3D = _sources[index].region
+		region.navigation_mesh = _job.results[index]
+		compact_polygon_count += _job.results[index].get_polygon_count()
+	last_rebuild_usec = _job.elapsed_usec
+	_job = null
+	set_physics_process(false)
+
+func is_rebuilding() -> bool:
+	# Resource work only. NavigationServer publishes the replacement through
+	# its normal asynchronous region/map iterations after this task finishes.
+	return _task_id >= 0
+
+func _exit_tree() -> void:
+	# A scene cannot release its resource inputs while its own task is active.
+	if _task_id >= 0:
+		WorkerThreadPool.wait_for_task_completion(_task_id)
+		_task_id = -1
+	_job = null
+
+static func _compact_mesh(source: NavigationMesh, ordered_cells: Array[Vector2i], walkable: Dictionary) -> NavigationMesh:
+	var remaining: Dictionary = walkable.duplicate()
+	var rectangles: Array[Rect2i] = []
+	for cell: Vector2i in ordered_cells:
+		if not remaining.has(cell): continue
+		var end_x: int = cell.x + 1
+		while end_x < cell.x + MAX_RECT_EDGE and remaining.has(Vector2i(end_x, cell.y)): end_x += 1
+		var end_y: int = cell.y + 1
+		while end_y < cell.y + MAX_RECT_EDGE:
+			var complete: bool = true
+			for x: int in range(cell.x, end_x):
+				if not remaining.has(Vector2i(x, end_y)):
+					complete = false
+					break
+			if not complete: break
+			end_y += 1
+		for x: int in range(cell.x, end_x):
+			for y: int in range(cell.y, end_y): remaining.erase(Vector2i(x, y))
+		rectangles.append(Rect2i(cell, Vector2i(end_x, end_y) - cell))
+	var vertical: Dictionary = {}
+	var horizontal: Dictionary = {}
+	for rect: Rect2i in rectangles:
+		for corner: Vector2i in [rect.position, rect.end, Vector2i(rect.position.x, rect.end.y), Vector2i(rect.end.x, rect.position.y)]:
+			if not vertical.has(corner.x): vertical[corner.x] = {}
+			if not horizontal.has(corner.y): horizontal[corner.y] = {}
+			vertical[corner.x][corner.y] = true
+			horizontal[corner.y][corner.x] = true
+	for key: int in vertical:
+		vertical[key] = vertical[key].keys()
+		vertical[key].sort()
+	for key: int in horizontal:
+		horizontal[key] = horizontal[key].keys()
+		horizontal[key].sort()
+	var result: NavigationMesh = source.duplicate()
+	result.clear_polygons()
+	var output := PackedVector3Array()
+	var ids: Dictionary = {}
+	for rect: Rect2i in rectangles:
+		var points: Array[Vector2i] = []
+		# Native binary searches visit only this short edge's subdivisions,
+		# instead of scanning an entire battlefield row for every rectangle.
+		var left: Array = vertical[rect.position.x]
+		for index: int in range(left.bsearch(rect.position.y), left.bsearch(rect.end.y)):
+			points.append(Vector2i(rect.position.x, left[index]))
+		var top: Array = horizontal[rect.end.y]
+		for index: int in range(top.bsearch(rect.position.x), top.bsearch(rect.end.x)):
+			points.append(Vector2i(top[index], rect.end.y))
+		var right: Array = vertical[rect.end.x]
+		for index: int in range(right.bsearch(rect.end.y, false) - 1, right.bsearch(rect.position.y, false) - 1, -1):
+			points.append(Vector2i(rect.end.x, right[index]))
+		var bottom: Array = horizontal[rect.position.y]
+		for index: int in range(bottom.bsearch(rect.end.x, false) - 1, bottom.bsearch(rect.position.x, false) - 1, -1):
+			points.append(Vector2i(bottom[index], rect.position.y))
+		var polygon := PackedInt32Array()
+		for point: Vector2i in points:
+			if not ids.has(point):
+				ids[point] = output.size()
+				output.append(Vector3(point.x, 0, point.y))
+			polygon.append(ids[point])
+		# Starting with three collinear edge subdivisions gives Godot a zero
+		# plane normal. The previous bottom-edge point, bottom-left corner and
+		# next left-edge point form a nondegenerate upward-facing triangle.
+		var rotated := PackedInt32Array([polygon[-1]])
+		for index: int in range(polygon.size() - 1): rotated.append(polygon[index])
+		result.add_polygon(rotated)
+	result.vertices = output
+	return result
 
 func footprint_cells(at: Vector3, size: Vector3 = Vector3(4, 6, 4)) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []

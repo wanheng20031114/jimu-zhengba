@@ -27,6 +27,9 @@
 [ext_resource type="Script" path="res://scripts/construction_navigation.gd" id="construction_nav"]
 
 [ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="fog"]
+[ext_resource type="PackedScene" path="res://scenes/match_replication.tscn" id="replication"]
+[ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="path_budget"]
+[ext_resource type="PackedScene" path="res://scenes/effect_pool.tscn" id="effect_pool"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.32,0.41,0.48,1)
@@ -109,6 +112,10 @@ rotation_degrees = Vector3(0,-45,0)
 
 [node name="MapContainer" type="Node3D" parent="."]
 
+[node name="PathBudget" parent="." instance=ExtResource("path_budget")]
+
+[node name="MatchReplication" parent="." instance=ExtResource("replication")]
+
 [node name="Buildings" type="Node3D" parent="."]
 
 [node name="Units" type="Node3D" parent="."]
@@ -125,6 +132,8 @@ visible = false
 [node name="FogOfWar" parent="." instance=ExtResource("fog")]
 
 [node name="Effects" type="Node3D" parent="."]
+
+[node name="EffectPool" parent="." instance=ExtResource("effect_pool")]
 
 
 [node name="Audio" parent="." instance=ExtResource("audio")]

@@ -15,6 +15,25 @@ var _active: bool = false
 var _game: Node
 var _blast_query: PhysicsShapeQueryParameters3D
 var _blast_radius: float = 0.0
+var _visual_only: bool = false
+
+func initialize_visual(from: Vector3, to: Vector3, kind: String, duration: float, arc: float, target: Node3D = null) -> void:
+	_visual_only = true
+	_game = get_tree().current_scene
+	_start = from
+	_end = to
+	_kind = kind
+	_duration = duration
+	_arc_height = arc
+	_target = target
+	$Arrow.visible = kind == "arrow"
+	$Stone.visible = kind == "stone"
+	$Cannonball.visible = kind == "cannon"
+	$Trail.emitting = kind == "cannon"
+	global_position = from
+	visible = _game.can_see_position(_game.local_owner_id, from)
+	_active = true
+	reset_physics_interpolation()
 
 func initialize(source: Node3D, target: Node3D, payload: DamagePayload, kind: String) -> void:
 	_source = source
@@ -83,6 +102,8 @@ func _physics_process(delta: float) -> void:
 
 func _impact() -> void:
 	_active = false
+	if _visual_only:
+		return
 	var damage_source: Node3D = _source if is_instance_valid(_source) else null
 	if _kind in ["arrow", "cannon"]:
 		var impact_kind: String = "arrow_hit" if _kind == "arrow" else "explosion"

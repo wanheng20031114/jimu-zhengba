@@ -1,0 +1,391 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/effect_pool.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/battle_effect.tscn" id="effect"]
+
+[node name="EffectPool" type="Node3D"]
+script = ExtResource("script")
+
+[node name="Effect000" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect001" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect002" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect003" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect004" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect005" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect006" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect007" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect008" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect009" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect010" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect011" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect012" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect013" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect014" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect015" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect016" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect017" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect018" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect019" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect020" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect021" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect022" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect023" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect024" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect025" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect026" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect027" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect028" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect029" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect030" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect031" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect032" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect033" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect034" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect035" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect036" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect037" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect038" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect039" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect040" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect041" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect042" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect043" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect044" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect045" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect046" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect047" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect048" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect049" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect050" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect051" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect052" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect053" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect054" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect055" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect056" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect057" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect058" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect059" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect060" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect061" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect062" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect063" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect064" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect065" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect066" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect067" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect068" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect069" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect070" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect071" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect072" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect073" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect074" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect075" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect076" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect077" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect078" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect079" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect080" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect081" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect082" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect083" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect084" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect085" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect086" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect087" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect088" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect089" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect090" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect091" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect092" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect093" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect094" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect095" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect096" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect097" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect098" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect099" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect100" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect101" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect102" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect103" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect104" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect105" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect106" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect107" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect108" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect109" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect110" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect111" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect112" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect113" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect114" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect115" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect116" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect117" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect118" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect119" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect120" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect121" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect122" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect123" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect124" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect125" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect126" parent="." instance=ExtResource("effect")]
+visible = false
+
+[node name="Effect127" parent="." instance=ExtResource("effect")]
+visible = false

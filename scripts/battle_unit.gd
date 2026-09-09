@@ -58,6 +58,7 @@ var _stats: UnitDefinition
 var _model: Node3D
 var _attack_animation: AnimationPlayer
 var _game: Node
+var _path_budget: PathBudget
 var _attack_cooldown: float = 0.0
 var _scan_time: float = 0.0
 var _repath_time: float = 0.0
@@ -111,6 +112,7 @@ func _ready() -> void:
 	_target_query.collision_mask = (8 | 64) if team == 0 else (16 | 32)
 	_space_state = get_world_3d().direct_space_state
 	_game = get_tree().current_scene
+	_path_budget = _game.get_node("PathBudget")
 	_home_position = global_position
 	destination = global_position
 	_scan_time = randf_range(0.05, 0.35)
@@ -144,6 +146,7 @@ func _ready() -> void:
 	# completed hierarchy so render interpolation never blends from the origin.
 	reset_physics_interpolation()
 	_game.register_entity(self)
+	_path_budget.register(self)
 
 func _physics_process(delta: float) -> void:
 	if not alive or not _game.is_authority:
@@ -181,8 +184,8 @@ func _physics_process(delta: float) -> void:
 			if _attack_cooldown <= 0.000001:
 				_start_attack()
 		elif order != Order.HOLD and order != Order.MOVE:
-			if _repath_time <= 0.0:
-				_repath_time = randf_range(0.3, 0.45)
+			if _repath_time <= 0.0 or _path_budget.is_finished(self):
+				_repath_time = randf_range(0.4, 0.55)
 				var attack_point: Vector3 = target.get_attack_position(global_position) if target.is_in_group("buildings") else target.global_position
 				var approach: Vector3 = global_position - attack_point
 				approach.y = 0.0
@@ -191,13 +194,13 @@ func _physics_process(delta: float) -> void:
 				var target_radius: float = 0.0 if target.is_in_group("buildings") else target.radius
 				var stop_distance: float = target_radius + radius + attack_range * 0.6
 				var chase_destination: Vector3 = attack_point + approach.normalized() * stop_distance
-				# An idle agent has a finished path and a default target at the
-				# origin. Even an unchanged/nearby destination must start that path.
-				if navigation_agent.is_navigation_finished() or navigation_agent.target_position.distance_squared_to(chase_destination) > 0.09:
+				# Small target motion keeps the current corridor. A finished route
+				# refreshes immediately instead of waiting for the chase interval.
+				if _path_budget.is_finished(self) or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
 					_set_navigation_target(chase_destination)
 			desired_velocity = _path_velocity()
 			path_velocity_requested = true
-			if target.is_in_group("buildings") and String(_stats.projectile).is_empty() and navigation_agent.is_navigation_finished():
+			if target.is_in_group("buildings") and String(_stats.projectile).is_empty() and _path_budget.is_finished(self):
 				# A padded navigation mesh ends before the physical wall. Complete the
 				# last contact step through CharacterBody3D so swords can reach it.
 				var contact_direction: Vector3 = target.get_attack_position(global_position) - global_position
@@ -211,7 +214,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			desired_velocity = _path_velocity()
 			path_velocity_requested = true
-			if NavigationServer3D.map_get_iteration_id(navigation_agent.get_navigation_map()) > 0 and navigation_agent.is_navigation_finished():
+			if _path_budget.is_finished(self):
 				_complete_waypoint()
 	elif order == Order.ATTACK:
 		_complete_waypoint()
@@ -238,12 +241,12 @@ func _physics_process(delta: float) -> void:
 		_apply_velocity(desired_velocity)
 
 func _path_velocity() -> Vector3:
-	if NavigationServer3D.map_get_iteration_id(navigation_agent.get_navigation_map()) == 0:
-		return Vector3.ZERO
-	var next_position: Vector3 = navigation_agent.get_next_path_position()
+	var next_position: Vector3 = _path_budget.next_position(self)
 	var direction: Vector3 = next_position - global_position
 	direction.y = 0.0
-	if direction.length_squared() < 0.01 or navigation_agent.is_navigation_finished():
+	if direction.length_squared() < 0.01 or _path_budget.is_finished(self):
+		if _path_budget.has_pending(self):
+			_face_direction(_path_budget.target_position(self) - global_position, get_physics_process_delta_time())
 		return Vector3.ZERO
 	return direction.normalized() * speed
 
@@ -278,7 +281,7 @@ func _set_movement_dust(moving: bool) -> void:
 
 func _set_navigation_target(at: Vector3) -> void:
 	at.y = 0.0
-	navigation_agent.target_position = at
+	_path_budget.request(self, at)
 
 func _face_direction(direction: Vector3, delta: float) -> void:
 	if direction.length_squared() > 0.001:
@@ -469,7 +472,7 @@ func _work_velocity(delta: float) -> Vector3:
 			_repath_time = 0.6
 			_update_work_destination()
 		var approach_velocity: Vector3 = _path_velocity()
-		if NavigationServer3D.map_get_iteration_id(navigation_agent.get_navigation_map()) > 0 and navigation_agent.is_navigation_finished() and distance.length_squared() <= pow(reach + 1.25, 2.0):
+		if _path_budget.is_finished(self) and distance.length_squared() <= pow(reach + 1.25, 2.0):
 			# The baked clearance band can end just outside a worker's reach.
 			# CharacterBody3D supplies the final collision-safe contact step.
 			approach_velocity = distance.normalized() * speed
@@ -538,6 +541,9 @@ func _interrupt_work() -> void:
 	_work_seconds = 0.0
 
 func _exit_tree() -> void:
+	# During full scene shutdown the sibling scheduler may already be gone.
+	if is_instance_valid(_path_budget):
+		_path_budget.unregister(self)
 	if _claimed_mine and is_instance_valid(work_target):
 		work_target.release(self)
 	if _claimed_site and is_instance_valid(work_target):
@@ -626,7 +632,7 @@ func _finish_order() -> void:
 	_set_movement_dust(false)
 	_moving = false
 	_model.set_motion(false)
-	_set_navigation_target(global_position)
+	_path_budget.cancel(self)
 	velocity = Vector3.ZERO
 	NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), Vector3.ZERO)
 
@@ -666,6 +672,7 @@ func _update_health_bar() -> void:
 
 func _die() -> void:
 	_interrupt_work()
+	_path_budget.cancel(self)
 	waypoint_queue.clear()
 	alive = false
 	sound_requested.emit(&"death_fall", global_position)

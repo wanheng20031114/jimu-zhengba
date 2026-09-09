@@ -1,0 +1,19 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://tests/network_game_fixture.gd" id="1_game"]
+[ext_resource type="Script" path="res://tests/network_game_fog_fixture.gd" id="2_fog"]
+[ext_resource type="PackedScene" path="res://scenes/resource_vein.tscn" id="3_mine"]
+[ext_resource type="PackedScene" path="res://scenes/match_replication.tscn" id="4_replication"]
+[ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="5_path_budget"]
+
+[node name="NetworkGameFixture" type="Node3D"]
+script = ExtResource("1_game")
+
+[node name="PathBudget" parent="." instance=ExtResource("5_path_budget")]
+
+[node name="FogOfWar" type="Node" parent="."]
+script = ExtResource("2_fog")
+
+[node name="Mine" parent="." instance=ExtResource("3_mine")]
+
+[node name="MatchReplication" parent="." instance=ExtResource("4_replication")]

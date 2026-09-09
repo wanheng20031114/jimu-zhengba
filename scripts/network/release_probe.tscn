@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/network/release_probe.gd" id="1_probe"]
+[ext_resource type="PackedScene" path="res://scripts/network/relay_client.tscn" id="2_relay"]
+
+[node name="NetworkReleaseProbe" type="Node"]
+process_mode = 3
+script = ExtResource("1_probe")
+
+[node name="RelayClient" parent="." instance=ExtResource("2_relay")]

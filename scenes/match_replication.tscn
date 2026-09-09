@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/network/match_replication.gd" id="1_replication"]
+
+[node name="MatchReplication" type="Node"]
+script = ExtResource("1_replication")
