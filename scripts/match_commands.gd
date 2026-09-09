@@ -51,7 +51,7 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 	var kind: String = command.kind
 	var entities: Array[BattleUnit] = []
 	var ids: Variant = command.get("units", [])
-	if not ids is Array or ids.size() > 70:
+	if not ids is Array or ids.size() > PlayerState.SUPPLY_LIMIT + game.get_player(owner).get_worker_limit():
 		return failure("无效单位列表")
 	for id: Variant in ids:
 		if not NetworkProtocol.integer(id, 1, MAX_INTEGER):

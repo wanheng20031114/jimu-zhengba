@@ -443,6 +443,7 @@ func _apply_players(states: Array) -> void:
 		player.reserved_farmers = int(own.reserved_farmers)
 		player.attack_level = int(own.attack_level)
 		player.defense_level = int(own.defense_level)
+		player.workforce_level = int(own.workforce_level)
 		player.queued_research = own.queued_research.duplicate()
 		player.active_research.clear()
 		for track: String in own.active_research:
@@ -536,15 +537,15 @@ func _valid_private(value: Variant) -> bool:
 	for key: String in ["gold", "supply", "reserved_supply", "farmers", "reserved_farmers"]:
 		if not NetworkProtocol.integer(value.get(key), 0, 2147483647):
 			return false
-	for key: String in ["attack_level", "defense_level"]:
-		if not NetworkProtocol.integer(value.get(key), 0, 3):
+	for track: String in BalanceCatalog.UPGRADE_TRACKS:
+		if not NetworkProtocol.integer(value.get(track + "_level"), 0, BalanceCatalog.UPGRADE_TRACKS[track]):
 			return false
 	if not value.get("active_research") is Dictionary:
 		return false
 	for track: Variant in value.active_research:
-		if not track in ["attack", "defense"] or not NetworkProtocol.integer(value.active_research[track], 1, 2147483647):
+		if not track in BalanceCatalog.UPGRADE_TRACKS or not NetworkProtocol.integer(value.active_research[track], 1, 2147483647):
 			return false
-	if not value.get("queued_research") is Dictionary or value.queued_research.size() > 6:
+	if not value.get("queued_research") is Dictionary or value.queued_research.size() > BalanceCatalog.UPGRADES.size():
 		return false
 	for id: Variant in value.queued_research:
 		if not id in BalanceCatalog.UPGRADES or not NetworkProtocol.integer(value.queued_research[id], 1, 2147483647):

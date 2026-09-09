@@ -33,7 +33,7 @@ func recruit_error(kind: String) -> String:
 	if player.gold < definition.cost:
 		return "金币不足"
 	if not definition.military and not player.can_reserve_farmer():
-		return "农民上限 10 人（含训练队列）"
+		return "农民上限 %d 人（含训练队列）" % player.get_worker_limit()
 	if definition.military and player.used_military_supply() + definition.supply > PlayerState.SUPPLY_LIMIT:
 		return "军事人口上限 60（含训练队列）"
 	return ""
@@ -135,10 +135,10 @@ func _cancel_missing_prerequisites() -> void:
 	# refund those unstartable jobs; already completed upgrades always survive.
 	var player: PlayerState = game.get_player(building.owner_id)
 	var cancelled := 0
-	for track: StringName in [&"attack", &"defense"]:
-		var completed: int = player.attack_level if track == &"attack" else player.defense_level
+	for track: StringName in BalanceCatalog.UPGRADE_TRACKS:
+		var completed: int = player.get_upgrade_level(track)
 		var missing := false
-		for level in range(completed + 1, 4):
+		for level in range(completed + 1, int(BalanceCatalog.UPGRADE_TRACKS[track]) + 1):
 			var id := "%s_%d" % [track, level]
 			if not player.queued_research.has(id):
 				missing = true
@@ -165,7 +165,7 @@ func research_waiting_for_prerequisite() -> bool:
 		return false
 	var upgrade := BalanceCatalog.upgrade(research_id)
 	var player: PlayerState = game.get_player(building.owner_id)
-	var completed: int = player.attack_level if upgrade.track == &"attack" else player.defense_level
+	var completed: int = player.get_upgrade_level(upgrade.track)
 	return upgrade.level > completed + 1
 
 func _physics_process(delta: float) -> void:
@@ -188,10 +188,7 @@ func _physics_process(delta: float) -> void:
 		research_elapsed += delta
 		if research_elapsed + 0.00001 >= upgrade.research_seconds:
 			var player: PlayerState = game.get_player(building.owner_id)
-			if upgrade.track == &"attack":
-				player.attack_level = upgrade.level
-			else:
-				player.defense_level = upgrade.level
+			player.complete_upgrade(upgrade)
 			_remove_research_at(0, false)
 			game.notify_owner(building.owner_id, "%s研究完成" % upgrade.name)
 

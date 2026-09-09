@@ -129,7 +129,11 @@ func submit_command(command: Dictionary, owner: int = -1) -> Dictionary:
 			cost = definition.cost
 		"research":
 			if not player.active_research.is_empty(): return {"ok": false}
-			cost = BalanceCatalog.upgrade(command.upgrade).cost
+			var upgrade: UpgradeDefinition = BalanceCatalog.upgrade(command.upgrade)
+			if target == null or target.owner_id != owner or target.building_type != "academy" or not target.is_constructed:
+				return {"ok": false}
+			if upgrade.level != player.get_upgrade_level(upgrade.track) + 1: return {"ok": false}
+			cost = upgrade.cost
 	if cost > player.gold: return {"ok": false}
 	var recorded: Dictionary = command.duplicate(true)
 	recorded["cost"] = cost
@@ -170,8 +174,7 @@ func advance(seconds: float) -> void:
 			player.active_research.remaining -= seconds
 			if player.active_research.remaining <= 0:
 				var upgrade: UpgradeDefinition = BalanceCatalog.upgrade(player.active_research.id)
-				if upgrade.track == &"attack": player.attack_level = upgrade.level
-				else: player.defense_level = upgrade.level
+				player.complete_upgrade(upgrade)
 				player.active_research.clear()
 	for worker: Node3D in get_tree().get_nodes_in_group("units"):
 		if worker.unit_type != "farmer" or worker.order != BattleUnit.Order.GATHER or not worker._claimed_mine: continue
@@ -197,4 +200,3 @@ func advance(seconds: float) -> void:
 			players[owner].reserved_farmers -= 1
 			add_unit("farmer", owner, entities[id].global_position + Vector3(5, 0, 0))
 			training.erase(id)
-

@@ -10,7 +10,7 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/AshenCrown-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
-当前版本 **0.7.3**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.3.md)。
+当前版本 **0.7.4**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.4.md)。
 
 异常后可运行发布包内 `COLLECT_DIAGNOSTICS.cmd`，在“文档/AshenCrown-Diagnostics”生成本地诊断ZIP；不会自动上传或修改设置。已复现问题、修复与诊断范围见 [稳定性调查](docs/crash-investigation-0.7.3.md)。
 
@@ -18,13 +18,14 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 - 1v1 琥珀十字路（96×96），2v2 双谷争锋（128×112）；对称出生、主路与侧路、6/10处永久矿脉。
 - 每人开局 1 座大本营、3 农民、320 金币。自然收入每秒 1，采矿每人每 3 秒 +4；每处矿脉共享 6 个位置，额外农民等待空位。
-- 大本营只训练农民：50 金币、10 秒，存活与排队合计上限10。兵营训练剑士6秒、弓手8秒、骑士10秒；军工厂训练投石车与加农炮各20秒。军事人口上限60，骑士占2、攻城器占3，其余军队占1，训练中预留的人口计入上限。
+- 大本营只训练农民：50 金币、10 秒，存活与排队合计基础上限10。学院一次性研究“农民上限扩展”，125金币、24秒，完成后仅该玩家上限提升至12，Bot同样需要付费研究。兵营训练剑士6秒、弓手8秒、骑士10秒；军工厂训练投石车与加农炮各20秒。军事人口上限60，骑士占2、攻城器占3，其余军队占1，训练中预留的人口计入上限。
 - 每座生产建筑最多排队10项，学院最多6项。训练与研究在生产栏上方逐格显示进度，点击任意格子取消并全额退款，多选建筑超过10项可以翻页。训练完成但出口堵塞时等待出场；建筑被摧毁丢失队列且不退款。
 - 农民建造、Shift 排队、施工接手；学院可预排全军攻防 I/II/III，总加成为 +1/+2/+4。跨学院不重复研究，取消前置时同时取消并退款依赖它的后续科技。
-- 近战/远程护甲与类别附伤统一计算。剑士45金币，近甲2/远甲1；骑士80金币，近甲2/远甲4，基础攻击19、对弓手+11，无科技两次击杀弓手；弓手基础攻击12、无类别附伤，对骑士每箭8点、需15箭，对剑士每箭11点、需10箭。骑士对剑士仍需6次、剑士对骑士5次。剑克骑、骑切弓；弓箭利用射程，投石克密集阵列，炮克建筑与攻城器。
-- 投石车射程14、最小射程3、基础攻击26，对步兵/骑兵/建筑/攻城器分别附伤18/22/80/50；无科技中心命中剑士43、弓手26、骑士44、投石车72、加农炮70，对建筑96。180金币、200生命、3秒攻击间隔与20秒训练不变。炮保留18射程，对建筑220、投石车126的单体伤害优势。
+- 近战/远程护甲与类别附伤统一计算。剑士45金币，近甲2/远甲1；骑士80金币，近甲2/远甲4，基础攻击19、对弓手+11、对攻城器+31，无科技两次击杀弓手、四次击杀任一种攻城器；弓手基础攻击12、无类别附伤，对骑士每箭8点、需15箭，对剑士每箭11点、需10箭。骑士对剑士仍需6次、剑士对骑士5次。
+- 投石车200金币、160生命、13射程、35基础范围伤害，仅对建筑+50；加农炮250金币、200生命、14射程、86基础单体伤害，仅对建筑+150。无科技对建筑分别75/226，炮互射每击80，两击后剩40/200生命。箭塔射程14，与炮相同。两种攻城器近甲固定0，防御科技只增加其远甲；最小射程仍分别3/2.5，攻击间隔3/3.2秒，训练各20秒。
 - 摧毁敌队全部军事建筑及工地获胜。失去大本营仍可重建；全队完工核心生产建筑全失后，军事建筑永久暴露。
 - Bot 遵守相同金币、人口、建造、生产、科技与视野；没有免费刷兵或拆楼奖励。
+- 防御塔175金币、20秒施工、1200生命，自动攻击且无法驻军。
 
 | 操作 | 按键 |
 |---|---|
@@ -73,6 +74,7 @@ Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/con
 Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/battle-settings.engine.log --script tests/battle_settings_integration_test.gd
 Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/replica-selection.engine.log --script tests/replica_selection_lifecycle_test.gd
 Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/catapult-impact.engine.log --script tests/catapult_impact_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/workforce-hud.engine.log --script tests/workforce_hud_test.gd
 python tests/network_runner.py local
 python tests/network_game_live_runner.py local
 python tests/relay_timeout_lifecycle_runner.py

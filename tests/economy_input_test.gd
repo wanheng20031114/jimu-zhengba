@@ -166,7 +166,7 @@ func _construction_case(worker: Node3D, second: Node3D, mine: Node3D) -> void:
 	await _focus(first_position)
 	await _click(game.camera.unproject_position(first_position), MOUSE_BUTTON_LEFT, true)
 	var sites: Array[Node] = _sites()
-	_check(sites.size() == 1 and game.gold == before_gold - 100, "native Shift click creates one foundation and reserves one hundred gold")
+	_check(sites.size() == 1 and game.gold == before_gold - 175, "native Shift click creates one foundation and reserves one-hundred-seventy-five gold")
 	if sites.size() != 1:
 		return
 	var first: Node3D = sites[0]
@@ -179,7 +179,7 @@ func _construction_case(worker: Node3D, second: Node3D, mine: Node3D) -> void:
 	await _focus(second_position)
 	await _click(game.camera.unproject_position(second_position), MOUSE_BUTTON_LEFT, true)
 	sites = _sites()
-	_check(sites.size() == 2 and game.gold == before_gold - 200, "second Shift placement creates and charges a distinct tower")
+	_check(sites.size() == 2 and game.gold == before_gold - 350, "second Shift placement creates and charges a distinct tower")
 	if sites.size() != 2:
 		return
 	var queued: Node3D = sites[1]
@@ -188,9 +188,9 @@ func _construction_case(worker: Node3D, second: Node3D, mine: Node3D) -> void:
 	_check(not game.build_mode and not paused and not game.get_node("BuildingPreview").visible, "Escape closes construction mode without pausing or deleting foundations")
 	game.select_entities([queued])
 	await _key(KEY_DELETE)
-	_check(not queued.alive and game.gold == before_gold - 100, "native Delete cancels the untouched queued foundation and refunds one hundred gold")
+	_check(not queued.alive and game.gold == before_gold - 175, "native Delete cancels the untouched queued foundation and refunds one-hundred-seventy-five gold")
 	await _key(KEY_DELETE)
-	_check(game.gold == before_gold - 100, "repeated Delete cannot refund a canceled foundation twice")
+	_check(game.gold == before_gold - 175, "repeated Delete cannot refund a canceled foundation twice")
 	game.select_entities([worker])
 	_freeze(worker, false)
 	_check(await _until(func(): return worker._working, 14.0), "builder reaches a real foundation around the newly carved navigation footprint")

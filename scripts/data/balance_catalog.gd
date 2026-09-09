@@ -23,6 +23,8 @@ const BUILDINGS: Dictionary = {
 	"house": preload("res://data/buildings/house.tres"),
 }
 
+const UPGRADE_TRACKS: Dictionary = {&"attack": 3, &"defense": 3, &"workforce": 1}
+
 const UPGRADES: Dictionary = {
 	"attack_1": preload("res://data/upgrades/attack_1.tres"),
 	"attack_2": preload("res://data/upgrades/attack_2.tres"),
@@ -30,6 +32,7 @@ const UPGRADES: Dictionary = {
 	"defense_1": preload("res://data/upgrades/defense_1.tres"),
 	"defense_2": preload("res://data/upgrades/defense_2.tres"),
 	"defense_3": preload("res://data/upgrades/defense_3.tres"),
+	"workforce_1": preload("res://data/upgrades/workforce_1.tres"),
 }
 
 static func unit(kind: StringName) -> UnitDefinition:

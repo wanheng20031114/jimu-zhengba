@@ -36,6 +36,7 @@ func _ready() -> void:
 		portraits[kind] = $ModelPreviews.portrait(kind)
 	portraits["attack_upgrade"] = preload("res://assets/ui/attack_upgrade.png")
 	portraits["defense_upgrade"] = preload("res://assets/ui/defense_upgrade.png")
+	portraits["workforce_upgrade"] = preload("res://assets/ui/workforce_upgrade.png")
 	for index in range(buttons.size()):
 		buttons[index].pressed.connect(_on_recruit.bind(index))
 		buttons[index].mouse_entered.connect(func(): _set_preview_hover(_actions[index].portrait if index < _actions.size() else ""))
@@ -130,7 +131,8 @@ func refresh_hotkey_labels() -> void:
 		"F12 / %s / %s / %s" % [game.settings.hotkey_text("rts_photo"), game.settings.hotkey_text("rts_fullscreen"), game.settings.hotkey_text("rts_mute")],
 	]
 	$HelpOverlay/Paper/Keys.text = "\n".join(help_keys)
-	$HelpOverlay/Paper/Economy.text = "训练：农民 %s秒、剑士 %s秒、弓手 %s秒、骑士 %s秒、攻城器 %s秒 · 队列可取消退款\n每矿 %d 个位置 · 每人每 %s 秒 +%d 金币 · 科技总加成 +1 / +2 / +4，农民和建筑不享受" % [BalanceCatalog.unit("farmer").training_seconds, BalanceCatalog.unit("swordsman").training_seconds, BalanceCatalog.unit("archer").training_seconds, BalanceCatalog.unit("knight").training_seconds, BalanceCatalog.unit("catapult").training_seconds, ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
+	var workforce := BalanceCatalog.upgrade(&"workforce_1")
+	$HelpOverlay/Paper/Economy.text = "训练（秒）：农民%s / 剑士%s / 弓手%s / 骑士%s / 攻城%s · 每矿%d位 · 每人%s秒+%d金\n学院研究：军队攻防+1/+2/+4，攻城近甲固定0；%d金/%d秒扩农民10→12 · 队列可取消退款" % [BalanceCatalog.unit("farmer").training_seconds, BalanceCatalog.unit("swordsman").training_seconds, BalanceCatalog.unit("archer").training_seconds, BalanceCatalog.unit("knight").training_seconds, BalanceCatalog.unit("catapult").training_seconds, ResourceVein.CAPACITY, BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold, workforce.cost, workforce.research_seconds]
 	# Initial binding precedes match setup; subsequent preference changes refresh the panel.
 	if game._match_ready:
 		refresh()
@@ -165,8 +167,9 @@ func refresh() -> void:
 	var player: PlayerState = game.get_player(game.local_owner_id)
 	army_label.text = "军事 %d / %d" % [player.used_military_supply(), PlayerState.SUPPLY_LIMIT]
 	army_label.tooltip_text = "在场 %d 人口 · 训练中 %d 人口\n训练队列已预留军事人口" % [player.military_supply, player.reserved_military_supply]
-	farmers_label.text = "农民 %d / %d" % [player.farmers + player.reserved_farmers, PlayerState.WORKER_LIMIT]
-	farmers_label.tooltip_text = "在场 %d 人 · 训练中 %d 人\n训练中的农民已计入上限" % [player.farmers, player.reserved_farmers]
+	farmers_label.text = "农民 %d / %d" % [player.farmers + player.reserved_farmers, player.get_worker_limit()]
+	farmers_label.tooltip_text = "在场 %d 人 · 训练中 %d 人\n训练中的农民已计入上限\n%s" % [player.farmers, player.reserved_farmers,
+		"农民上限扩展已完成" if player.workforce_level > 0 else "学院可研究农民上限扩展至 12 人"]
 	var preview_relation: int = FactionPalette.SELF
 	if game.selection.size() == 1 and game.selection[0].owner_id >= 0:
 		preview_relation = FactionPalette.relation(game.selection[0].owner_id, game.selection[0].alliance_id, game)
@@ -215,7 +218,9 @@ func refresh() -> void:
 			var own_unit: bool = entity.owner_id == game.local_owner_id
 			var attack_bonus: int = player.get_attack_bonus() if own_unit and definition.military else 0
 			var defense_bonus: int = player.get_defense_bonus() if own_unit and definition.military else 0
-			selected_stats.text = "%s攻 %d · 近甲 %d / 远甲 %d\n%s" % ["" if own_unit else "基础 ", definition.damage + attack_bonus, definition.melee_armor + defense_bonus, definition.ranged_armor + defense_bonus, entity.order_name]
+			selected_stats.text = "%s攻 %d · 近甲 %d / 远甲 %d\n%s" % ["" if own_unit else "基础 ", definition.damage + attack_bonus,
+				DamageResolver.armor_for_channel(definition, CombatDefinition.DamageChannel.MELEE, defense_bonus),
+				DamageResolver.armor_for_channel(definition, CombatDefinition.DamageChannel.RANGED, defense_bonus), entity.order_name]
 			if entity.unit_type == "farmer":
 				var queued_orders: int = int(entity.get_meta("replica_queue_count", 0)) if game.online and not game.is_authority else entity.waypoint_queue.size()
 				selected_stats.text = "采矿 +%d / %s秒 · 建筑面板\n%s%s" % [BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds, entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
@@ -315,11 +320,11 @@ func _refresh_actions() -> void:
 			_actions.append({"kind": "demolish", "id": "", "portrait": "defense_tower", "name": "拆除防御塔", "cost": 0, "hint": game.settings.hotkey_text("rts_destroy") + " · 不返还金币"})
 		elif building.building_type == "academy":
 			var player: PlayerState = game.get_player(game.local_owner_id)
-			for track: String in ["attack", "defense"]:
+			for track: String in BalanceCatalog.UPGRADE_TRACKS:
 				var level: int = player.planned_upgrade_level(StringName(track))
-				if level < 3:
+				if level < BalanceCatalog.UPGRADE_TRACKS[track]:
 					var upgrade := BalanceCatalog.upgrade("%s_%d" % [track, level + 1])
-					_actions.append({"kind": "research", "id": upgrade.id, "portrait": track + "_upgrade", "name": upgrade.name, "cost": upgrade.cost, "hint": "%d 秒 · 全军总加成 +%d · 可连续加入队列" % [upgrade.research_seconds, upgrade.total_bonus]})
+					_actions.append({"kind": "research", "id": upgrade.id, "portrait": track + "_upgrade", "name": upgrade.name, "cost": upgrade.cost, "hint": _upgrade_hint(upgrade)})
 		else:
 			for kind: String in building.get_combat_definition().produces:
 				var definition := BalanceCatalog.unit(kind)
@@ -346,6 +351,12 @@ func _refresh_actions() -> void:
 			if not error.is_empty():
 				button.tooltip_text += "\n" + error
 	_refresh_queue(building)
+
+func _upgrade_hint(upgrade: UpgradeDefinition) -> String:
+	if upgrade.track == &"workforce":
+		return "%d 秒 · 农民上限 %d → %d · 仅本玩家生效" % [upgrade.research_seconds, PlayerState.WORKER_LIMIT, PlayerState.WORKER_LIMIT + upgrade.total_bonus]
+	var effect: String = "全军攻击总加成 +%d" % upgrade.total_bonus if upgrade.track == &"attack" else "全军防御总加成 +%d（攻城器仅远甲）" % upgrade.total_bonus
+	return "%d 秒 · %s · 可连续加入队列" % [upgrade.research_seconds, effect]
 
 func _queue_action_error(action: Dictionary) -> String:
 	var error := "需要选中自己的生产建筑"
@@ -379,7 +390,7 @@ func _refresh_queue(_building: BattleBuilding) -> void:
 		for index in range(production.research_queue.size()):
 			var job: Dictionary = production.research_queue[index]
 			var upgrade := BalanceCatalog.upgrade(job.id)
-			items.append({"portrait": String(upgrade.track) + "_upgrade", "name": upgrade.name, "source": building.display_name, "active": index == 0, "order": index + 1, "level": upgrade.level,
+			items.append({"portrait": String(upgrade.track) + "_upgrade", "name": upgrade.name, "source": building.display_name, "active": index == 0, "order": index + 1, "level": upgrade.level if upgrade.track != &"workforce" else 0,
 				"elapsed": float(job.elapsed), "duration": upgrade.research_seconds, "cost": upgrade.cost,
 				"waiting": index == 0 and production.research_waiting_for_prerequisite(),
 				"action": {"kind": "cancel_research", "target": building.entity_id, "upgrade": job.id, "job_id": job.job_id}})

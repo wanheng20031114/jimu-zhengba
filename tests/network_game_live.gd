@@ -275,6 +275,7 @@ func host_steps() -> void:
 	check(await until(func(): return [1, 2, 3].all(func(id): return game.get_player(id).attack_level == 1 and game.get_player(id).defense_level == 1), 48.0), "research_queue_completes_in_order_across_reconnections")
 	publish("queues_done")
 	check(await until(func(): return all_phase("queues_done"), 12.0), "all_clients_receive_finished_research_and_population")
+	await host_workforce_research()
 	await host_selection_retirement()
 	await seconds(0.6)
 	for client_owner in range(1, 4):
@@ -290,7 +291,7 @@ func host_steps() -> void:
 
 func client_steps() -> void:
 	var previous: String = ""
-	while Time.get_ticks_msec() - started_msec < 135000 + int((_load_seconds + 45.0) * 1000) * int(_load_units > 0):
+	while Time.get_ticks_msec() - started_msec < 175000 + int((_load_seconds + 45.0) * 1000) * int(_load_units > 0):
 		var process_now: int = Time.get_ticks_msec()
 		if phase == "network_load" and _load_last_process_msec > 0 and process_now - _load_last_process_msec > 100:
 			_load_process_gaps.append({"at_ms": process_now - _load_started_msec, "gap_ms": process_now - _load_last_process_msec})
@@ -310,7 +311,7 @@ func client_steps() -> void:
 			check(game.get_player(owner).gold < 2000, "own_gold_returns_to_authoritative_value")
 			check(game.bots.is_empty(), "client_never_instantiates_authoritative_bot_ai")
 			check(get_nodes_in_group("units").all(func(unit): return not unit.is_physics_processing() and not unit.navigation_agent.avoidance_enabled), "actual_client_units_never_run_physics_or_rvo")
-			check(_transport_states.count("reconnecting") == (1 if owner == 3 else 0), "client_has_only_planned_transport_interruption")
+			check(_transport_states.count("reconnecting") == (1 if owner in [1, 3] else 0), "client_has_only_planned_transport_interruption")
 			check(_saw_private_queue_plan, "own_shift_plan_crossed_real_transport")
 			check(_saw_private_research_queue and _saw_reserved_population, "private_research_and_population_crossed_real_transport")
 			return
@@ -322,6 +323,53 @@ func client_steps() -> void:
 		_observed_stages.append(stage)
 		_published = directive
 		match stage:
+			"workforce_cap":
+				if owner == 1:
+					check(await until(func(): return game.get_player(owner).farmers == 10 and game.get_player(owner).reserved_farmers == 0, 5.0),
+						"ten_existing_farmers_arrive_before_expansion")
+					check(game.get_player(owner).get_worker_limit() == 10, "unresearched_live_client_cap_is_ten")
+					game.get_player(owner).workforce_level = 1
+					game.submit_local({"kind": "recruit", "target": int(directive.bases["1"]), "unit_type": "farmer",
+						"workforce_level": 1, "worker_limit": 12, "test_marker": "forged_workforce_cap"})
+				phase = stage
+			"workforce_research":
+				if owner == 1:
+					var academy: BattleBuilding = game.entities_by_id[int(directive.academies["1"])]
+					var before_gold: int = game.get_player(owner).gold
+					game.submit_local({"kind": "research", "target": academy.entity_id, "upgrade": "workforce_1"})
+					check(await until(func(): return academy.production.research_queue.size() == 1, 5.0),
+						"workforce_research_job_crosses_authority_and_replication")
+					check(academy.production.research_queue[0].cost == 125 and game.get_player(owner).gold < before_gold - 100,
+						"workforce_research_deducts_real_125_gold")
+					check(game.get_player(owner).get_worker_limit() == 10, "workforce_cap_does_not_increase_at_research_start")
+				elif owner == 2:
+					game.submit_local({"kind": "research", "target": int(directive.academies["1"]), "upgrade": "workforce_1",
+						"owner": 1, "test_marker": "foreign_workforce_research"})
+				phase = stage
+			"workforce_completed":
+				if owner == 1:
+					check(await until(func(): return game.get_player(owner).get_worker_limit() == 12 and game.entities_by_id[int(directive.academies["1"])].production.research_queue.is_empty(), 5.0),
+						"workforce_completion_snapshot_changes_cap_to_twelve")
+					for index in 3:
+						game.submit_local({"kind": "recruit", "target": int(directive.bases["1"]), "unit_type": "farmer",
+							"test_marker": "expanded_farmer_%d" % index})
+					check(await until(func(): return game.get_player(owner).reserved_farmers == 2, 5.0),
+						"twelfth_farmer_reserved_thirteenth_not_reserved")
+				else:
+					check(game.get_player(owner).get_worker_limit() == 10 and game.get_player(1).workforce_level == 0,
+						"other_clients_keep_own_cap_and_no_private_ally_or_enemy_upgrade")
+				phase = stage
+			"workforce_resume":
+				if owner == 1:
+					var before_snapshots: int = snapshots
+					drop_transport()
+					resume_transport()
+					check(await until(func(): return relay.connection_state == "match" and snapshots > before_snapshots + 1, 15.0),
+						"expanded_worker_owner_reconnects_and_receives_fresh_snapshot")
+					check(game.get_player(owner).get_worker_limit() == 12
+						and game.get_player(owner).farmers + game.get_player(owner).reserved_farmers == 12,
+						"workforce_upgrade_and_paid_reservations_survive_reconnect")
+				phase = stage
 			"retirement_select":
 				if owner == 1:
 					_retirement_id = int(directive.retirement.unit)
@@ -470,6 +518,60 @@ func client_steps() -> void:
 				phase = stage
 		status(true)
 	check(false, "scenario_deadline")
+
+func host_workforce_research() -> void:
+	# The fixture supplies ten real workers; research, reservation, payment and
+	# completion below use normal commands and the unchanged authority clock.
+	var player: PlayerState = game.get_player(1)
+	var base: BattleBuilding = game.entities_by_id[int(_published.bases["1"])]
+	var academy: BattleBuilding = game.entities_by_id[int(_published.academies["1"])]
+	while player.farmers < 10:
+		var at: Vector3 = game.find_recruit_position("farmer", base)
+		check(at.is_finite(), "legal_workforce_fixture_spawn_%d" % player.farmers)
+		if not at.is_finite():
+			return
+		var worker: BattleUnit = game.spawn_unit("farmer", 1, at)
+		worker.hold()
+		await physics_frame
+	player.gold = 700
+	var before_forgery_gold: int = player.gold
+	publish("workforce_cap")
+	check(await until(func(): return all_phase("workforce_cap") and _command_marks.get("forged_workforce_cap", 0) == 1, 8.0),
+		"forged_workforce_capacity_command_reaches_authority_validator")
+	await physics_frame
+	check(player.get_worker_limit() == 10 and player.reserved_farmers == 0 and base.production.training.is_empty(),
+		"client_cannot_forge_workforce_level_or_queue_eleventh_farmer")
+	check(player.gold >= before_forgery_gold, "rejected_eleventh_farmer_does_not_charge_gold")
+	var foreign_before_gold: int = game.get_player(2).gold
+	publish("workforce_research")
+	check(await until(func(): return all_phase("workforce_research") and academy.production.research_queue.size() == 1, 8.0),
+		"authority_receives_workforce_research_from_its_owner")
+	check(academy.production.research_queue[0].cost == 125 and BalanceCatalog.upgrade("workforce_1").research_seconds == 24.0,
+		"authority_workforce_job_has_exact_cost_and_duration")
+	check(await until(func(): return _command_marks.get("foreign_workforce_research", 0) == 1, 3.0),
+		"foreign_workforce_command_reaches_authority_validator")
+	await physics_frame
+	check(game.get_player(2).gold >= foreign_before_gold, "foreign_workforce_research_never_charges_requesting_player")
+	var remaining: float = 24.0 - float(academy.production.research_queue[0].elapsed)
+	var started_at: float = game.elapsed
+	check(player.get_worker_limit() == 10 and player.active_research.has(&"workforce"), "unfinished_workforce_research_keeps_ten_cap")
+	check(await until(func(): return player.workforce_level == 1, 28.0), "workforce_research_really_completes_after_24_simulation_seconds")
+	check(game.elapsed - started_at >= remaining - 0.07, "workforce_research_does_not_complete_early")
+	check(game.get_player(2).workforce_level == 0, "foreign_workforce_research_cannot_upgrade_another_player")
+	var before_expanded_gold: int = player.gold
+	publish("workforce_completed")
+	check(await until(func(): return all_phase("workforce_completed") and _command_marks.get("expanded_farmer_2", 0) == 1, 8.0),
+		"all_clients_observe_only_owned_expansion_and_three_recruit_attempts")
+	await physics_frame
+	check(player.farmers == 10 and player.reserved_farmers == 2 and base.production.training.size() == 2,
+		"authority_allows_eleventh_and_twelfth_but_rejects_thirteenth_farmer")
+	check(player.gold >= before_expanded_gold - 100, "rejected_thirteenth_farmer_never_charges_gold")
+	check(game.get_player(0).get_worker_limit() == 10 and game.get_player(2).get_worker_limit() == 10
+		and game.get_player(3).get_worker_limit() == 10, "completed_workforce_is_strictly_per_owner")
+	publish("workforce_resume")
+	check(await until(func(): return all_phase("workforce_resume"), 20.0), "expanded_worker_owner_reconnects_without_losing_research_or_population")
+	check(player.get_worker_limit() == 12 and player.farmers + player.reserved_farmers == 12,
+		"authority_retains_twelve_workers_across_authenticated_resume")
 
 func host_selection_retirement() -> void:
 	# Use the authored central lane so the camera ray cannot hit a headquarters

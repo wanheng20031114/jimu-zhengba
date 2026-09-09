@@ -138,8 +138,9 @@ func _inspect_help(hud: Control) -> void:
 		for other: Control in controls:
 			check(not child.get_global_rect().intersects(other.get_global_rect()), "help labels do not overlap: " + str(child.name) + "/" + str(other.name))
 		controls.append(child)
-	check("联机不暂停" in paper.get_node("Actions").text and "单机金币" in paper.get_node("Actions").text, "help distinguishes online pause and offline-only gold cheat")
-	check("研究" in paper.get_node("Economy").text and "Shift" in paper.get_node("Keys").text and "屏幕边缘" in paper.get_node("Keys").text, "help covers production research groups and edge scrolling")
+	check("联机仅房主" in paper.get_node("Actions").text and "单机金币" in paper.get_node("Actions").text, "help distinguishes host-controlled online pause and offline-only gold cheat")
+	check("研究" in paper.get_node("Economy").text and "Shift" in paper.get_node("Keys").text and "窗口边缘" in paper.get_node("Keys").text, "help covers production research groups and window edge scrolling")
+	check("125金/24秒扩农民10→12" in paper.get_node("Economy").text and "攻城近甲固定0" in paper.get_node("Economy").text, "help explains the new economy upgrade and siege armor rule")
 
 func _capture(label: String) -> void:
 	await RenderingServer.frame_post_draw

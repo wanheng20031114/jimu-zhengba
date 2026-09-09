@@ -60,8 +60,10 @@ func _run() -> void:
 		last_sequence = command.seq
 	await _fog_memory_case()
 	await _siege_and_supply_case()
+	await _defense_tower_budget_case()
 	await _retreat_and_ally_case()
 	await _technology_and_lane_search_case()
+	await _workforce_expansion_case()
 	await _deferred_and_client_case()
 	await _physics_frequency_case()
 	await _takeover_without_headquarters_case()
@@ -104,7 +106,7 @@ func _siege_and_supply_case() -> void:
 	bot.tick(1.0)
 	var recruits: Array = host.commands.filter(func(c: Dictionary) -> bool: return c.kind == "recruit")
 	_check(not recruits.is_empty() and recruits[0].unit_type == "cannon", "observed defensive position triggers a paid counter-siege cannon")
-	_check(host.players[0].gold == 300 - host.total_spent and host.total_spent >= 240, "counter siege pays the full catalog price")
+	_check(host.players[0].gold == 300 - host.total_spent and host.total_spent >= BalanceCatalog.unit(&"cannon").cost, "counter siege pays the full catalog price")
 	await _fresh()
 	_ready_base(["swordsman", "archer", "knight"])
 	host.players[0].gold = 1000
@@ -112,6 +114,25 @@ func _siege_and_supply_case() -> void:
 	bot = BOT.new(host, 0)
 	bot.tick(1.0)
 	_check(host.players[0].military_supply <= 60, "AI accounts for cavalry/siege supply weights at the cap")
+
+func _defense_tower_budget_case() -> void:
+	await _fresh()
+	_opening()
+	host.add_building("barracks", 0, Vector3(-20, 0, 0))
+	for kind: String in ["swordsman", "archer", "knight"]:
+		host.add_unit(kind, 0, Vector3(-22, 0, 0))
+	for index in range(3):
+		var intruder: Node3D = host.add_unit("knight", 1, Vector3(-25, 0, index))
+		host.visibility[intruder.entity_id] = true
+	host.players[0].gold = 174
+	var bot: RefCounted = BOT.new(host, 0)
+	bot.tick(1.0)
+	_check(not host.commands.any(func(c: Dictionary) -> bool: return c.kind == "build" and c.building_type == "defense_tower"), "emergency tower cannot be built with only 174 gold")
+	_check(host.players[0].gold == 174 and host.total_spent == 0, "emergency tower saves all 175 gold instead of spending the shortfall on units")
+	host.players[0].gold = 175
+	bot.tick(1.0)
+	_check(host.commands.any(func(c: Dictionary) -> bool: return c.kind == "build" and c.building_type == "defense_tower")
+		and host.total_spent == 175 and host.players[0].gold == 0, "emergency tower is commissioned immediately when 175 gold is available")
 
 func _retreat_and_ally_case() -> void:
 	await _fresh()
@@ -241,19 +262,19 @@ func _takeover_without_headquarters_case() -> void:
 	_check(host.commands.is_empty() and host.players[0].gold == 399, "a surviving farmer preserves the 400-gold rebuild priority ahead of recruiting")
 	await _fresh()
 	var factory: Node3D = host.add_building("factory", 0, Vector3(-30, 0, 0))
-	host.players[0].gold = 180
+	host.players[0].gold = BalanceCatalog.unit(&"catapult").cost
 	bot = BOT.new(host, 0)
 	bot.tick(1.0)
 	_check(host.commands.size() == 1 and host.commands[0].kind == "recruit" and host.commands[0].target == factory.entity_id and host.commands[0].unit_type == "catapult", "factory-only takeover recruits through its remaining completed producer")
-	_check(host.total_spent == 180 and host.players[0].military_supply == 3, "factory-only takeover pays the catalog price and siege supply")
+	_check(host.total_spent == BalanceCatalog.unit(&"catapult").cost and host.players[0].military_supply == 3, "factory-only takeover pays the catalog price and siege supply")
 	await _fresh()
 	factory = host.add_building("factory", 0, Vector3(-30, 0, 0))
 	var tower: Node3D = host.add_building("defense_tower", 1, Vector3(20, 0, 0))
 	host.visibility[tower.entity_id] = true
-	host.players[0].gold = 240
+	host.players[0].gold = BalanceCatalog.unit(&"cannon").cost
 	bot = BOT.new(host, 0)
 	bot.tick(1.0)
-	_check(host.commands.size() == 1 and host.commands[0].unit_type == "cannon" and host.commands[0].target == factory.entity_id and host.total_spent == 240, "factory-only takeover uses observed fortifications to choose a fully paid cannon")
+	_check(host.commands.size() == 1 and host.commands[0].unit_type == "cannon" and host.commands[0].target == factory.entity_id and host.total_spent == BalanceCatalog.unit(&"cannon").cost, "factory-only takeover uses observed fortifications to choose a fully paid cannon")
 	await _fresh()
 	host.add_building("headquarters", 2, Vector3(-30, 0, 10))
 	host.add_unit("farmer", 2, Vector3(-24, 0, 10))
@@ -287,3 +308,37 @@ func _timed_queue_case() -> void:
 	host.commands.clear()
 	bot.tick(1.0)
 	_check(not host.commands.any(func(c): return c.kind == "recruit" and c.unit_type in ["swordsman", "archer", "knight"]), "full native-size queues do not produce repeated rejected bot orders")
+
+func _workforce_expansion_case() -> void:
+	await _fresh()
+	_ready_base(["swordsman", "swordsman", "archer", "archer", "knight", "knight", "swordsman", "archer"])
+	host.players[0].active_research.clear()
+	host.players[0].farmers = 0
+	for index in range(10):
+		host.add_unit("farmer", 0, Vector3(-24, 0, index * 0.5))
+	host.add_mine(Vector3(-24, 0, -8))
+	var second: ResourceVein = host.add_mine(Vector3(-22, 0, 8))
+	host.visibility[second.entity_id] = false
+	host.players[0].gold = 125
+	var bot: RefCounted = BOT.new(host, 0)
+	bot.tick(1.0)
+	_check(not host.commands.any(func(c): return c.kind == "research" and c.upgrade == "workforce_1"), "bot does not expand workforce without a discovered second mine")
+	host.visibility[second.entity_id] = true
+	host.players[0].gold = 125
+	var spent_before: int = host.total_spent
+	bot.tick(1.0)
+	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "workforce_1" and c.cost == 125), "bot submits a paid workforce research through the shared command entry")
+	_check(host.total_spent == spent_before + 125 and host.players[0].gold == 0, "workforce expansion charges exactly 125 gold")
+	_check(host.players[0].get_worker_limit() == 10, "bot research does not grant early worker slots")
+	for second_index in range(23):
+		host.advance(1.0)
+		bot.tick(1.0)
+	_check(host.players[0].get_worker_limit() == 10 and host.players[0].farmers + host.players[0].reserved_farmers == 10, "bot holds ten workers until the full research time elapses")
+	host.advance(1.0)
+	_check(host.players[0].get_worker_limit() == 12, "bot receives two worker slots at research completion")
+	for second_index in range(60):
+		bot.tick(1.0)
+		host.advance(1.0)
+	_check(host.players[0].farmers == 12 and host.players[0].reserved_farmers == 0, "expanded bot trains the eleventh and twelfth farmers normally")
+	_check(host.commands.filter(func(c): return c.kind == "research" and c.upgrade == "workforce_1").size() == 1, "bot never researches the one-time expansion twice")
+	_check(host.players[1].get_worker_limit() == 10 and host.players[2].get_worker_limit() == 10, "bot expansion does not improve allies or opponents")

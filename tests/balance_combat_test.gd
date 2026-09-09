@@ -61,6 +61,9 @@ func _run() -> void:
 	await _melee_and_vision()
 	await _cannon_snapshot()
 	await _stone_blast()
+	await _siege_melee_vulnerability()
+	await _knight_siege_hits()
+	await _cannon_mirror_two_shots()
 	await _minimum_ranges()
 	await _mining_slots()
 	await _client_authority()
@@ -113,7 +116,7 @@ func _cannon_snapshot() -> void:
 	host.get_player(0).attack_level = 3
 	host.get_player(1).defense_level = 2
 	await _wait(1.0)
-	_check(catapult.hp == 75, "source freed after launch still deals launch attack +1 versus current defense +2")
+	_check(catapult.hp == 79, "source freed after launch still deals launch attack +1 versus current defense +2")
 	_check(neighbor.hp == neighbor.max_hp, "cannon explosion does not splash a neighboring archer")
 	_check(host.get_node("Effects").get_child_count() == 0, "completed projectile frees itself after the interpolation tail")
 	await _clear()
@@ -135,10 +138,52 @@ func _stone_blast() -> void:
 	await physics_frame
 	await _wait(1.6)
 	_check(center.hp == 100, "stone fixed impact point can be dodged")
-	_check(core.hp == 34, "stone core applies twenty-six damage to an archer")
-	_check(edge.hp > 34 and edge.hp < 47, "stone outer annulus attenuates damage")
+	_check(core.hp == 25, "stone core applies thirty-five damage to an archer")
+	_check(edge.hp > 25 and edge.hp < 42.5, "stone outer annulus attenuates damage")
 	_check(outside.hp == 60 and ally.hp == 60, "stone leaves out-of-radius and allied units unharmed")
 	_check(impact_point == Vector3(0, 1, -9), "stone initial landing point is fixed to commanded ground")
+	await _clear()
+
+func _siege_melee_vulnerability() -> void:
+	for kind: String in ["catapult", "cannon"]:
+		var sword: BattleUnit = _spawn("swordsman", 0, Vector3.ZERO)
+		var archer: BattleUnit = _spawn("archer", 0, Vector3(0, 0, 3))
+		var siege: BattleUnit = _spawn(kind, 1, Vector3(1.5, 0, 0))
+		host.get_player(1).defense_level = 3
+		var melee := DamageResolver.snapshot(sword.get_combat_definition(), 0, 0, 0)
+		siege.receive_hit(melee, sword)
+		_check(siege.hp == siege.max_hp - 20, kind + " native melee receive_hit ignores defense III")
+		var before: float = siege.hp
+		var ranged := DamageResolver.snapshot(archer.get_combat_definition(), 0, 0, 0)
+		siege.receive_hit(ranged, archer)
+		_check(before - siege.hp == (4 if kind == "catapult" else 2), kind + " native ranged receive_hit retains defense III")
+		siege.hp = siege.max_hp
+		var hits: int = 0
+		while siege.alive:
+			siege.receive_hit(melee, sword)
+			hits += 1
+		_check(hits == (8 if kind == "catapult" else 10), kind + " lower health and zero melee armor preserve eight or ten sword hits even with defense III")
+		await _clear()
+
+func _knight_siege_hits() -> void:
+	for kind: String in ["catapult", "cannon"]:
+		var knight: BattleUnit = _spawn("knight", 0, Vector3.ZERO)
+		var target: BattleUnit = _spawn(kind, 1, Vector3(2, 0, 0))
+		knight.issue_attack(target)
+		for strike in range(1, 5):
+			knight._start_attack()
+			await _wait(0.3)
+			_check(target.hp == maxf(0, target.max_hp - strike * 50) and target.alive == (strike < 4), kind + " native cavalry strike " + str(strike) + " applies fifty damage and defeats on fourth")
+		await _clear()
+
+func _cannon_mirror_two_shots() -> void:
+	var cannon: BattleUnit = _spawn("cannon", 0, Vector3.ZERO)
+	var target: BattleUnit = _spawn("cannon", 1, Vector3(0, 0, -10))
+	for shot in range(1, 3):
+		host.spawn_projectile(cannon, target, DamageResolver.snapshot(cannon.get_combat_definition(), 0, 0, 0), "cannon")
+		await _wait(1.0)
+		_check(target.hp == 200 - shot * 80 and target.alive, "native cannon mirror shot " + str(shot) + " deals eighty damage")
+	_check(target.hp == 40 and is_equal_approx(target.hp / target.max_hp, 0.2), "two real cannon projectiles leave twenty percent health")
 	await _clear()
 
 func _minimum_ranges() -> void:

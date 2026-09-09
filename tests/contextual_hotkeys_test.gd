@@ -94,7 +94,7 @@ func _run() -> void:
 	check(hud.buttons[0].get_node("Hotkey").text == "Q" and hud.buttons[1].get_node("Hotkey").text == "W", "upgrade buttons display current hotkeys beside generated icons")
 	await _key(KEY_Q)
 	await _key(KEY_Q)
-	check(hud._actions.size() == 1 and hud._actions[0].id == "defense_2", "fully reserved attack route leaves defense as the first visible action")
+	check(hud._actions.map(func(action): return action.id) == [&"defense_2", &"workforce_1"], "fully reserved attack route keeps defense first and independent workforce research visible")
 	await _key(KEY_Q)
 	check(academy.production.research_queue.back().id == "defense_2", "Q follows the first visible research after its neighbor disappears")
 	var worker: BattleUnit = game.owned_entities(0, "units")[0]

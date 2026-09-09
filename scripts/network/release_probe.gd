@@ -105,19 +105,40 @@ func validate_resource_values() -> void:
 		"packaged_archer_values_and_swordsman_ranged_armor")
 	check(BalanceCatalog.unit("knight").sight == 15 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
-	check(knight.cost == 80 and knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.damage == 19 and knight.bonuses.get(&"archer") == 11, "packaged_knight_price_ranged_armor_and_archer_bonus")
+	check(knight.cost == 80 and knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.damage == 19
+		and knight.bonuses == {&"archer": 11, &"siege": 31}, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")
-	check(catapult.range == 14 and catapult.damage == 26 and catapult.bonuses.get(&"building") == 80 and catapult.bonuses.get(&"siege") == 50
-		and catapult.bonuses.get(&"infantry") == 18 and catapult.bonuses.get(&"cavalry") == 22
-		and catapult.cost == 180 and catapult.hp == 200 and catapult.cooldown == 3 and catapult.min_range == 3,
+	check(catapult.range == 13 and catapult.damage == 35 and catapult.bonuses == {&"building": 50}
+		and catapult.cost == 200 and catapult.hp == 160 and catapult.cooldown == 3 and catapult.min_range == 3,
 		"packaged_catapult_reach_damage_and_class_bonuses")
-	check(BalanceCatalog.unit("cannon").bonuses.get(&"building") == 200, "packaged_cannon_building_bonus")
-	check(BalanceCatalog.unit("cannon").bonuses.get(&"siege") == 100, "packaged_cannon_siege_bonus")
+	var cannon := BalanceCatalog.unit("cannon")
+	check(cannon.damage == 86 and cannon.bonuses == {&"building": 150}, "packaged_cannon_base_damage_and_building_only_bonus")
+	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
+	check(cannon_damage == 80 and is_equal_approx((cannon.hp - 2 * cannon_damage) / cannon.hp, 0.2), "packaged_cannon_two_mirror_hits_leave_twenty_percent")
+	check(cannon.hp == 200 and cannon.cost == 250 and cannon.range == 14 and cannon.min_range == 2.5
+		and is_equal_approx(cannon.cooldown, 3.2), "packaged_cannon_health_price_and_reach")
+	check(BalanceCatalog.building("defense_tower").range == cannon.range and catapult.range == cannon.range - 1,
+		"packaged_tower_cannon_catapult_reach_relationship")
+	for siege: UnitDefinition in [catapult, cannon]:
+		check(siege.melee_armor == 0 and not siege.melee_defense_upgrades
+			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.MELEE, 4) == 0
+			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.RANGED, 4) == siege.ranged_armor + 4,
+			"packaged_" + String(siege.id) + "_zero_melee_armor_after_defense_research")
+		var knight_damage := DamageResolver.resolve(DamageResolver.snapshot(knight, 0, 0, 0), siege)
+		check(knight_damage == 50 and ceili(siege.hp / knight_damage) == 4,
+			"packaged_knight_four_hits_against_" + String(siege.id))
 	for track: String in ["attack", "defense"]:
 		for level in range(1, 4):
 			var upgrade := BalanceCatalog.upgrade(track + "_" + str(level))
 			check(upgrade.track == StringName(track) and upgrade.level == level and upgrade.total_bonus == [1, 2, 4][level - 1],
 				"packaged_upgrade_values_" + track + "_" + str(level))
+	var workforce := BalanceCatalog.upgrade("workforce_1")
+	check(workforce.track == &"workforce" and workforce.level == 1 and workforce.cost == 125
+		and workforce.research_seconds == 24 and workforce.total_bonus == 2, "packaged_workforce_research_price_duration_and_bonus")
+	var player := PlayerState.new()
+	check(player.get_worker_limit() == 10, "packaged_default_worker_limit_is_ten")
+	player.complete_upgrade(workforce)
+	check(player.get_worker_limit() == 12 and player.attack_level == 0 and player.defense_level == 0, "packaged_workforce_research_expands_only_worker_limit_to_twelve")
 	resource_value_checks = checks - began
 
 func until(predicate: Callable, duration: float) -> bool:

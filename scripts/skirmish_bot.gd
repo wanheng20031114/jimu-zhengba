@@ -238,7 +238,7 @@ func _develop_base() -> int:
 		return 0
 	if _enemy_power_near(_home, 17.0) > 120.0:
 		if _building("defense_tower") == null:
-			return 0 if _try_build("defense_tower", _home + _front * 11.0) else 100
+			return 0 if _try_build("defense_tower", _home + _front * 11.0) else BalanceCatalog.building(&"defense_tower").cost
 		return 0
 	if _building("factory") == null and _clock >= 75.0:
 		_investment_kind = "factory"
@@ -252,9 +252,14 @@ func _develop_base() -> int:
 	var player: PlayerState = _game.get_player(_owner)
 	if academy == null or not player.active_research.is_empty() or _clock < _next_research_at:
 		return 0
+	if _can_expand_workforce(player):
+		var workforce := BalanceCatalog.upgrade(&"workforce_1")
+		if _submit({"kind": "research", "target": academy.entity_id, "upgrade": String(workforce.id)}, workforce.cost):
+			_next_research_at = _clock + workforce.research_seconds + (25.0 if _army.size() < 8 else 0.0)
+			return 0
 	var track: String = "defense" if player.defense_level <= player.attack_level else "attack"
-	var level: int = (player.defense_level if track == "defense" else player.attack_level) + 1
-	if level > 3:
+	var level: int = player.get_upgrade_level(StringName(track)) + 1
+	if level > int(BalanceCatalog.UPGRADE_TRACKS[track]):
 		return 0
 	var upgrade: UpgradeDefinition = BalanceCatalog.upgrade(StringName("%s_%d" % [track, level]))
 	if _submit({"kind": "research", "target": academy.entity_id, "upgrade": String(upgrade.id)}, upgrade.cost):
@@ -264,11 +269,21 @@ func _develop_base() -> int:
 		return 0
 	return upgrade.cost
 
+func _can_expand_workforce(player: PlayerState) -> bool:
+	if player.get_upgrade_level(&"workforce") > 0 or _budget < BalanceCatalog.upgrade(&"workforce_1").cost:
+		return false
+	if player.farmers + player.reserved_farmers < PlayerState.WORKER_LIMIT or _mines.size() < 2:
+		return false
+	var available_slots := 0
+	for mine: Node3D in _mines:
+		available_slots += ResourceVein.CAPACITY - mine.occupied_slots()
+	return available_slots >= BalanceCatalog.upgrade(&"workforce_1").total_bonus
+
 func _recruit_farmer(reserve: int) -> void:
 	var hq: Node3D = _building("headquarters", true)
 	var player: PlayerState = _game.get_player(_owner)
-	var desired: int = 10 if _mines.size() >= 2 and _army.size() >= MINIMUM_RAID_SIZE else 6
-	if hq == null or _clock < _farmer_pending_until or player.reserved_farmers > 0 or player.farmers >= desired:
+	var desired: int = player.get_worker_limit() if _mines.size() >= 2 and _army.size() >= MINIMUM_RAID_SIZE else 6
+	if hq == null or _clock < _farmer_pending_until or player.reserved_farmers > 0 or player.farmers >= desired or not player.can_reserve_farmer():
 		return
 	if _budget - reserve < 50 or (_enemy_power_near(_home, 15.0) > 150.0 and _army.size() < 3):
 		return

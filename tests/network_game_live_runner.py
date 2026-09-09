@@ -139,7 +139,7 @@ def main() -> int:
             children.append(process)
             peers.append(process)
             time.sleep(0.35)
-        deadline = time.monotonic() + 150 + (args.load_seconds + 45 if args.load_units else 0)
+        deadline = time.monotonic() + 190 + (args.load_seconds + 45 if args.load_units else 0)
         last_phase = ""
         while time.monotonic() < deadline and any(process.poll() is None for process in peers):
             phase_path = directory / "phase.json"

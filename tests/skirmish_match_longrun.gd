@@ -138,7 +138,7 @@ func _observe_entities() -> void:
 		if (player.attack_level + player.defense_level) > 0 and float(stat.first_research) < 0: stat.first_research = game.elapsed
 		if game.bots[player.owner_id].army_state == &"attack" and float(stat.first_raid) < 0: stat.first_raid = game.elapsed
 		_invariant(player.gold >= 0, "gold never becomes negative")
-		_invariant(player.farmers + player.reserved_farmers <= 10, "live and queued farmers never exceed ten per owner")
+		_invariant(player.farmers + player.reserved_farmers <= player.get_worker_limit(), "live and queued farmers never exceed the owner's researched worker limit")
 		_invariant(player.military_supply <= 60, "military supply never exceeds sixty per owner")
 		var actual_workers: int = 0
 		var actual_supply: int = 0

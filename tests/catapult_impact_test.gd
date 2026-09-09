@@ -32,8 +32,7 @@ func _run() -> void:
 		_freeze(building)
 	_check(game.players.map(func(p): return p.alliance_id) == [0, 0, 1, 1], "real 2v2 has four owners and two alliances")
 	var definition := BalanceCatalog.unit("catapult")
-	_check(definition.damage == 26 and definition.bonuses.get(&"building") == 80
-		and definition.bonuses.get(&"siege") == 50 and definition.range == 14,
+	_check(definition.damage == 35 and definition.bonuses == {&"building": 50} and definition.range == 13,
 		"production catapult matches approved damage and range")
 	for legacy: bool in [true, false]:
 		for owner in 4:
@@ -94,11 +93,11 @@ func _target_batch(owner: int, legacy: bool) -> void:
 		if index < 10:
 			kind = BUILDINGS[index % 5]
 			target = _building(kind, defender, at, index >= 5)
-			expected = 60.0 if legacy else 96.0
+			expected = 60.0 if legacy else 75.0
 		else:
 			kind = "catapult" if index == 10 else "cannon"
 			target = _unit(kind, defender, at)
-			expected = (16.0 if index == 10 else 14.0) if legacy else (72.0 if index == 10 else 70.0)
+			expected = (16.0 if index == 10 else 14.0) if legacy else (31.0 if index == 10 else 29.0)
 		var source := _unit("catapult", owner, at + Vector3(-10, 0, 0))
 		pending.append({"source": source, "target": target, "before": target.hp, "expected": expected,
 			"kind": kind, "site": index >= 5 and index < 10})
@@ -136,10 +135,10 @@ func _edge_and_allies() -> void:
 	_check(is_equal_approx(Vector2(point.x, point.z).length(), 3.0), "rotated large building footprint touches blast edge despite distant center")
 	_fire(source, center)
 	await create_timer(2.5, true, true).timeout
-	_check(center.hp == 34, "stone center damages infantry through native impact")
-	_check(is_equal_approx(edge.hp, edge.max_hp - 35.0555556),
-		"outer siege at footprint distance 2.95 takes 35.0556 after falloff and armor (actual %.6f)" % (edge.max_hp - edge.hp))
-	_check(is_equal_approx(building.hp, building.max_hp - 43.0), "rotated factory receives edge splash at footprint instead of center")
+	_check(center.hp == 25, "stone center damages infantry through native impact")
+	_check(is_equal_approx(edge.hp, edge.max_hp - 13.9861111),
+		"outer siege at footprint distance 2.95 takes 13.9861 after falloff and armor (actual %.6f)" % (edge.max_hp - edge.hp))
+	_check(is_equal_approx(building.hp, building.max_hp - 32.5), "rotated factory receives edge splash at footprint instead of center")
 	_check(outside.hp == outside.max_hp, "siege outside true three-meter footprint radius takes no damage")
 	_check(friendly_unit.hp == friendly_unit.max_hp and friendly_building.hp == friendly_building.max_hp,
 		"different allied owner unit and building both reject splash")
@@ -156,7 +155,7 @@ func _source_death() -> void:
 	source.queue_free()
 	game.get_player(3).attack_level = 3
 	await create_timer(2.5, true, true).timeout
-	_check(target.hp == target.max_hp - 97, "freed attacker retains launch +1 snapshot and building bonus on landing")
+	_check(target.hp == target.max_hp - 76, "freed attacker retains launch +1 snapshot and building bonus on landing")
 	game.get_player(3).attack_level = 0
 	await _clear_case()
 
@@ -174,7 +173,7 @@ func _native_attack_release() -> void:
 		var shots: Array = game.effect_container.get_children().filter(func(effect): return effect is BattleProjectile)
 		_check(shots.size() == 1, "authored attack windup creates a real stone against " + kind)
 		await create_timer(2.5, true, true).timeout
-		var expected := 96.0 if kind == "factory" else 72.0 if kind == "catapult" else 70.0
+		var expected := 75.0 if kind == "factory" else 31.0 if kind == "catapult" else 29.0
 		_check(is_equal_approx(target.max_hp - target.hp, expected), "native animation-release-flight-impact damages " + kind)
 		await _clear_case()
 

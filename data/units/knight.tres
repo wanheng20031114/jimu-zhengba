@@ -6,14 +6,14 @@
 script = ExtResource("1_definition")
 id = &"knight"
 name = "骑士"
-description = "高速重甲骑兵，抗箭能力强，对弓箭手有额外伤害，适合侦察迂回。"
+description = "高速重甲骑兵，抗箭能力强，额外克制弓箭手和攻城器，适合侦察迂回。"
 hp = 120
 damage = 19
 melee_armor = 2
 ranged_armor = 4
 damage_channel = 0
 combat_class = &"cavalry"
-bonuses = {&"archer": 11}
+bonuses = {&"archer": 11, &"siege": 31}
 range = 1.2
 cooldown = 1.1
 cost = 80

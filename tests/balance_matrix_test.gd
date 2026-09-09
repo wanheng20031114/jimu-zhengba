@@ -5,17 +5,17 @@ const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult
 const EXPECTED_DAMAGE: Array = [
 	[18, 20, 24, 20, 20, 20],
 	[11, 12, 8, 8, 6, 12],
-	[17, 30, 17, 19, 19, 19],
-	[43, 26, 44, 72, 70, 26],
-	[29, 30, 26, 126, 124, 30],
+	[17, 30, 17, 50, 50, 19],
+	[34, 35, 31, 31, 29, 35],
+	[85, 86, 82, 82, 80, 86],
 	[6, 8, 6, 8, 8, 8],
 ]
 const EXPECTED_HITS: Array = [
-	[6, 3, 5, 10, 13, 4], [10, 5, 15, 25, 44, 7],
-	[6, 2, 8, 11, 14, 4], [3, 3, 3, 3, 4, 3],
-	[4, 2, 5, 2, 3, 3], [17, 8, 20, 25, 33, 10],
+	[6, 3, 5, 8, 10, 4], [10, 5, 15, 20, 34, 7],
+	[6, 2, 8, 4, 4, 4], [3, 2, 4, 6, 7, 3],
+	[2, 1, 2, 2, 3, 1], [17, 8, 20, 20, 25, 10],
 ]
-const BUILDING_DAMAGE: Array[int] = [10, 2, 9, 96, 220, 1]
+const BUILDING_DAMAGE: Array[int] = [10, 2, 9, 75, 226, 1]
 const BONUS: Array[int] = [0, 1, 2, 4]
 var checks: int = 0
 var failures: Array[String] = []
@@ -45,7 +45,9 @@ func _run() -> void:
 					var attack_bonus: float = BONUS[attack_level] if attacker.military else 0
 					var defense_bonus: float = BONUS[defense_level] if defender.military else 0
 					var packet: DamagePayload = DamageResolver.snapshot(attacker, attack_bonus, 3, 1)
-					var expected: float = maxf(1.0, base + attack_bonus - defense_bonus)
+					# Independent expectation: research never supplies melee armor to siege.
+					var applied_defense: float = 0.0 if attacker_index in [0, 2, 5] and defender_index in [3, 4] else defense_bonus
+					var expected: float = maxf(1.0, base + attack_bonus - applied_defense)
 					_check(is_equal_approx(DamageResolver.resolve(packet, defender, defense_bonus), expected), label + " upgrade %d/%d" % [attack_level, defense_level])
 		for key: String in BalanceCatalog.BUILDINGS:
 			var structure: BuildingDefinition = BalanceCatalog.building(key)
@@ -78,20 +80,37 @@ func _test_snapshot() -> void:
 	var local_definition: UnitDefinition = BalanceCatalog.unit(&"cannon").duplicate(true)
 	var packet: DamagePayload = DamageResolver.snapshot(local_definition, 2, 3, 1)
 	local_definition.damage = 999
-	local_definition.bonuses[&"siege"] = 999
-	_check(packet.base_damage == 30 and packet.attack_bonus == 2 and packet.bonuses[&"siege"] == 100, "launch packet copies attacks and bonuses")
+	local_definition.bonuses[&"building"] = 999
+	_check(packet.base_damage == 86 and packet.attack_bonus == 2 and packet.bonuses == {&"building": 150}, "launch packet copies attacks and bonuses")
 	_check(packet.owner_id == 3 and packet.alliance_id == 1, "launch packet retains player/alliance independently")
-	_check(DamageResolver.resolve(packet, BalanceCatalog.unit(&"catapult"), 4) == 124, "impact reads current defense without changing launch attack")
-	_check(BalanceCatalog.unit(&"cannon").damage == 30 and BalanceCatalog.unit(&"cannon").bonuses[&"siege"] == 100, "catalog resource stays immutable")
+	_check(DamageResolver.resolve(packet, BalanceCatalog.unit(&"catapult"), 4) == 80, "impact reads current defense without changing launch attack")
+	_check(BalanceCatalog.unit(&"cannon").damage == 86 and BalanceCatalog.unit(&"cannon").bonuses == {&"building": 150}, "catalog resource stays immutable")
 
 func _test_siege() -> void:
 	_check(DamageResolver.stone_falloff(0) == 1 and DamageResolver.stone_falloff(1.2) == 1, "stone full-strength core")
 	_check(is_equal_approx(DamageResolver.stone_falloff(2.1), 0.75), "stone annulus midpoint")
 	_check(DamageResolver.stone_falloff(3) == 0.5, "stone half-strength outer edge")
 	var stone: DamagePayload = DamageResolver.snapshot(BalanceCatalog.unit(&"catapult"), 0, 0, 0)
-	_check(DamageResolver.resolve(stone, BalanceCatalog.unit(&"swordsman"), 0, 0.5) == 21, "stone attenuation precedes armor")
+	_check(DamageResolver.resolve(stone, BalanceCatalog.unit(&"swordsman"), 0, 0.5) == 16.5, "stone attenuation precedes armor")
 	var catapult := BalanceCatalog.unit(&"catapult")
-	_check(catapult.range == 14 and catapult.damage == 26 and catapult.cost == 180 and catapult.hp == 200 and catapult.cooldown == 3, "catapult trades reach for higher damage without changing cost, health or cadence")
+	var cannon := BalanceCatalog.unit(&"cannon")
+	var tower := BalanceCatalog.building(&"defense_tower")
+	_check(catapult.range == 13 and catapult.damage == 35 and catapult.cost == 200 and catapult.hp == 160 and catapult.cooldown == 3, "catapult has thirteen reach, lower health and two-hundred-gold price")
+	_check(catapult.bonuses == {&"building": 50}, "catapult only gains its fifty-damage building bonus")
+	_check(cannon.range == 14 and cannon.damage == 86 and cannon.cost == 250 and cannon.hp == 200, "cannon has fourteen reach, lower health and two-hundred-fifty-gold price")
+	_check(cannon.bonuses == {&"building": 150}, "cannon only gains its one-hundred-fifty-damage building bonus")
+	var cannon_damage: float = DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
+	_check(cannon_damage == 80 and is_equal_approx((cannon.hp - 2 * cannon_damage) / cannon.hp, 0.2), "two cannon mirror hits leave exactly twenty percent health")
+	var knight := BalanceCatalog.unit(&"knight")
+	for siege: UnitDefinition in [catapult, cannon]:
+		var knight_damage: float = DamageResolver.resolve(DamageResolver.snapshot(knight, 0, 0, 0), siege)
+		_check(knight_damage == 50 and ceili(siege.hp / knight_damage) == 4, "knight defeats " + String(siege.id) + " in four fifty-damage hits")
+	_check(tower.range == cannon.range and catapult.range == cannon.range - 1, "arrow tower matches cannon reach and catapult is one unit shorter")
+	for definition: UnitDefinition in [catapult, cannon]:
+		_check(definition.melee_armor == 0 and not definition.melee_defense_upgrades, str(definition.id) + " cannot gain melee armor from research")
+		for defense: int in BONUS:
+			_check(DamageResolver.armor_for_channel(definition, CombatDefinition.DamageChannel.MELEE, defense) == 0, str(definition.id) + " zero melee armor at defense bonus " + str(defense))
+			_check(DamageResolver.armor_for_channel(definition, CombatDefinition.DamageChannel.RANGED, defense) == definition.ranged_armor + defense, str(definition.id) + " retains ranged armor research at bonus " + str(defense))
 	_check(BalanceCatalog.unit(&"catapult").min_range == 3 and BalanceCatalog.unit(&"cannon").min_range == 2.5, "siege minimum ranges")
 	_check(is_equal_approx(BalanceCatalog.unit(&"cannon").cooldown, 3.2), "cannon uses approved 3.2-second cycle")
 
@@ -108,4 +127,4 @@ func _test_production_data() -> void:
 		if definition.military:
 			var training: Dictionary = {&"swordsman": 6.0, &"archer": 8.0, &"knight": 10.0, &"catapult": 20.0, &"cannon": 20.0}
 			_check(definition.training_seconds == training[kind], str(kind) + " timed military production")
-	_check(BalanceCatalog.building(&"defense_tower").cost == 100 and BalanceCatalog.building(&"defense_tower").build_seconds == 20, "tower preserves hundred-gold twenty-second contract")
+	_check(BalanceCatalog.building(&"defense_tower").cost == 175 and BalanceCatalog.building(&"defense_tower").build_seconds == 20, "tower costs one-hundred-seventy-five gold and takes twenty seconds")
