@@ -489,7 +489,7 @@ func help_visible() -> bool:
 
 func show_pause(value: bool) -> void:
 	$PauseOverlay/Paper/Title.text = "战场菜单" if game.online else "战斗已暂停"
-	$PauseOverlay/Paper/Eyebrow.text = ("全局已暂停 · 房主按 %s 继续" % game.settings.hotkey_text("rts_pause") if get_tree().paused else "联机菜单 · 打开菜单不会暂停对局") if game.online else "ASHEN CROWN"
+	$PauseOverlay/Paper/Eyebrow.text = ("全局已暂停 · 房主按 %s 继续" % game.settings.hotkey_text("rts_pause") if get_tree().paused else "联机菜单 · 打开菜单不会暂停对局") if game.online else "积木争霸"
 	%RestartButton.text = "返回大厅" if game.online else "重新开始"
 	%RestartButton.visible = not game.online
 	%ResumeButton.text = ("返回战场" if game.online and not game.is_authority else "继续战斗") + "  [" + game.settings.hotkey_text("rts_pause") + "]"

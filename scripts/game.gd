@@ -753,7 +753,7 @@ func on_entity_died(entity: Node3D) -> void:
 func _on_income() -> void:
 	if not finished and is_authority:
 		for player: PlayerState in players:
-			if not player.eliminated:
+			if player.is_participating() and not player.eliminated:
 				player.gold += BalanceCatalog.ECONOMY.passive_gold_per_second
 
 func debug_add_gold() -> void:
@@ -1105,21 +1105,26 @@ func _setup_match() -> void:
 		if "--" + candidate in OS.get_cmdline_user_args():
 			mode = candidate
 	if match_config.is_empty():
-		match_config = {"mode": mode, "players": []}
-		for owner in range(int(NetworkProtocol.MODES[mode].slots)):
-			match_config.players.append({"owner_id": owner, "team_id": NetworkProtocol.default_alliance(mode, owner), "controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
+		match_config = Session.offline_config(mode)
+	assert(NetworkProtocol.match_config_error(match_config, online).is_empty(), "Invalid match roster")
 	players.clear()
 	for slot: Dictionary in match_config.players:
 		var player := PlayerState.new(int(slot.owner_id), int(slot.team_id))
 		player.controller = slot.controller
 		player.display_name = slot.name
+		if not player.is_participating():
+			player.gold = 0
 		players.append(player)
 	# Physical starts follow alliances even when the host rearranges room teams.
 	# Owner IDs remain stable for commands, economy and network recipients.
-	var spawn_order := players.duplicate()
+	var spawn_order := players.filter(func(player: PlayerState): return player.is_participating())
 	spawn_order.sort_custom(func(a: PlayerState, b: PlayerState): return a.alliance_id < b.alliance_id if a.alliance_id != b.alliance_id else a.owner_id < b.owner_id)
-	for index: int in range(spawn_order.size()):
-		_spawn_indices[spawn_order[index].owner_id] = index
+	var alliance_slots: Dictionary = {}
+	_spawn_indices.clear()
+	for player: PlayerState in spawn_order:
+		var offset := int(alliance_slots.get(player.alliance_id, 0))
+		_spawn_indices[player.owner_id] = player.alliance_id * int(NetworkProtocol.MODES[match_config.mode].team_size) + offset
+		alliance_slots[player.alliance_id] = offset + 1
 	map_definition = load(NetworkProtocol.map_path(match_config.mode))
 	map_size = map_definition.size
 	map_instance = map_definition.scene.instantiate()
@@ -1128,6 +1133,8 @@ func _setup_match() -> void:
 		camera_rig.focus_at(get_spawn_marker(local_owner_id).global_position, true)
 		return
 	for player: PlayerState in players:
+		if not player.is_participating():
+			continue
 		var spawn: Marker3D = get_spawn_marker(player.owner_id)
 		var at: Vector3 = spawn.global_position
 		var base := spawn_building("headquarters", player.owner_id, at)
@@ -1154,6 +1161,8 @@ func check_victory() -> void:
 	var counts: Dictionary = {}
 	var cores: Dictionary = {}
 	for player: PlayerState in players:
+		if not player.is_participating():
+			continue
 		counts[player.alliance_id] = 0
 		cores[player.alliance_id] = 0
 	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
@@ -1172,7 +1181,7 @@ func check_victory() -> void:
 			remaining.append(alliance)
 		else:
 			for player: PlayerState in players:
-				if player.alliance_id == alliance and not player.eliminated:
+				if player.is_participating() and player.alliance_id == alliance and not player.eliminated:
 					player.eliminated = true
 					bots.erase(player.owner_id)
 					if alliance not in newly_eliminated:
@@ -1188,7 +1197,7 @@ func check_victory() -> void:
 			if unit.alive and unit.alliance_id == alliance:
 				unit.receive_damage(unit.hp)
 		for player: PlayerState in players:
-			if player.alliance_id == alliance:
+			if player.is_participating() and player.alliance_id == alliance:
 				var message := "你的阵营已出局 · 比赛继续，可返回大厅"
 				if online and player.owner_id == local_owner_id:
 					message = "你的阵营已出局 · 请保持房间开启，其他玩家继续对战"
@@ -1215,12 +1224,12 @@ func _on_network_event(event: Dictionary) -> void:
 		"notice": hud.toast(str(event.get("text", "")), 2.5)
 		"bot_takeover":
 			var owner: int = int(event.owner)
-			if is_authority and owner >= 0 and owner < players.size() and not get_player(owner).eliminated:
+			if is_authority and owner >= 0 and owner < players.size() and get_player(owner).is_participating() and not get_player(owner).eliminated:
 				get_player(owner).controller = "bot"
 				bots[owner] = SkirmishBot.new(self, owner)
 		"player_reconnected":
 			var owner: int = int(event.owner)
-			if is_authority and owner >= 0 and owner < players.size():
+			if is_authority and owner >= 0 and owner < players.size() and get_player(owner).is_participating():
 				get_player(owner).controller = "human"
 				bots.erase(owner)
 		"host_paused":

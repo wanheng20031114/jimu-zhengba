@@ -1,0 +1,283 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/unit_codex.gd" id="script"]
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="theme"]
+
+[sub_resource type="StyleBoxEmpty" id="Clear"]
+
+[sub_resource type="StyleBoxFlat" id="Selected"]
+bg_color = Color(0.22, 0.17, 0.095, 1)
+border_width_left = 3
+border_color = Color(0.86, 0.67, 0.34, 1)
+content_margin_left = 16.0
+content_margin_right = 12.0
+content_margin_top = 13.0
+content_margin_bottom = 13.0
+
+[sub_resource type="StyleBoxFlat" id="Hovered"]
+bg_color = Color(0.15, 0.13, 0.095, 1)
+content_margin_left = 16.0
+content_margin_right = 12.0
+content_margin_top = 13.0
+content_margin_bottom = 13.0
+
+[sub_resource type="SystemFont" id="Bold"]
+font_names = PackedStringArray("Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC")
+font_weight = 700
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.063, 0.056, 0.043, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.81, 0.85, 0.94, 1)
+ambient_light_energy = 0.58
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 0.55
+ssao_intensity = 1.4
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.28, 0.23, 0.15, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="PedestalMesh"]
+material = SubResource("GroundMaterial")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.1
+radial_segments = 16
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+bg_color = Color(0.057, 0.051, 0.04, 1)
+
+[node name="UnitCodex" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("theme")
+script = ExtResource("script")
+
+[node name="Backdrop" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 58
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 58
+theme_override_constants/margin_bottom = 34
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 26
+
+[node name="Heading" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Content/Heading"]
+layout_mode = 2
+text = "积木争霸"
+theme_override_fonts/font = SubResource("Bold")
+theme_override_font_sizes/font_size = 34
+
+[node name="SectionTitle" type="Label" parent="Margin/Content/Heading"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "   /   战争图鉴"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.67, 0.58, 0.43, 1)
+
+[node name="CloseCodex" type="Button" parent="Margin/Content/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "返回主菜单   Esc"
+theme_override_font_sizes/font_size = 17
+
+[node name="Divider" type="HSeparator" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="Catalog" type="VBoxContainer" parent="Margin/Content/Body"]
+layout_mode = 2
+custom_minimum_size = Vector2(255, 0)
+theme_override_constants/separation = 20
+
+[node name="CategoryTabs" type="TabBar" parent="Margin/Content/Body/Catalog"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_styles/tab_selected = SubResource("Selected")
+theme_override_styles/tab_unselected = SubResource("Hovered")
+theme_override_colors/font_selected_color = Color(0.94, 0.81, 0.57, 1)
+theme_override_colors/font_unselected_color = Color(0.69, 0.61, 0.48, 1)
+
+[node name="Entries" type="ItemList" parent="Margin/Content/Body/Catalog"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("Clear")
+theme_override_styles/selected = SubResource("Selected")
+theme_override_styles/selected_focus = SubResource("Selected")
+theme_override_styles/hovered = SubResource("Hovered")
+theme_override_styles/focus = SubResource("Clear")
+theme_override_font_sizes/font_size = 20
+theme_override_constants/v_separation = 15
+theme_override_colors/font_color = Color(0.75, 0.68, 0.55, 1)
+theme_override_colors/font_selected_color = Color(0.96, 0.86, 0.66, 1)
+allow_reselect = true
+
+[node name="Count" type="Label" parent="Margin/Content/Body/Catalog"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.50, 0.45, 0.36, 1)
+
+[node name="Preview" type="VBoxContainer" parent="Margin/Content/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Portrait" type="TextureRect" parent="Margin/Content/Body/Preview"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 6
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PreviewActions" type="HBoxContainer" parent="Margin/Content/Body/Preview"]
+layout_mode = 2
+alignment = 1
+
+[node name="PreviewHint" type="Label" parent="Margin/Content/Body/Preview/PreviewActions"]
+layout_mode = 2
+text = "拖动旋转 · 滚轮缩放"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.58, 0.51, 0.39, 1)
+
+[node name="ResetView" type="Button" parent="Margin/Content/Body/Preview/PreviewActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "复位"
+theme_override_font_sizes/font_size = 15
+
+[node name="DetailScroll" type="ScrollContainer" parent="Margin/Content/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(385, 0)
+horizontal_scroll_mode = 0
+follow_focus = true
+
+[node name="Details" type="VBoxContainer" parent="Margin/Content/Body/DetailScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 18
+
+[node name="EntryType" type="Label" parent="Margin/Content/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.71, 0.55, 0.30, 1)
+
+[node name="EntryTitle" type="Label" parent="Margin/Content/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = SubResource("Bold")
+theme_override_font_sizes/font_size = 38
+autowrap_mode = 2
+
+[node name="Description" type="Label" parent="Margin/Content/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.69, 0.62, 0.50, 1)
+
+[node name="Divider" type="HSeparator" parent="Margin/Content/Body/DetailScroll/Details"]
+layout_mode = 2
+
+[node name="Stats" type="RichTextLabel" parent="Margin/Content/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+fit_content = true
+scroll_active = false
+bbcode_enabled = true
+theme_override_font_sizes/normal_font_size = 18
+theme_override_constants/table_h_separation = 20
+theme_override_constants/table_v_separation = 10
+
+[node name="Special" type="Label" parent="Margin/Content/Body/DetailScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.65, 0.59, 0.46, 1)
+
+[node name="DataNote" type="Label" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "初始数值 · 未研究科技"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.50, 0.45, 0.36, 1)
+
+[node name="CodexViewport" type="SubViewport" parent="."]
+unique_name_in_owner = true
+own_world_3d = true
+transparent_bg = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(900, 900)
+render_target_update_mode = 0
+
+[node name="World" type="Node3D" parent="CodexViewport"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="CodexViewport/World"]
+environment = SubResource("Environment")
+
+[node name="ModelAnchor" type="Node3D" parent="CodexViewport/World"]
+unique_name_in_owner = true
+
+[node name="Pedestal" type="MeshInstance3D" parent="CodexViewport/World"]
+unique_name_in_owner = true
+position = Vector3(0, -0.08, 0)
+mesh = SubResource("PedestalMesh")
+
+[node name="Sun" type="DirectionalLight3D" parent="CodexViewport/World"]
+rotation_degrees = Vector3(-45, 140, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.45
+shadow_enabled = true
+
+[node name="Fill" type="DirectionalLight3D" parent="CodexViewport/World"]
+rotation_degrees = Vector3(-28, -35, 0)
+light_color = Color(0.68, 0.79, 1, 1)
+light_energy = 0.6
+
+[node name="PreviewCamera" type="Camera3D" parent="CodexViewport/World"]
+unique_name_in_owner = true
+position = Vector3(3.2, 2.5, -5.5)
+projection = 1
+size = 3.2
+near = 0.1
+far = 80.0
+current = true

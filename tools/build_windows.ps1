@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$GodotPath = 'C:/Program Files/Godot/Godot_console.exe',
     [switch]$PackOnly,
     [ValidatePattern('^$|^[0-9]+\.[0-9]+\.[0-9]+$')][string]$VersionedOutput = ''
@@ -7,8 +7,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $buildRoot = Join-Path $projectRoot ('builds/windows' + $(if ($VersionedOutput) { '-' + $VersionedOutput } else { '' }))
-$executable = Join-Path $buildRoot 'AshenCrown.exe'
-$archive = Join-Path $projectRoot ('builds/AshenCrown-' + $(if ($VersionedOutput) { $VersionedOutput + '-' } else { '' }) + 'Windows-x64.zip')
+$executable = Join-Path $buildRoot '积木争霸.exe'
+$archive = Join-Path $projectRoot ('builds/积木争霸-' + $(if ($VersionedOutput) { $VersionedOutput + '-' } else { '' }) + 'Windows-x64.zip')
 if ($VersionedOutput) {
     $presetText = Get-Content -LiteralPath (Join-Path $projectRoot 'export_presets.cfg') -Raw -Encoding UTF8
     $presetVersion = [regex]::Match($presetText, '(?m)^application/file_version="([^"]+)"').Groups[1].Value
@@ -25,7 +25,7 @@ if ($PackOnly) {
     $releaseVersionMatch = [regex]::Match((Get-Content -LiteralPath (Join-Path $projectRoot 'export_presets.cfg') -Raw -Encoding UTF8), '(?m)^application/file_version="([^"]+)"')
     $launcherVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable).FileVersion
     if (-not $releaseVersionMatch.Success -or $launcherVersion -ne $releaseVersionMatch.Groups[1].Value) { throw 'Launcher version differs from the export preset; run a full export first.' }
-    & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-pack 'Windows Desktop' (Join-Path $buildRoot 'AshenCrown.pck')
+    & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-pack 'Windows Desktop' (Join-Path $buildRoot '积木争霸.pck')
 } else {
     & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-release 'Windows Desktop' $executable
 }
@@ -42,7 +42,7 @@ $packageStream = [System.IO.File]::Open($archive, [System.IO.FileMode]::Create)
 try {
     $packageZip = [System.IO.Compression.ZipArchive]::new($packageStream, [System.IO.Compression.ZipArchiveMode]::Create, $true)
     try {
-        foreach ($packageName in @('AshenCrown.exe', 'AshenCrown.pck', 'START_HERE.txt', 'collect_diagnostics.ps1', 'COLLECT_DIAGNOSTICS.cmd')) {
+        foreach ($packageName in @('积木争霸.exe', '积木争霸.pck', 'START_HERE.txt', 'collect_diagnostics.ps1', 'COLLECT_DIAGNOSTICS.cmd')) {
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($packageZip, (Join-Path $buildRoot $packageName), ('windows/' + $packageName), [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
         }
     } finally {

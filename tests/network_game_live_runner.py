@@ -1,4 +1,4 @@
-"""Four or six independent main scenes over a local or deployed DTLS relay."""
+"""Four, six or eight independent main scenes over a local or deployed DTLS relay."""
 from __future__ import annotations
 
 import argparse
@@ -47,12 +47,12 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
     from cryptography.x509.oid import NameOID
 
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "ashen-crown-relay")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "jimu-zhengba-relay")])
     now = datetime.now(timezone.utc)
     cert = (x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(key.public_key())
             .serial_number(x509.random_serial_number()).not_valid_before(now - timedelta(minutes=5))
             .not_valid_after(now + timedelta(days=1))
-            .add_extension(x509.SubjectAlternativeName([x509.DNSName("ashen-crown-relay")]), critical=False)
+            .add_extension(x509.SubjectAlternativeName([x509.DNSName("jimu-zhengba-relay")]), critical=False)
             .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True).sign(key, hashes.SHA256()))
     key_path = directory / "test-private.key"
     cert_path = directory / "test-trust.crt"
@@ -72,20 +72,20 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
     config = directory / "relay.cfg"
-    config.write_text('[relay]\nbind="127.0.0.1"\nport=%d\nmax_rooms=1\nmax_humans=6\n[tls]\nprivate_key=%s\ncertificate=%s\n'
+    config.write_text('[relay]\nbind="127.0.0.1"\nport=%d\nmax_rooms=1\nmax_humans=8\n[tls]\nprivate_key=%s\ncertificate=%s\n'
                       % (port, json.dumps(key_path.as_posix()), json.dumps(cert_path.as_posix())), encoding="utf-8")
     out = (directory / "relay.stdout.log").open("wb")
     err = (directory / "relay.stderr.log").open("wb")
     handles.extend((out, err))
     environment = os.environ.copy()
-    environment["ASHEN_RELAY_CONFIG"] = str(config)
+    environment["JIMU_RELAY_CONFIG"] = str(config)
     runtime = load_deploy().runtime("win64.exe")
     process = subprocess.Popen([str(runtime), "--headless", "--log-file", str(directory / "relay.engine.log"), "--path", str(stage), "--script", "res://tests/network_relay_diagnostic.gd"],
                                env=environment, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
     children.append(process)
     deadline = time.monotonic() + 15
     while time.monotonic() < deadline:
-        if "ASHEN_RELAY_READY" in (directory / "relay.stdout.log").read_text(encoding="utf-8", errors="replace"):
+        if "JIMU_RELAY_READY" in (directory / "relay.stdout.log").read_text(encoding="utf-8", errors="replace"):
             return {"address": "127.0.0.1", "port": port, "certificate": cert_path.as_posix()}
         if process.poll() is not None:
             raise RuntimeError("local_relay_failed")
@@ -96,7 +96,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("target", choices=("local", "remote", "impaired"))
-    parser.add_argument("--mode", choices=("2v2", "3v3", "2v2v2", "ffa"), default="2v2")
+    parser.add_argument("--mode", choices=("2v2", "3v3", "2v2v2", "4v4", "ffa"), default="2v2")
     parser.add_argument("--seed", type=int, default=24571)
     parser.add_argument("--loss", type=float, choices=(0.03, 0.04, 0.05), default=0.04)
     parser.add_argument("--steady-seconds", type=float, default=15)
@@ -110,9 +110,9 @@ def main() -> int:
         parser.error("--steady-seconds must be between 0 and 30")
     if not 5 <= args.load_seconds <= 60:
         parser.error("--load-seconds must be between 5 and 60")
-    peer_count = 4 if args.mode == "2v2" else 6
-    if peer_count == 6 and args.load_units:
-        parser.error("six-player validation uses the bounded multiplayer scenario; load suite remains four-player")
+    peer_count = 4 if args.mode == "2v2" else (8 if args.mode in ("4v4", "ffa") else 6)
+    if peer_count > 4 and args.load_units:
+        parser.error("multiplayer validation uses the bounded multiplayer scenario; load suite remains four-player")
     directory = LOCAL / ("live-" + args.mode + "-" + args.target + "-" + uuid.uuid4().hex[:8])
     directory.mkdir(parents=True)
     children: list[subprocess.Popen] = []
@@ -124,7 +124,7 @@ def main() -> int:
     try:
         endpoint = local_server(directory, children, handles) if args.target != "remote" else json.loads((LOCAL / "endpoint.json").read_text(encoding="utf-8"))
         (directory / "endpoint.json").write_text(json.dumps(endpoint), encoding="utf-8")
-        if args.target == "impaired" or args.load_units:
+        if args.target == "impaired" or args.load_units or peer_count > 4:
             impairment = ImpairedRelay((endpoint["address"], endpoint["port"]), peers=peer_count, seed=args.seed, loss=args.loss).start() if args.target == "impaired" else ImpairedRelay(
                 (endpoint["address"], endpoint["port"]), peers=peer_count, seed=args.seed, rtt_ms=0, rtt_jitter_ms=0, loss=0, reorder=0).start()
             for index, port in enumerate(impairment.ports):

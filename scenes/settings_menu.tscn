@@ -65,7 +65,7 @@ layout_mode = 2
 [node name="Brand" type="Label" parent="Menu/Center/Panel/Layout/Heading"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "灰烬王国  /  设置"
+text = "积木争霸  /  设置"
 theme_override_font_sizes/font_size = 29
 
 [node name="Close" type="Button" parent="Menu/Center/Panel/Layout/Heading"]

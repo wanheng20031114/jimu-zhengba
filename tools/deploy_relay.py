@@ -1,4 +1,4 @@
-"""Deploy only the isolated Ashen Crown relay. Never log connection credentials.
+"""Deploy only the isolated 积木争霸 relay. Never log connection credentials.
 
 Examples: python tools/deploy_relay.py --certificate
           python tools/deploy_relay.py --deploy
@@ -22,9 +22,11 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCAL = ROOT / ".local" / "network"
 KEY = LOCAL / "relay-private.key"
 CERT = ROOT / "scripts" / "network" / "relay_trust.crt"
-BASE = "/opt/ashen-crown-relay"
-SERVICE = "ashen-crown-relay.service"
-TLS_NAME = "ashen-crown-relay"
+BASE = "/opt/jimu-zhengba-relay"
+SERVICE = "jimu-zhengba-relay.service"
+# Only this prior name may be retired during the explicit product rename.
+LEGACY_SERVICE = "ashen-crown-relay.service"
+TLS_NAME = "jimu-zhengba-relay"
 RUNTIME_VERSION = "4.7.2-stable"
 RUNTIME_DIGESTS = {
     "linux.x86_64": "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4",
@@ -41,7 +43,7 @@ def relay_journal_ready(journal: str) -> bool:
             continue
         if "SCRIPT ERROR" in line or "ERROR:" in line or "RELAY_TRANSPORT_ERROR" in line:
             raise RuntimeError("The new relay did not start cleanly")
-        if re.fullmatch(r"ASHEN_RELAY_READY protocol=[0-9]+ rooms=[0-9]+ humans=[0-9]+", line):
+        if re.fullmatch(r"JIMU_RELAY_READY protocol=[0-9]+ rooms=[0-9]+ humans=[0-9]+", line):
             ready = True
     return ready
 
@@ -60,6 +62,16 @@ def relay_service_identity(output: str, expected: tuple[str, int, int] | None = 
     if expected is not None and identity != expected:
         raise RuntimeError("The relay service changed identity or restarted during readiness")
     return identity
+
+
+def rollback_failed_start(run, legacy_active: bool, was_enabled: bool) -> None:
+    # Cancel Restart=on-failure before returning the shared UDP port to legacy.
+    # A failed first migration must not create a second auto-starting service.
+    run("systemctl stop " + SERVICE)
+    if not was_enabled:
+        run("systemctl disable " + SERVICE)
+    if legacy_active:
+        run("systemctl start " + LEGACY_SERVICE)
 
 
 def runtime(platform: str = "linux.x86_64") -> Path:
@@ -90,22 +102,28 @@ def runtime(platform: str = "linux.x86_64") -> Path:
     return executable
 
 
-def certificate() -> None:
+def certificate(renew_identity: bool = False) -> None:
     from cryptography import x509
     from cryptography.hazmat.primitives import hashes, serialization
     from cryptography.hazmat.primitives.asymmetric import rsa
     from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 
-    if KEY.exists() and CERT.exists():
+    if KEY.exists() != CERT.exists():
+        raise RuntimeError("Refusing to replace an incomplete existing certificate pair")
+    LOCAL.mkdir(parents=True, exist_ok=True)
+    if KEY.exists():
         private = serialization.load_pem_private_key(KEY.read_bytes(), password=None)
         cert = x509.load_pem_x509_certificate(CERT.read_bytes())
         if private.public_key().public_numbers() != cert.public_key().public_numbers():
             raise RuntimeError("Existing private key and public certificate do not match")
-        return
-    if KEY.exists() or CERT.exists():
-        raise RuntimeError("Refusing to replace an incomplete existing certificate pair")
-    LOCAL.mkdir(parents=True, exist_ok=True)
-    private = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        identity = cert.subject.get_attributes_for_oid(NameOID.COMMON_NAME)
+        if len(identity) == 1 and identity[0].value == TLS_NAME:
+            return
+        if not renew_identity:
+            raise RuntimeError("Certificate identity changed; use --renew-certificate before releasing matching clients")
+        (LOCAL / "previous-relay-trust.crt").write_bytes(CERT.read_bytes())
+    else:
+        private = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     now = dt.datetime.now(dt.timezone.utc)
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, TLS_NAME)])
     public = (
@@ -195,8 +213,9 @@ def deploy() -> None:
         old_pid = run("systemctl show bot-jump-relay.service -p MainPID --value")
         if not old_pid.isdigit() or int(old_pid) <= 0:
             raise RuntimeError("Existing relay was not in the expected running state")
+        was_enabled = run("systemctl is-enabled " + SERVICE + " || true") in ("enabled", "enabled-runtime")
         run("install -d -m 755 " + shlex.quote(BASE) + " " + shlex.quote(BASE + "/bin") + " " + shlex.quote(BASE + "/config"))
-        run("id -u ashencrown >/dev/null 2>&1 || useradd --system --home-dir " + shlex.quote(BASE) + " --shell /usr/sbin/nologin ashencrown")
+        run("id -u jimuzhengba >/dev/null 2>&1 || useradd --system --home-dir " + shlex.quote(BASE) + " --shell /usr/sbin/nologin jimuzhengba")
         with ssh.open_sftp() as sftp:
             present = run("if [ -f " + shlex.quote(runtime_path) + " ]; then sha256sum " + shlex.quote(runtime_path) + "; fi")
             if not present.startswith(executable_digest):
@@ -205,19 +224,19 @@ def deploy() -> None:
                 upload(sftp, release + "/" + path, content)
             upload(sftp, BASE + "/config/relay-private.key", KEY.read_bytes(), 0o600)
             upload(sftp, BASE + "/config/relay.crt", CERT.read_bytes())
-            relay_config = '[relay]\nbind="*"\nport=24571\nmax_rooms=1\nmax_humans=6\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
+            relay_config = '[relay]\nbind="*"\nport=24571\nmax_rooms=1\nmax_humans=8\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
             upload(sftp, BASE + "/config/relay.cfg", relay_config.encode(), 0o600)
             unit = f"""[Unit]
-Description=Ashen Crown encrypted match relay
+Description=积木争霸 encrypted match relay
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=ashencrown
-Group=ashencrown
+User=jimuzhengba
+Group=jimuzhengba
 WorkingDirectory={BASE}/current
-Environment=ASHEN_RELAY_CONFIG={BASE}/config/relay.cfg
+Environment=JIMU_RELAY_CONFIG={BASE}/config/relay.cfg
 Environment=HOME={BASE}/state
 ExecStart={runtime_path} --headless --path {BASE}/current --script res://server/relay_main.gd
 Restart=on-failure
@@ -236,28 +255,37 @@ LimitNOFILE=1024
 WantedBy=multi-user.target
 """
             upload(sftp, BASE + "/config/" + SERVICE, unit.encode())
-        run("install -d -m 750 -o ashencrown -g ashencrown " + shlex.quote(BASE + "/state"))
-        run("chown -R ashencrown:ashencrown " + shlex.quote(release) + " " + shlex.quote(BASE + "/config"))
+        run("install -d -m 750 -o jimuzhengba -g jimuzhengba " + shlex.quote(BASE + "/state"))
+        run("chown -R jimuzhengba:jimuzhengba " + shlex.quote(release) + " " + shlex.quote(BASE + "/config"))
         run("ln -sfn " + shlex.quote(release) + " " + shlex.quote(BASE + "/current"))
         run("install -m 644 " + shlex.quote(BASE + "/config/" + SERVICE) + " /etc/systemd/system/" + SERVICE)
         run("systemctl daemon-reload")
         run("systemctl enable " + SERVICE)
-        run("systemctl restart " + SERVICE)
-        # Require readiness from this invocation, not a stale journal entry.
-        identity_command = "systemctl show " + SERVICE + " -p InvocationID -p MainPID -p ActiveState -p SubState -p NRestarts"
-        identity = relay_service_identity(run(identity_command))
-        invocation = identity[0]
-        deadline = time.monotonic() + 8
-        ready = False
-        while time.monotonic() < deadline:
-            journal = run("journalctl _SYSTEMD_INVOCATION_ID=" + invocation + " --no-pager -o cat")
-            if relay_journal_ready(journal):
-                ready = True
-                break
-            time.sleep(0.25)
-        if not ready:
-            raise RuntimeError("The new relay did not report readiness")
-        relay_service_identity(run(identity_command), identity)
+        legacy_active = run("systemctl is-active " + LEGACY_SERVICE + " || true") == "active"
+        if legacy_active:
+            run("systemctl stop " + LEGACY_SERVICE)
+        try:
+            run("systemctl restart " + SERVICE)
+            # Require readiness from this invocation, not a stale journal entry.
+            identity_command = "systemctl show " + SERVICE + " -p InvocationID -p MainPID -p ActiveState -p SubState -p NRestarts"
+            identity = relay_service_identity(run(identity_command))
+            invocation = identity[0]
+            deadline = time.monotonic() + 8
+            ready = False
+            while time.monotonic() < deadline:
+                journal = run("journalctl _SYSTEMD_INVOCATION_ID=" + invocation + " --no-pager -o cat")
+                if relay_journal_ready(journal):
+                    ready = True
+                    break
+                time.sleep(0.25)
+            if not ready:
+                raise RuntimeError("The new relay did not report readiness")
+            relay_service_identity(run(identity_command), identity)
+        except Exception:
+            rollback_failed_start(run, legacy_active, was_enabled)
+            raise
+        if legacy_active:
+            run("systemctl disable " + LEGACY_SERVICE)
         after_pid = run("systemctl show bot-jump-relay.service -p MainPID --value")
         if old_pid != after_pid:
             raise RuntimeError("Service verification or preservation of the existing relay failed")
@@ -273,12 +301,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--certificate", action="store_true")
+    action.add_argument("--renew-certificate", action="store_true", help="Reissue the public certificate for a renamed relay using the existing private key")
     action.add_argument("--deploy", action="store_true")
     action.add_argument("--runtimes", action="store_true")
     args = parser.parse_args()
     try:
-        if args.certificate:
-            certificate()
+        if args.certificate or args.renew_certificate:
+            certificate(renew_identity=args.renew_certificate)
             print("RELAY_CERTIFICATE_READY public certificate tracked; private key stays local")
         elif args.runtimes:
             runtime("win64.exe")

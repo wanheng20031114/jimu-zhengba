@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="灰烬王国 · 中世纪乱斗"
+config/name="积木争霸"
 run/main_scene="res://scenes/lobby.tscn"
 run/flush_stdout_on_print=true
 config/features=PackedStringArray("4.6", "Forward Plus")

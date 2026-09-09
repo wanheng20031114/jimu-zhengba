@@ -2,9 +2,9 @@ class_name NetworkProtocol
 extends RefCounted
 ## Explicit JSON primitives only: never decode network bytes into Godot objects.
 
-const VERSION: int = 7
-const BUILD_ID: String = "0.8.2"
-const TLS_NAME: String = "ashen-crown-relay"
+const VERSION: int = 8
+const BUILD_ID: String = "0.9.0"
+const TLS_NAME: String = "jimu-zhengba-relay"
 const PORT: int = 24571
 const CONTROL_CHANNEL: int = 0
 const EVENT_CHANNEL: int = 1
@@ -12,7 +12,7 @@ const SNAPSHOT_CHANNEL: int = 2
 # Host -> relay uses channels 2 + recipient. Separate sequence windows prevent
 # one recipient's newer packet from discarding another recipient's reordered one.
 # Relay -> each client uses channel 2 because that connection has one recipient.
-const CHANNEL_COUNT: int = 8
+const CHANNEL_COUNT: int = 10
 const MAX_COMMAND_BYTES: int = 4096
 const MAX_EVENT_BYTES: int = 32768
 const MAX_PACKET_BYTES: int = 524288
@@ -22,16 +22,59 @@ const MAX_VALUES: int = 65536
 const MAGIC: int = 0x314e4341 # ACN1, little endian.
 const HEADER_BYTES: int = 9
 
-# Shared by lobby, authority and relay. Owner IDs are dense slot indices;
+# Shared by lobby, authority and relay. Owner IDs are stable slot indices;
 # alliance IDs are independent and only FFA fixes each owner to its own alliance.
-const MAX_PLAYERS: int = 6
+const MAX_PLAYERS: int = 8
 const MODES: Dictionary = {
 	"1v1": {"slots": 2, "teams": 2, "team_size": 1, "map_id": "duel", "map_resource": "amber_crossroads_1v1", "label": "1v1 遭遇战"},
 	"2v2": {"slots": 4, "teams": 2, "team_size": 2, "map_id": "teams", "map_resource": "twin_valleys_2v2", "label": "2v2 团队战"},
 	"3v3": {"slots": 6, "teams": 2, "team_size": 3, "map_id": "trios", "map_resource": "three_frontiers_3v3", "label": "3v3 团队战"},
+	"4v4": {"slots": 8, "teams": 2, "team_size": 4, "map_id": "quad_teams", "map_resource": "four_banners_4v4", "label": "4v4 团队战"},
 	"2v2v2": {"slots": 6, "teams": 3, "team_size": 2, "map_id": "triad", "map_resource": "triad_basin_2v2v2", "label": "2v2v2 三方混战"},
-	"ffa": {"slots": 6, "teams": 6, "team_size": 1, "map_id": "free_for_all", "map_resource": "crownfall_ffa", "label": "乱斗 · 各自为战"},
+	"ffa": {"slots": 8, "teams": 8, "team_size": 1, "map_id": "free_for_all", "map_resource": "crownfall_ffa", "label": "八人乱战 · 各自为战"},
 }
+
+static func match_config_error(config: Dictionary, require_human_host: bool = true) -> String:
+	if config.get("mode") not in MODES or not config.get("players") is Array:
+		return "invalid_roster"
+	var mode: Dictionary = MODES[config.mode]
+	if config.players.size() != int(mode.slots):
+		return "invalid_roster"
+	var teams: Dictionary = {}
+	for index: int in range(config.players.size()):
+		var slot: Variant = config.players[index]
+		if not slot is Dictionary or not integer(slot.get("owner_id"), index, index) or not integer(slot.get("team_id"), 0, int(mode.teams) - 1):
+			return "invalid_roster"
+		if slot.get("controller") not in ["human", "bot", "open"] or not slot.get("name") is String:
+			return "invalid_roster"
+		if config.mode == "ffa" and int(slot.team_id) != index:
+			return "ffa_independent"
+		if slot.controller == "open":
+			continue
+		var alliance := int(slot.team_id)
+		teams[alliance] = int(teams.get(alliance, 0)) + 1
+		if teams[alliance] > int(mode.team_size):
+			return "team_capacity"
+	if require_human_host and config.players[0].controller != "human":
+		return "human_host_required"
+	return "opponents_required" if teams.size() < 2 else ""
+
+static func room_start_error(room: Dictionary) -> String:
+	if not room.get("slots") is Array:
+		return "invalid_roster"
+	var config := {"mode": room.get("mode"), "players": []}
+	for slot: Variant in room.slots:
+		if not slot is Dictionary:
+			return "invalid_roster"
+		config.players.append({"owner_id": slot.get("owner_id"), "team_id": slot.get("team_id"),
+			"controller": slot.get("kind"), "name": slot.get("name", "")})
+	var roster_error := match_config_error(config)
+	if not roster_error.is_empty():
+		return roster_error
+	for slot: Dictionary in room.slots:
+		if slot.kind == "human" and (slot.get("ready") != true or slot.get("connected") != true):
+			return "not_ready"
+	return ""
 
 static func default_alliance(mode: String, owner: int) -> int:
 	return owner / int(MODES[mode].team_size)

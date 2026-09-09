@@ -16,6 +16,8 @@ def main() -> int:
     parser.add_argument("executable", type=Path)
     parser.add_argument("--source", action="store_true", help="Run the same Session entry in an editor engine before exporting")
     parser.add_argument("--catalogue-only", action="store_true", help="Audit packaged content without connecting to or occupying the production relay")
+    parser.add_argument("--room-mode", choices=("1v1", "2v2", "3v3", "4v4", "2v2v2", "ffa"), default="2v2")
+    parser.add_argument("--empty-slots", default="", help="Comma-separated non-host seat IDs left empty")
     args = parser.parse_args()
     executable = args.executable.resolve(strict=True)
     directory = ROOT / ".local/network" / ("release-" + uuid.uuid4().hex[:8])
@@ -24,6 +26,9 @@ def main() -> int:
     if args.source:
         command.extend(("--path", str(ROOT)))
     command.extend(("--", "--network-smoke"))
+    command.append("--room-mode=" + args.room_mode)
+    if args.empty_slots:
+        command.append("--room-empty-slots=" + args.empty_slots)
     if args.catalogue_only:
         command.append("--catalogue-only")
     with (directory / "stdout.log").open("wb") as out, (directory / "stderr.log").open("wb") as err:
@@ -50,7 +55,7 @@ def main() -> int:
         success = success and summary.get("catalogue_only", False) == args.catalogue_only
         if args.catalogue_only:
             success = success and summary.get("handshake_msec") == -1
-    report = {"passed": success, "summary": summary, "resource_value_audit_present": value_audit_present, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
+    report = {"passed": success, "summary": summary, "room_mode": args.room_mode, "empty_slots": args.empty_slots, "resource_value_audit_present": value_audit_present, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
     (directory / "summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print("NETWORK_RELEASE_RESULTS " + json.dumps(report, ensure_ascii=False))
     return 0 if success else 1

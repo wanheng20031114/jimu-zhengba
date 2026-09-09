@@ -30,6 +30,9 @@ func _init(owner: int = 0, alliance: int = 0) -> void:
 	alliance_id = alliance
 	display_name = "指挥官 %d" % (owner + 1)
 
+func is_participating() -> bool:
+	return controller != "open"
+
 func get_attack_bonus() -> int:
 	return BalanceCatalog.upgrade("attack_%d" % attack_level).total_bonus if attack_level > 0 else 0
 

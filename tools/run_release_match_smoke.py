@@ -12,9 +12,10 @@ import time
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("executable", type=Path, help="AshenCrown.exe; or Godot_console.exe with --project")
+    parser.add_argument("executable", type=Path, help="积木争霸.exe; or Godot_console.exe with --project")
     parser.add_argument("--project", type=Path, help="Source validation only: Godot project directory")
-    parser.add_argument("--mode", choices=("1v1", "2v2", "3v3", "2v2v2", "ffa"), default="1v1")
+    parser.add_argument("--mode", choices=("1v1", "2v2", "3v3", "4v4", "2v2v2", "ffa"), default="1v1")
+    parser.add_argument("--empty-slots", default="", help="Comma-separated non-host seat IDs, for example 5,6 for a 4v2 match")
     parser.add_argument("--fast", action="store_true", help="10x wall-clock speed; same 1/30-second simulation delta")
     parser.add_argument("--headless", action="store_true", help="Use native Dummy renderer instead of a visible game window")
     parser.add_argument("--diagnose", action="store_true", help="Observe only 120 simulation seconds; always fails acceptance")
@@ -33,6 +34,12 @@ def main() -> int:
     if args.headless:
         command += ["--headless"]
     command += ["--", "--match-smoke", "--" + args.mode]
+    if args.empty_slots:
+        seats = args.empty_slots.split(",")
+        capacity = {"1v1": 2, "2v2": 4, "3v3": 6, "4v4": 8, "2v2v2": 6, "ffa": 8}[args.mode]
+        if any(not seat.isdecimal() or not 0 < int(seat) < capacity for seat in seats) or len(set(seats)) != len(seats):
+            parser.error("--empty-slots requires unique non-host seats within the chosen mode")
+        command += ["--match-empty-slots=" + args.empty_slots]
     if args.fast:
         command += ["--match-smoke-fast"]
     if args.diagnose:
@@ -71,7 +78,7 @@ def main() -> int:
     accepted = (
         not timed_out and process.returncode == 0 and stderr_clean and isinstance(result, dict)
         and result.get("ok") is True and result.get("finished") is True
-        and result.get("observed_step_valid") is True and result.get("winner") in range({"1v1": 2, "2v2": 2, "3v3": 2, "2v2v2": 3, "ffa": 6}[args.mode])
+        and result.get("observed_step_valid") is True and result.get("winner") in range({"1v1": 2, "2v2": 2, "3v3": 2, "4v4": 2, "2v2v2": 3, "ffa": 8}[args.mode])
         and result.get("mode") == args.mode
         and result.get("checks", 0) >= 22 and result.get("failures") == []
         and (bool(args.project) or result.get("source_editor_feature") is False)

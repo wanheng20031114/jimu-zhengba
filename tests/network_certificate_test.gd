@@ -2,6 +2,7 @@ extends SceneTree
 ## Expected-negative TLS test. Verification failure diagnostics are expected here.
 
 const Client = preload("res://scripts/network/relay_client.gd")
+const Protocol = preload("res://scripts/network/network_protocol.gd")
 var client: Node
 var temporary_cert: String = ""
 
@@ -13,7 +14,7 @@ func _run() -> void:
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://.local/network/endpoint.json"))
 	var crypto := Crypto.new()
 	var key := crypto.generate_rsa(2048)
-	var wrong_trust := crypto.generate_self_signed_certificate(key, "CN=ashen-crown-relay")
+	var wrong_trust := crypto.generate_self_signed_certificate(key, "CN=" + Protocol.TLS_NAME)
 	temporary_cert = "user://wrong-network-trust-%d.crt" % Time.get_ticks_usec()
 	wrong_trust.save(temporary_cert)
 	client = Client.new()

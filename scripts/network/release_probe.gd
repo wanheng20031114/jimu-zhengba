@@ -15,6 +15,8 @@ var catalog_files: int = 0
 var resource_value_checks: int = 0
 var handshake_msec: int = -1
 var catalogue_only: bool = false
+var room_mode: String = "2v2"
+var room_empty_slots: Array[int] = []
 
 func _ready() -> void:
 	_run.call_deferred()
@@ -25,6 +27,29 @@ func _run() -> void:
 		await finish()
 		return
 	catalogue_only = "--catalogue-only" in OS.get_cmdline_user_args()
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--room-mode="):
+			room_mode = argument.trim_prefix("--room-mode=")
+		if argument.begins_with("--room-empty-slots="):
+			for raw: String in argument.trim_prefix("--room-empty-slots=").split(",", false):
+				if not raw.is_valid_int():
+					check(false, "invalid_empty_seat_argument")
+				else:
+					room_empty_slots.append(int(raw))
+	check(room_mode in NetworkProtocol.MODES, "release_room_mode_exists")
+	if not failures.is_empty():
+		await finish()
+		return
+	var roster := Session.offline_config(room_mode)
+	for owner: int in room_empty_slots:
+		if owner <= 0 or owner >= roster.players.size():
+			check(false, "invalid_empty_seat_index")
+		else:
+			roster.players[owner].controller = "open"
+	check(NetworkProtocol.match_config_error(roster).is_empty(), "release_room_roster_valid")
+	if not failures.is_empty():
+		await finish()
+		return
 	relay.error_received.connect(func(code: String, _message: String): errors.append(code))
 	relay.match_started.connect(func(config: Dictionary): received_config = config)
 	relay.event_received.connect(func(event: Dictionary):
@@ -53,23 +78,28 @@ func _run() -> void:
 	if not failures.is_empty():
 		await finish()
 		return
-	relay.create_room("2v2", "发布包联网自检")
+	relay.create_room(room_mode, "发布包联网自检")
 	check(await until(func(): return relay.connection_state == "lobby" and not relay.room.is_empty(), 10.0), "temporary_room_created")
 	if not failures.is_empty():
 		await finish()
 		return
-	check(relay.owner_id == 0 and relay.is_host and relay.room.slots.size() == 4, "server_assigns_four_slot_room_and_host_identity")
+	check(relay.owner_id == 0 and relay.is_host and relay.room.slots.size() == roster.players.size(), "server_assigns_requested_slots_and_host_identity")
+	check(relay.room.mode == room_mode, "room_preserves_requested_mode")
 	check(relay.room.match_id is String and relay.room.match_id.length() == 32, "server_assigns_independent_match_epoch")
-	for owner in range(1, 4):
-		relay.configure_slot(owner, "bot", 0 if owner < 2 else 1)
-	check(await until(func(): return relay.room.slots.slice(1).all(func(slot): return slot.kind == "bot"), 10.0), "server_accepts_native_bot_slot_configuration")
+	for owner in range(1, roster.players.size()):
+		if owner not in room_empty_slots:
+			relay.configure_slot(owner, "bot", NetworkProtocol.default_alliance(room_mode, owner))
+	check(await until(func(): return relay.room.slots.slice(1).all(func(slot): return slot.kind == ("open" if int(slot.owner_id) in room_empty_slots else "bot")), 10.0), "server_accepts_bot_and_empty_slot_configuration")
 	if failures.is_empty():
 		# Only the room protocol starts, so the probe can confirm reliable finish
 		# and capacity release. No main.tscn or gameplay simulation is instantiated.
 		relay.start_match()
 		check(await until(func(): return relay.connection_state == "match" and not received_config.is_empty(), 10.0), "start_configuration_reaches_packaged_client")
 	if failures.is_empty():
-		check(received_config.match_id == relay.room.match_id and received_config.players.size() == 4, "start_configuration_preserves_epoch_and_roster")
+		check(received_config.match_id == relay.room.match_id and received_config.players.size() == roster.players.size(), "start_configuration_preserves_epoch_and_roster")
+		check(received_config.mode == room_mode and received_config.map_id == NetworkProtocol.MODES[room_mode].map_id, "start_configuration_preserves_requested_mode_and_map")
+		check(received_config.players.all(func(slot): return int(slot.team_id) == NetworkProtocol.default_alliance(room_mode, int(slot.owner_id))), "start_configuration_preserves_alliances")
+		check(received_config.players.all(func(slot): return slot.controller == ("open" if int(slot.owner_id) in room_empty_slots else ("human" if int(slot.owner_id) == 0 else "bot"))), "start_configuration_preserves_actual_participation")
 		relay.finish_match({"winner": -1, "time": 0})
 		check(await until(func(): return relay.connection_state == "finished" and received_finish, 10.0), "reliable_finish_confirms_room_release")
 	check(errors.is_empty(), "no_transport_error_during_release_probe")

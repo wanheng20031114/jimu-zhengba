@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://scenes/maps/four_banners_4v4_ground_stone.res" id="1_8pk54"]
+[ext_resource type="ArrayMesh" path="res://scenes/maps/four_banners_4v4_ground_earth.res" id="2_avu4f"]
+
+[node name="FourBanners4v4Ground" type="Node3D" unique_id=1853501104]
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=1398080236]
+cast_shadow = 0
+mesh = ExtResource("1_8pk54")
+
+[node name="Earth" type="MeshInstance3D" parent="." unique_id=1849186105]
+cast_shadow = 0
+mesh = ExtResource("2_avu4f")

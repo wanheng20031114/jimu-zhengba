@@ -1,33 +1,35 @@
-# 灰烬王国 · 实施约定
+# 积木争霸 · 实施约定
 
-视觉：暖沙色、象牙石灰墙、深棕木梁、蓝金玩家与锈红敌军，精细低多边形原创模型，真实3D正交战场。
-界面：完整战场为主体，左下小地图，底部选中信息与生产操作，右上金币，克制的炭灰金色界面。
-动态：角色步态与攻击、器械抛臂与后坐、旗帜/烟尘/建筑瓦解、选择和指令标记。
+Godot 4.6.3 原生 3D RTS。暖砂岩、蓝金屋顶与部队服饰，45° 正交战场；当前版本 0.9.0、协议 8。完整规则见 README 与 `report/balance-0.8.2.md`，不要从旧报告或历史生成器恢复过时数值。
 
-## 场景与接口
-- 坐标：Y 向上，单位面向 -Z；世界区域 x/z -42..42。角色人体约 1.7~2m；骑兵约 2.5m高；器械宽2.0~2.8m。
-- 模型交付路径 `assets/models/units/{swordsman,knight,archer,catapult,cannon}.tscn`，Node3D 根节点，有 `set_motion(moving: bool)`、`strike()`、`set_team(team: int)` 方法。原生 AnimationPlayer 或清晰的部件动画。静态网格可合并，关节有命名枢轴，模型必须实际3D。
-- 环境模型路径 `assets/models/environment/{headquarters,enemy_keep,barracks,tower,house,ruin,wall,palisade,barrel,crate,tree,rock,well,cart}.tscn`；均 Node3D 根，Y=0 落地。环境组合场景 `scenes/environment.tscn` 保存静态聚落；可攻击建筑位于主场景 Buildings 下。
-- 游戏脚本 `scripts/game.gd`，主场景 `scenes/main.tscn`。主场景与 HUD 由 `tools/build_interface.py` 离线生成，修改保存节点时应同步生成器。
-- 战斗脚本 `scripts/battle_unit.gd` / `scripts/battle_building.gd` / `scripts/projectile.gd` / `scripts/battle_effect.gd` 分别绑定 `scenes/unit.tscn` / `building.tscn` / `projectile.tscn` / `battle_effect.tscn`。
-- 单位根 CharacterBody3D；建筑根 StaticBody3D。单位 @export `unit_type: String`、`team: int`；建筑 @export `building_type: String`、`team: int`。生成之前设置类型与阵营。
-- 实体加入 `entities` 和 `units` / `buildings` 组。公开 `hp`, `max_hp`, `team`, `selected`, `alive`, `display_name`, `radius` 属性；公开 `set_selected(value: bool)`, `receive_damage(amount: float, source: Node3D = null)`, `issue_move(destination: Vector3, attack_move: bool = false)`, `issue_attack(target: Node3D)`, `stop()`, `hold()` 方法（后三项只对单位）。
-- 单位 stats 放 battle_unit.gd 常量 STATS 字典，费用依次 swordsman45 / archer60 / knight100 / catapult140 / cannon180。友军蓝，敌军红。
-- 主场景固定子节点 `Units`, `Buildings`, `Effects`, `NavigationRegion3D`, `CameraRig`。战斗可从 current_scene 获取主场景。主场景方法 `spawn_projectile(source: Node3D, target: Node3D, damage: float, kind: String)`、`spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE)`、`on_entity_died(entity: Node3D)`。无必要不依赖其他主场景 API。
-- 静态地图使用已保存 NavigationMesh；NavAgent3D 路径/避让。建筑占地在主代理制作的导航网格中阻挡。避免每帧全图逐单位复杂搜索；目标搜索间隔约0.35秒。
-- 远程弹体在真实攻击释放帧读取模型 `ProjectileSocket` 的全局位置；逻辑伤害计时与 AnimationPlayer 的释放关键帧对齐。
-- 场景结构优先 .tscn 保存；不在运行时拼零碎 MeshInstance/Control 节点。必要实例化 PackedScene 可用。
-- 所有源码使用 UTF-8；验证进程应自行退出，并用命令核实。不得关闭用户编辑器。
+## 代码与数据边界
 
-## 原生渲染与输入
+- `scripts/session.gd` 负责持久连接、对局配置、场景切换和脱敏生命周期记录；`scenes/lobby.tscn` 是启动场景，`scenes/main.tscn` 是战场。
+- `data/units`、`data/buildings`、`data/upgrades`、`data/maps` 是可编辑 Resource；HUD、图鉴、AI、经济与伤害结算读取 `BalanceCatalog`。
+- `PlayerState.owner_id` 是完整席位数组的稳定索引，`alliance_id` 独立。空位用 `controller="open"`，通过 `is_participating()` 排除资产、经济、Bot、视野、胜负和接管。不要压缩玩家数组。
+- `NetworkProtocol.MODES` 是模式、队伍容量与地图的唯一映射；`match_config_error` 与 `room_start_error` 供房主、客户端与中继复用。4v4 允许两队各 1～4 人，乱战允许 2～8 人，至少两个实际阵营。
+- `scripts/game.gd` 运行 30 TPS 权威模拟，`MatchCommands` 验证序号、所属玩家、金币与人口。客户端发送意图，不运行经济、伤害或 Bot。
+- `MatchReplication` 按每名玩家视野生成 15 Hz 快照，七个远端收件人交错到两步发送。客户端用 120 ms 时间线插值，失去视野的敌军与建筑立即移除，不留下模型记忆。
+- 攻击出手记录攻击力及类别附伤，命中时读取目标当前护甲。追击使用实际位移速度估计和径向释放范围，近战前摇可追步，完整冷却与动画关键帧保持。
 
-- 每个刚性关节使用单个 ArrayMesh 和共享 ShaderMaterial；阵营颜色通过实例参数设置。动画关键帧保存在原生 AnimationPlayer 中。
-- HUD 通过六个独立 SubViewport 展示真实模型，静态预览只绘制一次，活动预览以 15 Hz 更新。`scenes/model_previews.tscn` 可直接在编辑器中修改取景。
-- 鼠标边缘移动采用 DisplayServer 的客户区物理像素，覆盖宽屏与 4:3 黑边；世界选择和界面输入使用 Godot 自身的视口变换。
-- Ctrl + 数字覆盖编队，Shift + 数字合并所选存活友军并去重；数字召回，双按定位。
-- 建筑存活时占地不在主导航网格中，摧毁后启用预先保存的独立 NavigationRegion3D 补片，无需运行时重新烘焙。
-- Windows 预设与 `tools/build_windows.ps1` 保存了可重复执行的导出步骤。运行时不依赖 Python、美术生成器或测试代码。
+## 原生场景与表现
 
-## 地图布局（供环境设计遵守）
-大本营中心(-22,0,23)，占地9x8；敌要塞(22,0,-24)，占地9x8；敌兵营(9,0,-21)，占地6x5；敌塔(25,0,-7)，占地4x4；敌仓库/兵营(-4,0,-12)，占地6x5。
-中央道路沿 x=z*-0.65，从玩家区左下通向敌区右上；主战斗中心(0,0,0)。地图范围-42..42；装饰房屋置两侧，主要通道留宽10米以上。环境碰撞/障碍清单通过 JSON 交付主代理用于烘焙导航。
+单位根节点为 CharacterBody3D，建筑为 StaticBody3D；模型是独立可编辑 PackedScene。节点结构优先保存于 `.tscn`，运行时实例化整套已有场景，不逐件构造模型或界面。
+
+模型动画使用 AnimationPlayer；物理使用 NavigationAgent3D/Jolt 与原生物理插值。静态地图保留 NavigationMesh，动态施工占地由 ConstructionNavigation 管理。PathBudget 对路径查询按逻辑步限额。
+
+地图构建脚本为 `tools/build_skirmish_maps.py`；六张独立地图在 `data/maps/` 与 `scenes/maps/`。4v4 为 192×184，八人乱战为 192×192，每席具有出生矿、扩张矿与左侧免费防御塔。占地、道路、出生点与矿槽验证是重建的一部分。
+
+大厅与图鉴以原生 Control/Container、SubViewport 和游戏模型组成。图鉴显示时只运行当前模型，关闭时停用预览。设置使用本地 ConfigFile；更名迁移仅复制旧版两份偏好文件，已有新版配置优先。
+
+阵营色通过共享材质和实例参数应用：自己蓝色、盟友黄色、敌方红色。CombatLayers 为八个阵营分配独立单位及建筑层，新增模式必须检查全部阵营组合。
+
+## 构建与联机
+
+修改规则或地图后运行 `python tools/build_content_manifest.py`，再使用 `tools/build_windows.ps1 -VersionedOutput 0.9.0` 导出。发布程序为 `积木争霸.exe` 和同目录 PCK，ZIP 仅包含五项明确交付文件；测试和本机密钥均不进入包。
+
+中继专用服务为 `jimu-zhengba-relay.service`，端口 UDP 24571，原生 DTLS 验证固定受信身份。服务器使用隔离且校验 SHA256 的 Godot 4.7.2 运行时。详见 `server/README.md`。更名时旧服务名仅用于迁移；不可更改其他服务或其端口。
+
+按修改范围运行有效回归，先完成可运行包，再做重负载验证。性能报告须说明实测人数、场景、帧 P95/P99、30 TPS 实际达成情况和共享机器条件，不能把目标当作实测帧率。
+
+每个完整阶段中文 commit + push。源码、场景、配置和文档采用 UTF-8；供 Windows PowerShell 5.1 执行的中文脚本使用 UTF-8 BOM。结束前关闭并命令核实自己启动的辅助进程，保留用户编辑器与正在运行的游戏。

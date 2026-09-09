@@ -1,5 +1,6 @@
 extends Node
 ## Persistent native transport and the small configuration crossing scene changes.
+signal load_failed(message: String)
 var config: Dictionary = {}
 var online: bool = false
 @onready var relay: RelayClient = $RelayClient
@@ -15,11 +16,14 @@ func _ready() -> void:
 	elif "--match-smoke" in OS.get_cmdline_user_args():
 		add_child.call_deferred(preload("res://scripts/qa/release_match_probe.tscn").instantiate())
 
-func start_offline(mode: String) -> void:
+func start_offline(mode: String) -> Error:
+	if mode not in NetworkProtocol.MODES:
+		load_failed.emit("所选对局模式无效，请重新选择")
+		return ERR_INVALID_PARAMETER
 	record_diagnostic("load_match", {"online": false, "mode": mode})
 	online = false
 	config = offline_config(mode)
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	return _load_match_scene()
 
 static func offline_config(mode: String) -> Dictionary:
 	var match_data: Dictionary = {"mode": mode, "players": []}
@@ -28,11 +32,27 @@ static func offline_config(mode: String) -> Dictionary:
 			"controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
 	return match_data
 
-func start_online(match_data: Dictionary) -> void:
+func start_online(match_data: Dictionary) -> Error:
+	if not NetworkProtocol.match_config_error(match_data).is_empty():
+		relay.leave_room()
+		online = false
+		config.clear()
+		load_failed.emit("对局席位配置无效，请重新创建或加入房间")
+		return ERR_INVALID_DATA
 	record_diagnostic("load_match", {"online": true, "mode": match_data.mode})
 	online = true
 	config = match_data.duplicate(true)
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	return _load_match_scene()
+
+func _load_match_scene() -> Error:
+	var error := get_tree().change_scene_to_file("res://scenes/main.tscn")
+	if error != OK:
+		if online:
+			relay.leave_room()
+		online = false
+		config.clear()
+		load_failed.emit("无法载入积木争霸战场，请检查游戏文件后重试")
+	return error
 
 func back_to_lobby() -> void:
 	record_diagnostic("return_to_lobby")
@@ -45,7 +65,7 @@ func back_to_lobby() -> void:
 func record_diagnostic(event: String, details: Dictionary = {}) -> void:
 	# Only bounded lifecycle/health facts reach this local log. Never dump the
 	# room config, endpoint, invitation or reconnect credentials.
-	print("ASHEN_DIAGNOSTIC ", JSON.stringify({"event": event, "build": NetworkProtocol.BUILD_ID,
+	print("JIMU_DIAGNOSTIC ", JSON.stringify({"event": event, "build": NetworkProtocol.BUILD_ID,
 		"pid": OS.get_process_id(), "seconds": snappedf(Time.get_ticks_msec() / 1000.0, 0.001), "details": details}))
 
 func _record_health() -> void:

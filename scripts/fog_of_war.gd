@@ -16,6 +16,7 @@ var grid_size: Vector2i = Vector2i.ZERO
 var map_size: Vector2 = Vector2.ZERO
 var _game: Node3D
 var _cells: Array[PackedByteArray] = []
+var _participating_alliances: Array[int] = []
 var _revealed: PackedByteArray = PackedByteArray()
 var _tick_time: float = 0.0
 var _local_owner: int = -1
@@ -36,8 +37,11 @@ func configure(game: Node3D, size: Vector2) -> void:
 	grid_size = Vector2i(ceili(size.x / CELL_SIZE), ceili(size.y / CELL_SIZE))
 	assert(grid_size.x * grid_size.y <= MAX_GRID_CELLS, "Fog exceeds the supported map size")
 	alliance_count = 0
+	_participating_alliances.clear()
 	for player: PlayerState in game.players:
 		alliance_count = maxi(alliance_count, player.alliance_id + 1)
+		if player.is_participating() and player.alliance_id not in _participating_alliances:
+			_participating_alliances.append(player.alliance_id)
 	assert(alliance_count > 0 and alliance_count <= NetworkProtocol.MAX_PLAYERS)
 	_cells.clear()
 	_revealed.resize(alliance_count)
@@ -73,7 +77,7 @@ func tick(delta: float) -> void:
 
 func _recompute() -> void:
 	var sources: Array[Node] = _game.get_tree().get_nodes_in_group("entities")
-	for alliance: int in range(alliance_count):
+	for alliance: int in _participating_alliances:
 		var previous: PackedByteArray = _cells[alliance]
 		var mask := PackedByteArray()
 		mask.resize(previous.size())
@@ -116,7 +120,7 @@ func _state(alliance: int, at: Vector3) -> int:
 	return _cells[alliance][cell.y * grid_size.x + cell.x]
 
 func cell_state(owner: int, at: Vector3) -> int:
-	return _state(_game.get_player(owner).alliance_id, at) if _configured else 0
+	return _state(_game.get_player(owner).alliance_id, at) if _configured and _game.get_player(owner).is_participating() else 0
 
 func position_visible(owner: int, at: Vector3) -> bool:
 	return cell_state(owner, at) == 2
@@ -145,7 +149,7 @@ func _entity_visible_to_alliance(alliance: int, entity: Node3D) -> bool:
 	return _state(alliance, entity.global_position) == 2
 
 func entity_visible(owner: int, entity: Node3D) -> bool:
-	return _configured and is_instance_valid(entity) and _entity_visible_to_alliance(_game.get_player(owner).alliance_id, entity)
+	return _configured and _game.get_player(owner).is_participating() and is_instance_valid(entity) and _entity_visible_to_alliance(_game.get_player(owner).alliance_id, entity)
 
 func visible_entities(owner: int) -> Array[Node3D]:
 	var result: Array[Node3D] = []
@@ -216,7 +220,7 @@ func apply_snapshot(data: Dictionary) -> bool:
 		return false
 	var owner: int = int(data.owner_id)
 	var alliance: int = int(data.alliance_id)
-	if owner < 0 or owner >= _game.players.size() or alliance < 0 or alliance >= alliance_count or _game.get_player(owner).alliance_id != alliance:
+	if owner < 0 or owner >= _game.players.size() or not _game.get_player(owner).is_participating() or alliance < 0 or alliance >= alliance_count or _game.get_player(owner).alliance_id != alliance:
 		return false
 	if int(data.width) != grid_size.x or int(data.height) != grid_size.y or int(data.revision) <= _received_revision or int(data.revision) > 2147483647:
 		return false

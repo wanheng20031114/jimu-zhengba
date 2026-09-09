@@ -48,6 +48,13 @@ var _entrance: Tween
 @onready var menu: Control = $Menu
 @onready var display_timer: Timer = $DisplayRevertTimer
 
+func _enter_tree() -> void:
+	var current_directory := OS.get_user_data_dir()
+	var previous_directory := current_directory.get_base_dir().path_join(UserDataMigration.PREVIOUS_PROJECT_DIRECTORY)
+	var error := UserDataMigration.migrate(previous_directory, current_directory)
+	if error != OK:
+		push_warning("积木争霸：旧版偏好设置迁移失败，错误码 %d" % error)
+
 func _ready() -> void:
 	menu.hide()
 	var values := defaults()

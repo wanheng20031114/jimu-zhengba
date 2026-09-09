@@ -1,14 +1,23 @@
 extends "res://tests/skirmish_stress_test.gd"
-## Six-player source benchmark using the existing saved SceneTree priority probe.
+## Six/eight-player source benchmark using the saved SceneTree priority probe.
 ## No production settings, balance or match scripts are changed by this harness.
 const SIX_PLAYER_MIX: Dictionary = {"swordsman": 10, "archer": 6, "knight": 4, "catapult": 2, "cannon": 2}
 var _damage_events: int = 0
 var _population_kind: String = "mixed"
+var _player_count: int = 6
 
 func _run() -> void:
 	began_usec = Time.get_ticks_usec()
 	create_timer(140.0, true, false, true).timeout.connect(_watchdog)
 	mode = "3v3"
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--mode="):
+			mode = argument.trim_prefix("--mode=")
+	_check(mode in ["3v3", "4v4"], "benchmark mode is an authored 3v3 or 4v4 battlefield")
+	if mode not in ["3v3", "4v4"]:
+		await _finish()
+		return
+	_player_count = 8 if mode == "4v4" else 6
 	var rendered: bool = DisplayServer.get_name() != "headless"
 	_check(rendered or short_check, "performance values require a real Forward+ window")
 	if not rendered and not short_check:
@@ -42,7 +51,7 @@ func _run() -> void:
 	game.camera_rig.zoom_target = 58.0
 	game.camera.size = 58.0
 	_check(Engine.physics_ticks_per_second == 30, "authority physics frequency remains 30 TPS")
-	_check(game.players.size() == 6, "native 3v3 map has six independent owners")
+	_check(game.players.size() == _player_count, "native %s map has %d independent owners" % [mode, _player_count])
 	var deadline: int = Time.get_ticks_msec() + 15000
 	while not game.find_recruit_position("farmer", game.headquarters).is_finite() and Time.get_ticks_msec() < deadline:
 		await physics_frame
@@ -50,10 +59,10 @@ func _run() -> void:
 	var maximum_only: bool = "--max-only" in OS.get_cmdline_user_args()
 	if not maximum_only:
 		await _populate("mixed")
-		await _measure("standard_144_military_60_workers", 1.0 if short_check else SAMPLE_SECONDS)
+		await _measure("standard_%d_military_%d_workers" % [_player_count * 24, _player_count * 10], 1.0 if short_check else SAMPLE_SECONDS)
 	if not short_check or maximum_only:
 		await _populate("maximum_light")
-		await _measure("maximum_600_military_72_workers", 1.0 if short_check else SAMPLE_SECONDS)
+		await _measure("maximum_%d_military_%d_workers" % [_player_count * 100, _player_count * 12], 1.0 if short_check else SAMPLE_SECONDS)
 	await _finish()
 
 func _populate(composition: String) -> void:
@@ -83,7 +92,9 @@ func _populate(composition: String) -> void:
 		var expected_supply: int = 36 if composition == "mixed" else player.get_supply_limit()
 		_check(player.get_supply_limit() == (50 if composition == "mixed" else 100), "owner %d has the real researched population limit" % player.owner_id)
 		var sign_x: float = -1.0 if player.alliance_id == 0 else 1.0
-		var lane: float = -22.0 + float(player.owner_id % 3) * 22.0
+		# Preserve the original 3v3 fixture exactly. Four-player teams instead use
+		# all four actual authored front lines, paired by their native spawn Z.
+		var lane: float = game.get_spawn_marker(player.owner_id).position.z if mode == "4v4" else -22.0 + float(player.owner_id % 3) * 22.0
 		var roster: Array[String] = []
 		if composition == "mixed":
 			for kind: String in SIX_PLAYER_MIX:
@@ -105,7 +116,14 @@ func _populate(composition: String) -> void:
 			unit.issue_move(Vector3(-sign_x * 3.0, 0, lane + (index % 5 - 2) * 1.6), true)
 		var home: Vector3 = game.get_spawn_marker(player.owner_id).global_position
 		var mines: Array[Node] = get_nodes_in_group("resource_veins")
-		mines.sort_custom(func(a: Node3D, b: Node3D): return a.global_position.distance_squared_to(home) < b.global_position.distance_squared_to(home))
+		if mode == "4v4":
+			# The nearest expansion can be a neighbour's birth mine. Use the map's
+			# independently authored birth/expansion pair so all 96 workers have
+			# six real mineral slots each, with no fixture-only slot contention.
+			var resources: Node3D = game.get_node("MapContainer").get_child(0).get_node("Resources")
+			mines.assign([resources.get_node("GoldVein%d" % player.owner_id), resources.get_node("GoldVein%d" % (player.owner_id + _player_count))])
+		else:
+			mines.sort_custom(func(a: Node3D, b: Node3D): return a.global_position.distance_squared_to(home) < b.global_position.distance_squared_to(home))
 		for index: int in range(worker_count):
 			var mine: ResourceVein = mines[0 if index < 6 else 1]
 			var at: Vector3 = mine.global_position + Vector3(cos(index * TAU / 6.0), 0, sin(index * TAU / 6.0)) * 4.0
@@ -114,8 +132,8 @@ func _populate(composition: String) -> void:
 			worker.max_hp *= 100.0
 			worker.issue_gather(mine)
 		_check(player.military_supply == expected_supply and player.farmers == worker_count, "owner %d has the declared military supply and worker count" % player.owner_id)
-	_check(expected_population == (204 if composition == "mixed" else 672), "live research resources produce the intended standard or maximum roster")
-	_check(get_nodes_in_group("units").size() == expected_population, "population matches the declared six-player load")
+	_check(expected_population == _player_count * (34 if composition == "mixed" else 112), "live research resources produce the intended standard or maximum roster")
+	_check(get_nodes_in_group("units").size() == expected_population, "population matches the declared %d-player load" % _player_count)
 	game.select_army()
 	await create_timer(1.0 if short_check else WARMUP_SECONDS).timeout
 
@@ -163,12 +181,13 @@ func _write_report() -> void:
 		"camera_size": 58.0, "sample_seconds_per_phase": SAMPLE_SECONDS, "warmup_seconds_per_phase": WARMUP_SECONDS,
 		"physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
 		"render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
-		"conditions": "Native 3v3 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 144 mixed military +60 workers; researched cap is 600 light military +72 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample.",
+		"conditions": "Native %s map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is %d mixed military +%d workers; researched cap is %d light military +%d upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view." % [mode, _player_count * 24, _player_count * 10, _player_count * 100, _player_count * 12],
 		"limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
 		"checks": checks, "failures": failures, "phases": phases}
 	var suffix: String = "-harness" if short_check else ""
 	var version_suffix: String = NetworkProtocol.BUILD_ID.replace(".", "")
-	var file := FileAccess.open("res://artifacts/six-player-performance-%s%s.json" % [version_suffix, suffix], FileAccess.WRITE)
+	var player_label: String = "eight" if mode == "4v4" else "six"
+	var file := FileAccess.open("res://artifacts/%s-player-performance-%s%s.json" % [player_label, version_suffix, suffix], FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "  ") + "\n")
 	file.close()
 

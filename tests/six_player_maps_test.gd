@@ -1,11 +1,11 @@
 extends SceneTree
-## Six-seat resources, authored symmetry, clear lanes and native mining paths.
+## Six/eight-seat resources, authored symmetry and native mining paths.
 
 class TestHost extends Node3D:
 	func register_entity(entity: Node) -> void:
 		entity.entity_id = entity.get_instance_id()
 
-const MAP_IDS: Array[String] = ["three_frontiers_3v3", "triad_basin_2v2v2", "crownfall_ffa"]
+const MAP_IDS: Array[String] = ["three_frontiers_3v3", "triad_basin_2v2v2", "four_banners_4v4", "crownfall_ffa"]
 var checks: int = 0
 var failures: Array[String] = []
 var metrics: Array[Dictionary] = []
@@ -23,7 +23,7 @@ func check(value: bool, label: String) -> void:
 func _run() -> void:
 	for map_id: String in MAP_IDS:
 		await _check_map(map_id)
-	print("SIX_PLAYER_MAPS_RESULTS " + JSON.stringify({"checks": checks, "failures": failures, "maps": metrics}))
+	print("MULTIPLAYER_MAPS_RESULTS " + JSON.stringify({"checks": checks, "failures": failures, "maps": metrics}))
 	quit(0 if failures.is_empty() else 1)
 
 func _path(map_rid: RID, start: Vector3, target: Vector3) -> PackedVector3Array:
@@ -44,8 +44,9 @@ func _check_map(map_id: String) -> void:
 	current_scene = host
 	var map_scene: Node3D = definition.scene.instantiate()
 	host.add_child(map_scene)
-	check(definition.slots == 6 and definition.size == map_scene.get_meta("map_size"), map_id + "_six_seat_resource_and_native_bounds_agree")
-	check(map_scene.get_node("SpawnPoints").get_child_count() == 6, map_id + "_all_six_native_spawn_markers")
+	var seats: int = 8 if map_id in ["four_banners_4v4", "crownfall_ffa"] else 6
+	check(definition.slots == seats and definition.size == map_scene.get_meta("map_size"), map_id + "_seat_resource_and_native_bounds_agree")
+	check(map_scene.get_node("SpawnPoints").get_child_count() == seats, map_id + "_all_stable_native_spawn_markers")
 	check(map_scene.get_node("Resources").get_child_count() == layout.mines.size(), map_id + "_native_resource_count")
 	check(definition.size.x <= 192.0 and definition.size.y <= 192.0, map_id + "_bounded_fog_grid")
 	var region: NavigationRegion3D = map_scene.get_node("NavigationRegion3D")
@@ -76,7 +77,7 @@ func _check_map(map_id: String) -> void:
 		var at := Vector3(item.position[0], 0, item.position[2]).rotated(Vector3.UP, turn)
 		var target := Vector3(next.position[0], 0, next.position[2])
 		check(at.distance_to(target) < 0.0001 and item.model == next.model and item.scale == next.scale, map_id + "_obstacle_%d_preserves_team_rotation" % index)
-	for owner: int in range(6):
+	for owner: int in range(seats):
 		var spawn: Marker3D = map_scene.get_node("SpawnPoints/Player%d" % owner)
 		var tower: Vector3 = spawn.get_meta("starting_tower_position")
 		var mine: Node3D = map_scene.get_node("Resources/GoldVein%d" % owner)
@@ -104,6 +105,23 @@ func _check_map(map_id: String) -> void:
 	query.shape = worker
 	query.collision_mask = 3
 	var space: PhysicsDirectSpaceState3D = host.get_world_3d().direct_space_state
+	# Opening infrastructure is part of the authored geography: every stable
+	# slot must fit its base, tower, and a complete production exit perimeter.
+	var building_query := PhysicsShapeQueryParameters3D.new()
+	var footprint := BoxShape3D.new()
+	building_query.shape = footprint
+	building_query.collision_mask = 3
+	for spawn: Marker3D in map_scene.get_node("SpawnPoints").get_children():
+		footprint.size = Vector3(9.0, 0.6, 8.0)
+		building_query.transform = Transform3D(Basis(Vector3.UP, spawn.rotation.y), spawn.global_position + Vector3.UP * 0.7)
+		check(space.intersect_shape(building_query, 1).is_empty(), map_id + "_" + str(spawn.name) + "_headquarters_native_footprint_is_clear")
+		footprint.size = Vector3(4.0, 0.6, 4.0)
+		building_query.transform = Transform3D(Basis(Vector3.UP, spawn.rotation.y), Vector3(spawn.get_meta("starting_tower_position")) + Vector3.UP * 0.7)
+		check(space.intersect_shape(building_query, 1).is_empty(), map_id + "_" + str(spawn.name) + "_left_tower_native_footprint_is_clear")
+		for direction: int in range(8):
+			var exit: Vector3 = spawn.global_position + Vector3(8.0, 0, 0).rotated(Vector3.UP, direction * TAU / 8)
+			query.transform = Transform3D(Basis.IDENTITY, exit + Vector3.UP * 0.7)
+			check(space.intersect_shape(query, 1).is_empty(), map_id + "_" + str(spawn.name) + "_exit_%d_is_clear" % direction)
 	for mine: Node3D in map_scene.get_node("Resources").get_children():
 		check(mine.get_node("GatherSlots").get_child_count() == 6, map_id + "_" + str(mine.name) + "_six_slots")
 		for slot: Marker3D in mine.get_node("GatherSlots").get_children():
@@ -118,7 +136,7 @@ func _check_map(map_id: String) -> void:
 			check(accessible, map_id + "_" + str(mine.name) + "_" + str(slot.name) + "_reachable_via_native_route_and_collision_safe_contact")
 			if not accessible:
 				print("MINING_PATH_DIAGNOSTIC ", map_id, " ", mine.name, "/", slot.name, " target=", slot.global_position, " nearest=", closest)
-	metrics.append({"map": map_id, "mines": layout.mines.size(), "obstacles": layout.obstacles.size(), "source_polygons": source.get_polygon_count(), "compact_polygons": region.navigation_mesh.get_polygon_count(), "compact_ms": elapsed_ms})
+	metrics.append({"map": map_id, "seats": seats, "mines": layout.mines.size(), "obstacles": layout.obstacles.size(), "source_polygons": source.get_polygon_count(), "compact_polygons": region.navigation_mesh.get_polygon_count(), "compact_ms": elapsed_ms})
 	host.queue_free()
 	await process_frame
 	await process_frame

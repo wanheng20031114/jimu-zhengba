@@ -445,7 +445,7 @@ func _strategic_objective() -> Vector3:
 	# Never inspect hidden enemy entities to choose the next scouting destination.
 	var starts: Array[Vector3] = []
 	for player: PlayerState in _game.players:
-		if player.alliance_id != _game.get_player(_owner).alliance_id and not player.eliminated:
+		if player.is_participating() and player.alliance_id != _game.get_player(_owner).alliance_id and not player.eliminated:
 			starts.append(_game.get_spawn_marker(player.owner_id).global_position)
 	starts.sort_custom(func(a: Vector3, b: Vector3): return _allied_center.distance_squared_to(a) < _allied_center.distance_squared_to(b))
 	if starts.is_empty():

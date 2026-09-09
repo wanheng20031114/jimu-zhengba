@@ -3,7 +3,7 @@
 Run this offline, then run tests/skirmish_maps_bake.gd once with Godot. Geometry
 is saved as native ArrayMesh resources; no meshes or navigation are built in a
 match. New maps can be authored independently with --maps ID --skip-models;
-their seeded obstacle layouts obey the map's two, three or sixfold symmetry.
+their seeded obstacle layouts obey the map's two, three or eightfold symmetry.
 """
 from __future__ import annotations
 
@@ -311,7 +311,7 @@ def rotate_point(point, angle):
             round(-x*math.sin(angle)+z*math.cos(angle),6)]
 
 
-def six_player_definitions():
+def large_match_definitions():
     front={"id":"three_frontiers_3v3","title":"三线烽火","size":[160,144],
            "symmetry":2,"seed":80303,
            "spawns":[[-58,-40,0],[-58,0,0],[-58,40,0],[58,40,1],[58,0,1],[58,-40,1]],
@@ -320,21 +320,36 @@ def six_player_definitions():
                     [-26,-60],[-26,-20],[-26,20],[26,60],[26,20],[26,-20],[-10,-20],[10,20]],
            "roads":[{"width":12,"points":[[-58,z],[58,z]]} for z in (-40,0,40)] +
                    [{"width":8,"points":[[x,-40],[x,40]]} for x in (-44,0,44)]}
+    four_front={"id":"four_banners_4v4","title":"四旗会战","size":[192,184],
+                "symmetry":2,"seed":90404,
+                "spawns":[[-70,z,0] for z in (-60,-20,20,60)] +
+                         [[70,z,1] for z in (60,20,-20,-60)],
+                "starting_towers":[[-82,z-22] for z in (-60,-20,20,60)] +
+                                  [[82,z+22] for z in (60,20,-20,-60)],
+                "mines":[[-77,z-15] for z in (-60,-20,20,60)] +
+                        [[77,z+15] for z in (60,20,-20,-60)] +
+                        [[-40,z-15] for z in (-60,-20,20,60)] +
+                        [[40,z+15] for z in (60,20,-20,-60)] +
+                        [[-16,-40],[16,40],[-16,40],[16,-40]],
+                "roads":[{"width":12,"points":[[-70,z],[70,z]]} for z in (-60,-20,20,60)] +
+                        [{"width":8,"points":[[x,-60],[x,60]]} for x in (-56,0,56)]}
     radial=[]
     for name,title,size,radius,teams,symmetry,seed in [
         ("triad_basin_2v2v2","三盟盆地",176,66,[0,0,1,1,2,2],3,80222),
-        ("crownfall_ffa","落冠荒原",160,59,[0,1,2,3,4,5],6,80601),
+        ("crownfall_ffa","落冠荒原",192,72,list(range(8)),8,90801),
     ]:
         spawns=[];birth_mines=[];towers=[];expansions=[];roads=[]
         # Clockwise consecutive owners make the adjacent two seats one team.
-        angles=[math.radians(150-i*60) for i in range(6)]
+        seats=len(teams)
+        angle_step=math.tau/seats
+        angles=[math.pi-angle_step/2-i*angle_step for i in range(seats)]
         for owner,angle in enumerate(angles):
             outward=np.array([math.cos(angle),math.sin(angle)])
             front_dir=-outward;left=np.array([front_dir[1],-front_dir[0]])
             spawn=outward*radius
             birth=spawn+outward*5+left*14
             tower=birth+left*8
-            expansion=outward*34+left*13
+            expansion=outward*(40 if seats==8 else 34)+left*13
             spawns.append([*np.round(spawn,6).tolist(),teams[owner]])
             birth_mines.append(np.round(birth,6).tolist())
             towers.append(np.round(tower,6).tolist())
@@ -342,23 +357,23 @@ def six_player_definitions():
             roads.append({"width":12,"points":[np.round(spawn,6).tolist(),[0,0]]})
         # The ring connects adjacent lanes; reserves a second tactical route
         # without crossing the inward expansion mines on either side.
-        ring_radius=56 if size==176 else 52
+        ring_radius=60 if seats==8 else 56
         ring=[[round(math.cos(a)*ring_radius,6),round(math.sin(a)*ring_radius,6)] for a in angles]
-        roads.extend({"width":8,"points":[ring[i],ring[(i+1)%6]]} for i in range(6))
+        roads.extend({"width":8,"points":[ring[i],ring[(i+1)%seats]]} for i in range(seats))
         # Three evenly spaced contested veins lie between radial main lanes.
         contested=[[round(math.cos(math.radians(120-i*120))*22,6),
                     round(math.sin(math.radians(120-i*120))*22,6)] for i in range(3)]
-        if symmetry==6:
-            contested=[[round(math.cos(math.radians(120-i*60))*22,6),
-                        round(math.sin(math.radians(120-i*60))*22,6)] for i in range(6)]
+        if seats==8:
+            contested=[[round(math.cos(a-angle_step/2)*28,6),
+                        round(math.sin(a-angle_step/2)*28,6)] for a in angles]
         radial.append({"id":name,"title":title,"size":[size,size],"symmetry":symmetry,"seed":seed,
                        "spawns":spawns,"starting_towers":towers,"mines":birth_mines+expansions+contested,
-                       "mine_rotations":[i*math.pi/3 for i in range(6)]*2+
+                       "mine_rotations":[i*angle_step for i in range(seats)]*2+
                                         [i*math.tau/len(contested) for i in range(len(contested))],"roads":roads})
-    return [front,*radial]
+    return [front,four_front,*radial]
 
 
-MAP_DEFINITIONS.extend(six_player_definitions())
+MAP_DEFINITIONS.extend(large_match_definitions())
 
 
 def road_union(definition,padding=0):
@@ -573,7 +588,7 @@ def write_map(definition,obstacles,nav):
     report={**definition,"navigation_cell_size":1,"navigation_polygons":len(nav["polygons"]),
             "base_clearance_radius":11.5,"mine_clearance_radius":5.1,"obstacles":obstacles}
     art.write_asset(MAPS/f"{name}_layout.json",json.dumps(report,ensure_ascii=False,indent=2))
-    if len(definition["spawns"])==6:
+    if len(definition["spawns"])>=6:
         art.write_asset(ROOT/f"data/maps/{name}.tres",f'''[gd_resource type="Resource" script_class="MapDefinition" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/map_definition.gd" id="script"]
@@ -584,7 +599,7 @@ script = ExtResource("script")
 id = &"{name}"
 display_name = "{definition['title']}"
 size = Vector2({w}, {d})
-slots = 6
+slots = {len(definition['spawns'])}
 scene = ExtResource("scene")
 ''')
     print(f'{name}: {len(obstacles)} obstacles, {len(nav["polygons"])} connected-grid polygons, {len(definition["mines"])} mines')

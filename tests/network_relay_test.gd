@@ -54,7 +54,7 @@ func _run() -> void:
 	# A clean checkout can run this test without any production private key.
 	var crypto := Crypto.new()
 	var key := crypto.generate_rsa(2048)
-	var certificate := crypto.generate_self_signed_certificate(key, "CN=ashen-crown-relay")
+	var certificate := crypto.generate_self_signed_certificate(key, "CN=" + Protocol.TLS_NAME)
 	_certificate_path = "user://network-test-%d.crt" % Time.get_ticks_usec()
 	_key_path = _certificate_path.trim_suffix(".crt") + ".key"
 	_check("isolated test certificate generated", key.save(_key_path) == OK and certificate.save(_certificate_path) == OK)

@@ -217,7 +217,7 @@ def render(data: dict[str, Any]) -> str:
     names = {u["id"]: u["name"] for u in units + data["buildings"]}
     lookup = {(r["attacker"], r["defender"], r["attack_level"], r["defense_level"]): r for r in data["matchups"]}
     building_lookup = {(r["attacker"], r["defender"], r["attack_level"]): r for r in data["building_matchups"]}
-    parts = [f"# 灰烬王国 {data['build_id']} 战斗数值完整审查", "",
+    parts = [f"# 积木争霸 {data['build_id']} 战斗数值完整审查", "",
         "本报告由实际 Godot 资源、玩家科技状态和 `DamageResolver` 导出。Python 负责排版与命中边界校验，不另写伤害公式。对应机器数据与完整资源 SHA-256 位于同目录 JSON，可复现核对。", "",
         "## 计算口径", "",
         "- 全部对象满血、敌对、每次有效命中；不计多人集火、移动、躲避、阻挡、最小射程、动画前摇、弹丸飞行或治疗。",

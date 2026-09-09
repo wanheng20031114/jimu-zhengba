@@ -76,7 +76,7 @@ code = "shader_type canvas_item;\nvoid fragment() {\n vec2 d = (UV - vec2(0.5, 0
 [sub_resource type="ShaderMaterial" id="vignette_material"]
 shader = SubResource("vignette")
 
-[node name="AshenCrown" type="Node3D"]
+[node name="积木争霸" type="Node3D"]
 script = ExtResource("game")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]

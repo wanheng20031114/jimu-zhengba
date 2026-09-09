@@ -11,7 +11,7 @@ signal visual_event_due(event: Dictionary)
 const INTERPOLATION_SECONDS: float = 0.12
 const SNAPSHOT_TICKS: int = 2
 const MAX_BUFFERED_SNAPSHOTS: int = 12
-# Six expanded armies can contain 672 units; leave room for production lines,
+# Eight expanded armies can contain 896 units; leave room for production lines,
 # defenses and rebuilding sites without rejecting an otherwise valid snapshot.
 const MAX_VISIBLE_ENTITIES: int = 1536
 const MAX_CONTINUOUS_GAP: float = 0.5
@@ -77,7 +77,7 @@ func tick(_delta: float) -> void:
 	for player: PlayerState in game.players:
 		if player.owner_id != game.local_owner_id and player.controller == "human":
 			# Every recipient still gets 15 Hz; offset the two phases so a full
-			# six-human match sends at most three large snapshots in one tick.
+			# eight-human match sends at most four large snapshots in one tick.
 			if current_tick % SNAPSHOT_TICKS != (player.owner_id - 1) % SNAPSHOT_TICKS:
 				continue
 			_flush_visual(player.owner_id)
@@ -491,7 +491,7 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 		if not NetworkProtocol.integer(state.get("id"), 1, 2147483647) or ids.has(int(state.id)):
 			return false
 		ids[int(state.id)] = true
-		if not NetworkProtocol.integer(state.get("owner"), 0, game.players.size() - 1):
+		if not NetworkProtocol.integer(state.get("owner"), 0, game.players.size() - 1) or not game.get_player(int(state.owner)).is_participating():
 			return false
 		var existing: Node3D = game.entities_by_id.get(int(state.id))
 		if is_instance_valid(existing) and existing is ResourceVein:
@@ -540,7 +540,13 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			return false
 		var owner := int(state.owner_id)
 		owners[owner] = true
-		if owner >= game.players.size() or not state.get("name") is String or not state.get("controller") in ["human", "bot"] or not state.get("eliminated") is bool:
+		if owner >= game.players.size() or not state.get("name") is String or not state.get("controller") in ["human", "bot", "open"] or not state.get("eliminated") is bool:
+			return false
+		# Empty seats are immutable for this match. Disconnect takeovers may only
+		# switch a participating player between human and Bot.
+		if (state.controller == "open") != (not game.get_player(owner).is_participating()):
+			return false
+		if state.controller == "open" and state.eliminated:
 			return false
 		if not NetworkProtocol.integer(state.get("alliance_id"), 0, NetworkProtocol.MAX_PLAYERS - 1) or int(state.alliance_id) != game.get_player(owner).alliance_id:
 			return false

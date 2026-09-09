@@ -19,7 +19,7 @@ func next_sequence(owner: int) -> int:
 func submit(command: Dictionary, owner: int) -> Dictionary:
 	if owner < 0 or owner >= game.players.size() or game.finished:
 		return failure("对局已结束或玩家不存在")
-	if game.get_player(owner).eliminated:
+	if not game.get_player(owner).is_participating() or game.get_player(owner).eliminated:
 		return failure("你的阵营已出局")
 	var raw_sequence: Variant = command.get("seq", 0)
 	if command.get("kind", "") not in KINDS:
@@ -48,7 +48,7 @@ func tick() -> void:
 func execute(command: Dictionary, owner: int) -> Dictionary:
 	if owner < 0 or owner >= game.players.size() or game.finished:
 		return failure("对局已结束或玩家不存在")
-	if game.get_player(owner).eliminated:
+	if not game.get_player(owner).is_participating() or game.get_player(owner).eliminated:
 		return failure("你的阵营已出局")
 	if command.get("kind", "") not in KINDS:
 		return failure("无效命令")

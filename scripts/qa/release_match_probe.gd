@@ -44,23 +44,40 @@ func _run() -> void:
 	# start_offline changes the scene at the end of the frame. Configure its
 	# saved roster before Game._ready constructs players and the standard Bots.
 	var mode := "1v1"
+	var empty_slots: Array[int] = []
 	for candidate: String in NetworkProtocol.MODES:
 		if "--" + candidate in arguments:
 			mode = candidate
+	for argument: String in arguments:
+		if argument.begins_with("--match-empty-slots="):
+			for raw: String in argument.trim_prefix("--match-empty-slots=").split(",", false):
+				if not raw.is_valid_int() or int(raw) <= 0 or int(raw) >= int(NetworkProtocol.MODES[mode].slots):
+					printerr("MATCH_SMOKE_FAIL invalid_empty_seat_argument")
+					get_tree().quit(2)
+					return
+				empty_slots.append(int(raw))
 	session.start_offline(mode)
 	for slot: Dictionary in session.config.players:
-		slot.controller = "bot"
+		slot.controller = "open" if int(slot.owner_id) in empty_slots else "bot"
 		harvested.append(0)
 		produced.append({})
 		completed.append({})
+	if not NetworkProtocol.match_config_error(session.config, false).is_empty():
+		printerr("MATCH_SMOKE_FAIL invalid_sparse_match_configuration")
+		get_tree().quit(2)
+		return
 	await get_tree().scene_changed
 	game = get_tree().current_scene
 	game.camera_rig.edge_scroll = false
 	catalogue_probe = _inspect_catalogue()
 	print("MATCH_SMOKE_CATALOGUE ", JSON.stringify(catalogue_probe))
 	check(not game.tests_running and not game.online, "production_offline_victory_and_economy_enabled")
-	check(game.players.size() == int(NetworkProtocol.MODES[mode].slots) and game.bots.size() == game.players.size(), "all_standard_bots_loaded_from_session")
+	var active_count: int = game.players.filter(func(player: PlayerState): return player.is_participating()).size()
+	check(game.players.size() == int(NetworkProtocol.MODES[mode].slots) and game.bots.size() == active_count, "all_standard_bots_loaded_from_session")
 	for player: PlayerState in game.players:
+		if not player.is_participating():
+			check(player.gold == 0 and player.farmers == 0 and not game.bots.has(player.owner_id), "empty_owner_%d_has_no_assets_or_bot" % player.owner_id)
+			continue
 		check(player.gold == 320 and player.farmers == 3 and player.military_supply == 0, "owner_%d_approved_starting_economy" % player.owner_id)
 		var towers: Array = game.owned_entities(player.owner_id, "buildings").filter(func(building): return building.building_type == "defense_tower")
 		check(towers.size() == 1, "owner_%d_starts_with_exactly_one_free_tower" % player.owner_id)
@@ -108,11 +125,14 @@ func _run() -> void:
 	check(step_valid and game.simulation_tick > 0, "every_observed_simulation_tick_preserved_one_thirtieth_second")
 	check(damage_events > 0 and military_deaths > 0 and first_damage > 0, "real_armies_dealt_damage_and_suffered_casualties")
 	for owner: int in range(game.players.size()):
+		if not game.get_player(owner).is_participating():
+			check(harvested[owner] == 0 and produced[owner].is_empty() and completed[owner].is_empty(), "empty_owner_%d_never_produces_or_mines" % owner)
+			continue
 		check(harvested[owner] > 0, "owner_%d_real_mining_income" % owner)
 		check(produced[owner].has("swordsman") and produced[owner].has("archer") and produced[owner].has("knight"), "owner_%d_paid_basic_army_production" % owner)
 		check(completed[owner].has("barracks"), "owner_%d_real_barracks_construction_completed" % owner)
 	var report := {"ok": failures.is_empty(), "checks": checks, "failures": failures, "build": NetworkProtocol.BUILD_ID,
-		"mode": mode, "source_editor_feature": OS.has_feature("editor"), "rendering": DisplayServer.get_name(),
+		"mode": mode, "empty_slots": empty_slots, "participants": active_count, "source_editor_feature": OS.has_feature("editor"), "rendering": DisplayServer.get_name(),
 		"speed": speed, "step_seconds": STEP, "observed_step_valid": step_valid, "simulated_seconds": game.elapsed,
 		"wall_seconds": (Time.get_ticks_msec() - started_at) / 1000.0, "finished": game.finished, "winner": winner,
 		"remaining_buildings": remaining, "first_damage": first_damage, "damage_events": damage_events,
@@ -170,7 +190,7 @@ func _diagnostics() -> Dictionary:
 	for player: PlayerState in game.players:
 		row.players.append({"owner": player.owner_id, "gold": player.gold, "workers": player.farmers,
 			"reserved_workers": player.reserved_farmers, "supply": player.military_supply, "reserved_supply": player.reserved_military_supply,
-			"harvested": harvested[player.owner_id], "eliminated": player.eliminated, "bot_state": "eliminated" if player.eliminated else str(game.bots[player.owner_id].army_state)})
+			"harvested": harvested[player.owner_id], "eliminated": player.eliminated, "bot_state": "empty" if not player.is_participating() else ("eliminated" if player.eliminated else str(game.bots[player.owner_id].army_state))})
 	for unit: BattleUnit in get_tree().get_nodes_in_group("units"):
 		if unit.unit_type != "farmer":
 			continue

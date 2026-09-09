@@ -14,9 +14,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def records(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [json.loads(line.removeprefix("ASHEN_DIAGNOSTIC "))
+    return [json.loads(line.removeprefix("JIMU_DIAGNOSTIC "))
             for line in path.read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
-            if line.startswith("ASHEN_DIAGNOSTIC ") and line.endswith("\n")]
+            if line.startswith("JIMU_DIAGNOSTIC ") and line.endswith("\n")]
 
 
 def main() -> int:

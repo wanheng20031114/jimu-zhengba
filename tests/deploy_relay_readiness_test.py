@@ -10,7 +10,7 @@ SPEC = importlib.util.spec_from_file_location("deploy_relay", MODULE)
 DEPLOY = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(DEPLOY)
 
-READY = "ASHEN_RELAY_READY protocol=4 rooms=1 humans=4"
+READY = "JIMU_RELAY_READY protocol=4 rooms=1 humans=4"
 STATE = {
     "InvocationID": "a" * 32,
     "MainPID": "279695",
@@ -25,6 +25,33 @@ def properties(**changes: str) -> str:
 
 
 class RelayReadinessTest(unittest.TestCase):
+    def test_failed_first_migration_cannot_restart_or_boot_both_services(self):
+        state = {"new_running": True, "new_enabled": True, "legacy_running": False}
+        def run(command):
+            if command == "systemctl stop " + DEPLOY.SERVICE:
+                state["new_running"] = False
+            elif command == "systemctl disable " + DEPLOY.SERVICE:
+                state["new_enabled"] = False
+            elif command == "systemctl start " + DEPLOY.LEGACY_SERVICE:
+                self.assertFalse(state["new_running"], "legacy cannot recover while new service holds its port")
+                state["legacy_running"] = True
+            else:
+                self.fail("Rollback touched an unexpected service")
+        DEPLOY.rollback_failed_start(run, legacy_active=True, was_enabled=False)
+        self.assertEqual(state, {"new_running": False, "new_enabled": False, "legacy_running": True})
+
+    def test_failed_stop_does_not_start_a_competing_legacy(self):
+        def run(command):
+            self.assertEqual(command, "systemctl stop " + DEPLOY.SERVICE)
+            raise RuntimeError("Unable to stop new service")
+        with self.assertRaises(RuntimeError):
+            DEPLOY.rollback_failed_start(run, legacy_active=True, was_enabled=False)
+
+    def test_existing_service_enable_preference_is_preserved(self):
+        calls = []
+        DEPLOY.rollback_failed_start(calls.append, legacy_active=False, was_enabled=True)
+        self.assertEqual(calls, ["systemctl stop " + DEPLOY.SERVICE])
+
     def test_clean_current_invocation_is_ready(self):
         self.assertTrue(DEPLOY.relay_journal_ready("Godot Engine v4.7.2\n" + READY))
 
@@ -50,7 +77,7 @@ class RelayReadinessTest(unittest.TestCase):
                 DEPLOY.relay_journal_ready(READY + "\n" + error)
 
     def test_partial_or_embedded_ready_marker_is_not_readiness(self):
-        for line in ("ASHEN_RELAY_READY", "old log says " + READY, READY + " invalid"):
+        for line in ("JIMU_RELAY_READY", "old log says " + READY, READY + " invalid"):
             with self.subTest(line=line):
                 self.assertFalse(DEPLOY.relay_journal_ready(line))
 

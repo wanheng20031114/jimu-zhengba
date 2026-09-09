@@ -112,7 +112,7 @@ func send_command(command: Dictionary) -> Error:
 func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 	if not is_host or _match.is_empty() or connection_state != "match":
 		return ERR_UNAUTHORIZED
-	if owner < 0 or owner >= _match.players.size():
+	if owner < 0 or owner >= _match.players.size() or _match.players[owner].controller == "open":
 		return ERR_INVALID_PARAMETER
 	if _peer == null or not _peer.is_active() or _peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
 		return ERR_UNAVAILABLE
@@ -240,6 +240,9 @@ func _receive(message: Dictionary) -> void:
 			room = message.room
 			room_changed.emit(room)
 		"start":
+			if not message.get("config") is Dictionary or not Protocol.match_config_error(message.config).is_empty() or owner_id < 0 or owner_id >= message.config.players.size() or message.config.players[owner_id].controller == "open":
+				_fail("invalid_roster", "积木争霸对局席位配置无效")
+				return
 			var resuming := not _match.is_empty()
 			_match = message.config
 			_last_snapshot_sequence = -1

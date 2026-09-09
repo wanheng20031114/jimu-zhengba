@@ -95,4 +95,4 @@ offset_bottom = 89.0
 theme_override_colors/font_color = Color(0.93,0.88,0.75,1)
 theme_override_fonts/font = SubResource("LabelFont")
 theme_override_font_sizes/font_size = 29
-text = "灰烬王国   /   兵营 · 军工厂 · 学院"
+text = "积木争霸   /   兵营 · 军工厂 · 学院"

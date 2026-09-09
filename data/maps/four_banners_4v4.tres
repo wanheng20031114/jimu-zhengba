@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MapDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/map_definition.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/maps/four_banners_4v4.tscn" id="scene"]
+
+[resource]
+script = ExtResource("script")
+id = &"four_banners_4v4"
+display_name = "四旗会战"
+size = Vector2(192, 184)
+slots = 8
+scene = ExtResource("scene")

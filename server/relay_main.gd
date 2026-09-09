@@ -12,7 +12,7 @@ func _start() -> void:
 	relay = SERVER_SCENE.instantiate()
 	root.add_child(relay)
 	var settings := ConfigFile.new()
-	var config_path := OS.get_environment("ASHEN_RELAY_CONFIG")
+	var config_path := OS.get_environment("JIMU_RELAY_CONFIG")
 	if config_path.is_empty(): config_path = "user://relay.cfg"
 	if settings.load(config_path) != OK:
 		push_error("RELAY_CONFIG_UNAVAILABLE")
@@ -25,7 +25,7 @@ func _start() -> void:
 		push_error("RELAY_START_FAILED code=%d" % result)
 		quit(1)
 		return
-	print("ASHEN_RELAY_READY protocol=%d rooms=%d humans=%d" % [PROTOCOL.VERSION, relay.max_rooms, relay.max_humans])
+	print("JIMU_RELAY_READY protocol=%d rooms=%d humans=%d" % [PROTOCOL.VERSION, relay.max_rooms, relay.max_humans])
 
 func _finalize() -> void:
 	if is_instance_valid(relay):
