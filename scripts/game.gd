@@ -278,7 +278,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_S: stop_selected()
 			KEY_H: hold_selected()
 			KEY_B, KEY_HOME: select_headquarters()
-			KEY_G: select_army()
+			KEY_G, KEY_F2: select_army()
 			KEY_SPACE: focus_selection()
 			KEY_Q: recruit("swordsman")
 			KEY_E: recruit("archer")

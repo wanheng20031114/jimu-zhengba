@@ -75,6 +75,14 @@ func _run() -> void:
 			worker.order = BattleUnit.Order.IDLE
 		_key(KEY_G)
 		_check(game.selection == [soldiers[owner]], "owner %d all-army shortcut excludes other owners and own farmers" % owner)
+		game.select_entities([])
+		_key(KEY_F2)
+		_check(game.selection == [soldiers[owner]], "owner %d F2 selects the same own military units as G" % owner)
+		soldiers[owner].alive = false
+		game.select_entities([])
+		_key(KEY_F2)
+		_check(game.selection.is_empty(), "owner %d F2 excludes dead soldiers, farmers and other owners" % owner)
+		soldiers[owner].alive = true
 	game.local_owner_id = 0
 	await game.prepare_shutdown()
 	game.queue_free()

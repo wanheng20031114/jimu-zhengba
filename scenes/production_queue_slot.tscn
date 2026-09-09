@@ -1,0 +1,84 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StyleBoxFlat" id="active"]
+bg_color = Color(0.19, 0.18, 0.13, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.88, 0.71, 0.38, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_left = 2
+corner_radius_bottom_right = 2
+
+[sub_resource type="StyleBoxFlat" id="track"]
+bg_color = Color(0.055, 0.065, 0.06, 1)
+
+[sub_resource type="StyleBoxFlat" id="fill"]
+bg_color = Color(0.88, 0.71, 0.38, 1)
+
+[sub_resource type="StyleBoxEmpty" id="focus"]
+
+[node name="QueueSlot" type="Button"]
+custom_minimum_size = Vector2(40, 40)
+offset_right = 40.0
+offset_bottom = 40.0
+focus_mode = 0
+action_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("focus")
+theme_override_styles/pressed = SubResource("active")
+toggle_mode = true
+
+[node name="Portrait" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 1.0
+offset_right = 36.0
+offset_bottom = 33.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Status" type="Label" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 23.0
+offset_right = 37.0
+offset_bottom = 36.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.97, 0.88, 0.65, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.07, 0.06, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Progress" type="ProgressBar" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 36.0
+offset_right = 38.0
+offset_bottom = 39.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("track")
+theme_override_styles/fill = SubResource("fill")
+max_value = 1.0
+step = 0.001
+show_percentage = false
+
+[node name="Cancel" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 25.0
+offset_top = -1.0
+offset_right = 38.0
+offset_bottom = 15.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.79, 0.63, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.07, 0.06, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "×"
+horizontal_alignment = 2

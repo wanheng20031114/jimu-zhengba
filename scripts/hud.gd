@@ -4,6 +4,8 @@ const UNIT_ORDER := ["swordsman", "archer", "knight", "catapult", "cannon", "far
 const UNIT_NAMES := ["剑士", "弓箭手", "骑士", "投石车", "加农炮", "农民"]
 const BUILD_ORDER := ["barracks", "factory", "academy", "defense_tower", "headquarters"]
 var _actions: Array[Dictionary] = []
+var _queue_actions: Array[Dictionary] = []
+var _queue_buttons: Array[Button] = []
 var game: Node3D
 var portraits: Dictionary = {}
 var _toast_remaining: float = 0.0
@@ -37,6 +39,12 @@ func _ready() -> void:
 		buttons[index].tooltip_text = definition.name + " · " + str(definition.cost) + " 金币\n" + definition.description
 		buttons[index].get_node("Cost").text = "◈ %d" % definition.cost
 		buttons[index].get_node("Portrait").texture = portraits[UNIT_ORDER[index]]
+	for child: Button in %QueueStrip.get_node("Slots").get_children():
+		var index: int = _queue_buttons.size()
+		_queue_buttons.append(child)
+		child.pressed.connect(_on_queue_cancel.bind(index))
+		child.mouse_entered.connect(_on_queue_hover.bind(index, true))
+		child.mouse_exited.connect(_on_queue_hover.bind(index, false))
 	%AttackButton.pressed.connect(func(): game.set_attack_mode(true))
 	%StopButton.pressed.connect(func(): game.stop_selected())
 	%HoldButton.pressed.connect(func(): game.hold_selected())
@@ -214,7 +222,7 @@ func _on_recruit(index: int) -> void:
 		"recruit": game.recruit(action.id)
 		"demolish": game.demolish_selected_towers()
 		"research": game.submit_local({"kind": "research", "target": game.selected_production().entity_id, "upgrade": action.id})
-		"cancel_training", "cancel_research", "cancel_site": game.submit_local({"kind": action.kind, "target": game.selected_production().entity_id})
+		"cancel_site": game.submit_local({"kind": action.kind, "target": game.selected_production().entity_id})
 
 func _refresh_actions() -> void:
 	_actions.clear()
@@ -240,14 +248,10 @@ func _refresh_actions() -> void:
 				if level < 3:
 					var upgrade := BalanceCatalog.upgrade("%s_%d" % [track, level + 1])
 					_actions.append({"kind": "research", "id": upgrade.id, "portrait": "swordsman" if track == "attack" else "knight", "name": upgrade.name, "cost": upgrade.cost, "hint": "%d 秒 · 全军总加成 +%d" % [upgrade.research_seconds, upgrade.total_bonus]})
-			if not building.production.research_id.is_empty():
-				_actions.append({"kind": "cancel_research", "id": "", "portrait": "academy", "name": "取消研究", "cost": 0, "hint": "全额退款"})
 		else:
 			for kind: String in building.get_combat_definition().produces:
 				var definition := BalanceCatalog.unit(kind)
 				_actions.append({"kind": "recruit", "id": kind, "portrait": kind, "name": definition.name, "cost": definition.cost, "hint": "训练 10 秒" if kind == "farmer" else "即时出场"})
-			if not building.production.training.is_empty():
-				_actions.append({"kind": "cancel_training", "id": "", "portrait": "farmer", "name": "取消训练", "cost": 0, "hint": "取消队首 · 全额退款"})
 		%RecruitHint.text = "右键设置集结点 · 研究取消全额退款" if building.building_type == "academy" else "右键设置集结点"
 	for index in range(buttons.size()):
 		var button := buttons[index]
@@ -265,6 +269,58 @@ func _refresh_actions() -> void:
 			button.disabled = button.disabled or not building.production.recruit_error(action.id).is_empty()
 		elif action.kind == "research":
 			button.disabled = button.disabled or not building.production.research_error(action.id).is_empty()
+	_refresh_queue(building)
+
+func _refresh_queue(building: BattleBuilding) -> void:
+	_queue_actions.clear()
+	var items: Array[Dictionary] = []
+	if building != null and building.is_constructed:
+		var production: BuildingProduction = building.production
+		for index in range(production.training.size()):
+			var job: Dictionary = production.training[index]
+			var definition := BalanceCatalog.unit(job.kind)
+			var action := {"kind": "cancel_training", "target": building.entity_id}
+			# Existing 0.6 peers may still send index-only queue entries.
+			if job.has("job_id"):
+				action["job_id"] = job.job_id
+			else:
+				action["index"] = index
+			_queue_actions.append(action)
+			items.append({"portrait": job.kind, "name": definition.name, "elapsed": float(job.elapsed), "duration": definition.training_seconds, "cost": int(job.cost)})
+		if not production.research_id.is_empty():
+			var upgrade := BalanceCatalog.upgrade(production.research_id)
+			_queue_actions.append({"kind": "cancel_research", "target": building.entity_id, "upgrade": production.research_id})
+			items.append({"portrait": "swordsman" if upgrade.track == &"attack" else "knight", "name": upgrade.name, "elapsed": production.research_elapsed, "duration": upgrade.research_seconds, "cost": upgrade.cost})
+	%QueueStrip.visible = not items.is_empty()
+	$CommandBar/Recruitment/RecruitTitle.visible = items.is_empty()
+	%RecruitHint.visible = items.is_empty()
+	%QueueStrip.get_node("Caption").text = ("研究中" if building != null and building.building_type == "academy" else "训练队列") + "\n点击格子取消"
+	for index in range(_queue_buttons.size()):
+		var button: Button = _queue_buttons[index]
+		button.visible = index < items.size()
+		if not button.visible:
+			button.get_node("Cancel").hide()
+			continue
+		var item: Dictionary = items[index]
+		var active: bool = index == 0
+		var remaining: int = ceili(maxf(0.0, item.duration - item.elapsed))
+		button.get_node("Portrait").texture = portraits[item.portrait]
+		button.get_node("Progress").value = clampf(item.elapsed / item.duration, 0.0, 1.0)
+		button.get_node("Progress").visible = active
+		button.get_node("Status").text = ("%ds" % remaining if remaining > 0 else "待出场") if active else str(index + 1)
+		button.set_pressed_no_signal(active)
+		button.disabled = game.finished
+		var status: String = ("剩余 %d 秒" % remaining if remaining > 0 else "训练完成 · 等待出口空位") if active else "等待中 · 第 %d 项" % (index + 1)
+		button.tooltip_text = "%s · %s\n点击取消 · 返还 %d 金币" % [item.name, status, item.cost]
+
+func _on_queue_cancel(index: int) -> void:
+	if index < _queue_actions.size() and not game.finished:
+		game.submit_local(_queue_actions[index].duplicate())
+
+func _on_queue_hover(index: int, entered: bool) -> void:
+	_queue_buttons[index].get_node("Cancel").visible = entered
+	if not entered:
+		_set_preview_hover("")
 
 func _on_building_action() -> void:
 	if game.selection.size() == 1 and game.selection[0] is BattleBuilding and game.selection[0].is_constructed:

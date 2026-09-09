@@ -89,10 +89,19 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 				return failure("需要自己的学院")
 			return target.get_node("Production").research(upgrade)
 		"cancel_research":
-			return target.get_node("Production").cancel_research() if own_building else failure("需要自己的学院")
+			if not own_building:
+				return failure("需要自己的学院")
+			var production: BuildingProduction = target.get_node("Production")
+			if command.has("upgrade") and (not command.upgrade is String or command.upgrade != production.research_id):
+				return failure("研究项目已完成或已取消")
+			return production.cancel_research()
 		"cancel_training":
 			if not own_building:
 				return failure("需要自己的生产建筑")
+			if command.has("job_id"):
+				if not NetworkProtocol.integer(command.job_id, 1, MAX_INTEGER):
+					return failure("无效训练项目编号")
+				return target.get_node("Production").cancel_training_job(int(command.job_id))
 			var index: Variant = command.get("index", 0)
 			if not NetworkProtocol.integer(index, 0, MAX_INTEGER):
 				return failure("无效训练项目编号")

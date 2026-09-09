@@ -1,10 +1,12 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="hud"]
 
 [ext_resource type="Script" path="res://scripts/minimap.gd" id="minimap"]
 
 [ext_resource type="PackedScene" path="res://scenes/model_previews.tscn" id="previews"]
+
+[ext_resource type="PackedScene" path="res://scenes/production_queue_slot.tscn" id="queue_slot"]
 
 [sub_resource type="SystemFont" id="font"]
 font_names = PackedStringArray("Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC")
@@ -507,6 +509,73 @@ theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.80,0.76,0.63,1)
 unique_name_in_owner = true
 horizontal_alignment = 2
+
+[node name="QueueStrip" type="Control" parent="CommandBar/Recruitment"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_top = -43.0
+offset_right = 566.0
+offset_bottom = -3.0
+mouse_filter = 2
+
+[node name="Slots" type="HBoxContainer" parent="CommandBar/Recruitment/QueueStrip"]
+layout_mode = 0
+offset_right = 436.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Slot0" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot1" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot2" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot3" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot4" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot5" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot6" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot7" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot8" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Slot9" parent="CommandBar/Recruitment/QueueStrip/Slots" instance=ExtResource("queue_slot")]
+visible = false
+layout_mode = 2
+
+[node name="Caption" type="Label" parent="CommandBar/Recruitment/QueueStrip"]
+layout_mode = 0
+offset_left = 446.0
+offset_right = 566.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.91, 0.85, 0.69, 1)
+theme_override_font_sizes/font_size = 11
+text = "训练队列\n点击格子取消"
+vertical_alignment = 1
 
 [node name="Recruit0" type="Button" parent="CommandBar/Recruitment"]
 layout_mode = 0
@@ -1012,7 +1081,7 @@ offset_left = 0
 offset_top = 112
 offset_right = 239
 offset_bottom = 141
-text = "选择全部军队  G"
+text = "选择全部军队  F2 / G"
 unique_name_in_owner = true
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
@@ -1233,7 +1302,7 @@ offset_left = 38
 offset_top = 169
 offset_right = 283
 offset_bottom = 500
-text = "左键 / 框选 / 双击\nShift + 左键 / 右键\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl + 1—9 / Shift + 1—9\n1—9 / 双按数字\n屏幕边缘 / 中键 / 方向键\n滚轮 / 空格\nB / G / .\n农民 / 生产建筑\n学院\nDelete / Ctrl + Delete\nEsc / P\nF12 / F10 / F11 / M"
+text = "左键 / 框选 / 双击\nShift + 左键 / 右键\n右键 / Shift + 右键\nA + 左键 / S / H\nCtrl + 1—9 / Shift + 1—9\n1—9 / 双按数字\n屏幕边缘 / 中键 / 方向键\n滚轮 / 空格\nB / F2（或 G）/ .\n农民 / 生产建筑\n学院\nDelete / Ctrl + Delete\nEsc / P\nF12 / F10 / F11 / M"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 13
@@ -1258,7 +1327,7 @@ offset_left = 36
 offset_top = 508
 offset_right = 706
 offset_bottom = 546
-text = "大本营训练农民 10 秒 · 兵营 / 军工厂即时出兵 · 取消训练或研究全额退款\n每矿 6 个采集位置 · 每人每 3 秒 +3 金币 · Shift 可连续指派建造与采矿"
+text = "大本营训练农民 10 秒 · 兵营 / 军工厂即时出兵 · 训练/研究队列：点击取消，全额退款\n每矿 6 个采集位置 · 每人每 3 秒 +3 金币 · Shift 可连续指派建造与采矿"
 mouse_filter = 2
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 11

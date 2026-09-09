@@ -7,6 +7,7 @@ var research_id: String = ""
 var research_elapsed: float = 0.0
 var rally_mine: ResourceVein
 var _retry: float = 0.0
+var _next_training_job_id: int = 1
 @onready var building: BattleBuilding = get_parent()
 @onready var game: Node3D = get_tree().current_scene
 
@@ -34,7 +35,8 @@ func recruit(kind: String) -> Dictionary:
 	if definition.training_seconds > 0:
 		player.gold -= definition.cost
 		player.reserved_farmers += 1
-		training.append({"kind": kind, "elapsed": 0.0, "cost": definition.cost})
+		training.append({"kind": kind, "elapsed": 0.0, "cost": definition.cost, "job_id": _next_training_job_id})
+		_next_training_job_id += 1
 	else:
 		var at: Vector3 = game.find_recruit_position(kind, building)
 		if not at.is_finite():
@@ -51,6 +53,14 @@ func cancel_training(index: int) -> Dictionary:
 	player.reserved_farmers -= 1
 	training.remove_at(index)
 	return {"ok": true}
+
+func cancel_training_job(job_id: int) -> Dictionary:
+	# Queue positions move when a farmer finishes or another slot is cancelled.
+	# A delayed click must only cancel the paid job that the player actually saw.
+	for index: int in range(training.size()):
+		if training[index].has("job_id") and int(training[index].job_id) == job_id:
+			return cancel_training(index)
+	return {"ok": false, "error": "训练项目已完成或已取消"}
 
 func research_error(id: String) -> String:
 	if not building.is_constructed or building.building_type != "academy":

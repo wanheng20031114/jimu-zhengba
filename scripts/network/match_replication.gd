@@ -546,9 +546,15 @@ func _valid_production(state: Dictionary) -> bool:
 	var production: Dictionary = state.production
 	if not production.get("training") is Array or production.training.size() > 10:
 		return false
+	var job_ids: Dictionary = {}
 	for item: Variant in production.training:
 		if not item is Dictionary or not item.get("kind") in BalanceCatalog.UNITS or not _number(item.get("elapsed"), 0, 1000) or not NetworkProtocol.integer(item.get("cost"), 0, 1000000):
 			return false
+		# Existing 0.6 snapshots have no job ID. New paid jobs always include one.
+		if item.has("job_id"):
+			if not NetworkProtocol.integer(item.job_id, 1, 2147483647) or job_ids.has(int(item.job_id)):
+				return false
+			job_ids[int(item.job_id)] = true
 	if not production.get("research_id") is String or not _number(production.get("research_elapsed"), 0, 10000):
 		return false
 	return production.research_id.is_empty() or production.research_id in BalanceCatalog.UPGRADES
