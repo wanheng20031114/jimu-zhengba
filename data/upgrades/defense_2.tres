@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"defense_2"
+name = "护甲强化 II"
+track = &"defense"
+level = 2
+cost = 300
+research_seconds = 40.0
+total_bonus = 2
+

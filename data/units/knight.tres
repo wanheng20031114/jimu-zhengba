@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"knight"
+name = "骑士"
+description = "高速骑兵，擅长迂回突袭弓箭手。"
+hp = 120
+damage = 19
+melee_armor = 2
+ranged_armor = 2
+damage_channel = 0
+combat_class = &"cavalry"
+bonuses = {&"archer": 3}
+range = 1.2
+cooldown = 1.1
+cost = 85
+supply = 2
+speed = 6.1
+radius = 0.78
+sight = 12
+min_range = 0
+projectile = ""
+production_building = &"barracks"
+training_seconds = 0
+military = true

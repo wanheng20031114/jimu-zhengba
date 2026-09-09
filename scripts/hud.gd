@@ -2,8 +2,6 @@ extends Control
 
 const UNIT_ORDER := ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]
 const UNIT_NAMES := ["剑士", "弓箭手", "骑士", "投石车", "加农炮", "农民"]
-const COSTS := [45, 60, 100, 140, 180, 50]
-const DESCRIPTIONS := ["可靠的近战步兵\n剑盾冲锋，守护远程部队", "远程齐射\n利用射程压制敌方步兵", "重装骑兵\n迅速接敌，冲锋造成额外伤害", "远程攻城器械\n抛射巨石，造成范围伤害", "重型火炮\n炮弹爆炸，适合摧毁建筑", "采矿与建造\n矿边每3秒+3金币；建造防御塔"]
 var game: Node3D
 var portraits: Dictionary = {}
 var _toast_remaining: float = 0.0
@@ -31,7 +29,9 @@ func _ready() -> void:
 		buttons[index].pressed.connect(_on_recruit.bind(index))
 		buttons[index].mouse_entered.connect(_set_preview_hover.bind(UNIT_ORDER[index]))
 		buttons[index].mouse_exited.connect(_set_preview_hover.bind(""))
-		buttons[index].tooltip_text = UNIT_NAMES[index] + " · " + str(COSTS[index]) + " 金币\n" + DESCRIPTIONS[index] + "\n立即加入战场，无需等待"
+		var definition := BalanceCatalog.unit(UNIT_ORDER[index])
+		buttons[index].tooltip_text = definition.name + " · " + str(definition.cost) + " 金币\n" + definition.description
+		buttons[index].get_node("Cost").text = "◈ %d" % definition.cost
 		buttons[index].get_node("Portrait").texture = portraits[UNIT_ORDER[index]]
 	%AttackButton.pressed.connect(func(): game.set_attack_mode(true))
 	%StopButton.pressed.connect(func(): game.stop_selected())
@@ -119,8 +119,8 @@ func refresh() -> void:
 			%BuildInfo.text = "防御塔已就绪\n自动警戒 · 射程 12 · 无需驻军" if selected_site.is_constructed else "防御塔施工 %d%%\n取消返还未完成部分的金币" % roundi(selected_site.construction_progress * 100)
 	for index in range(buttons.size()):
 		buttons[index].visible = not worker_panel
-		buttons[index].disabled = not can_recruit or game.gold < COSTS[index]
-		buttons[index].get_node("Cost").modulate = Color("e9c97b") if game.gold >= COSTS[index] else Color("c27055")
+		buttons[index].disabled = not can_recruit or game.gold < BalanceCatalog.unit(UNIT_ORDER[index]).cost
+		buttons[index].get_node("Cost").modulate = Color("e9c97b") if game.gold >= BalanceCatalog.unit(UNIT_ORDER[index]).cost else Color("c27055")
 	if game.selection.is_empty():
 		selected_name.text = "等待指令"
 		selected_role.text = "蓝旗军团"

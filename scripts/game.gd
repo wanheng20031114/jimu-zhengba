@@ -5,7 +5,6 @@ const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
 const EFFECT_SCENE: PackedScene = preload("res://scenes/battle_effect.tscn")
 const BUILDING_SCENE: PackedScene = preload("res://scenes/building.tscn")
 const UNIT_TYPES := ["swordsman", "archer", "knight", "catapult", "cannon", "farmer"]
-const UNIT_COSTS := {"swordsman": 45, "archer": 60, "knight": 100, "catapult": 140, "cannon": 180, "farmer": 50}
 const UNIT_NAMES := {"swordsman": "剑士", "archer": "弓箭手", "knight": "骑士", "catapult": "投石车", "cannon": "加农炮", "farmer": "农民"}
 const TOWER_COST := 100
 const MAX_ARMY: int = 160
@@ -19,7 +18,15 @@ const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit",
 @onready var unit_container: Node3D = $Units
 @onready var effect_container: Node3D = $Effects
 
-var gold: int = 320
+var players: Array[PlayerState] = [PlayerState.new(0, 0), PlayerState.new(1, 1)]
+var local_owner_id: int = 0
+var is_authority: bool = true
+var map_size := Vector2(84, 84)
+var entities_by_id: Dictionary = {}
+var _next_entity_id: int = 1
+var gold: int:
+	get: return get_player(local_owner_id).gold
+	set(value): get_player(local_owner_id).gold = value
 var elapsed: float = 0.0
 var simulation_tick: int = 0
 var kills: int = 0
@@ -616,9 +623,9 @@ func recruit(kind: String) -> bool:
 		$Audio.play_ui(&"denied")
 		hud.toast("选择大本营后招募部队 · 快捷键 B", 2.5)
 		return false
-	if gold < UNIT_COSTS[kind]:
+	if gold < BalanceCatalog.unit(kind).cost:
 		$Audio.play_ui(&"denied")
-		hud.toast("金币不足 · 需要 %d 金币" % UNIT_COSTS[kind], 2.0)
+		hud.toast("金币不足 · 需要 %d 金币" % BalanceCatalog.unit(kind).cost, 2.0)
 		return false
 	if player_count() >= MAX_ARMY:
 		$Audio.play_ui(&"denied")
@@ -629,7 +636,7 @@ func recruit(kind: String) -> bool:
 		$Audio.play_ui(&"denied")
 		hud.toast("大本营出口被堵住 · 请移动部队或拆除附近防御塔", 2.5)
 		return false
-	gold -= UNIT_COSTS[kind]
+	gold -= BalanceCatalog.unit(kind).cost
 	_spawn_index += 1
 	var unit := spawn_unit(kind, 0, at)
 	var target := rally_point + Vector3(randf_range(-2, 2), 0, randf_range(-2, 2))
@@ -673,14 +680,15 @@ func find_recruit_position(kind: String) -> Vector3:
 func spawn_unit(kind: String, faction: int, at: Vector3) -> Node3D:
 	var unit: Node3D = UNIT_SCENE.instantiate()
 	unit.unit_type = kind
-	unit.team = faction
+	unit.owner_id = faction
+	unit.alliance_id = get_player(faction).alliance_id
 	unit.position = at
 	unit.sound_requested.connect($Audio.play_world)
 	unit.gathered.connect(_on_gathered)
 	unit_container.add_child(unit)
 	return unit
 
-func spawn_projectile(source: Node3D, target: Node3D, damage: float, kind: String) -> void:
+func spawn_projectile(source: Node3D, target: Node3D, damage: DamagePayload, kind: String) -> void:
 	if not is_instance_valid(source) or not is_instance_valid(target):
 		return
 	var projectile = PROJECTILE_SCENE.instantiate()
@@ -837,3 +845,25 @@ func _on_minimap_clicked(at: Vector3, command: bool) -> void:
 		set_attack_mode(false)
 	else:
 		camera_rig.focus_at(at)
+
+func get_player(owner: int) -> PlayerState:
+	return players[owner]
+
+func register_entity(entity: Node3D) -> void:
+	if entity.entity_id == 0:
+		entity.entity_id = _next_entity_id
+		_next_entity_id += 1
+	entities_by_id[entity.entity_id] = entity
+
+func are_hostile(a: Node3D, b: Node3D) -> bool:
+	return a.alliance_id != b.alliance_id
+
+func can_see_entity(_owner: int, _entity: Node3D) -> bool:
+	return true
+
+func can_see_position(_owner: int, _at: Vector3) -> bool:
+	return true
+
+func clamp_to_map(at: Vector3) -> Vector3:
+	return Vector3(clampf(at.x, -map_size.x * 0.5 + 2, map_size.x * 0.5 - 2), 0,
+		clampf(at.z, -map_size.y * 0.5 + 2, map_size.y * 0.5 - 2))

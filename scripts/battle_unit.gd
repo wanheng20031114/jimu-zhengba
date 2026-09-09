@@ -16,21 +16,25 @@ const MODELS: Dictionary = {
 	"farmer": preload("res://assets/models/units/farmer.tscn"),
 }
 
-const STATS: Dictionary = {
-	"swordsman": {"name": "剑士", "description": "坚守阵线的近战步兵，持剑盾抵挡敌军。", "cost": 45, "hp": 155.0, "speed": 3.7, "damage": 23.0, "range": 1.0, "cooldown": 1.05, "radius": 0.48, "armor": 2.0, "sight": 10.0, "projectile": ""},
-	"archer": {"name": "弓箭手", "description": "在后排抛射羽箭，适合协同近战部队作战。", "cost": 60, "hp": 85.0, "speed": 3.6, "damage": 20.0, "range": 10.0, "cooldown": 1.5, "radius": 0.42, "armor": 0.0, "sight": 13.0, "projectile": "arrow"},
-	"knight": {"name": "骑士", "description": "重甲骑兵，连续奔驰后发动高伤害冲锋。", "cost": 100, "hp": 320.0, "speed": 6.1, "damage": 39.0, "range": 1.2, "cooldown": 1.35, "radius": 0.78, "armor": 5.0, "sight": 12.0, "projectile": ""},
-	"catapult": {"name": "投石车", "description": "抛射巨石，对密集敌军和建筑造成范围伤害。", "cost": 140, "hp": 230.0, "speed": 2.2, "damage": 67.0, "range": 17.0, "cooldown": 4.2, "radius": 1.05, "armor": 2.0, "sight": 19.0, "projectile": "stone"},
-	"cannon": {"name": "加农炮", "description": "发射爆炸炮弹，擅长轰击敌方防御建筑。", "cost": 180, "hp": 285.0, "speed": 2.0, "damage": 96.0, "range": 15.0, "cooldown": 3.5, "radius": 1.0, "armor": 3.0, "sight": 18.0, "projectile": "cannon"},
-	"farmer": {"name": "农民", "description": "在矿脉旁持续采金，每3秒获得3金币；花费100金币、施工20秒建造防御塔。", "cost": 50, "hp": 75.0, "speed": 3.6, "damage": 8.0, "range": 0.9, "cooldown": 1.3, "radius": 0.42, "armor": 0.0, "sight": 8.0, "projectile": ""},
-}
+const STATS: Dictionary = BalanceCatalog.UNITS
 
 enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
 const GATHER_SECONDS: float = 3.0
 const GATHER_GOLD: int = 3
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
-@export var team: int = 0
+@export var owner_id: int = -1
+@export var alliance_id: int = 0
+# Saved 0.5 scenes encode two alliances as team. New matches set owner_id explicitly.
+@export var team: int:
+	get:
+		return alliance_id
+	set(value):
+		alliance_id = value
+		if owner_id < 0:
+			owner_id = value
+
+var entity_id: int = 0
 
 var hp: float = 1.0
 var max_hp: float = 1.0
@@ -41,7 +45,7 @@ var radius: float = 0.5
 var speed: float = 3.5
 var attack_range: float = 1.0
 var attack_damage: float = 20.0
-var armor: float = 0.0
+var min_attack_range: float = 0.0
 var order_name: String = "待命"
 var order: Order = Order.IDLE
 var target: Node3D
@@ -50,7 +54,7 @@ var waypoint_queue: Array[Dictionary] = []
 var work_target: Node3D
 var work_progress: float = 0.0
 
-var _stats: Dictionary
+var _stats: UnitDefinition
 var _model: Node3D
 var _attack_animation: AnimationPlayer
 var _game: Node
@@ -60,7 +64,6 @@ var _repath_time: float = 0.0
 var _damage_bar_time: float = 0.0
 var _home_position: Vector3
 var _strike_target: Node3D
-var _strike_damage: float = 0.0
 var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
 var _raises_movement_dust: bool = false
@@ -75,6 +78,7 @@ var _working: bool = false
 var _work_seconds: float = 0.0
 var _work_sound_time: float = 0.45
 var _claimed_site: bool = false
+var _claimed_mine: bool = false
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var model_pivot: Node3D = $ModelPivot
@@ -85,7 +89,9 @@ var _claimed_site: bool = false
 @onready var movement_dust: GPUParticles3D = $MovementDust
 
 func _ready() -> void:
-	_stats = STATS[unit_type]
+	if owner_id < 0:
+		owner_id = alliance_id
+	_stats = BalanceCatalog.unit(unit_type)
 	display_name = _stats.name
 	max_hp = _stats.hp
 	hp = max_hp
@@ -93,7 +99,7 @@ func _ready() -> void:
 	radius = _stats.radius
 	attack_range = _stats.range
 	attack_damage = _stats.damage
-	armor = _stats.armor
+	min_attack_range = _stats.min_range
 	_raises_movement_dust = unit_type in ["knight", "catapult", "cannon"]
 	movement_dust.visible = _raises_movement_dust
 	# Keep the common picking layer; dedicated faction layers filter native queries.
@@ -137,9 +143,10 @@ func _ready() -> void:
 	# The unit is instantiated at its actual spawn position. Synchronize the
 	# completed hierarchy so render interpolation never blends from the origin.
 	reset_physics_interpolation()
+	_game.register_entity(self)
 
 func _physics_process(delta: float) -> void:
-	if not alive:
+	if not alive or not _game.is_authority:
 		return
 	# Keep the fractional tick at expiry for continuous attacks (e.g. 1.05 s
 	# at 30 physics ticks). An already-ready unit never banks idle attack time.
@@ -281,7 +288,7 @@ func _face_direction(direction: Vector3, delta: float) -> void:
 
 func _valid_target(entity: Variant) -> bool:
 	# Freed cached targets must reach the validity guard before object-type checks.
-	return is_instance_valid(entity) and entity != self and entity.is_in_group("entities") and entity.alive and entity.team != team
+	return is_instance_valid(entity) and entity != self and entity.is_in_group("entities") and entity.alive and _game.are_hostile(self, entity) and _game.can_see_entity(owner_id, entity)
 
 func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
 	var building: bool = entity.is_in_group("buildings")
@@ -289,7 +296,8 @@ func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
 	var distance: Vector3 = attack_point - global_position
 	distance.y = 0.0
 	var reach: float = attack_range + radius + (0.0 if building else entity.radius) + extra
-	return distance.length_squared() <= reach * reach
+	var minimum: float = min_attack_range + radius + (0.0 if building else entity.radius) if min_attack_range > 0.0 else 0.0
+	return distance.length_squared() <= reach * reach and distance.length_squared() >= minimum * minimum
 
 func _refresh_target() -> void:
 	# Workers finish economic orders even under fire. An explicit attack still
@@ -338,10 +346,8 @@ func _refresh_target() -> void:
 
 func _start_attack() -> void:
 	_strike_target = target
-	_strike_damage = attack_damage
 	_attack_cooldown = float(_stats.cooldown) + minf(0.0, _attack_cooldown)
 	if unit_type == "knight" and _charge_time >= 0.95 and _charge_cooldown <= 0.0:
-		_strike_damage *= 1.85
 		_charge_cooldown = 6.0
 		_game.spawn_effect(global_position + Vector3.UP * 0.2, "charge", Color("edd9a1"))
 	_charge_time = 0.0
@@ -367,15 +373,17 @@ func _on_attack_windup_timeout() -> void:
 	var pose_delay: float = attack_windup.wait_time - _attack_animation.current_animation_position
 	if pose_delay > 0.0:
 		_attack_animation.advance(pose_delay + 0.000001)
+	var upgrade_bonus: float = _game.get_player(owner_id).get_attack_bonus() if _stats.military else 0.0
+	var payload: DamagePayload = DamageResolver.snapshot(_stats, upgrade_bonus, owner_id, alliance_id)
 	if kind.is_empty():
 		var effect_kind: String = _strike_target.get_hit_effect() if _strike_target.is_in_group("buildings") else "hit"
 		var contact: Vector3 = _strike_target.get_attack_position(global_position) if _strike_target.is_in_group("buildings") else _strike_target.global_position
-		_strike_target.receive_damage(_strike_damage, self)
+		_strike_target.receive_hit(payload, self)
 		_game.spawn_effect(contact + Vector3.UP * 1.1, effect_kind, Color("f5d691"))
 	else:
 		if kind != "cannon":
 			sound_requested.emit(&"bow_release" if kind == "arrow" else &"catapult_release", get_projectile_origin())
-		_game.spawn_projectile(self, _strike_target, _strike_damage, kind)
+		_game.spawn_projectile(self, _strike_target, payload, kind)
 		if kind == "cannon":
 			_game.spawn_effect(get_projectile_origin(), "muzzle", Color("ffd898"))
 
@@ -393,7 +401,7 @@ func issue_gather(mine: Node3D, queued: bool = false) -> bool:
 	return _issue_work(mine, Order.GATHER, queued)
 
 func issue_build(site: Node3D, queued: bool = false) -> bool:
-	if not alive or unit_type != "farmer" or not is_instance_valid(site) or not site.is_in_group("buildings") or not site.alive or site.team != team or site.is_constructed:
+	if not alive or unit_type != "farmer" or not is_instance_valid(site) or not site.is_in_group("buildings") or not site.alive or site.owner_id != owner_id or site.is_constructed:
 		return false
 	return _issue_work(site, Order.BUILD, queued)
 
@@ -427,7 +435,8 @@ func _begin_work(entity: Node3D, work_order: Order) -> void:
 
 func _update_work_destination() -> void:
 	if order == Order.GATHER:
-		destination = work_target.get_work_position(global_position)
+		_claimed_mine = work_target.try_claim(self)
+		destination = work_target.get_work_position(global_position, self if _claimed_mine else null)
 	else:
 		var edge: Vector3 = work_target.get_attack_position(global_position)
 		var outward: Vector3 = global_position - edge
@@ -444,8 +453,11 @@ func _work_velocity(delta: float) -> Vector3:
 	if order == Order.BUILD and work_target.is_constructed:
 		_complete_waypoint()
 		return Vector3.ZERO
-	var contact: Vector3 = work_target.global_position if order == Order.GATHER else work_target.get_attack_position(global_position)
-	var reach: float = work_target.radius + 1.55 if order == Order.GATHER else 1.85
+	if order == Order.GATHER and not _claimed_mine and _repath_time <= 0.0:
+		_repath_time = 0.6
+		_update_work_destination()
+	var contact: Vector3 = destination if order == Order.GATHER else work_target.get_attack_position(global_position)
+	var reach: float = 0.65 if order == Order.GATHER else 1.85
 	var distance: Vector3 = contact - global_position
 	distance.y = 0.0
 	if distance.length_squared() > reach * reach:
@@ -462,7 +474,11 @@ func _work_velocity(delta: float) -> Vector3:
 			# CharacterBody3D supplies the final collision-safe contact step.
 			approach_velocity = distance.normalized() * speed
 		return approach_velocity
-	_face_direction(distance, delta)
+	if order == Order.GATHER and not _claimed_mine:
+		_set_working(false)
+		order_name = "矿脉满员 · 等待空位"
+		return Vector3.ZERO
+	_face_direction(work_target.global_position - global_position if order == Order.GATHER else distance, delta)
 	if order == Order.BUILD:
 		# A worker pushed away can have its site taken over. Revalidate ownership
 		# before contributing so the former builder waits instead of animating work.
@@ -486,7 +502,7 @@ func _work_velocity(delta: float) -> Vector3:
 				_complete_waypoint()
 				return Vector3.ZERO
 	else:
-		order_name = "建造防御塔"
+		order_name = "建造" + work_target.display_name
 		work_target.contribute_work(self, delta)
 		work_progress = work_target.construction_progress
 		if work_target.is_constructed:
@@ -510,6 +526,9 @@ func _set_working(value: bool) -> void:
 		work_bar.set_instance_shader_parameter("bar_color", Color("e9bf5c") if order == Order.GATHER else Color("72c6d8"))
 
 func _interrupt_work() -> void:
+	if _claimed_mine and is_instance_valid(work_target):
+		work_target.release(self)
+	_claimed_mine = false
 	if _claimed_site and is_instance_valid(work_target):
 		work_target.release_builder(self)
 	_claimed_site = false
@@ -519,6 +538,8 @@ func _interrupt_work() -> void:
 	_work_seconds = 0.0
 
 func _exit_tree() -> void:
+	if _claimed_mine and is_instance_valid(work_target):
+		work_target.release(self)
 	if _claimed_site and is_instance_valid(work_target):
 		work_target.release_builder(self)
 
@@ -540,7 +561,7 @@ func _begin_move(at: Vector3, attack_move: bool) -> void:
 	_interrupt_work()
 	order = Order.ATTACK_MOVE if attack_move else Order.MOVE
 	order_name = "攻击前进" if attack_move else "移动中"
-	destination = Vector3(clampf(at.x, -40.0, 40.0), 0.0, clampf(at.z, -40.0, 40.0))
+	destination = _game.clamp_to_map(at)
 	target = null
 	_move_retaliation = null
 	attack_windup.stop()
@@ -609,10 +630,22 @@ func _finish_order() -> void:
 	velocity = Vector3.ZERO
 	NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), Vector3.ZERO)
 
-func receive_damage(amount: float, source: Node3D = null) -> void:
-	if not alive or (is_instance_valid(source) and source.team == team):
+func get_combat_definition() -> CombatDefinition:
+	return _stats
+
+func receive_hit(payload: DamagePayload, source: Node3D = null, falloff: float = 1.0) -> void:
+	if not alive or payload.alliance_id == alliance_id:
 		return
-	var actual_damage: float = maxf(1.0, amount - armor)
+	var defense_bonus: float = _game.get_player(owner_id).get_defense_bonus() if _stats.military else 0.0
+	_apply_damage(DamageResolver.resolve(payload, _stats, defense_bonus, falloff), source)
+
+func receive_damage(amount: float, source: Node3D = null) -> void:
+	# Explicit direct damage for scenario scripts and debugging. Combat uses receive_hit.
+	if not alive or (is_instance_valid(source) and not _game.are_hostile(self, source)):
+		return
+	_apply_damage(maxf(0.0, amount), source)
+
+func _apply_damage(actual_damage: float, source: Node3D) -> void:
 	hp = maxf(0.0, hp - actual_damage)
 	_damage_bar_time = 5.0
 	_update_health_bar()

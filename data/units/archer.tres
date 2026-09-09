@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"archer"
+name = "弓箭手"
+description = "远程齐射克制骑兵，需要保护以避免被近战突袭。"
+hp = 60
+damage = 14
+melee_armor = 0
+ranged_armor = 0
+damage_channel = 1
+combat_class = &"archer"
+bonuses = {&"cavalry": 12}
+range = 10
+cooldown = 1.5
+cost = 60
+supply = 1
+speed = 3.6
+radius = 0.42
+sight = 13
+min_range = 0
+projectile = "arrow"
+production_building = &"barracks"
+training_seconds = 0
+military = true

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/building_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+combat_class = &"building"
+melee_armor = 10.0
+ranged_armor = 10.0
+damage_channel = 1
+id = &"headquarters"
+name = "大本营"
+hp = 3000
+cost = 400
+build_seconds = 30
+radius = 4.5
+size = Vector3(9, 6, 8)
+bar_height = 9.1
+damage = 20
+range = 10
+cooldown = 2.0
+model = "headquarters"
+produces = PackedStringArray("farmer")

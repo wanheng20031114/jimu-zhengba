@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"farmer"
+name = "农民"
+description = "在矿脉旁每3秒采集3金币，并建造军事与经济建筑。"
+hp = 75
+damage = 8
+melee_armor = 0
+ranged_armor = 0
+damage_channel = 0
+combat_class = &"worker"
+bonuses = {}
+range = 0.9
+cooldown = 1.3
+cost = 50
+supply = 0
+speed = 3.6
+radius = 0.42
+sight = 8
+min_range = 0
+projectile = ""
+production_building = &"headquarters"
+training_seconds = 10
+military = false

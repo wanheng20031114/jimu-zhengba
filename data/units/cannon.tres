@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"cannon"
+name = "加农炮"
+description = "远程单体炮击，摧毁建筑并克制攻城器；近距离无法开火。"
+hp = 260
+damage = 30
+melee_armor = 0
+ranged_armor = 6
+damage_channel = 1
+combat_class = &"siege"
+bonuses = {&"building": 200, &"siege": 100}
+range = 18
+cooldown = 3.2
+cost = 240
+supply = 3
+speed = 2
+radius = 1
+sight = 20
+min_range = 2.5
+projectile = "cannon"
+production_building = &"factory"
+training_seconds = 0
+military = true

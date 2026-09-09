@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/upgrade_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"attack_3"
+name = "武器强化 III"
+track = &"attack"
+level = 3
+cost = 500
+research_seconds = 50.0
+total_bonus = 4
+

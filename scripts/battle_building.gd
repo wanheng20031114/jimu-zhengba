@@ -18,17 +18,11 @@ const MODELS: Dictionary = {
 	"house": preload("res://assets/models/environment/house.tscn"),
 }
 
-const STATS: Dictionary = {
-	"headquarters": {"name": "王国大本营", "hp": 2200.0, "radius": 4.5, "size": Vector3(9, 6, 8), "bar_height": 9.1, "damage": 23.0, "range": 10.0, "cooldown": 2.0, "model": "headquarters"},
-	"enemy_keep": {"name": "赤旗要塞", "hp": 1900.0, "radius": 4.5, "size": Vector3(9, 6, 8), "bar_height": 9.5, "damage": 26.0, "range": 10.0, "cooldown": 2.2, "model": "enemy_keep"},
-	"barracks": {"name": "敌军兵营", "hp": 950.0, "radius": 3.0, "size": Vector3(6, 4, 5), "bar_height": 5.9, "damage": 0.0, "range": 0.0, "cooldown": 1.0, "model": "barracks"},
-	"tower": {"name": "弩箭哨塔", "hp": 800.0, "radius": 2.0, "size": Vector3(4, 7, 4), "bar_height": 8.1, "damage": 28.0, "range": 12.0, "cooldown": 1.8, "model": "tower"},
-	"house": {"name": "敌军补给所", "hp": 650.0, "radius": 3.0, "size": Vector3(6, 4, 5), "bar_height": 6.1, "damage": 0.0, "range": 0.0, "cooldown": 1.0, "model": "house"},
-	"defense_tower": {"name": "王国防御塔", "hp": 800.0, "radius": 2.0, "size": Vector3(4, 6, 4), "bar_height": 7.1, "damage": 28.0, "range": 12.0, "cooldown": 1.8, "model": "defense_tower"},
-}
-
-@export_enum("headquarters", "enemy_keep", "barracks", "tower", "house", "defense_tower") var building_type: String = "headquarters"
+@export_enum("headquarters", "enemy_keep", "barracks", "tower", "house", "defense_tower", "factory", "academy") var building_type: String = "headquarters"
 @export var team: int = 0
+@export var owner_id: int = -1
+var alliance_id: int = 0
+var entity_id: int = 0
 @export var under_construction: bool = false
 
 var hp: float = 1.0
@@ -44,7 +38,7 @@ var is_constructed: bool:
 	get:
 		return alive and not under_construction
 
-var _stats: Dictionary
+var _stats: BuildingDefinition
 var _game: Node
 var _model: Node3D
 var _target: Node3D
@@ -62,8 +56,13 @@ var _construction_meshes: Array[MeshInstance3D] = []
 @onready var scaffolding: Node3D = $ModelPivot/Scaffolding
 
 func _ready() -> void:
-	_stats = STATS[building_type]
+	_stats = BalanceCatalog.building(building_type)
 	_game = get_tree().current_scene
+	if owner_id < 0:
+		owner_id = team
+	alliance_id = _game.get_player(owner_id).alliance_id
+	team = alliance_id
+	_game.register_entity(self)
 	display_name = _stats.name
 	max_hp = _stats.hp
 	hp = max_hp
@@ -115,7 +114,7 @@ func _ready() -> void:
 	reset_physics_interpolation()
 
 func _physics_process(delta: float) -> void:
-	if not alive or under_construction or float(_stats.damage) <= 0.0:
+	if not _game.is_authority or not alive or under_construction or float(_stats.damage) <= 0.0:
 		return
 	_scan_time -= delta
 	_cooldown -= delta
@@ -138,10 +137,10 @@ func _physics_process(delta: float) -> void:
 	if _can_shoot_target(_target) and _cooldown <= 0.0:
 		_cooldown = _stats.cooldown
 		sound_requested.emit(&"bow_release", get_projectile_origin())
-		_game.spawn_projectile(self, _target, _stats.damage, "arrow")
+		_game.spawn_projectile(self, _target, DamageResolver.snapshot(_stats, 0, owner_id, alliance_id), "arrow")
 
 func _can_shoot_target(entity: Node3D) -> bool:
-	if not is_instance_valid(entity) or not entity.alive or entity.team == team:
+	if not is_instance_valid(entity) or not entity.alive or entity.alliance_id == alliance_id:
 		return false
 	var offset: Vector3 = entity.global_position - get_attack_position(entity.global_position)
 	offset.y = 0.0
@@ -150,7 +149,7 @@ func _can_shoot_target(entity: Node3D) -> bool:
 func try_claim_builder(worker: Node3D) -> bool:
 	if not alive or not under_construction or not is_instance_valid(worker):
 		return false
-	if not worker.alive or worker.team != team or worker.unit_type != "farmer":
+	if not worker.alive or worker.owner_id != owner_id or worker.unit_type != "farmer":
 		return false
 	var assigned: Node3D = _builder.get_ref() if _builder != null else null
 	if is_instance_valid(assigned) and assigned.alive and assigned != worker:
@@ -172,7 +171,7 @@ func contribute_work(worker: Node3D, delta: float) -> void:
 		return
 	if _builder.get_ref() != worker or not is_instance_valid(worker) or not worker.alive:
 		return
-	if worker.team != team or worker.unit_type != "farmer":
+	if worker.owner_id != owner_id or worker.unit_type != "farmer":
 		return
 	var contact: Vector3 = get_attack_position(worker.global_position)
 	var offset: Vector3 = worker.global_position - contact
@@ -181,7 +180,7 @@ func contribute_work(worker: Node3D, delta: float) -> void:
 		order_name = "等待农民抵达"
 		return
 	var previous: float = construction_progress
-	construction_progress = minf(1.0, construction_progress + delta / CONSTRUCTION_SECONDS)
+	construction_progress = minf(1.0, construction_progress + delta / _stats.build_seconds)
 	# Construction adds the remaining structural HP, preserving enemy damage.
 	hp = minf(max_hp, hp + (construction_progress - previous) * max_hp * 0.9)
 	if hp >= max_hp * 0.55:
@@ -201,7 +200,7 @@ func contribute_work(worker: Node3D, delta: float) -> void:
 func cancel_construction() -> int:
 	if not alive or not under_construction:
 		return 0
-	var refund: int = floori(CONSTRUCTION_COST * (1.0 - construction_progress) + 0.00001)
+	var refund: int = floori(_stats.cost * (1.0 - construction_progress) + 0.00001)
 	_die()
 	return refund
 
@@ -236,8 +235,16 @@ func get_projectile_origin() -> Vector3:
 func get_hit_effect() -> String:
 	return "wood_hit" if building_type in ["tower", "house", "barracks", "defense_tower"] else "stone_chip"
 
+func get_combat_definition() -> CombatDefinition:
+	return _stats
+
+func receive_hit(payload: DamagePayload, source: Node3D = null, falloff: float = 1.0) -> void:
+	if payload.alliance_id == alliance_id:
+		return
+	receive_damage(DamageResolver.resolve(payload, _stats, 0, falloff), source)
+
 func receive_damage(amount: float, source: Node3D = null) -> void:
-	if not alive or (is_instance_valid(source) and source.team == team):
+	if not alive or (is_instance_valid(source) and source.alliance_id == alliance_id):
 		return
 	hp = maxf(0.0, hp - amount)
 	health_bar.set_instance_shader_parameter("health", hp / max_hp)

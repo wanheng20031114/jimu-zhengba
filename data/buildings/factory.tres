@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/building_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+combat_class = &"building"
+melee_armor = 10.0
+ranged_armor = 10.0
+damage_channel = 1
+id = &"factory"
+name = "军工厂"
+hp = 1800
+cost = 250
+build_seconds = 25
+radius = 3.5
+size = Vector3(7, 5, 6)
+bar_height = 6.4
+damage = 0
+range = 0
+cooldown = 1
+model = "factory"
+produces = PackedStringArray("catapult", "cannon")
+
