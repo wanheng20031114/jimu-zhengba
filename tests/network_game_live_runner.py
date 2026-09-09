@@ -80,7 +80,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
     environment = os.environ.copy()
     environment["ASHEN_RELAY_CONFIG"] = str(config)
     runtime = load_deploy().runtime("win64.exe")
-    process = subprocess.Popen([str(runtime), "--headless", "--path", str(stage), "--script", "res://tests/network_relay_diagnostic.gd"],
+    process = subprocess.Popen([str(runtime), "--headless", "--log-file", str(directory / "relay.engine.log"), "--path", str(stage), "--script", "res://tests/network_relay_diagnostic.gd"],
                                env=environment, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
     children.append(process)
     deadline = time.monotonic() + 15
@@ -132,7 +132,7 @@ def main() -> int:
             out = (directory / ("peer-%d.stdout.log" % index)).open("wb")
             err = (directory / ("peer-%d.stderr.log" % index)).open("wb")
             handles.extend((out, err))
-            command = [str(args.godot), "--headless", "--audio-driver", "Dummy", "--path", str(ROOT), "--script", "res://tests/network_game_live.gd", "--",
+            command = [str(args.godot), "--headless", "--log-file", str(directory / ("peer-%d.engine.log" % index)), "--audio-driver", "Dummy", "--path", str(ROOT), "--script", "res://tests/network_game_live.gd", "--",
                        "--live-dir=" + directory.as_posix(), "--peer-index=" + str(index),
                        "--load-units=" + str(args.load_units), "--load-seconds=" + str(args.load_seconds)]
             process = subprocess.Popen(command, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)

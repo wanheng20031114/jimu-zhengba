@@ -382,6 +382,17 @@ func select_entities(entities: Array, additive: bool = false, toggle: bool = fal
 func _prune_selection() -> void:
 	selection = selection.filter(func(entity): return is_instance_valid(entity) and entity.alive and can_see_entity(local_owner_id, entity))
 
+func forget_entity_selection(entity: Node3D) -> void:
+	# Authoritative death and client snapshot retirement share this local-only
+	# cleanup. Clear references before queue_free; HUD/input run more frequently
+	# than the periodic selection refresh and must never see a freed replica.
+	selection.erase(entity)
+	for group: Array in control_groups.values():
+		group.erase(entity)
+	if _last_click_entity == entity:
+		_last_click_entity = null
+		_last_click_time = -1.0
+
 func own_selected_units() -> Array[Node3D]:
 	var result: Array[Node3D] = []
 	for entity in selection:
@@ -721,7 +732,7 @@ func spawn_effect(at: Vector3, kind: String, color: Color = Color.WHITE) -> void
 	$EffectPool.play(at, kind, color)
 
 func on_entity_died(entity: Node3D) -> void:
-	selection.erase(entity)
+	forget_entity_selection(entity)
 	if not is_authority:
 		return
 	if entity is BattleUnit:
@@ -844,6 +855,7 @@ func end_battle(victory: bool) -> void:
 		Session.relay.finish_match({"winner": get_player(local_owner_id).alliance_id if victory else 1 - get_player(local_owner_id).alliance_id, "time": elapsed})
 	if finished:
 		return
+	Session.record_diagnostic("match_finished", {"victory": victory, "online": online, "tick": simulation_tick})
 	finished = true
 	$EnemyTimer.stop()
 	$IncomeTimer.stop()
@@ -873,6 +885,7 @@ func restart() -> void:
 		get_tree().reload_current_scene()
 
 func prepare_shutdown() -> void:
+	Session.record_diagnostic("shutdown_begin", {"online": online, "tick": simulation_tick})
 	finished = true
 	$EffectPool.reset_all()
 	if online:
@@ -896,6 +909,7 @@ func prepare_shutdown() -> void:
 		await get_tree().process_frame
 		retiring_playbacks = retiring_playbacks.filter(func(reference: WeakRef): return reference.get_ref() != null)
 	await get_tree().process_frame
+	Session.record_diagnostic("shutdown_complete")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _closing:

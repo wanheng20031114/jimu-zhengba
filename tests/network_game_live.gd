@@ -50,6 +50,9 @@ var _load_routes: Dictionary = {}
 var _saw_private_queue_plan := false
 var _saw_private_research_queue := false
 var _saw_reserved_population := false
+var _retirement_id: int = 0
+var _retirement_armed := false
+var _retirement_observed := false
 
 func _initialize() -> void:
 	Engine.max_fps = 60
@@ -123,6 +126,7 @@ func _run() -> void:
 	game.tests_running = true
 	game.camera_rig.edge_scroll = false
 	game.get_node("MatchReplication").snapshot_rejected.connect(func(_reason): snapshot_rejections += 1)
+	game.get_node("MatchReplication").snapshot_applied.connect(_selection_retirement_snapshot)
 	check(game.local_owner_id == owner and game.is_authority == (owner == 0), "session_bound_identity_and_authority")
 	check(game.players.size() == 4 and game.match_config.mode == "2v2", "actual_four_player_map")
 	if owner != 0:
@@ -271,6 +275,7 @@ func host_steps() -> void:
 	check(await until(func(): return [1, 2, 3].all(func(id): return game.get_player(id).attack_level == 1 and game.get_player(id).defense_level == 1), 48.0), "research_queue_completes_in_order_across_reconnections")
 	publish("queues_done")
 	check(await until(func(): return all_phase("queues_done"), 12.0), "all_clients_receive_finished_research_and_population")
+	await host_selection_retirement()
 	await seconds(0.6)
 	for client_owner in range(1, 4):
 		var report := owner_status(client_owner)
@@ -317,6 +322,43 @@ func client_steps() -> void:
 		_observed_stages.append(stage)
 		_published = directive
 		match stage:
+			"retirement_select":
+				if owner == 1:
+					_retirement_id = int(directive.retirement.unit)
+					check(await until(func(): return game.entities_by_id.has(_retirement_id), 10.0), "retirement_knight_arrives_as_real_client_replica")
+					var knight: BattleUnit = game.entities_by_id[_retirement_id]
+					game.camera_rig.focus_at(knight.global_position, true)
+					await physics_frame
+					await physics_frame
+					var pick_point: Vector2 = game.camera.unproject_position(knight.global_position + Vector3.UP)
+					check(game.entity_at(pick_point) == knight, "retirement_knight_has_synchronized_unobstructed_native_pick")
+					await _retirement_click(pick_point)
+					check(game.selected_ids() == [_retirement_id], "native_click_selects_remote_owned_knight")
+					game.use_control_group(7, true)
+					check(game.control_groups[7].size() == 1 and game.control_groups[7][0].entity_id == _retirement_id,
+						"remote_owned_knight_enters_control_group")
+					_retirement_armed = true
+					game.command_move(vec(directive.retirement.destination))
+				phase = stage
+			"retirement_removed":
+				if owner == 1:
+					check(await until(func(): return _retirement_observed, 10.0), "authority_death_removes_selected_knight_over_snapshot")
+					game.hud.refresh()
+					var survivor_id: int = int(directive.retirement.survivor)
+					check(game.entities_by_id.has(survivor_id), "own_survivor_remains_after_knight_removal")
+					var survivor: BattleUnit = game.entities_by_id[survivor_id]
+					game.camera_rig.focus_at(survivor.global_position, true)
+					await process_frame
+					await _retirement_click(game.camera.unproject_position(survivor.global_position + Vector3.UP), MOUSE_BUTTON_LEFT, true)
+					check(game.selected_ids() == [survivor_id], "native_shift_click_safely_appends_survivor_after_snapshot_deletion")
+					game.use_control_group(7, false, true)
+					check(game.control_groups[7].size() == 1 and game.control_groups[7][0].entity_id == survivor_id,
+						"survivor_safely_appends_to_retired_knight_group")
+					var move_to: Vector3 = survivor.global_position + Vector3(0, 0, 8)
+					await _retirement_click(game.camera.unproject_position(move_to), MOUSE_BUTTON_RIGHT)
+					game.hud.refresh()
+					check(game.selected_ids() == [survivor_id], "native_right_click_and_hud_remain_safe_after_deletion")
+				phase = stage
 			"network_load_setup":
 				phase = stage
 				_load_setup_msec = Time.get_ticks_msec()
@@ -428,6 +470,52 @@ func client_steps() -> void:
 				phase = stage
 		status(true)
 	check(false, "scenario_deadline")
+
+func host_selection_retirement() -> void:
+	# Use the authored central lane so the camera ray cannot hit a headquarters
+	# in front of the newly replicated cavalry during the native click fixture.
+	var at := NavigationServer3D.map_get_closest_point(game.get_world_3d().navigation_map, Vector3(-8, 0, 6))
+	check(at.is_finite(), "legal_remote_knight_retirement_spawn")
+	if not at.is_finite():
+		return
+	var knight: BattleUnit = game.spawn_unit("knight", 1, at)
+	knight.hold()
+	var destination := NavigationServer3D.map_get_closest_point(game.get_world_3d().navigation_map, at.move_toward(Vector3.ZERO, 4.0))
+	_published.retirement = {"unit": knight.entity_id, "survivor": int(_published.actors["1"]), "destination": data(destination)}
+	publish("retirement_select")
+	check(await until(func(): return all_phase("retirement_select"), 15.0), "client_selects_groups_and_commands_real_knight")
+	check(await until(func(): return knight.global_position.distance_to(at) > 0.7, 8.0), "selected_remote_knight_move_reaches_authority")
+	var supply_before: int = game.get_player(1).military_supply
+	var id: int = knight.entity_id
+	knight.receive_damage(knight.max_hp)
+	check(not knight.alive and not game.entities_by_id.has(id), "host_uses_native_death_to_retire_knight")
+	check(game.get_player(1).military_supply == supply_before - 2, "retirement_death_releases_knight_population_once")
+	publish("retirement_removed")
+	check(await until(func(): return all_phase("retirement_removed"), 15.0), "client_survives_deletion_shift_append_group_and_right_click")
+	var survivor: BattleUnit = game.entities_by_id[int(_published.actors["1"])]
+	check(await until(func(): return survivor.order == BattleUnit.Order.MOVE, 5.0), "post_retirement_native_right_click_reaches_authority")
+
+func _selection_retirement_snapshot(_tick: int) -> void:
+	if owner != 1 or not _retirement_armed or _retirement_observed or game.entities_by_id.has(_retirement_id):
+		return
+	_retirement_observed = true
+	# Observe this callback before a later input/HUD prune can conceal a stale
+	# reference left by MatchReplication._remove_replica().
+	check(game.selection.is_empty(), "same_snapshot_removes_retired_knight_from_selection")
+	check(game.control_groups.get(7, []).is_empty(), "same_snapshot_removes_retired_knight_from_all_control_groups")
+	check(game._last_click_entity == null, "same_snapshot_clears_retired_double_click_reference")
+	game.hud.refresh()
+
+func _retirement_click(at: Vector2, button: MouseButton = MOUSE_BUTTON_LEFT, shift: bool = false) -> void:
+	for pressed: bool in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = button
+		event.position = at
+		event.global_position = at
+		event.pressed = pressed
+		event.shift_pressed = shift
+		root.push_input(event, true)
+	await process_frame
 
 func drop_transport() -> void:
 	if relay._peer != null:

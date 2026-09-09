@@ -444,7 +444,7 @@ func _maintenance(now: int) -> void:
 		if now - int(state.at) > (8000 if state.hello else 5000):
 			var peer: ENetPacketPeer = state.peer
 			_drop_connection(peer, now)
-			peer.peer_disconnect_now()
+			peer.peer_disconnect()
 	for token: String in sessions.keys():
 		# Expiring a host removes the whole room, including later entries in this copy.
 		if not sessions.has(token): continue

@@ -360,6 +360,7 @@ func _remove_replica(id: int) -> void:
 		return
 	# Leaving visibility is not dying. No resource refund, score, rubble, death
 	# sound or authoritative on_entity_died callback is permitted here.
+	game.forget_entity_selection(entity)
 	entity.alive = false
 	entity.set_selected(false)
 	entity.hide()

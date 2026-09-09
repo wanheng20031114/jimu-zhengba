@@ -10,7 +10,9 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/AshenCrown-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
-当前版本 **0.7.2**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.2.md)。
+当前版本 **0.7.3**，变化与实际 EXE 验收见 [交付记录](docs/release-0.7.3.md)。
+
+异常后可运行发布包内 `COLLECT_DIAGNOSTICS.cmd`，在“文档/AshenCrown-Diagnostics”生成本地诊断ZIP；不会自动上传或修改设置。已复现问题、修复与诊断范围见 [稳定性调查](docs/crash-investigation-0.7.3.md)。
 
 ## 对局
 
@@ -19,7 +21,8 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 - 大本营只训练农民：50 金币、10 秒，存活与排队合计上限10。兵营训练剑士6秒、弓手8秒、骑士10秒；军工厂训练投石车与加农炮各20秒。军事人口上限60，骑士占2、攻城器占3，其余军队占1，训练中预留的人口计入上限。
 - 每座生产建筑最多排队10项，学院最多6项。训练与研究在生产栏上方逐格显示进度，点击任意格子取消并全额退款，多选建筑超过10项可以翻页。训练完成但出口堵塞时等待出场；建筑被摧毁丢失队列且不退款。
 - 农民建造、Shift 排队、施工接手；学院可预排全军攻防 I/II/III，总加成为 +1/+2/+4。跨学院不重复研究，取消前置时同时取消并退款依赖它的后续科技。
-- 近战/远程护甲与类别附伤统一计算。骑士80金币，近甲2/远甲4，基础攻击19、对弓手+11，无科技两次击杀弓手；弓手基础攻击12、无类别附伤，对骑士每箭8点、需15箭，对剑士每箭8点、需13箭。骑士对剑士仍需6次、剑士对骑士5次。剑克骑、骑切弓；弓箭利用射程，投石克密集阵列，炮克建筑与攻城器。
+- 近战/远程护甲与类别附伤统一计算。剑士45金币，近甲2/远甲1；骑士80金币，近甲2/远甲4，基础攻击19、对弓手+11，无科技两次击杀弓手；弓手基础攻击12、无类别附伤，对骑士每箭8点、需15箭，对剑士每箭11点、需10箭。骑士对剑士仍需6次、剑士对骑士5次。剑克骑、骑切弓；弓箭利用射程，投石克密集阵列，炮克建筑与攻城器。
+- 投石车射程14、最小射程3、基础攻击26，对步兵/骑兵/建筑/攻城器分别附伤18/22/80/50；无科技中心命中剑士43、弓手26、骑士44、投石车72、加农炮70，对建筑96。180金币、200生命、3秒攻击间隔与20秒训练不变。炮保留18射程，对建筑220、投石车126的单体伤害优势。
 - 摧毁敌队全部军事建筑及工地获胜。失去大本营仍可重建；全队完工核心生产建筑全失后，军事建筑永久暴露。
 - Bot 遵守相同金币、人口、建造、生产、科技与视野；没有免费刷兵或拆楼奖励。
 
@@ -59,16 +62,22 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 以本轮测试为准，旧0.5战役测试保留作历史参考，不适用于已移除的四楼战役规则。
 
 ```text
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/balance_matrix_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/balance_combat_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/skirmish_match_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/fog_state_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/timed_production_research_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/hud_production_queue_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/contextual_hotkeys_test.gd
-Godot_console.exe --headless --path . --audio-driver Dummy --script tests/battle_settings_integration_test.gd
+New-Item -ItemType Directory -Path .local -Force
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/balance-matrix.engine.log --script tests/balance_matrix_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/balance-combat.engine.log --script tests/balance_combat_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/skirmish-match.engine.log --script tests/skirmish_match_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/fog-state.engine.log --script tests/fog_state_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/production-research.engine.log --script tests/timed_production_research_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/hud-queue.engine.log --script tests/hud_production_queue_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/context-hotkeys.engine.log --script tests/contextual_hotkeys_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/battle-settings.engine.log --script tests/battle_settings_integration_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/replica-selection.engine.log --script tests/replica_selection_lifecycle_test.gd
+Godot_console.exe --headless --path . --audio-driver Dummy --log-file .local/catapult-impact.engine.log --script tests/catapult_impact_test.gd
 python tests/network_runner.py local
 python tests/network_game_live_runner.py local
+python tests/relay_timeout_lifecycle_runner.py
+python tests/crash_stability_runner.py
+python tests/diagnostic_logging_test.py builds/windows/AshenCrown.exe
 powershell -ExecutionPolicy Bypass -File tools/profile_skirmish.ps1
 ```
 

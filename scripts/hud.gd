@@ -294,7 +294,7 @@ func _on_recruit(index: int) -> void:
 		"recruit": game.recruit(action.id)
 		"demolish": game.demolish_selected_towers()
 		"research": game.research_selected(action.id)
-		"cancel_site": game.submit_local({"kind": action.kind, "target": game.selected_production().entity_id})
+		"cancel_site": game.submit_local({"kind": action.kind, "target": action.target})
 
 func _refresh_actions() -> void:
 	_actions.clear()
@@ -310,7 +310,7 @@ func _refresh_actions() -> void:
 			_actions.append({"kind": "build", "id": kind, "portrait": kind, "name": definition.name, "cost": definition.cost, "hint": "%d 秒施工" % definition.build_seconds})
 	elif building != null:
 		if not building.is_constructed:
-			_actions.append({"kind": "cancel_site", "id": "", "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还未完成部分的费用"})
+			_actions.append({"kind": "cancel_site", "id": "", "target": building.entity_id, "portrait": building.building_type, "name": "取消施工", "cost": 0, "hint": "返还未完成部分的费用"})
 		elif building.building_type == "defense_tower":
 			_actions.append({"kind": "demolish", "id": "", "portrait": "defense_tower", "name": "拆除防御塔", "cost": 0, "hint": game.settings.hotkey_text("rts_destroy") + " · 不返还金币"})
 		elif building.building_type == "academy":

@@ -26,7 +26,7 @@ def main() -> int:
     stdout_path = prefix.parent / (prefix.name + ".stdout.log")
     stderr_path = prefix.parent / (prefix.name + ".stderr.log")
     report_path = prefix.parent / (prefix.name + ".json")
-    command = [str(executable), "--audio-driver", "Dummy"]
+    command = [str(executable), "--audio-driver", "Dummy", "--log-file", str(prefix.parent / (prefix.name + ".engine.log"))]
     if args.project:
         command += ["--path", str(args.project.resolve(strict=True))]
     if args.headless:

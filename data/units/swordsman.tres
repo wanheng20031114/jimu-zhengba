@@ -6,11 +6,11 @@
 script = ExtResource("1_definition")
 id = &"swordsman"
 name = "剑士"
-description = "持盾承受箭雨，近战克制骑兵。"
+description = "持盾近战步兵，克制骑兵，需要防范远程火力。"
 hp = 100
 damage = 20
 melee_armor = 2
-ranged_armor = 4
+ranged_armor = 1
 damage_channel = 0
 combat_class = &"infantry"
 bonuses = {&"cavalry": 6}

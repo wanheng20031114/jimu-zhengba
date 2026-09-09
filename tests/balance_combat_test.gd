@@ -135,8 +135,8 @@ func _stone_blast() -> void:
 	await physics_frame
 	await _wait(1.6)
 	_check(center.hp == 100, "stone fixed impact point can be dodged")
-	_check(core.hp == 40, "stone core applies the archer class damage")
-	_check(edge.hp > 40 and edge.hp < 50, "stone outer annulus attenuates damage")
+	_check(core.hp == 34, "stone core applies twenty-six damage to an archer")
+	_check(edge.hp > 34 and edge.hp < 47, "stone outer annulus attenuates damage")
 	_check(outside.hp == 60 and ally.hp == 60, "stone leaves out-of-radius and allied units unharmed")
 	_check(impact_point == Vector3(0, 1, -9), "stone initial landing point is fixed to commanded ground")
 	await _clear()

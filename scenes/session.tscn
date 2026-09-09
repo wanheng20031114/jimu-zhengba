@@ -12,3 +12,10 @@ script = ExtResource("session")
 script = ExtResource("relay")
 
 [node name="Settings" parent="." instance=ExtResource("settings")]
+
+[node name="DiagnosticHeartbeat" type="Timer" parent="."]
+wait_time = 15.0
+autostart = true
+ignore_time_scale = true
+
+[connection signal="timeout" from="DiagnosticHeartbeat" to="." method="_record_health"]

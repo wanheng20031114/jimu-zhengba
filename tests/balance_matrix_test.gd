@@ -4,18 +4,18 @@ extends SceneTree
 const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult", &"cannon", &"farmer"]
 const EXPECTED_DAMAGE: Array = [
 	[18, 20, 24, 20, 20, 20],
-	[8, 12, 8, 8, 6, 12],
+	[11, 12, 8, 8, 6, 12],
 	[17, 30, 17, 19, 19, 19],
-	[34, 20, 38, 16, 14, 20],
-	[26, 30, 26, 126, 124, 30],
+	[43, 26, 44, 72, 70, 26],
+	[29, 30, 26, 126, 124, 30],
 	[6, 8, 6, 8, 8, 8],
 ]
 const EXPECTED_HITS: Array = [
-	[6, 3, 5, 10, 13, 4], [13, 5, 15, 25, 44, 7],
-	[6, 2, 8, 11, 14, 4], [3, 3, 4, 13, 19, 4],
+	[6, 3, 5, 10, 13, 4], [10, 5, 15, 25, 44, 7],
+	[6, 2, 8, 11, 14, 4], [3, 3, 3, 3, 4, 3],
 	[4, 2, 5, 2, 3, 3], [17, 8, 20, 25, 33, 10],
 ]
-const BUILDING_DAMAGE: Array[int] = [10, 2, 9, 60, 220, 1]
+const BUILDING_DAMAGE: Array[int] = [10, 2, 9, 96, 220, 1]
 const BONUS: Array[int] = [0, 1, 2, 4]
 var checks: int = 0
 var failures: Array[String] = []
@@ -89,7 +89,9 @@ func _test_siege() -> void:
 	_check(is_equal_approx(DamageResolver.stone_falloff(2.1), 0.75), "stone annulus midpoint")
 	_check(DamageResolver.stone_falloff(3) == 0.5, "stone half-strength outer edge")
 	var stone: DamagePayload = DamageResolver.snapshot(BalanceCatalog.unit(&"catapult"), 0, 0, 0)
-	_check(DamageResolver.resolve(stone, BalanceCatalog.unit(&"swordsman"), 0, 0.5) == 15, "stone attenuation precedes armor")
+	_check(DamageResolver.resolve(stone, BalanceCatalog.unit(&"swordsman"), 0, 0.5) == 21, "stone attenuation precedes armor")
+	var catapult := BalanceCatalog.unit(&"catapult")
+	_check(catapult.range == 14 and catapult.damage == 26 and catapult.cost == 180 and catapult.hp == 200 and catapult.cooldown == 3, "catapult trades reach for higher damage without changing cost, health or cadence")
 	_check(BalanceCatalog.unit(&"catapult").min_range == 3 and BalanceCatalog.unit(&"cannon").min_range == 2.5, "siege minimum ranges")
 	_check(is_equal_approx(BalanceCatalog.unit(&"cannon").cooldown, 3.2), "cannon uses approved 3.2-second cycle")
 

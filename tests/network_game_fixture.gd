@@ -66,6 +66,11 @@ func spawn_building(kind: String, owner: int, at: Vector3, construction: bool = 
 func on_entity_died(_entity: Node3D) -> void:
 	deaths += 1
 
+func forget_entity_selection(_entity: Node3D) -> void:
+	# This transport fixture has no selection/HUD. The real-game lifecycle
+	# regression covers synchronous selection, control-group and click cleanup.
+	pass
+
 func spawn_effect(_at: Vector3, _kind: String, _color: Color = Color.WHITE) -> void:
 	effects += 1
 

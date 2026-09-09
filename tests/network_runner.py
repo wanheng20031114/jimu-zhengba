@@ -43,7 +43,7 @@ def main() -> int:
         shutil.copy2(ROOT / "server/relay_project.godot", stage / "project.godot")
     out_path = local / (args.suite + ".stdout.log")
     err_path = local / (args.suite + ".stderr.log")
-    command = [str(engine), "--headless", "--path", str(stage), "--script", "res://tests/" + script]
+    command = [str(engine), "--headless", "--log-file", str(local / (args.suite + ".engine.log")), "--path", str(stage), "--script", "res://tests/" + script]
     with out_path.open("wb") as out, err_path.open("wb") as err:
         process = subprocess.Popen(command, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
         try:

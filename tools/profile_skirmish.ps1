@@ -23,7 +23,8 @@ foreach ($profileMode in $profileModes) {
     $profileStem = 'skirmish_stress_' + $profileMode + $profileSuffix
     $profileOutput = Join-Path $profileArtifactDirectory ($profileStem + '.log')
     $profileErrors = Join-Path $profileArtifactDirectory ($profileStem + '_error.log')
-    $profileArguments = @('--path', ('"' + $profileProject + '"'), '--script', 'res://tests/skirmish_stress_test.gd')
+    $profileEngineLog = Join-Path $profileArtifactDirectory ($profileStem + '_engine.log')
+    $profileArguments = @('--path', ('"' + $profileProject + '"'), '--log-file', ('"' + $profileEngineLog + '"'), '--script', 'res://tests/skirmish_stress_test.gd')
     if ($HarnessCheck) {
         $profileArguments += '--headless'
     } else {

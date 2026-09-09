@@ -24,6 +24,10 @@ func _refs() -> Array[WeakRef]:
 
 func _run() -> void:
 	create_timer(20.0).timeout.connect(func(): push_error("SHUTDOWN_LIFECYCLE deadline"); quit(3))
+	# Keep the actual driver and mixer running without sending test sounds to
+	# the speakers. This affects only this process and never saves preferences.
+	AudioServer.set_bus_mute(0, true)
+	print("LIFECYCLE_AUDIO_DRIVER ", AudioServer.get_driver_name())
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
 	change_scene_to_file("res://scenes/main.tscn")
@@ -67,6 +71,9 @@ func _run() -> void:
 	report.store_string(JSON.stringify({"checks": checks, "failures": failures}, "  "))
 	report.close()
 	print("SHUTDOWN_LIFECYCLE ", checks, " checks; ", failures.size(), " failures")
+	if not failures.is_empty():
+		quit(1)
+		return
 	paused = true
 	print("CLOSE_REQUEST_FROM_PAUSE")
 	game.notification(Node.NOTIFICATION_WM_CLOSE_REQUEST)

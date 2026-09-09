@@ -19,7 +19,7 @@ def main() -> int:
     executable = args.executable.resolve(strict=True)
     directory = ROOT / ".local/network" / ("release-" + uuid.uuid4().hex[:8])
     directory.mkdir(parents=True)
-    command = [str(executable), "--headless"]
+    command = [str(executable), "--headless", "--log-file", str(directory / "engine.log")]
     if args.source:
         command.extend(("--path", str(ROOT)))
     command.extend(("--", "--network-smoke"))
