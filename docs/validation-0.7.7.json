@@ -1,0 +1,1044 @@
+{
+  "build": "0.7.7",
+  "protocol": 4,
+  "packaged_and_delivered_before_tests": true,
+  "catapult": {
+    "base_damage": 35,
+    "bonuses": {
+      "infantry": 45,
+      "archer": 15,
+      "building": 50
+    },
+    "core_damage": {
+      "swordsman": 79,
+      "archer": 50,
+      "knight": 31,
+      "catapult": 31,
+      "cannon": 29,
+      "building": 75
+    }
+  },
+  "native_tests": {
+    "version": "0.7.7",
+    "completed_at_utc": "2026-09-09T20:37:52.711730+00:00",
+    "tests": [
+      {
+        "name": "balance_matrix",
+        "checks": 1022,
+        "failures": [],
+        "exit_code": 0,
+        "timed_out": false,
+        "stderr_bytes": 0,
+        "stderr": "",
+        "engine_errors": [],
+        "elapsed_seconds": 0.656,
+        "pid": 43492,
+        "process_exited": true,
+        "passed": true,
+        "samples": []
+      },
+      {
+        "name": "balance_combat",
+        "checks": 52,
+        "failures": [],
+        "exit_code": 0,
+        "timed_out": false,
+        "stderr_bytes": 0,
+        "stderr": "",
+        "engine_errors": [],
+        "elapsed_seconds": 20.64,
+        "pid": 44092,
+        "process_exited": true,
+        "passed": true,
+        "samples": []
+      },
+      {
+        "name": "catapult_impact",
+        "checks": 248,
+        "failures": [],
+        "exit_code": 0,
+        "timed_out": false,
+        "stderr_bytes": 0,
+        "stderr": "",
+        "engine_errors": [],
+        "elapsed_seconds": 43.562,
+        "pid": 44588,
+        "process_exited": true,
+        "passed": true,
+        "samples": [
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "factory",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "academy",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": true,
+            "target": "factory",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": true,
+            "target": "academy",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 0,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 2
+          },
+          {
+            "actual": 16.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 2
+          },
+          {
+            "actual": 14.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 2
+          },
+          {
+            "actual": 37.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 2
+          },
+          {
+            "actual": 20.0,
+            "legacy": true,
+            "owner": 0,
+            "site": false,
+            "target": "archer",
+            "target_owner": 2
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "factory",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "academy",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": true,
+            "target": "factory",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": true,
+            "target": "academy",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 1,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 3
+          },
+          {
+            "actual": 16.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 3
+          },
+          {
+            "actual": 14.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 3
+          },
+          {
+            "actual": 37.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 3
+          },
+          {
+            "actual": 20.0,
+            "legacy": true,
+            "owner": 1,
+            "site": false,
+            "target": "archer",
+            "target_owner": 3
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "factory",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "academy",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": true,
+            "target": "factory",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": true,
+            "target": "academy",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 2,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 0
+          },
+          {
+            "actual": 16.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 0
+          },
+          {
+            "actual": 14.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 0
+          },
+          {
+            "actual": 37.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 0
+          },
+          {
+            "actual": 20.0,
+            "legacy": true,
+            "owner": 2,
+            "site": false,
+            "target": "archer",
+            "target_owner": 0
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "factory",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "academy",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": true,
+            "target": "factory",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": true,
+            "target": "academy",
+            "target_owner": 1
+          },
+          {
+            "actual": 60.0,
+            "legacy": true,
+            "owner": 3,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 1
+          },
+          {
+            "actual": 16.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 1
+          },
+          {
+            "actual": 14.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 1
+          },
+          {
+            "actual": 37.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 1
+          },
+          {
+            "actual": 20.0,
+            "legacy": true,
+            "owner": 3,
+            "site": false,
+            "target": "archer",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "factory",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "academy",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": true,
+            "target": "factory",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": true,
+            "target": "academy",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 0,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 2
+          },
+          {
+            "actual": 31.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 2
+          },
+          {
+            "actual": 29.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 2
+          },
+          {
+            "actual": 79.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 2
+          },
+          {
+            "actual": 50.0,
+            "legacy": false,
+            "owner": 0,
+            "site": false,
+            "target": "archer",
+            "target_owner": 2
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "factory",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "academy",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": true,
+            "target": "factory",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": true,
+            "target": "academy",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 1,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 3
+          },
+          {
+            "actual": 31.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 3
+          },
+          {
+            "actual": 29.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 3
+          },
+          {
+            "actual": 79.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 3
+          },
+          {
+            "actual": 50.0,
+            "legacy": false,
+            "owner": 1,
+            "site": false,
+            "target": "archer",
+            "target_owner": 3
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "factory",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "academy",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": true,
+            "target": "factory",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": true,
+            "target": "academy",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 2,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 0
+          },
+          {
+            "actual": 31.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 0
+          },
+          {
+            "actual": 29.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 0
+          },
+          {
+            "actual": 79.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 0
+          },
+          {
+            "actual": 50.0,
+            "legacy": false,
+            "owner": 2,
+            "site": false,
+            "target": "archer",
+            "target_owner": 0
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "headquarters",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "barracks",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "factory",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "academy",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "defense_tower",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": true,
+            "target": "headquarters",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": true,
+            "target": "barracks",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": true,
+            "target": "factory",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": true,
+            "target": "academy",
+            "target_owner": 1
+          },
+          {
+            "actual": 75.0,
+            "legacy": false,
+            "owner": 3,
+            "site": true,
+            "target": "defense_tower",
+            "target_owner": 1
+          },
+          {
+            "actual": 31.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "catapult",
+            "target_owner": 1
+          },
+          {
+            "actual": 29.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "cannon",
+            "target_owner": 1
+          },
+          {
+            "actual": 79.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "swordsman",
+            "target_owner": 1
+          },
+          {
+            "actual": 50.0,
+            "legacy": false,
+            "owner": 3,
+            "site": false,
+            "target": "archer",
+            "target_owner": 1
+          }
+        ]
+      }
+    ],
+    "checks": 1322,
+    "passed": true,
+    "process_verification": {
+      "remaining_owned_test_processes": [],
+      "godot_processes_at_end": [
+        {
+          "ProcessId": 33896,
+          "Name": "Godot.exe",
+          "CommandLine": "\"C:\\Program Files\\Godot\\Godot.exe\" --path C:/Users/wh/Documents/middle-ages-battle --editor"
+        }
+      ]
+    }
+  },
+  "actual_exe_public_room_probe": {
+    "passed": true,
+    "summary": {
+      "build": "0.7.7",
+      "catalogue_files": 44,
+      "checks": 116,
+      "content_hash": "af8612fb4146615161d9b43c2aa9d460ff524a3761eb884be8eb0071d0e60c2a",
+      "error_codes": [],
+      "exported_template": true,
+      "failures": [],
+      "handshake_msec": 539,
+      "protocol": 4,
+      "resource_value_checks": 57
+    },
+    "resource_value_audit_present": true,
+    "stderr_empty": true,
+    "log_directory": "release-ddb90d45"
+  },
+  "deployment": {
+    "release": "f585b325b1c54812",
+    "version": "0.7.7",
+    "protocol": 4,
+    "services": {
+      "bot-jump-relay.service": {
+        "MainPID": "270544",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "ashen-crown-relay.service": {
+        "MainPID": "281371",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "files_match": {
+      "scripts/network/network_protocol.gd": true,
+      "data/content_manifest.json": true,
+      "server/relay_server.gd": true
+    },
+    "udp_listeners": {
+      "24570": true,
+      "24571": true
+    }
+  },
+  "files": [
+    {
+      "path": "builds/windows/AshenCrown.exe",
+      "bytes": 104588800,
+      "sha256": "5ddaf348fdf9334ce147996e26af0857d8c623664bc520dacd26123562f1163d"
+    },
+    {
+      "path": "builds/windows/AshenCrown.pck",
+      "bytes": 20174248,
+      "sha256": "fefa94c45219275a571dc7ad13f830b7027c10ce5e703dc9506893cc95d6655f"
+    },
+    {
+      "path": "builds/AshenCrown-Windows-x64.zip",
+      "bytes": 51691037,
+      "sha256": "7e23ab3b8e81955a0ed754004fa695b6432ddbe8ed509e601edc07e2d18e90b2"
+    }
+  ]
+}

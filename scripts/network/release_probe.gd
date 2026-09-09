@@ -109,9 +109,13 @@ func validate_resource_values() -> void:
 	check(knight.cost == 80 and knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.damage == 19
 		and knight.bonuses == {&"archer": 11, &"siege": 31}, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")
-	check(catapult.range == 13 and catapult.damage == 35 and catapult.bonuses == {&"building": 50}
+	check(catapult.range == 13 and catapult.damage == 35
+		and catapult.bonuses == {&"infantry": 45, &"archer": 15, &"building": 50}
 		and catapult.cost == 200 and catapult.hp == 160 and catapult.cooldown == 3 and catapult.min_range == 3,
 		"packaged_catapult_reach_damage_and_class_bonuses")
+	var stone := DamageResolver.snapshot(catapult, 0, 0, 0)
+	check(DamageResolver.resolve(stone, swordsman) == 79 and DamageResolver.resolve(stone, archer) == 50,
+		"packaged_catapult_core_leaves_swordsman_twenty_one_and_archer_ten_health")
 	var cannon := BalanceCatalog.unit("cannon")
 	check(cannon.damage == 86 and cannon.bonuses == {&"building": 150}, "packaged_cannon_base_damage_and_building_only_bonus")
 	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)

@@ -32,7 +32,7 @@ func _run() -> void:
 		_freeze(building)
 	_check(game.players.map(func(p): return p.alliance_id) == [0, 0, 1, 1], "real 2v2 has four owners and two alliances")
 	var definition := BalanceCatalog.unit("catapult")
-	_check(definition.damage == 35 and definition.bonuses == {&"building": 50} and definition.range == 13,
+	_check(definition.damage == 35 and definition.bonuses == {&"infantry": 45, &"archer": 15, &"building": 50} and definition.range == 13,
 		"production catapult matches approved damage and range")
 	for legacy: bool in [true, false]:
 		for owner in 4:
@@ -85,7 +85,7 @@ func _fire(source: BattleUnit, target: Node3D, legacy: bool = false) -> BattlePr
 func _target_batch(owner: int, legacy: bool) -> void:
 	var defender: int = (owner + 2) % 4
 	var pending: Array[Dictionary] = []
-	for index in 12:
+	for index in 14:
 		var at := Vector3(-28 + (index % 3) * 28, 0, -30 + (index / 3) * 20)
 		var target: Node3D
 		var kind: String
@@ -95,9 +95,9 @@ func _target_batch(owner: int, legacy: bool) -> void:
 			target = _building(kind, defender, at, index >= 5)
 			expected = 60.0 if legacy else 75.0
 		else:
-			kind = "catapult" if index == 10 else "cannon"
+			kind = ["catapult", "cannon", "swordsman", "archer"][index - 10]
 			target = _unit(kind, defender, at)
-			expected = (16.0 if index == 10 else 14.0) if legacy else (31.0 if index == 10 else 29.0)
+			expected = [16.0, 14.0, 37.0, 20.0][index - 10] if legacy else [31.0, 29.0, 79.0, 50.0][index - 10]
 		var source := _unit("catapult", owner, at + Vector3(-10, 0, 0))
 		pending.append({"source": source, "target": target, "before": target.hp, "expected": expected,
 			"kind": kind, "site": index >= 5 and index < 10})
@@ -135,7 +135,7 @@ func _edge_and_allies() -> void:
 	_check(is_equal_approx(Vector2(point.x, point.z).length(), 3.0), "rotated large building footprint touches blast edge despite distant center")
 	_fire(source, center)
 	await create_timer(2.5, true, true).timeout
-	_check(center.hp == 25, "stone center damages infantry through native impact")
+	_check(center.hp == 10 and center.alive, "stone center leaves an archer at ten health through native impact")
 	_check(is_equal_approx(edge.hp, edge.max_hp - 13.9861111),
 		"outer siege at footprint distance 2.95 takes 13.9861 after falloff and armor (actual %.6f)" % (edge.max_hp - edge.hp))
 	_check(is_equal_approx(building.hp, building.max_hp - 32.5), "rotated factory receives edge splash at footprint instead of center")
@@ -160,7 +160,8 @@ func _source_death() -> void:
 	await _clear_case()
 
 func _native_attack_release() -> void:
-	for kind: String in ["factory", "catapult", "cannon"]:
+	var expected_damage: Dictionary = {"factory": 75.0, "catapult": 31.0, "cannon": 29.0, "swordsman": 79.0, "archer": 50.0}
+	for kind: String in expected_damage:
 		var source := _unit("catapult", 0, Vector3(-12, 0, 0))
 		var target: Node3D = _building(kind, 2, Vector3.ZERO) if kind == "factory" else _unit(kind, 2, Vector3.ZERO)
 		game.get_node("FogOfWar").tick(0.3)
@@ -173,7 +174,7 @@ func _native_attack_release() -> void:
 		var shots: Array = game.effect_container.get_children().filter(func(effect): return effect is BattleProjectile)
 		_check(shots.size() == 1, "authored attack windup creates a real stone against " + kind)
 		await create_timer(2.5, true, true).timeout
-		var expected := 75.0 if kind == "factory" else 31.0 if kind == "catapult" else 29.0
+		var expected: float = expected_damage[kind]
 		_check(is_equal_approx(target.max_hp - target.hp, expected), "native animation-release-flight-impact damages " + kind)
 		await _clear_case()
 

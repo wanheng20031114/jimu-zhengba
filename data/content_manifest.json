@@ -1,5 +1,5 @@
 {
-  "build": "0.7.6",
+  "build": "0.7.7",
   "protocol": 4,
   "files": {
     "data/buildings/academy.tres": "f868bc59ee251b7885d2499e81db0b2135c752b063e841ec3a7d97003e69f45e",
@@ -15,7 +15,7 @@
     "data/maps/twin_valleys_2v2.tres": "501ef02a0d2631ee77764fff317876fa1edea7a81aa06d7834a8dcc954bfdb87",
     "data/units/archer.tres": "6276c9a7679aff24b34b9f7cd32b9e451b96446ec7df6c0b89a8b2bbb461fc37",
     "data/units/cannon.tres": "c77320e5dadd89209aa26ee1c9bdf6a3a80eaf3bf686cb9fb165a7e675650ad3",
-    "data/units/catapult.tres": "e10e9e5c83dd489a536419363a3f47173d0fcd1f1bb547f0c250c90abfd09d60",
+    "data/units/catapult.tres": "001cfae52f25de9f268c2777c6158a436b7a4d20a8987e86ed4a8af560e263d2",
     "data/units/farmer.tres": "d33bcdfa6b7fb71aa253a333eaf80068750b6f61df5a3130bb1386858782dc7b",
     "data/units/knight.tres": "f7606384c5b1bdf520733877d47ff72896b697b8d55f10dd5e3b7ec4c4aaf843",
     "data/units/swordsman.tres": "08e8ef080969d38c8fffc762b6b6778a1d53d0ffcb47b936a678575172557565",

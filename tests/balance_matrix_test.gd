@@ -6,13 +6,13 @@ const EXPECTED_DAMAGE: Array = [
 	[18, 20, 58, 20, 20, 20],
 	[11, 12, 8, 8, 6, 12],
 	[17, 30, 17, 50, 50, 19],
-	[34, 35, 31, 31, 29, 35],
+	[79, 50, 31, 31, 29, 35],
 	[85, 86, 82, 82, 80, 86],
 	[6, 8, 6, 8, 8, 8],
 ]
 const EXPECTED_HITS: Array = [
 	[6, 3, 3, 8, 10, 4], [10, 5, 15, 20, 34, 7],
-	[6, 2, 8, 4, 4, 4], [3, 2, 4, 6, 7, 3],
+	[6, 2, 8, 4, 4, 4], [2, 2, 4, 6, 7, 3],
 	[2, 1, 2, 2, 3, 1], [17, 8, 20, 20, 25, 10],
 ]
 const BUILDING_DAMAGE: Array[int] = [10, 2, 9, 75, 226, 1]
@@ -91,12 +91,23 @@ func _test_siege() -> void:
 	_check(is_equal_approx(DamageResolver.stone_falloff(2.1), 0.75), "stone annulus midpoint")
 	_check(DamageResolver.stone_falloff(3) == 0.5, "stone half-strength outer edge")
 	var stone: DamagePayload = DamageResolver.snapshot(BalanceCatalog.unit(&"catapult"), 0, 0, 0)
-	_check(DamageResolver.resolve(stone, BalanceCatalog.unit(&"swordsman"), 0, 0.5) == 16.5, "stone attenuation precedes armor")
+	_check(DamageResolver.resolve(stone, BalanceCatalog.unit(&"swordsman"), 0, 0.5) == 39, "stone attenuation includes infantry bonus before armor")
+	for kind: StringName in [&"swordsman", &"archer"]:
+		var defender := BalanceCatalog.unit(kind)
+		var raw_damage: float = 80.0 if kind == &"swordsman" else 50.0
+		var base_armor: float = 1.0 if kind == &"swordsman" else 0.0
+		for attack_bonus: int in BONUS:
+			for defense_bonus: int in BONUS:
+				var packet := DamageResolver.snapshot(BalanceCatalog.unit(&"catapult"), attack_bonus, 0, 0)
+				for falloff: float in [0.75, 0.5]:
+					var expected: float = (raw_damage + attack_bonus) * falloff - base_armor - defense_bonus
+					_check(is_equal_approx(DamageResolver.resolve(packet, defender, defense_bonus, falloff), expected),
+						"stone bonus and upgrades attenuate before armor: %s attack %d defense %d falloff %.2f" % [kind, attack_bonus, defense_bonus, falloff])
 	var catapult := BalanceCatalog.unit(&"catapult")
 	var cannon := BalanceCatalog.unit(&"cannon")
 	var tower := BalanceCatalog.building(&"defense_tower")
 	_check(catapult.range == 13 and catapult.damage == 35 and catapult.cost == 200 and catapult.hp == 160 and catapult.cooldown == 3, "catapult has thirteen reach, lower health and two-hundred-gold price")
-	_check(catapult.bonuses == {&"building": 50}, "catapult only gains its fifty-damage building bonus")
+	_check(catapult.bonuses == {&"infantry": 45, &"archer": 15, &"building": 50}, "catapult has infantry, archer and building bonuses only")
 	_check(cannon.range == 14 and cannon.damage == 86 and cannon.cost == 250 and cannon.hp == 200, "cannon has fourteen reach, lower health and two-hundred-fifty-gold price")
 	_check(cannon.bonuses == {&"building": 150}, "cannon only gains its one-hundred-fifty-damage building bonus")
 	var cannon_damage: float = DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
