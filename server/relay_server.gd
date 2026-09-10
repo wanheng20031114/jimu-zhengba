@@ -264,9 +264,12 @@ func _receive_allowed(state: Dictionary, wire_bytes: int, decoded_bytes: int, no
 	var wire_rate: float = HOST_WIRE_RATE if host else CLIENT_WIRE_RATE
 	var decoded_rate: float = HOST_DECODED_RATE if host else CLIENT_DECODED_RATE
 	var bucket: Dictionary = state.receive_bucket
-	if bucket.get("profile", -1) != profile:
+	if bucket.is_empty():
 		bucket = {"profile": profile, "at": now, "packets": packet_rate * RECEIVE_BURST_SECONDS, "wire": wire_rate * RECEIVE_BURST_SECONDS, "decoded": decoded_rate * RECEIVE_BURST_SECONDS}
 		state.receive_bucket = bucket
+	# Lobby/match or membership transitions change the ceiling, not accrued
+	# credit. Repeated room creation must not mint a fresh burst on each change.
+	bucket.profile = profile
 	var elapsed: float = maxi(0, now - int(bucket.at)) / 1000.0
 	bucket.at = now
 	bucket.packets = minf(packet_rate * RECEIVE_BURST_SECONDS, float(bucket.packets) + elapsed * packet_rate) - 1.0
