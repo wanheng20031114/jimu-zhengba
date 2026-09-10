@@ -28,6 +28,10 @@ const MELEE_CONTACT_TOLERANCE: float = 0.2
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
+# Experimental presentation and RVO switches are fixed before this unit enters
+# the tree. Network replicas retain the same authority gate as native models.
+var render_batches: UnitRenderBatches
+@export var prune_stationary_avoidance: bool = false
 @export var owner_id: int = -1
 @export var alliance_id: int = 0
 # Saved 0.5 scenes encode two alliances as team. New matches set owner_id explicitly.
@@ -92,6 +96,7 @@ var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
 var _moving: bool = false
 var _avoidance_moving: bool = false
+var _moving_neighbor_limit: int = 10
 var _observed_velocity := Vector3.ZERO
 var _move_retaliation: Node3D
 var _retaliation_time: float = 0.0
@@ -149,6 +154,8 @@ func _ready() -> void:
 	var relation: int = FactionPalette.relation(owner_id, alliance_id, _game)
 	_model.set_team(relation)
 	model_pivot.add_child(_model)
+	if render_batches != null:
+		_model.bind_render_batches(render_batches)
 	_attack_animation = _model.get_node("Attack")
 	model_pivot.rotation.y = rotation.y
 	rotation.y = 0.0
@@ -157,6 +164,9 @@ func _ready() -> void:
 	navigation_agent.max_speed = 0.0
 	navigation_agent.neighbor_distance = 5.5
 	navigation_agent.avoidance_priority = 1.0
+	_moving_neighbor_limit = navigation_agent.max_neighbors
+	if prune_stationary_avoidance:
+		navigation_agent.max_neighbors = 0
 	var capsule: CapsuleShape3D = $CollisionShape3D.shape
 	capsule.radius = radius * 0.85
 	capsule.height = maxf(radius * 1.7, 1.8)
@@ -322,6 +332,10 @@ func _set_avoidance_moving(moving: bool) -> void:
 	# hold or work. A zero desired velocity alone still permits lateral shoves.
 	navigation_agent.max_speed = speed if moving else 0.0
 	navigation_agent.avoidance_priority = 0.5 if moving else 1.0
+	if prune_stationary_avoidance:
+		# A zero-speed agent cannot choose a different velocity. Keep it in the
+		# native neighbor tree for approaching troops, but omit its own search.
+		navigation_agent.max_neighbors = _moving_neighbor_limit if moving else 0
 
 func _apply_velocity(safe_velocity: Vector3) -> void:
 	if not alive:
@@ -928,5 +942,6 @@ func _die() -> void:
 	fall.chain().tween_callback(queue_free)
 
 func _fade_corpse(amount: float) -> void:
+	_model.set_batch_fade(amount)
 	for mesh: GeometryInstance3D in _corpse_meshes:
 		mesh.transparency = amount

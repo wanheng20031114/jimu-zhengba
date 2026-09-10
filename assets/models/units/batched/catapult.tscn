@@ -1,0 +1,195 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="1_script"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/Body.res" id="2_Body"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelLeftFront.res" id="3_WheelLeftFront"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelRightFront.res" id="4_WheelRightFront"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelLeftRear.res" id="5_WheelLeftRear"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/WheelRightRear.res" id="6_WheelRightRear"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/ThrowArm.res" id="7_ThrowArm"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/catapult/Payload.res" id="8_Payload"]
+
+[sub_resource type="Animation" id="Animation_y4xup"]
+resource_name = "idle"
+length = 2.6
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 2.6, 1, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_ywmsp"]
+resource_name = "walk"
+length = 0.72
+loop_mode = 1
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/WheelLeftFrontKick/WheelLeftFront")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.36, 1, 1, 0, 0, 1.6292068e-07, 0.72, 1, 1.509958e-07, 0, 0, 1)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Action/WheelRightFrontKick/WheelRightFront")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.36, 1, 1, 0, 0, 1.6292068e-07, 0.72, 1, 1.509958e-07, 0, 0, 1)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/Action/WheelLeftRearKick/WheelLeftRear")
+tracks/2/interp = 1
+tracks/2/loop_wrap = false
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.36, 1, 1, 0, 0, 1.6292068e-07, 0.72, 1, 1.509958e-07, 0, 0, 1)
+tracks/3/type = "rotation_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/Action/WheelRightRearKick/WheelRightRear")
+tracks/3/interp = 1
+tracks/3/loop_wrap = false
+tracks/3/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.36, 1, 1, 0, 0, 1.6292068e-07, 0.72, 1, 1.509958e-07, 0, 0, 1)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]
+_data = {
+&"idle": SubResource("Animation_y4xup"),
+&"walk": SubResource("Animation_ywmsp")
+}
+
+[sub_resource type="Animation" id="Animation_20lbd"]
+resource_name = "strike"
+length = 1.72
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/ThrowArm")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, 0.049979173, 0, 0, 0.99875027, 0.32, 1, 0.10977831, 0, 0, 0.99395615, 0.44, 1, 0.124674745, 0, 0, 0.99219763, 0.48, 1, -0.71735615, 0, 0, 0.6967067, 0.53, 1, -0.78950375, 0, 0, 0.61374575, 0.61, 1, -0.7032794, 0, 0, 0.71091354, 0.7, 1, -0.7610953, 0, 0, 0.6486401, 0.86, 1, -0.6961352, 0, 0, 0.7179107, 1.08, 1, -0.44394812, 0, 0, 0.8960525, 1.34, 1, -0.09983341, 0, 0, 0.9950042, 1.53, 1, 0.012499675, 0, 0, 0.99992186, 1.72, 1, 0, 0, 0, 1)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Action")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.18, 1, 0, -0.003, 0, 0.32, 1, 0, -0.008, -0.006, 0.44, 1, 0, -0.012, -0.012, 0.48, 1, 0, 0.023, 0.015, 0.53, 1, 0, 0.012, 0.09, 0.61, 1, 0, -0.012, 0.065, 0.7, 1, 0, 0.006, 0.028, 0.86, 1, 0, -0.003, 0.008, 1.08, 1, 0, 0, 0, 1.34, 1, 0, 0, 0, 1.53, 1, 0, 0, 0, 1.72, 1, 0, 0, 0)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/Action/Body")
+tracks/2/interp = 1
+tracks/2/loop_wrap = false
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, -0.0014999995, 0, 0, 0.99999887, 0.32, 1, -0.0039999895, 0, 0, 0.999992, 0.44, 1, -0.005999964, 0, 0, 0.999982, 0.48, 1, 0.008999862, -1.7999746e-05, 0.001999918, 0.9999575, 0.53, 1, 0.015999286, 3.1998625e-05, -0.0019997428, 0.99987, 0.61, 1, -0.0079999, 1.5999824e-05, 0.0019999351, 0.99996597, 0.7, 1, 0.005999961, 5.9999634e-06, -0.0009999821, 0.9999815, 0.86, 1, -0.0024999974, 0, 0, 0.9999969, 1.08, 1, 0, 0, 0, 1, 1.34, 1, 0, 0, 0, 1, 1.53, 1, 0, 0, 0, 1, 1.72, 1, 0, 0, 0, 1)
+tracks/3/type = "rotation_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/Action/WheelLeftFrontKick")
+tracks/3/interp = 1
+tracks/3/loop_wrap = false
+tracks/3/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, 0, 0, 0, 1, 0.32, 1, -0.0039999895, 0, 0, 0.999992, 0.44, 1, -0.0074999295, 0, 0, 0.99997187, 0.48, 1, 0.014999437, 0, 0, 0.9998875, 0.53, 1, 0.084897675, 0, 0, 0.9963897, 0.61, 1, 0.054972276, 0, 0, 0.9984879, 0.7, 1, 0.02599707, 0, 0, 0.99966204, 0.86, 1, 0.007999916, 0, 0, 0.999968, 1.08, 1, 0, 0, 0, 1, 1.34, 1, 0, 0, 0, 1, 1.53, 1, 0, 0, 0, 1, 1.72, 1, 0, 0, 0, 1)
+tracks/4/type = "rotation_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Rig/Action/WheelRightFrontKick")
+tracks/4/interp = 1
+tracks/4/loop_wrap = false
+tracks/4/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, 0, 0, 0, 1, 0.32, 1, -0.0039999895, 0, 0, 0.999992, 0.44, 1, -0.0074999295, 0, 0, 0.99997187, 0.48, 1, 0.014999437, 0, 0, 0.9998875, 0.53, 1, 0.084897675, 0, 0, 0.9963897, 0.61, 1, 0.054972276, 0, 0, 0.9984879, 0.7, 1, 0.02599707, 0, 0, 0.99966204, 0.86, 1, 0.007999916, 0, 0, 0.999968, 1.08, 1, 0, 0, 0, 1, 1.34, 1, 0, 0, 0, 1, 1.53, 1, 0, 0, 0, 1, 1.72, 1, 0, 0, 0, 1)
+tracks/5/type = "rotation_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Rig/Action/WheelLeftRearKick")
+tracks/5/interp = 1
+tracks/5/loop_wrap = false
+tracks/5/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, 0, 0, 0, 1, 0.32, 1, -0.0039999895, 0, 0, 0.999992, 0.44, 1, -0.0074999295, 0, 0, 0.99997187, 0.48, 1, 0.014999437, 0, 0, 0.9998875, 0.53, 1, 0.084897675, 0, 0, 0.9963897, 0.61, 1, 0.054972276, 0, 0, 0.9984879, 0.7, 1, 0.02599707, 0, 0, 0.99966204, 0.86, 1, 0.007999916, 0, 0, 0.999968, 1.08, 1, 0, 0, 0, 1, 1.34, 1, 0, 0, 0, 1, 1.53, 1, 0, 0, 0, 1, 1.72, 1, 0, 0, 0, 1)
+tracks/6/type = "rotation_3d"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Rig/Action/WheelRightRearKick")
+tracks/6/interp = 1
+tracks/6/loop_wrap = false
+tracks/6/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, 0, 0, 0, 1, 0.32, 1, -0.0039999895, 0, 0, 0.999992, 0.44, 1, -0.0074999295, 0, 0, 0.99997187, 0.48, 1, 0.014999437, 0, 0, 0.9998875, 0.53, 1, 0.084897675, 0, 0, 0.9963897, 0.61, 1, 0.054972276, 0, 0, 0.9984879, 0.7, 1, 0.02599707, 0, 0, 0.99966204, 0.86, 1, 0.007999916, 0, 0, 0.999968, 1.08, 1, 0, 0, 0, 1, 1.34, 1, 0, 0, 0, 1, 1.53, 1, 0, 0, 0, 1, 1.72, 1, 0, 0, 0, 1)
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Rig/Action/ThrowArm/Payload:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = false
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.48, 1.61),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]
+_data = {
+&"strike": SubResource("Animation_20lbd")
+}
+
+[node name="Catapult" type="Node3D" unique_id=1966408805]
+script = ExtResource("1_script")
+batch_parts = Dictionary[NodePath, Mesh]({
+NodePath("Rig/Action/Body"): ExtResource("2_Body"),
+NodePath("Rig/Action/WheelLeftFrontKick/WheelLeftFront"): ExtResource("3_WheelLeftFront"),
+NodePath("Rig/Action/WheelRightFrontKick/WheelRightFront"): ExtResource("4_WheelRightFront"),
+NodePath("Rig/Action/WheelLeftRearKick/WheelLeftRear"): ExtResource("5_WheelLeftRear"),
+NodePath("Rig/Action/WheelRightRearKick/WheelRightRear"): ExtResource("6_WheelRightRear"),
+NodePath("Rig/Action/ThrowArm"): ExtResource("7_ThrowArm"),
+NodePath("Rig/Action/ThrowArm/Payload"): ExtResource("8_Payload")
+})
+kind = "catapult"
+projectile_socket = NodePath("Rig/Action/ThrowArm/ProjectileSocket")
+
+[node name="Rig" type="Node3D" parent="." unique_id=295995706]
+
+[node name="Action" type="Node3D" parent="Rig" unique_id=1953932]
+
+[node name="Body" type="Node3D" parent="Rig/Action" unique_id=1145051027]
+
+[node name="WheelLeftFrontKick" type="Node3D" parent="Rig/Action" unique_id=1262423542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.97, 0.47, -0.67)
+
+[node name="WheelLeftFront" type="Node3D" parent="Rig/Action/WheelLeftFrontKick" unique_id=445796160]
+
+[node name="WheelRightFrontKick" type="Node3D" parent="Rig/Action" unique_id=104830260]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.97, 0.47, -0.67)
+
+[node name="WheelRightFront" type="Node3D" parent="Rig/Action/WheelRightFrontKick" unique_id=228924715]
+
+[node name="WheelLeftRearKick" type="Node3D" parent="Rig/Action" unique_id=41478806]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.97, 0.47, 0.87)
+
+[node name="WheelLeftRear" type="Node3D" parent="Rig/Action/WheelLeftRearKick" unique_id=286655782]
+
+[node name="WheelRightRearKick" type="Node3D" parent="Rig/Action" unique_id=1423903098]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.97, 0.47, 0.87)
+
+[node name="WheelRightRear" type="Node3D" parent="Rig/Action/WheelRightRearKick" unique_id=840876145]
+
+[node name="ThrowArm" type="Node3D" parent="Rig/Action" unique_id=1082911116]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, -0.05)
+
+[node name="Payload" type="Node3D" parent="Rig/Action/ThrowArm" unique_id=545283873]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91, 0.89)
+
+[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/ThrowArm" unique_id=1948409096]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91, 0.89)
+
+[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=1057336109]
+callback_mode_process = 0
+libraries/ = SubResource("AnimationLibrary_locomotion")
+autoplay = &"idle"
+
+[node name="Attack" type="AnimationPlayer" parent="." unique_id=2003609769]
+callback_mode_process = 0
+libraries/ = SubResource("AnimationLibrary_attack")
+
+[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]
+aabb = AABB(-4, -2, -4, 8, 9, 8)
+
+[connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier" to="." method="_on_screen_exited"]

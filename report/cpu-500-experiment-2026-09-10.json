@@ -7635,5 +7635,438 @@
     }
   ],
   "privacy": "Only allowlisted measurement facts retained. No endpoint, credentials, invitation, command lines, user process parameters or process identifiers included.",
-  "cleanup_status": "All helpers started for these completed measurements were confirmed exited. Other user processes were preserved."
+  "cleanup_status": "All helpers started for these completed measurements were confirmed exited. Other user processes were preserved.",
+  "post_formal_baseline_candidate_validation": {
+    "title": "正式基线后的候选验证",
+    "date": "2026-09-10",
+    "formal_fix_merge_commit": "4caca55789994574a882e77f8ae8e75a5235e605",
+    "status": "LOD, stationary-RVO and small Vulkan model/replication correctness checks passed. All new production defaults remain off; new 500-unit comparative render tests pending.",
+    "lod_repair": {
+      "commit": "e81cb8643691faf3c468ae9e02464679e794e670",
+      "converter_sha256": "8cde9739b2769759ef30e8d42bf8a4ab34ad888b0e5dfc3cc3b21035c03dbbde",
+      "root_cause": "The initial converter copied surface_get_arrays and omitted the independent lods argument when adding the merged surface. Base geometry checks did not validate LODs.",
+      "source_mesh_parts": 48,
+      "source_parts_with_lods": 42,
+      "initial_merged_meshes_with_lods": 0,
+      "corrected_merged_meshes_with_lods": 6,
+      "method": "ImporterMesh.from_mesh exposes authored LOD indices and thresholds. Merge the union of edges adjusted by each rigid part maximum-axis rest scale and lod_bias. Preserve original per-part indices, winding, vertices, material and bone ownership.",
+      "validated_scope": "Orthographic native LOD budget; sampled animations maintain relative part scale; reject dynamic scale tracks affecting LOD-bearing parts. Perspective per-part AABB distances are not equivalent after merging.",
+      "checks": 19489214,
+      "failures": [],
+      "lod_index_checks": 817416,
+      "sampled_poses": 1088,
+      "vertex_comparisons": 17123472,
+      "max_world_position_error": 1.78260743268766e-05,
+      "max_world_normal_error": 0.000132955101435073,
+      "stderr_bytes": 0,
+      "per_kind": [
+        {
+          "kind": "swordsman",
+          "checks": 2511490,
+          "lod_index_checks": 111120,
+          "lod_levels": 11,
+          "base_triangles": 4268,
+          "triangles_at_error_budget_0_2": 1404,
+          "triangles_at_error_budget_0_3": 516,
+          "mesh_sha256": "79afa0e352330ec12bbe0416872027be9dc9de635ce1107321342c1d137c5b57",
+          "result_sha256": "3a1699f5270b2dee57e021847cccef14a4be9f55875051ca5feb910c8b0057e9"
+        },
+        {
+          "kind": "archer",
+          "checks": 2420030,
+          "lod_index_checks": 129624,
+          "lod_levels": 11,
+          "base_triangles": 3636,
+          "triangles_at_error_budget_0_2": 1600,
+          "triangles_at_error_budget_0_3": 1328,
+          "mesh_sha256": "89d884c9fa3da76475a44743261f6bce66b289a2b336f21cbdcd5b6ce5ba5993",
+          "result_sha256": "8f5bc7bfb59c5b6bdead44ac501076a47bcd8eb0146617810fabc61dc1e3af65"
+        },
+        {
+          "kind": "knight",
+          "checks": 5054867,
+          "lod_index_checks": 370368,
+          "lod_levels": 17,
+          "base_triangles": 7728,
+          "triangles_at_error_budget_0_2": 4260,
+          "triangles_at_error_budget_0_3": 2924,
+          "mesh_sha256": "7c0132bfbc4899fef0b7ba809541e3666196865fc20d6cba7e1e2ed2e2b15787",
+          "result_sha256": "38f2ddee5c0a5335818154432912c4366fa678eb85dca64f2acce1dff13a754e"
+        },
+        {
+          "kind": "catapult",
+          "checks": 4027831,
+          "lod_index_checks": 60120,
+          "lod_levels": 5,
+          "base_triangles": 6892,
+          "triangles_at_error_budget_0_2": 4216,
+          "triangles_at_error_budget_0_3": 2184,
+          "mesh_sha256": "f215143633d1335d0f3a5bf569dbc19523b26a83e3afaf7ef946b34b569c6e7b",
+          "result_sha256": "195cc4b2fc0107b8a08a1c8eaa0163ebd369a1d9310a1cbce0f7fbb76e21a27d"
+        },
+        {
+          "kind": "cannon",
+          "checks": 2895042,
+          "lod_index_checks": 77988,
+          "lod_levels": 6,
+          "base_triangles": 5216,
+          "triangles_at_error_budget_0_2": 3138,
+          "triangles_at_error_budget_0_3": 2740,
+          "mesh_sha256": "0d65bc1eec1ed729441044c711336adf987c0d888285269c9dcb524228c56b45",
+          "result_sha256": "1d1eef307c2ec991da63b75bbd68b85995c24315f8da6dfb49741c78fab3271d"
+        },
+        {
+          "kind": "farmer",
+          "checks": 2579954,
+          "lod_index_checks": 68196,
+          "lod_levels": 6,
+          "base_triangles": 3268,
+          "triangles_at_error_budget_0_2": 1314,
+          "triangles_at_error_budget_0_3": 1066,
+          "mesh_sha256": "10df73d4b3e502115e1151a37d4f18704b589690291afc3a2fa2ebb9009d4be4",
+          "result_sha256": "25120486a01d4bc83b121b7d93790d4fb0c3093ba21b722e798198232b9dc4a4"
+        }
+      ],
+      "triangle_table_scope": "Main meshes only; retained visibility props use their own original LODs. Error budgets are model-space examples, not measured camera-selected or frame-rendered geometry.",
+      "new_rendered_or_performance_run": false,
+      "shadow_mesh": {
+        "original_parts_with_optimized_shadow_mesh": 48,
+        "generated_main_mesh_has_shadow_mesh": false,
+        "native_importer_excludes_boned_input": true,
+        "limitation": "This converter does not build manually skinned shadow resources. Reusing unweighted original shadow meshes would break poses; LOD repair does not restore all original depth/shadow vertex optimizations."
+      },
+      "source_urls": [
+        "https://docs.godotengine.org/en/4.6/classes/class_arraymesh.html",
+        "https://docs.godotengine.org/en/4.6/classes/class_importermesh.html",
+        "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/rendering/renderer_rd/forward_clustered/render_forward_clustered.cpp#L1071",
+        "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/rendering/renderer_geometry_instance.cpp#L67",
+        "https://github.com/godotengine/godot/blob/4.6.3-stable/scene/resources/3d/importer_mesh.cpp#L674"
+      ]
+    },
+    "native_counter_caveat": {
+      "engine": "Godot 4.6.3 Forward+",
+      "finding": "The LOD branch adds selected-index primitive count without multiplying instance_count. The non-LOD branch does multiply it. Reported primitives undercount MultiMesh instances when LOD selection is active.",
+      "source_url": "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/rendering/renderer_rd/forward_clustered/render_forward_clustered.cpp#L1093",
+      "interpretation": "Do not treat a drop in this native counter as equivalent GPU triangle/work reduction. Preserve old values as reported; verify batch instance counts, selected indices and actual rendering timing.",
+      "multimesh_lod_scale": "One GeometryInstance scale is used, not each child instance scale. Normal scale-one poses can match; shrinking corpses and merged batch culling differ."
+    },
+    "stationary_neighbor_prune": {
+      "method": "Retain native RVO membership; set own max_neighbors=0 while stationary and restore original 10 on movement transitions. Moving agents still observe stationary agents.",
+      "fixture_sha256": "85b9aed751206d563411214979871be978e2703c2ca69732db40e03c30cc479f",
+      "runtime_freeze_hash_at_run_available": false,
+      "runs": [
+        {
+          "mode": "native_velocity",
+          "checks": 53,
+          "failures": [],
+          "physics_ticks_per_second": 30,
+          "native_rvo": true,
+          "prune_enabled": false,
+          "moving_samples": 29345,
+          "stationary_samples": 23229,
+          "neighbor_mismatches": 0,
+          "stationary_callback_count": 23229,
+          "stationary_callback_max": 0.0,
+          "stationary_callback_nonfinite": 0,
+          "maximum_hold_displacement": 0,
+          "maximum_stationary_displacement": 0,
+          "case_types": [
+            "24v24",
+            "allied_rear_pressure",
+            "stationary_neighbor_passage",
+            "target_selection_guards"
+          ],
+          "receipt": {
+            "exit_code": 0,
+            "exited": true,
+            "stderr_bytes": 0
+          },
+          "result_sha256": "59169c770f8364885904f9964471ebbe28179a203027f29773e184fed19fe5be",
+          "receipt_sha256": "ac24502989bbf30337b321eb21cebf930bcc7ebb4a2304f6afc5397aa2df9e2b"
+        },
+        {
+          "mode": "pruned_velocity",
+          "checks": 53,
+          "failures": [],
+          "physics_ticks_per_second": 30,
+          "native_rvo": true,
+          "prune_enabled": true,
+          "moving_samples": 29955,
+          "stationary_samples": 22619,
+          "neighbor_mismatches": 0,
+          "stationary_callback_count": 22619,
+          "stationary_callback_max": 0.0,
+          "stationary_callback_nonfinite": 0,
+          "maximum_hold_displacement": 0,
+          "maximum_stationary_displacement": 0,
+          "case_types": [
+            "24v24",
+            "allied_rear_pressure",
+            "stationary_neighbor_passage",
+            "target_selection_guards"
+          ],
+          "receipt": {
+            "exit_code": 0,
+            "exited": true,
+            "stderr_bytes": 0
+          },
+          "result_sha256": "9c8488a21c747189bbdf448da3e2f75c0ddba4fc47d0569ab4569238f15607f8",
+          "receipt_sha256": "f15ddfdf117cdf91d9a574893ab5edf003d5b9dc06255bc06c8c0fd13fc5df22"
+        }
+      ],
+      "interpretation": "Both behavior regressions pass. Different samples/contact outcomes do not establish bitwise or frame-by-frame trajectory equivalence. No performance conclusion is drawn from helper wall time or callback sample counts."
+    },
+    "rigid_part_batches_offline": {
+      "checks": 1596,
+      "errors": [],
+      "pose_comparisons": 984,
+      "socket_comparisons": 120,
+      "max_transform_error": 0.0,
+      "max_socket_error": 0.0,
+      "tolerance": 3e-05,
+      "source_sha256": {
+        "tools/build_rigid_batches.gd": "6fc3a402842e29eb0c6889ac540ab0791a0a259be209a0ff36b1b2645ba417f1",
+        "scripts/unit_render_batches.gd": "44d278fcd523b1b871f7989470431ac74c970ce8ec094f839230ffc49ff2258a",
+        "scripts/unit_visual.gd": "9116bddf74989e1d8e4dfbbab28d670288bd9aeef7aea94d00206c9fdb5c9bfb",
+        "scenes/unit_render_batches.tscn": "b9ec5f8c533cac30e0a3eb3853e97858c23074b0d718ab0dc414eb929adb0b9f",
+        "assets/models/units/batched/unit_batch_surface.gdshader": "fa636afab6f485004d24beebb1c0d56d25d0352212ba9d49060daf3b0bae8ae1",
+        "assets/models/units/batched/swordsman.tscn": "6c504dfc996d12432d3a9152d693eb44f3f311584191e14947f66638ea0c6c95",
+        "assets/models/units/batched/archer.tscn": "e296382d82a6ca2d79b3cf69a660409b8de5b8354803685ec212be25373b5aae",
+        "assets/models/units/batched/knight.tscn": "0a3ea1c5938cbe48a5d4b35cb4679e5e16245bc0f78a4a039e8b203aabe58cab",
+        "assets/models/units/batched/catapult.tscn": "c232cb308372ee875016793ccd048bba60cb581698532d5fcd0abc2f2172a402",
+        "assets/models/units/batched/cannon.tscn": "a0840c7a5672504b663abdfb97193fca90321e46409de3c35bd1f25761ceb076",
+        "assets/models/units/batched/farmer.tscn": "e7d423a58ec8ead2f9f23fb80f766a54301ea8b9314d2625f2ac686966091a66"
+      },
+      "result_sha256": "6f5fb62c7e89ddf9c2cde7f4fca18af8f9550006c044466938bdd1100a821578",
+      "source_models": {
+        "archer": {
+          "path": "res://assets/models/units/archer.tscn",
+          "sha256": "67bb805b12091331ad7035c76de447f9749edb293e9ddd369fcb47e8f7dad321"
+        },
+        "cannon": {
+          "path": "res://assets/models/units/cannon.tscn",
+          "sha256": "60ab9dae3632f3295ffe8e59c713b15c421255989082fb15b5ee15f42685640d"
+        },
+        "catapult": {
+          "path": "res://assets/models/units/catapult.tscn",
+          "sha256": "900ff80fa64eb4ef9c49c474bae3a55306ea691026473bb6d36aed9673a59ea6"
+        },
+        "farmer": {
+          "path": "res://assets/models/units/farmer.tscn",
+          "sha256": "0ff6ae4b699ae6b8c807a5990a6e326aa6fa21018bb1578598c9f9d74b5dedaa"
+        },
+        "knight": {
+          "path": "res://assets/models/units/knight.tscn",
+          "sha256": "ecb5e15b3fe123d16618aac3e6763f442970f5610495b53f6e0686c9b9891e25"
+        },
+        "swordsman": {
+          "path": "res://assets/models/units/swordsman.tscn",
+          "sha256": "b6c2b399a2a01251196cbc7764c5b0aed025c5502da14c0fbb1f9a3aca9718a3"
+        }
+      },
+      "receipt": {
+        "timed_out": false,
+        "exit_code": 0,
+        "exited": true
+      },
+      "limitations": [
+        "Native clip/transform sampling, not a GPU or FPS test.",
+        "Original mesh resources and LODs are referenced unchanged; MultiMesh LOD selection need not match per-instance MeshInstance3D selection.",
+        "Batch-wide AABB is conservative; model notifier gates submissions, while fog visibility is an independent strict gate.",
+        "Corpse opacity uses opaque screen-door coverage rather than per-GeometryInstance3D transparency."
+      ],
+      "excluded_attempt": "Early empty-metadata verification did not exercise the required objects and is invalid; only converter-final-result.json is accepted here.",
+      "vulkan_integration_status_at_record": "Minimal real Vulkan integration passed separately below; complete replication, socket and fade coverage remains in progress."
+    },
+    "process_safety": "Completed conversion and stationary regression helpers were confirmed exited. This report edit starts no engine and does not alter user games, editor, production release or Relay.",
+    "rigid_part_batches_minimal_vulkan": {
+      "after_delete": {
+        "parts": 130,
+        "visible_models": 17
+      },
+      "camera_reentry": {
+        "parts": 141,
+        "visible_models": 18
+      },
+      "checks": 2927,
+      "errors": [],
+      "fog_hidden": {
+        "parts": 94,
+        "visible_models": 12
+      },
+      "fog_revealed": {
+        "parts": 141,
+        "visible_models": 18
+      },
+      "initial": {
+        "parts": 141,
+        "visible_models": 18
+      },
+      "passed": true,
+      "registered_after_delete": 17,
+      "rendering_method": "forward_plus",
+      "runtime": "4.6.3-stable (official)",
+      "scope": "Real Game.spawn_unit, BattleUnit, FogOfWar, UnitRenderBatches; 18 units, not a performance benchmark.",
+      "result_sha256": "bb77050cb7f0f31ef456b603c72c2d93c393747deac6fd2222f654f424879e57",
+      "integration_fixture_sha256": "5f4de813c4bfec48e42addecdd6737696240f675084f63e7d41ea8a41ee39e4f",
+      "independent_managers": 2,
+      "batches_per_manager": 48,
+      "independent_batch_rids_and_writes_checked": true,
+      "camera_exit_visible_models": 0,
+      "camera_exit_submitted_parts": 0,
+      "deleted_slot_zeroed_immediately": true,
+      "visual_screenshot_reviewed": true,
+      "receipt": {
+        "exit_code": 0,
+        "timeout": false,
+        "own_process_exited": true
+      },
+      "stderr_bytes": 0,
+      "pending": [
+        "complete client replication path",
+        "complete projectile socket coverage",
+        "corpse fade coverage",
+        "same-environment 500-unit performance comparison"
+      ]
+    },
+    "rigid_part_batches_extended_vulkan": {
+      "result": {
+        "sha256": "b7224a8079c6da736495aad275c641e4b0383b09db0fd6c26a30261a346cf0cd",
+        "data": {
+          "attack_phase": {
+            "parts": 140,
+            "visible_models": 18
+          },
+          "build": {
+            "parts": 140,
+            "visible_models": 18
+          },
+          "checks": 19956,
+          "corpse_gone": {
+            "parts": 134,
+            "visible_models": 17
+          },
+          "corpse_half": {
+            "parts": 138,
+            "visible_models": 18
+          },
+          "distinct_authority_display_samples": 4,
+          "errors": [],
+          "gather": {
+            "parts": 140,
+            "visible_models": 18
+          },
+          "passed": true,
+          "replica_blended": {
+            "parts": 141,
+            "visible_models": 18
+          },
+          "replica_reentry": {
+            "parts": 138,
+            "visible_models": 18
+          },
+          "replication": {
+            "authority_deaths_on_client": 0,
+            "client_entities": 18,
+            "host_entities": 18,
+            "visibility_removed": 6,
+            "wire": "local JSON snapshots; no ENet server"
+          },
+          "runtime": "4.6.3-stable (official)",
+          "scope": "18 batch models plus 6 originals; actual Game/BattleUnit/Fog/MatchReplication; functional Vulkan only, no performance claim."
+        }
+      },
+      "process": {
+        "sha256": "3a6d985dc9c9e2fe3b05151229232d5161d400cde5242b6256fa5b399ea22cfd",
+        "data": {
+          "pid": 32848,
+          "exit_code": 0,
+          "timeout": false,
+          "elapsed_seconds": 3.9459712505340576,
+          "runtime": "official Godot 4.6.3; experimental source, not formal release",
+          "own_process_exited": true
+        }
+      },
+      "fixture_sha256_after_run": "b17b56637dc0d26bc704a5e6ab2d2261fd2984fcaf46321854b004f550ff749d",
+      "runtime_source_fingerprint_captured_before_run": false,
+      "scope": "18 batch units plus 6 original model references; real Game, BattleUnit, FogOfWar and local JSON MatchReplication. No ENet relay and no 500-unit FPS measurement.",
+      "first_attempt": "Only the fixture assertion requiring a distinct interpolated pose failed. Native getter queried within physics_frame returns authoritative pose. Added process_frame sampling; product code unchanged.",
+      "first_attempt_original_logs_preserved": false,
+      "first_attempt_limitation": "The runner reused its label and overwrote first-attempt originals before preservation. Later observed-output records are not original logs.",
+      "screenshots": [
+        {
+          "path": "cpu-500-batch-models.png",
+          "sha256": "f0931782b720c762aeecf1e0a707fdf11b65b209b1d4382a1d97b273048a9a6b"
+        },
+        {
+          "path": "cpu-500-batch-replicas.png",
+          "sha256": "e6361639ac36f5da0de206758e34329b94408950e409425fb78689784bd8f9c7"
+        }
+      ],
+      "inspection_receipt_after_run": {
+        "recorded_utc": "2026-09-10T12:32:49.581251+00:00",
+        "source_sha256": {
+          "scripts/unit_render_batches.gd": "44d278fcd523b1b871f7989470431ac74c970ce8ec094f839230ffc49ff2258a",
+          "scripts/unit_visual.gd": "9116bddf74989e1d8e4dfbbab28d670288bd9aeef7aea94d00206c9fdb5c9bfb",
+          "scripts/battle_unit.gd": "394c65a6ab99769f84001e6b556c02f2a5ee1df250c5ceeecb3540e2a5f5b46b",
+          "scripts/game.gd": "c181bd46814adeb77e1acbc06d496ba3d7c2011a8a8090869ac144717f0eaf5e",
+          "scripts/network/match_replication.gd": "905529d6c088371cd6867e39d686f34e9233e094c6d41923dca980bb4eee28ba",
+          "scenes/unit_render_batches.tscn": "b9ec5f8c533cac30e0a3eb3853e97858c23074b0d718ab0dc414eb929adb0b9f",
+          "assets/models/units/batched/swordsman.tscn": "6c504dfc996d12432d3a9152d693eb44f3f311584191e14947f66638ea0c6c95",
+          "assets/models/units/batched/archer.tscn": "e296382d82a6ca2d79b3cf69a660409b8de5b8354803685ec212be25373b5aae",
+          "assets/models/units/batched/knight.tscn": "0a3ea1c5938cbe48a5d4b35cb4679e5e16245bc0f78a4a039e8b203aabe58cab",
+          "assets/models/units/batched/catapult.tscn": "c232cb308372ee875016793ccd048bba60cb581698532d5fcd0abc2f2172a402",
+          "assets/models/units/batched/cannon.tscn": "a0840c7a5672504b663abdfb97193fca90321e46409de3c35bd1f25761ceb076",
+          "assets/models/units/batched/farmer.tscn": "e7d423a58ec8ead2f9f23fb80f766a54301ea8b9314d2625f2ac686966091a66"
+        },
+        "checks": 22883,
+        "failures": 0,
+        "runtime": "Godot 4.6.3 official / Vulkan Forward+ / RTX 3080",
+        "max_models_visible": "18 batched plus 6 original controls",
+        "not_performance_benchmark": true,
+        "network_scope": "real MatchReplication using host-built snapshots serialized through JSON in one local process; no public or local ENet relay",
+        "own_pids_exited": [
+          48480,
+          45584,
+          46096,
+          38884,
+          32848
+        ],
+        "background_preserved": [
+          36624,
+          36044
+        ],
+        "final_process_verification": "CIM only user editor36624 and formal game36044; no headless/check-only/batch helper",
+        "harness_correction": "First advanced run sampled get_global_transform_interpolated in physics_frame and expected a distinct render pose. Moved render sampling to process_frame; all four subsequent observations distinct. Production unchanged.",
+        "fingerprint_timing": "Source hashes collected after the successful final run, not before it; this is a post-run inspection receipt, not a pre-run immutable source manifest.",
+        "attempt1_log_limit": "Original first advanced stdout/stderr/result were overwritten before the retention message arrived. attempt1-observed-output reproduces only content returned in tool output and is not an original log.",
+        "attempt2_original_directory": "attempt2-original-files"
+      }
+    },
+    "cleanup": {
+      "helpers_exited": true,
+      "preserved_user_editor_pid": 36624,
+      "preserved_formal_game_pid": 36044,
+      "temporary_deletion": "automatic approval rejected: blocked by policy",
+      "retry_or_bypass": false,
+      "retained": [
+        {
+          "path": ".local/cpu-500-stationary-tests-20260910",
+          "bytes": 145365,
+          "exists": true
+        },
+        {
+          "path": ".local/cpu-500-rigid-batches-20260910",
+          "bytes": 27389,
+          "exists": true
+        },
+        {
+          "path": ".local/cpu-500-batch-tests-20260910",
+          "bytes": 171276,
+          "exists": true
+        }
+      ],
+      "other_experimental_worktree_and_pending_500_benchmark": "retained for ongoing experimental work"
+    }
+  }
 }

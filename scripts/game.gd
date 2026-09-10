@@ -2,6 +2,8 @@ extends Node3D
 ## Authored model variants for the separate CPU experiment. Empty keeps every
 ## original rigid-part scene; no per-frame model switching or runtime baking.
 @export var unit_model_overrides: Dictionary[String, PackedScene] = {}
+@export var unit_batches_enabled: bool = false
+@export var stationary_avoidance_pruning_enabled: bool = false
 
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit.tscn")
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
@@ -720,6 +722,9 @@ func spawn_unit(kind: String, faction: int, at: Vector3, id: int = 0) -> Node3D:
 	var unit: Node3D = UNIT_SCENE.instantiate()
 	unit.unit_type = kind
 	unit.model_scene_override = unit_model_overrides.get(kind)
+	unit.prune_stationary_avoidance = stationary_avoidance_pruning_enabled
+	if unit_batches_enabled:
+		unit.render_batches = $UnitRenderBatches
 	unit.entity_id = id
 	unit.owner_id = faction
 	unit.alliance_id = get_player(faction).alliance_id

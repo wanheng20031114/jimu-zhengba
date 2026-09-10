@@ -7,6 +7,7 @@ extends Node3D
 ## continue to use their Marker3D socket and need neither field.
 @export_node_path("Skeleton3D") var rigid_skin_skeleton: NodePath
 @export var rigid_skin_socket_bone: StringName
+@export var batch_parts: Dictionary[NodePath, Mesh] = {}
 
 @onready var locomotion: AnimationPlayer = $Locomotion
 @onready var attack: AnimationPlayer = $Attack
@@ -25,6 +26,7 @@ var _pause_started_frame: int = -1
 var _dead: bool = false
 var _rigid_skeleton: Skeleton3D
 var _rigid_socket_index: int = -1
+var _batch_renderer: UnitRenderBatches
 
 func _ready() -> void:
 	if not rigid_skin_skeleton.is_empty():
@@ -178,3 +180,17 @@ func set_team(team: int) -> void:
 	var tint := FactionPalette.model_color(team)
 	for mesh: MeshInstance3D in _team_surfaces:
 		mesh.set_instance_shader_parameter("team_color", tint)
+	if _batch_renderer != null:
+		_batch_renderer.set_team(self, team)
+
+func bind_render_batches(renderer: UnitRenderBatches) -> void:
+	assert(not batch_parts.is_empty() and _batch_renderer == null, "Batch models require authored parts and one renderer")
+	_batch_renderer = renderer
+	_batch_renderer.register_model(self, _team)
+	# The connection disappears with the renderer if the entire match exits.
+	# Ordinary model deletion releases every batch slot before its nodes free.
+	tree_exiting.connect(_batch_renderer.unregister_model.bind(self))
+
+func set_batch_fade(amount: float) -> void:
+	if _batch_renderer != null:
+		_batch_renderer.set_fade(self, amount)
