@@ -32,6 +32,7 @@ RUNTIME_DIGESTS = {
     "linux.x86_64": "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4",
     "win64.exe": "731980f9608d61333e5baf54a2ef17210acc7a538446c0cb9969f002aca1e953",
 }
+RELEASE_TEMPLATE_SHA256 = "d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63"
 
 
 def relay_journal_ready(journal: str) -> bool:
@@ -169,28 +170,77 @@ def credentials() -> dict[str, str]:
     return matches[0]
 
 
-def deploy(max_rooms: int = 8, max_humans: int = 8) -> None:
+def load_release_package(folder: Path) -> dict[str, bytes]:
+    """Accept the builder's exact official template and current source receipt."""
+    folder = folder.resolve(strict=True)
+    receipt = json.loads((folder / "build-receipt.json").read_text(encoding="utf-8"))
+    if (receipt.get("schema_version") != 1 or receipt.get("runtime_version") != RUNTIME_VERSION
+            or receipt.get("platform") != "Linux"
+            or receipt.get("template_archive_sha256") != "f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011"):
+        raise ValueError("Release package is not the pinned Linux release runtime")
+    required_sources = {"server/relay_project.godot", "scripts/network/network_protocol.gd",
+                        "server/relay_server.gd", "server/relay_bootstrap.gd", "server/relay_bootstrap.tscn",
+                        "server/relay.tscn", "data/content_manifest.json"}
+    sources = receipt.get("source_sha256", {})
+    if not isinstance(sources, dict) or not required_sources.issubset(sources):
+        raise ValueError("Release package source receipt is incomplete")
+    for name, expected in sources.items():
+        source = (ROOT / name).resolve(strict=True)
+        if not source.is_relative_to(ROOT.resolve()) or not source.is_file():
+            raise ValueError("Release package source path escaped the project")
+        if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
+            raise ValueError("Release package no longer matches the current source")
+    payload = {}
+    files = receipt.get("files", {})
+    if set(files) != {"jimu-relay", "jimu-relay.pck"}:
+        raise ValueError("Release package must contain the named executable and adjacent PCK")
+    for name, record in files.items():
+        path = (folder / name).resolve(strict=True)
+        if path.parent != folder or not path.is_file():
+            raise ValueError("Release package file escaped its directory")
+        data = path.read_bytes()
+        if len(data) != record.get("bytes") or hashlib.sha256(data).hexdigest() != record.get("sha256"):
+            raise ValueError("Release package file checksum mismatch")
+        payload[name] = data
+    if files["jimu-relay"]["sha256"] != RELEASE_TEMPLATE_SHA256 or receipt.get("template_sha256") != RELEASE_TEMPLATE_SHA256:
+        raise ValueError("The release executable was altered after template extraction")
+    return payload
+
+
+def deploy(max_rooms: int = 8, max_humans: int = 8, release_package: Path | None = None) -> None:
     import paramiko
 
     if not 1 <= max_rooms <= 16 or not 1 <= max_humans <= 8:
         raise ValueError("Relay capacity must be 1..16 rooms and 1..8 humans per room")
     certificate()
     config = credentials()
-    executable = runtime()
-    executable_digest = hashlib.sha256(executable.read_bytes()).hexdigest()
-    runtime_path = BASE + "/bin/godot-" + executable_digest[:16]
-    payload = {
-        "project.godot": (ROOT / "server" / "relay_project.godot").read_bytes(),
-        "scripts/network/network_protocol.gd": (ROOT / "scripts/network/network_protocol.gd").read_bytes(),
-        "server/relay_server.gd": (ROOT / "server/relay_server.gd").read_bytes(),
-        "server/relay_main.gd": (ROOT / "server/relay_main.gd").read_bytes(),
-        "server/relay.tscn": (ROOT / "server/relay.tscn").read_bytes(),
-    }
-    manifest = ROOT / "data/content_manifest.json"
-    if manifest.exists():
-        payload["data/content_manifest.json"] = manifest.read_bytes()
+    executable = None
+    runtime_path = ""
+    executable_digest = ""
+    if release_package is not None:
+        payload = load_release_package(release_package)
+    else:
+        executable = runtime()
+        executable_digest = hashlib.sha256(executable.read_bytes()).hexdigest()
+        runtime_path = BASE + "/bin/godot-" + executable_digest[:16]
+        payload = {
+            "project.godot": (ROOT / "server" / "relay_project.godot").read_bytes(),
+            "scripts/network/network_protocol.gd": (ROOT / "scripts/network/network_protocol.gd").read_bytes(),
+            "server/relay_server.gd": (ROOT / "server/relay_server.gd").read_bytes(),
+            "server/relay_main.gd": (ROOT / "server/relay_main.gd").read_bytes(),
+            "server/relay.tscn": (ROOT / "server/relay.tscn").read_bytes(),
+            "server/relay_bootstrap.gd": (ROOT / "server/relay_bootstrap.gd").read_bytes(),
+            "server/relay_bootstrap.tscn": (ROOT / "server/relay_bootstrap.tscn").read_bytes(),
+        }
+        manifest = ROOT / "data/content_manifest.json"
+        if manifest.exists():
+            payload["data/content_manifest.json"] = manifest.read_bytes()
     digest = hashlib.sha256(b"".join(path.encode() + payload[path] for path in sorted(payload))).hexdigest()[:16]
     release = f"{BASE}/releases/{digest}"
+    # Release templates locate the adjacent, equally immutable PCK themselves.
+    # Never put a mutable PCK beside the shared bin/hash editor executable.
+    launch = (release + "/jimu-relay --headless" if release_package is not None else
+              runtime_path + " --headless --path " + BASE + "/current --script res://server/relay_main.gd")
     ssh = paramiko.SSHClient()
     # Only add this explicitly supplied deployment host in memory; no known-host mutation.
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -247,17 +297,33 @@ def deploy(max_rooms: int = 8, max_humans: int = 8) -> None:
 
         run("install -d -m 755 " + shlex.quote(BASE) + " " + shlex.quote(BASE + "/bin") + " " + shlex.quote(BASE + "/config"))
         run("id -u jimuzhengba >/dev/null 2>&1 || useradd --system --home-dir " + shlex.quote(BASE) + " --shell /usr/sbin/nologin jimuzhengba")
-        with ssh.open_sftp() as sftp:
-            present = run("if [ -f " + shlex.quote(runtime_path) + " ]; then sha256sum " + shlex.quote(runtime_path) + "; fi")
-            if not present.startswith(executable_digest):
-                upload(sftp, runtime_path, executable.read_bytes(), 0o755)
-            for path, content in payload.items():
-                upload(sftp, release + "/" + path, content)
-            upload(sftp, BASE + "/config/relay-private.key", KEY.read_bytes(), 0o600)
-            upload(sftp, BASE + "/config/relay.crt", CERT.read_bytes())
-            relay_config = f'[relay]\nbind="*"\nport=24571\nmax_rooms={max_rooms}\nmax_humans={max_humans}\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
-            upload(sftp, BASE + "/config/relay.cfg", relay_config.encode(), 0o600)
-            unit = f"""[Unit]
+        legacy_active = run("systemctl is-active " + LEGACY_SERVICE + " || true") == "active"
+        shared_modified = False
+        try:
+            with ssh.open_sftp() as sftp:
+                if executable is not None:
+                    present = run("if [ -f " + shlex.quote(runtime_path) + " ]; then sha256sum " + shlex.quote(runtime_path) + "; fi")
+                    if not present.startswith(executable_digest):
+                        upload(sftp, runtime_path, executable.read_bytes(), 0o755)
+                for path, content in payload.items():
+                    target = release + "/" + path
+                    expected = hashlib.sha256(content).hexdigest()
+                    present = run("if [ -f " + shlex.quote(target) + " ]; then sha256sum " + shlex.quote(target) + "; fi")
+                    if present and not present.startswith(expected + " "):
+                        raise RuntimeError("An immutable release directory has conflicting content")
+                    if not present:
+                        staged = target + ".uploading"
+                        upload(sftp, staged, content, 0o755 if path == "jimu-relay" else 0o644)
+                        verified = run("sha256sum " + shlex.quote(staged))
+                        if not verified.startswith(expected + " "):
+                            raise RuntimeError("Uploaded relay file checksum mismatch")
+                        run("mv -T -- " + shlex.quote(staged) + " " + shlex.quote(target))
+                shared_modified = True
+                upload(sftp, BASE + "/config/relay-private.key", KEY.read_bytes(), 0o600)
+                upload(sftp, BASE + "/config/relay.crt", CERT.read_bytes())
+                relay_config = f'[relay]\nbind="*"\nport=24571\nmax_rooms={max_rooms}\nmax_humans={max_humans}\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
+                upload(sftp, BASE + "/config/relay.cfg", relay_config.encode(), 0o600)
+                unit = f"""[Unit]
 Description=积木争霸 encrypted match relay
 After=network-online.target
 Wants=network-online.target
@@ -269,7 +335,7 @@ Group=jimuzhengba
 WorkingDirectory={BASE}/current
 Environment=JIMU_RELAY_CONFIG={BASE}/config/relay.cfg
 Environment=HOME={BASE}/state
-ExecStart={runtime_path} --headless --path {BASE}/current --script res://server/relay_main.gd
+ExecStart={launch}
 Restart=on-failure
 RestartSec=3
 TimeoutStopSec=10
@@ -285,11 +351,9 @@ LimitNOFILE=1024
 [Install]
 WantedBy=multi-user.target
 """
-            upload(sftp, BASE + "/config/" + SERVICE, unit.encode())
-        run("install -d -m 750 -o jimuzhengba -g jimuzhengba " + shlex.quote(BASE + "/state"))
-        run("chown -R jimuzhengba:jimuzhengba " + shlex.quote(release) + " " + shlex.quote(BASE + "/config"))
-        legacy_active = run("systemctl is-active " + LEGACY_SERVICE + " || true") == "active"
-        try:
+                upload(sftp, BASE + "/config/" + SERVICE, unit.encode())
+            run("install -d -m 750 -o jimuzhengba -g jimuzhengba " + shlex.quote(BASE + "/state"))
+            run("chown -R jimuzhengba:jimuzhengba " + shlex.quote(release) + " " + shlex.quote(BASE + "/config"))
             run("ln -sfn " + shlex.quote(release) + " " + shlex.quote(BASE + "/current"))
             run("install -m 644 " + shlex.quote(BASE + "/config/" + SERVICE) + " /etc/systemd/system/" + SERVICE)
             run("systemctl daemon-reload")
@@ -313,7 +377,8 @@ WantedBy=multi-user.target
                 raise RuntimeError("The new relay did not report readiness")
             relay_service_identity(run(identity_command), identity)
         except Exception:
-            rollback_failed_start(run, legacy_active, was_enabled, restore_previous if was_active else None)
+            if shared_modified:
+                rollback_failed_start(run, legacy_active, was_enabled, restore_previous if was_active else None)
             raise
         if legacy_active:
             run("systemctl disable " + LEGACY_SERVICE)
@@ -323,7 +388,7 @@ WantedBy=multi-user.target
         # Connection endpoint is local-only; never commit or echo the credential source.
         LOCAL.mkdir(parents=True, exist_ok=True)
         (LOCAL / "endpoint.json").write_text(json.dumps({"server_name": "shanghai", "address": config["ip"], "port": 24571}), encoding="utf-8")
-        print(json.dumps({"server_name": "shanghai", "service": SERVICE, "state": "active", "release": digest, "existing_relay_preserved": True, "max_rooms": max_rooms, "humans_per_room": max_humans, "peer_capacity": max_rooms * max_humans + 16}))
+        print(json.dumps({"server_name": "shanghai", "service": SERVICE, "state": "active", "release": digest, "runtime": "release_template" if release_package is not None else "editor", "existing_relay_preserved": True, "max_rooms": max_rooms, "humans_per_room": max_humans, "peer_capacity": max_rooms * max_humans + 16}))
     finally:
         ssh.close()
 
@@ -335,9 +400,12 @@ def main() -> int:
     action.add_argument("--renew-certificate", action="store_true", help="Reissue the public certificate for a renamed relay using the existing private key")
     action.add_argument("--deploy", action="store_true")
     action.add_argument("--runtimes", action="store_true")
+    parser.add_argument("--release-package", type=Path, help="Verified Linux release bundle from build_relay_release.py (with --deploy)")
     parser.add_argument("--max-rooms", type=int, choices=range(1, 17), default=8, help="Maximum simultaneous relay rooms (default: 8)")
     parser.add_argument("--max-humans", type=int, choices=range(1, 9), default=8, help="Maximum humans in each room, not across the server (default: 8)")
     args = parser.parse_args()
+    if args.release_package is not None and not args.deploy:
+        parser.error("--release-package requires --deploy")
     try:
         if args.certificate or args.renew_certificate:
             certificate(renew_identity=args.renew_certificate)
@@ -347,7 +415,7 @@ def main() -> int:
             runtime("linux.x86_64")
             print("RELAY_RUNTIMES_VERIFIED version=" + RUNTIME_VERSION)
         else:
-            deploy(max_rooms=args.max_rooms, max_humans=args.max_humans)
+            deploy(max_rooms=args.max_rooms, max_humans=args.max_humans, release_package=args.release_package)
         return 0
     except Exception as error:
         # In particular, Paramiko exception strings can contain host addresses.
