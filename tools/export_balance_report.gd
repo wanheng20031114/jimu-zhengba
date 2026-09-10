@@ -82,7 +82,10 @@ func _export() -> void:
 		for id: String in BalanceCatalog.UNITS:
 			var definition: UnitDefinition = load(args[1].path_join(id + ".tres"))
 			baseline_units.append(definition)
-			baseline_unit_data.append(_combat_data(definition))
+			var historical_data := _combat_data(definition)
+			historical_data.merge({"cost": definition.cost, "supply": definition.supply,
+				"sight": definition.sight, "training_seconds": definition.training_seconds})
+			baseline_unit_data.append(historical_data)
 		for attacker: UnitDefinition in baseline_units:
 			for defender: UnitDefinition in baseline_units:
 				var payload: DamagePayload = baseline_resolver.snapshot(attacker, 0, 0, 0)
@@ -96,7 +99,7 @@ func _export() -> void:
 				var upgrade: UpgradeDefinition = load(args[1].path_join("%s_%d.tres" % [track, level]))
 				bonuses.append(upgrade.total_bonus)
 			baseline_upgrade_bonuses[track] = bonuses
-		report["baseline"] = {"build_id": "0.9.0", "units": baseline_unit_data, "matchups": baseline_matchups,
+		report["baseline"] = {"build_id": "0.10.0", "units": baseline_unit_data, "matchups": baseline_matchups,
 			"upgrade_bonuses": baseline_upgrade_bonuses}
 	var file := FileAccess.open(args[0], FileAccess.WRITE)
 	if file == null:

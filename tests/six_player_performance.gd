@@ -70,6 +70,7 @@ func _populate(composition: String) -> void:
 	game.select_entities([])
 	game.control_groups.clear()
 	game.get_node("EffectPool").reset_all()
+	game.get_node("ProjectilePool").reset_all()
 	for unit: Node in game.unit_container.get_children():
 		unit.queue_free()
 	for effect: Node in game.effect_container.get_children():

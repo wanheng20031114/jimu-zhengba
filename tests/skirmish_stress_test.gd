@@ -92,6 +92,7 @@ func _populate(composition: String) -> void:
 	game.select_entities([])
 	game.control_groups.clear()
 	game.get_node("EffectPool").reset_all()
+	game.get_node("ProjectilePool").reset_all()
 	for unit: Node in game.unit_container.get_children():
 		unit.queue_free()
 	for effect: Node in game.effect_container.get_children():
@@ -182,8 +183,10 @@ func _measure(label: String, seconds: float) -> void:
 				"nodes": Performance.get_monitor(Performance.OBJECT_NODE_COUNT),
 				"orphans": Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT),
 				"active_units": get_nodes_in_group("units").size(),
-				"effects": game.effect_container.get_child_count() + game.get_node("EffectPool").active_count(),
-				"projectiles": game.effect_container.get_child_count(),
+				"effects": game.get_node("ProjectilePool").visual_count() + game.get_node("EffectPool").active_count(),
+				"projectiles": game.get_node("ProjectilePool").active_count(),
+				"projectile_visuals": game.get_node("ProjectilePool").visual_count(),
+				"projectile_capacity": game.get_node("ProjectilePool").get_child_count(),
 				"pooled_effects": game.get_node("EffectPool").active_count()})
 	var duration_s: float = (Time.get_ticks_usec() - since) / 1000000.0
 	_check(Engine.max_fps == 0, "phase remained uncapped during measurement")

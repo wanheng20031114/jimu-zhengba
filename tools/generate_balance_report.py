@@ -13,10 +13,11 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-BASELINE_REF = "8e438b1"
+BASELINE_REF = "973338c"
 LEVELS = ("0", "I", "II", "III")
 CLASSES = {"infantry": "剑士", "archer": "弓箭手", "cavalry": "骑兵", "siege": "攻城器", "building": "建筑", "worker": "农民"}
 
@@ -45,7 +46,8 @@ def source_hashes() -> dict[str, str]:
         "data/economy.tres", "scripts/data/economy_definition.gd",
         "scripts/battle_unit.gd", "scripts/resource_vein.gd",
         "scripts/player_state.gd", "scripts/combat/damage_resolver.gd",
-        "scripts/projectile.gd", "tests/catapult_impact_test.gd",
+        "scripts/projectile.gd", "scripts/projectile_flight.gd", "scripts/projectile_pool.gd",
+        "tests/catapult_impact_test.gd",
         "scripts/data/combat_definition.gd", "scripts/data/balance_catalog.gd",
         "tools/export_balance_report.gd", "tools/generate_balance_report.py",
     )]
@@ -152,8 +154,11 @@ def validate(data: dict[str, Any], final: bool) -> dict[str, Any]:
                     for al in range(4):
                         for dl in range(4):
                             check(matchups[a, d, al, dl]["hits"] <= 40, f"军事 {a}→{d} A{al}D{dl} 不超过40击")
-        check(base("swordsman", "swordsman")["hits"] == 17, "剑士镜像由50刀缩短为17刀")
+        check(base("swordsman", "swordsman")["hits"] == 17, "剑士镜像保持17刀")
         check(units["knight"]["supply"] == 1, "骑士占一人口")
+        check(all(units[kind]["sight"] == 14 for kind in ("swordsman", "catapult", "cannon")), "剑士、投石车、加农炮视野统一为14")
+        check(units["archer"]["training_seconds"] == 7 and units["knight"]["training_seconds"] == 8, "弓手七秒、骑士八秒训练")
+        check(units["cannon"]["damage"] == 40 and units["cannon"]["bonuses"] == {"building": 100}, "炮基础攻击40、仅对建筑增加100")
         for row in data["defense_matchups"]:
             if row["attacker"] == "defense_tower" and row["defender"] in ("swordsman", "archer", "knight"):
                 check(6 <= row["hits"] <= 10, f"箭塔攻击 {row['defender']} 防御{row['defense_level']} 为6至10击")
@@ -236,15 +241,15 @@ def render_design(data: dict[str, Any], lookup: dict, names: dict[str, str]) -> 
     pairs = [("swordsman", "knight"), ("knight", "archer"), ("archer", "swordsman"), ("knight", "catapult"), ("cannon", "catapult")]
     parts += [table(["优势方向", "优势方伤害 / 击杀次数 / 秒", "反方向伤害 / 击杀次数 / 秒", "优势来源"], [
         [f"{names[a]} → {names[d]}", cell(lookup[a, d, 0, 0]), cell(lookup[d, a, 0, 0]), reason]
-        for (a, d), reason in zip(pairs, ["对骑兵+14；低价前排反骑", "对弓手+3、6远甲、高机动", "射程10、目标0远甲；需要保持距离", "对攻城器+11，贴近后利用对方最小射程", "对攻城器+12；单体炮战与拆楼"]) ]), "",
+        for (a, d), reason in zip(pairs, ["对骑兵+14；低价前排反骑", "对弓手+3、6远甲、高机动", "射程10、目标0远甲；需要保持距离", "对攻城器+11，贴近后利用对方最小射程", "40基础攻击；单体炮战，对攻城器没有类别附伤"]) ]), "",
         "弓手不是贴身肉搏克制剑士：无科技首次同时命中后，弓手需12秒，剑士只需8.4秒。弓手利用远程先手、齐射与前排掩护形成优势；骑士切入弓手约4.4秒完成击杀，剑士反骑约6秒。这些时长留出操作空间，但多名单位集火仍可能迅速击杀单体。", ""]
     roles = {
-        "swordsman": "45金的反骑前排，适合保护弓手、投石车与炮。基础攻击提高到8、反骑附伤改为14，把普通战斗从最低伤害区拉出来，同时保留明确反骑优势。17刀镜像约19.2秒；不应单靠剑士追逐弓手或拆重甲建筑。",
-        "archer": "60金的远程步兵，12基础攻击、无骑兵附伤；射剑士12点、射骑士6点。3远甲抵抗对方箭雨，但近甲为0，被骑士切入需撤退并依赖剑士保护。它依靠射程先手，不承担正面抗骑职责。",
-        "knight": "80金、1人口、120生命、6远甲；速度与16视野适合侦察绕后。对弓手+3、对攻城器+11，能高效切后排，但剑士反骑伤害高，不应在正面用骑兵硬换廉价剑士。",
-        "catapult": "200金、3人口、140生命；18基础远程攻击，对剑士+6、建筑+50。半径3内无边缘衰减、无友伤；落点发射时锁定，步兵可以散开或走位躲避。单台对普通步兵需要4至5次命中，多个单位同时受击才是其价值。没有近甲，最小射程3，必须保护。",
-        "cannon": "250金、3人口、180生命；26基础远程攻击，对攻城器+12、建筑+150，类别附伤不叠加。炮弹仅伤害锁定单体，爆炸只作视觉效果。对投石车4炮、同款5炮，擅长远程拆楼和炮战；最小射程2.5，不能靠炮群替代前排。",
-        "farmer": "50金、独立农民名额、150生命；5近战攻击，无军事攻防科技。基础伤害提高后，同类互打30次，遇骑士40次；这是逃生和紧急自卫单位，不是反满科技军队的选择。单位恢复科技同样保护农民。",
+        "swordsman": "45金的反骑前排，适合保护弓手、投石车与炮。保留8基础攻击、对骑兵+14，视野由11提高到14。17刀镜像约19.2秒；不应单靠剑士追逐弓手或拆重甲建筑。",
+        "archer": "60金、7秒训练的远程步兵，12基础攻击、无骑兵附伤；射剑士12点、射骑士6点。3远甲抵抗对方箭雨，但近甲为0，被骑士切入需撤退并依赖剑士保护。它依靠射程先手，不承担正面抗骑职责。",
+        "knight": "80金、8秒训练、1人口、120生命、6远甲；速度与16视野适合侦察绕后。对弓手+3、对攻城器+11，能高效切后排，但剑士反骑伤害高，不应在正面用骑兵硬换廉价剑士。",
+        "catapult": "200金、3人口、140生命；18基础远程攻击，对剑士+6、建筑+50，视野由20调整至14。半径3内无边缘衰减、无友伤；落点发射时锁定，步兵可以散开或走位躲避。单台对普通步兵需要4至5次命中，多个单位同时受击才是其价值。没有近甲，最小射程3，必须保护。",
+        "cannon": "250金、3人口、180生命；40基础远程攻击，仅对建筑+100，没有攻城器附伤，视野由21调整至14。炮弹仅伤害锁定单体，爆炸只作视觉效果。对投石车38伤4炮、同款38伤5炮；对10甲建筑130伤，比上一版166伤降低。基础攻击提高使其打普通单位更强，但仍无近甲、有2.5最小射程，需要前排保护。",
+        "farmer": "50金、独立农民名额、150生命；5近战攻击，无军事攻防科技。同类互打30次，遇骑士40次；这是逃生和紧急自卫单位，不是反满科技军队的选择。单位恢复科技同样保护农民。",
     }
     for u in data["units"]:
         parts += [f"### {u['name']}", "", roles[u["id"]], "",
@@ -260,12 +265,12 @@ def render_design(data: dict[str, Any], lookup: dict, names: dict[str, str]) -> 
         table(["攻击者 → 目标", "目标防御等级", "伤害", "命中次数"], [
             [f"{names[r['attacker']]} → {names[r['defender']]}", LEVELS[r["defense_level"]], number(r["damage"]), r["hits"]]
             for r in over if r["attack_level"] == 0]), "",
-        "**重甲建筑是另一类明确保留的例外。** 1000至3000生命、10护甲承担据点防守职责，不能要求一名普通兵40击内拆除全部建筑，否则会削弱专用攻城器。无科技剑士／骑士对建筑仍为1伤、弓手为2伤，单兵拆塔分别1000／1000／500击；这意味着失去攻城器的残局可能很慢。投石对建筑58伤，炮166伤；1000血塔分别18投石／7炮。完整建筑表下文逐项列出，没有把这些异常隐藏在移动单位统计里。", "",
+        "**重甲建筑是另一类明确保留的例外。** 1000至3000生命、10护甲承担据点防守职责，不能要求一名普通兵40击内拆除全部建筑，否则会削弱专用攻城器。无科技剑士／骑士对建筑仍为1伤、弓手为2伤，单兵拆塔分别1000／1000／500击；这意味着失去攻城器的残局可能很慢。投石对建筑58伤，炮130伤；1000血塔分别18投石／8炮。完整建筑表下文逐项列出，没有把这些异常隐藏在移动单位统计里。", "",
         "### 《帝国时代 IV》的参考边界", "",
         "参考其兵种职责与固定类别附伤。官方内容编辑器指南以弓手对轻近战步兵（长矛兵）+5伤害为例，同时区分前摇、后摇、冷却与装填；本作采用现有完整攻击循环，不把动画时间重复加入面板间隔。[官方 Weapons Masterclass](https://support.ageofempires.com/hc/en-us/articles/4418736198292-6-Weapons-Masterclass)", "",
         "官方2022年第三赛季补丁记录了黑暗时代长矛兵由70生命/6攻击改为80生命/7攻击。这是可核对的历史数据，而非声称当前所有文明统一使用这些数值：忽略护甲，80/7约为12击；本作剑士镜像17击，保留稍长交战方向。不同射程、成本、攻击循环和时代升级不能直接跨游戏换算秒数。[官方 Update 24916](https://www.ageofempires.com/news/age_of_empires_iv_update_24916_season3/)", "",
-        "官方2022年第二赛季也讨论了碰撞限制近战同时接触攻城器的问题，并调整攻城器耐久和骑兵附伤。因此本次适当降低攻城器生命、保留零近甲，让保护攻城器依赖前排阻挡接近路径。[官方 Update 17718](https://www.ageofempires.com/news/age-of-empires-iv-update-17718/)", "",
-        "## 箭塔阶梯造价与两项新科技", "",
+        "官方2022年第二赛季也讨论了碰撞限制近战同时接触攻城器的问题，并调整攻城器耐久和骑兵附伤。本作保留上一版的攻城器生命与零近甲，让保护攻城器依赖前排阻挡接近路径。[官方 Update 17718](https://www.ageofempires.com/news/age-of-empires-iv-update-17718/)", "",
+        "## 箭塔阶梯造价与两项辅助科技", "",
         table(["本局第几次付费放置箭塔", *[str(i) for i in range(1, 9)]], [["金币", *data["support_technology"]["tower_quotes_first_eight"]]]), "",
         "开局免费塔不计数。只有服务器成功支付并放置工地才推进本玩家的累计次数；失败、重复网络命令不推进。取消和毁坏不倒退次数；取消工地按实际已付金币与未完工比例退款。各玩家独立计价，计数只同步给本人。第五座280、随后270完全按指定顺序实现。", "",
         "箭塔1000生命、13射程、基础13远程伤害，对剑士+3、骑兵+9。无科技击杀剑士／弓手／骑士为7／6／8次；满防目标为8／9／10次，保持全科技阶段6至10次。塔不吃军事攻防科技；同一战斗类别只取一项附伤。", ""]
@@ -316,15 +321,15 @@ def render(data: dict[str, Any]) -> str:
             table(["攻击者 → 目标", "旧版首击后秒数", "新版首击后秒数", "变化"], [
                 [f"{names[a]} → {names[d]}", number(old_lookup[a, d]["seconds_after_first_hit"]), number(lookup[a, d, 0, 0]["seconds_after_first_hit"]),
                  f"{lookup[a, d, 0, 0]['seconds_after_first_hit'] - old_lookup[a, d]['seconds_after_first_hit']:+.1f} 秒"] for a, d in key_pairs]), "",
-            "普通兵和农民生命保留，投石车由160降为140、加农炮由200降为180；通过调整基础攻击、类别附伤和攻城器远甲解决过慢交战。单位价格、训练时间和攻击间隔沿用；骑士人口由2降为1。", ""]
-        unchanged_military_hp = all(u["hp"] == old_units[u["id"]]["hp"] for u in units if u["military"])
-        if unchanged_military_hp:
-            parts += ["本版军事单位生命沿用 0.8.0，通过降低基础伤害、重排类别附伤和小整数护甲延长战斗；农民生命单独翻倍。", ""]
-        parts += ["弓箭手基础攻击由9提高到12，对骑兵仍没有附伤；保留骑兵6点远甲与剑士0点远甲，使同一箭对两者的伤害明显不同。", "",
+            "生命、护甲、价格、人口和攻击间隔沿用0.10.0；弓手训练8→7秒，骑士训练10→8秒。炮基础攻击26→40，删除对攻城器+12附伤，对建筑附伤150→100。剑士视野11→14，投石车20→14，加农炮21→14；其他单位视野保持。", "",
+            table(["单位", "旧视野 → 新视野", "旧训练秒 → 新训练秒"], [
+                [u["name"], f"{number(old_units[u['id']]['sight'])} → {number(u['sight'])}",
+                 f"{number(old_units[u['id']]['training_seconds'])} → {number(u['training_seconds'])}"] for u in units]), ""]
+        parts += ["弓箭手仍为12基础攻击、没有骑兵附伤；骑兵6点远甲与剑士0点远甲保持不变。炮对建筑实际伤害166→130，对攻城器36→38；因此炮打兵变强、拆楼变慢，炮战基础击杀次数仍为4击投石车、5击同款炮。", "",
             table(["单位", "旧基础攻击", "新基础攻击", "基础攻击变化"], [
                 [names[kind], number(old_units[kind]["damage"]), number(next(u for u in units if u["id"] == kind)["damage"]),
                  f"{(next(u for u in units if u['id'] == kind)['damage'] / old_units[kind]['damage'] - 1) * 100:+.1f}%"]
-                for kind in ("swordsman", "archer", "knight")]), ""]
+                for kind in ("swordsman", "archer", "knight", "cannon")]), ""]
         quicker, same, longer = [], [], []
         for a in units:
             for d in units:
@@ -363,7 +368,7 @@ def render(data: dict[str, Any]) -> str:
             [title, " / ".join("+" + str(v) for v in data["baseline"]["upgrade_bonuses"][track][1:]),
              " / ".join("+" + str(v) for v in data[track + "_bonuses"][1:])]
             for track, title in (("attack", "攻击"), ("defense", "防御"))]), "",
-            "攻击与防御分别读取各自科技资源。伤害降低后，小整数攻击与护甲同样可能显著改变命中阈值，不能直接用面板加值大小判断科技是否有用；实际效果按下表核对。研究价格和时间保持原值。"]
+            "攻击与防御分别读取各自科技资源。固定攻击与护甲可能显著改变命中阈值，不能直接用面板加值大小判断科技是否有用；实际效果按下表核对。研究价格和时间保持原值。"]
     parts += ["", "**命中阈值检查。** 以下仅统计五类军事单位互相攻击的 25 种组合（含同类），以目标或攻击方无科技为基准，逐级比较完成本级研究前后的变化。不能减少击杀次数也可能提高残血收割和集火效率；不能增加承伤次数也可能增加剩余生命。", ""]
     military_ids = [u["id"] for u in units if u["military"]]
     effectiveness = []
@@ -471,24 +476,29 @@ def main() -> int:
     if args.from_json:
         data = json.loads(args.from_json.read_text(encoding="utf-8"))
     else:
-        work = ROOT / ".local" / "balance-report"
-        work.mkdir(parents=True, exist_ok=True)
-        exported = work / "godot-balance.json"
-        baseline_commit, baseline_hashes, baseline_directory = prepare_baseline(work)
-        command = [args.godot, "--headless", "--path", str(ROOT), "--script", "res://tools/export_balance_report.gd", "--", str(exported), baseline_directory]
-        try:
-            result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=45)
-        except subprocess.TimeoutExpired as exc:
-            print(f"Godot balance export exceeded 45 seconds; child terminated: {exc}", file=sys.stderr)
-            return 2
-        (work / "godot-export.log").write_text(result.stdout + result.stderr, encoding="utf-8")
-        if result.returncode != 0 or "SCRIPT ERROR" in result.stderr or not exported.exists():
-            print(result.stdout + result.stderr, file=sys.stderr)
-            return 2
-        data = json.loads(exported.read_text(encoding="utf-8"))
-        data["baseline"]["source_commit"] = baseline_commit
-        data["baseline"]["source_sha256"] = baseline_hashes
-        data["source_sha256"] = source_hashes()
+        scratch_root = ROOT / ".local"
+        scratch_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="balance-report-", dir=scratch_root) as directory:
+            work = Path(directory)
+            # Validate the resolved scope before TemporaryDirectory removes it.
+            work.resolve().relative_to(scratch_root.resolve())
+            exported = work / "godot-balance.json"
+            baseline_commit, baseline_hashes, baseline_directory = prepare_baseline(work)
+            command = [args.godot, "--headless", "--path", str(ROOT), "--audio-driver", "Dummy",
+                       "--log-file", str(work / "godot-export.log"), "--script", "res://tools/export_balance_report.gd",
+                       "--", str(exported), baseline_directory]
+            try:
+                result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=45)
+            except subprocess.TimeoutExpired as exc:
+                print(f"Godot balance export exceeded 45 seconds; child terminated: {exc}", file=sys.stderr)
+                return 2
+            if result.returncode != 0 or "SCRIPT ERROR" in result.stdout + result.stderr or not exported.exists():
+                print(result.stdout + result.stderr, file=sys.stderr)
+                return 2
+            data = json.loads(exported.read_text(encoding="utf-8"))
+            data["baseline"]["source_commit"] = baseline_commit
+            data["baseline"]["source_sha256"] = baseline_hashes
+            data["source_sha256"] = source_hashes()
     if args.impact_log:
         content = args.impact_log.read_text(encoding="utf-8-sig")
         records = [line.split("CATAPULT_IMPACT_RESULTS ", 1)[1] for line in content.splitlines() if "CATAPULT_IMPACT_RESULTS " in line]

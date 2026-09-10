@@ -89,13 +89,12 @@ func _case(mode: String) -> void:
 		state.physics_samples += 1
 		if not Engine.is_in_physics_frame():
 			state.outside_physics += 1
-	var capture_projectile := func(effect: Node):
-		if effect is BattleProjectile:
-			# add_child precedes initialize; the timeout callback checks final source.
-			state.projectiles_created += 1
-			state.projectile = effect
-			state.projectile_creation_tick = Engine.get_physics_frames()
-			state.projectile_creation_in_physics = Engine.is_in_physics_frame()
+	var capture_projectile := func(effect: BattleProjectile):
+		# This observes the actual initialized pooled visual, including socket pose.
+		state.projectiles_created += 1
+		state.projectile = effect
+		state.projectile_creation_tick = Engine.get_physics_frames()
+		state.projectile_creation_in_physics = Engine.is_in_physics_frame()
 	var capture_release := func():
 		state.timer_releases += 1
 		state.release_in_physics = Engine.is_in_physics_frame()
@@ -107,7 +106,7 @@ func _case(mode: String) -> void:
 			state.projectile_source_matches = state.projectile._source == fighter
 			state.projectile_socket_error_m = state.projectile._start.distance_to(fighter.get_projectile_origin())
 	attack.mixer_applied.connect(capture_pose)
-	game.effect_container.child_entered_tree.connect(capture_projectile)
+	game.get_node("ProjectilePool").projectile_launched.connect(capture_projectile)
 	fighter.attack_windup.timeout.connect(capture_release)
 	var move_target := func():
 		victim.position.x += 2.0 / float(rate)
@@ -164,7 +163,7 @@ func _case(mode: String) -> void:
 		elif not cancel_case and state.first_projectile_frame >= 0 and victim.hp < victim.max_hp and state.current_phase >= .45:
 			break
 	attack.mixer_applied.disconnect(capture_pose)
-	game.effect_container.child_entered_tree.disconnect(capture_projectile)
+	game.get_node("ProjectilePool").projectile_launched.disconnect(capture_projectile)
 	fighter.attack_windup.timeout.disconnect(capture_release)
 	if mode == "turning":
 		test.physics_frame.disconnect(move_target)
@@ -211,6 +210,7 @@ func _case(mode: String) -> void:
 	fighter.queue_free()
 	if is_instance_valid(victim):
 		victim.queue_free()
+	game.get_node("ProjectilePool").reset_all()
 	for effect: Node in game.effect_container.get_children():
 		effect.queue_free()
 	await test.physics_frame

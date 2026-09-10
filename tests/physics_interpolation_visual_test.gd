@@ -303,6 +303,7 @@ func _release_case(kind: String) -> void:
 		unit.navigation_agent.avoidance_enabled = false
 		unit.queue_free()
 	case_units.clear()
+	game.get_node("ProjectilePool").reset_all()
 	for effect: Node in game.effect_container.get_children():
 		effect.queue_free()
 	await physics_frame
@@ -323,8 +324,8 @@ func _record_release(fighter: Node3D, record: Dictionary) -> void:
 	elif fighter.unit_type == "catapult":
 		record.held_payload_hidden_at_release = not fighter._model.find_child("Payload").visible
 	var projectile_count: int = 0
-	for effect: Node in game.effect_container.get_children():
-		if effect is BattleProjectile and effect._source == fighter:
+	for effect: ProjectileFlight in game.get_node("ProjectilePool").active_flights:
+		if effect._source == fighter:
 			projectile_count += 1
 			record.projectile_start_error_m = effect._start.distance_to(fighter.get_projectile_origin())
 	record.projectile_count = projectile_count

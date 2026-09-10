@@ -76,6 +76,7 @@ func _run() -> void:
 		building.set_physics_process(false)
 	# Disable remaining processing throughout this frozen fixture, including portrait timers.
 	game.process_mode = Node.PROCESS_MODE_DISABLED
+	game.get_node("ProjectilePool").reset_all()
 	for effect: Node in game.effect_container.get_children():
 		effect.queue_free()
 	await process_frame

@@ -106,6 +106,16 @@ func _run() -> void:
 		first.production.recruit("knight")
 	for _index in range(3):
 		second.production.recruit("swordsman")
+	# The new eight-second knight cycle still gives the shorter queue more
+	# remaining time: two knights take sixteen seconds, these swordsmen fifteen.
+	second.production.training[0].elapsed = 3.0
+	var first_seconds: float = 0.0
+	var second_seconds: float = 0.0
+	for job: Dictionary in first.production.training:
+		first_seconds += BalanceCatalog.unit(job.kind).training_seconds - float(job.elapsed)
+	for job: Dictionary in second.production.training:
+		second_seconds += BalanceCatalog.unit(job.kind).training_seconds - float(job.elapsed)
+	check(first_seconds > second_seconds, "shorter item-count queue deliberately has more remaining training time")
 	check(first.entity_id < second.entity_id and player.reserved_military_supply == 5, "two knights and three swordsmen reserve five military population")
 	_select([second, first])
 	_key(KEY_ESCAPE)

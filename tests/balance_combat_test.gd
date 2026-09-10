@@ -47,7 +47,7 @@ func _clear() -> void:
 	for player: PlayerState in host.players:
 		player.attack_level = 0
 		player.defense_level = 0
-	host.hidden_entities.clear()
+	host.resume_vision()
 	host.gathered_gold = 0
 	host.is_authority = true
 
@@ -81,9 +81,9 @@ func _melee_and_vision() -> void:
 	var ally: BattleUnit = _spawn("knight", 2, Vector3(-1.5, 0, 0))
 	_check(sword.owner_id == 0 and ally.owner_id == 2 and sword.team == ally.team, "different owners share one alliance")
 	_check(sword._valid_target(knight) and not sword._valid_target(ally), "selection validity filters alliance rather than owner")
-	host.hidden_entities[knight.entity_id] = true
+	host.suspend_alliance_vision(sword.alliance_id)
 	_check(not sword._valid_target(knight), "unseen enemy cannot be acquired or attacked")
-	host.hidden_entities.erase(knight.entity_id)
+	host.resume_vision()
 	sword.issue_attack(knight)
 	sword._start_attack()
 	for repeat: int in range(20):

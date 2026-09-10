@@ -133,9 +133,9 @@ func _run() -> void:
 	_check(battle_mix.active_frames > 1000 and battle_mix.peak_dbfs <= -0.9, "dense combat mix remains audible and never clips")
 	await _silence()
 	game.spawn_effect(Vector3(-12, 0, 18), "muzzle")
-	var effect: Node = game.effect_container.get_child(game.effect_container.get_child_count() - 1)
+	var effect: BattleEffect = game.get_node("EffectPool")._active.back()
 	_check(not effect.has_node("Sound"), "particle effects no longer own transient audio players")
-	effect.queue_free()
+	game.get_node("EffectPool")._release(effect)
 	await create_timer(0.15).timeout
 	_check(audio.get_node("Combat").get_children().any(func(voice: Node): return voice.playing), "cannon sound tail survives freeing its visual effect")
 	audio.play_world(&"cart_wheel", Vector3(-12, 0, 18))

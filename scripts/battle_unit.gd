@@ -52,7 +52,7 @@ var attack_range: float:
 	get:
 		# Before _ready this property has its authored base. After binding, only
 		# the authority derives combat values; clients receive the visible result.
-		return _base_or_replicated_range + (_owner_state.get_cannon_range_bonus() if _game != null and _game.is_authority and unit_type == "cannon" else 0.0)
+		return _base_or_replicated_range + (_owner_state.get_cannon_range_bonus() if unit_type == "cannon" and _game != null and _game.is_authority else 0.0)
 	set(value):
 		_base_or_replicated_range = value
 var attack_damage: float = 20.0
@@ -66,10 +66,11 @@ var work_target: Node3D
 var work_progress: float = 0.0
 
 var _stats: UnitDefinition
-var _model: Node3D
+var _model: UnitVisual
 var _attack_animation: AnimationPlayer
 var _game: Node
 var _owner_state: PlayerState
+var _fog: FogOfWar
 var _recovery_quiet_seconds: float = 0.0
 var _recovery_progress: float = 0.0
 var _path_budget: PathBudget
@@ -124,6 +125,7 @@ func _ready() -> void:
 	_space_state = get_world_3d().direct_space_state
 	_game = get_tree().current_scene
 	_owner_state = _game.get_player(owner_id)
+	_fog = _game.get_node("FogOfWar")
 	_path_budget = _game.get_node("PathBudget")
 	_home_position = global_position
 	destination = global_position
@@ -176,8 +178,13 @@ func _physics_process(delta: float) -> void:
 	var show_health: bool = selected or _damage_bar_time > 0.0 or hp < max_hp
 	if health_bar.visible != show_health:
 		health_bar.visible = show_health
+	# Reuse validity only within this synchronous unit tick. Order completion
+	# and scanning may replace the target; a different reference is checked
+	# before use. The attack Timer independently revalidates at actual release.
+	var checked_target: Variant = target
+	var target_valid: bool = _valid_target(checked_target)
 	# Resolve a death immediately, before a completed chase path can consume the order.
-	if target != null and not _valid_target(target):
+	if not target_valid and (order == Order.ATTACK or target != null):
 		target = null
 		if order == Order.ATTACK:
 			_complete_waypoint()
@@ -186,19 +193,24 @@ func _physics_process(delta: float) -> void:
 	if _scan_time <= 0.0:
 		_scan_time = randf_range(0.3, 0.4)
 		_refresh_target()
+	if target != checked_target:
+		checked_target = target
+		target_valid = _valid_target(checked_target)
 	var desired_velocity := Vector3.ZERO
+	var facing_direction := Vector3.ZERO
 	var path_velocity_requested: bool = false
-	if order in [Order.GATHER, Order.BUILD]:
+	if order == Order.GATHER or order == Order.BUILD:
 		desired_velocity = _work_velocity(delta)
-	elif _valid_target(target):
-		var to_target: Vector3 = target.global_position - global_position
-		to_target.y = 0.0
+	elif target_valid:
+		var windup_active: bool = not attack_windup.is_stopped()
 		var can_start_strike: bool = _can_start_strike(target)
 		if can_start_strike:
-			_face_direction(to_target, delta)
-			if _attack_cooldown <= 0.000001 and attack_windup.is_stopped():
+			facing_direction = target.global_position - global_position
+			facing_direction.y = 0.0
+			if _attack_cooldown <= 0.000001 and not windup_active:
 				_start_attack()
-		var melee_windup: bool = not attack_windup.is_stopped() and String(_stats.projectile).is_empty()
+				windup_active = true
+		var melee_windup: bool = windup_active and _stats.projectile.is_empty()
 		var can_chase: bool = order != Order.HOLD and order != Order.MOVE
 		# Windup owns its locked target and release time. Melee may take a
 		# pursuit step during that swing; ranged weapons plant until release.
@@ -206,11 +218,12 @@ func _physics_process(delta: float) -> void:
 		var chase_needed: bool = not can_start_strike
 		if melee_windup:
 			chase_needed = not _within_attack_range(target, -attack_range * 0.4)
-		if can_chase and chase_needed and (attack_windup.is_stopped() or melee_windup):
+		if can_chase and chase_needed and (not windup_active or melee_windup):
 			desired_velocity = _chase_velocity(target)
 			path_velocity_requested = true
-	elif order in [Order.MOVE, Order.ATTACK_MOVE]:
-		if global_position.distance_squared_to(destination) < pow(maxf(0.65, radius * 0.8), 2.0):
+	elif order == Order.MOVE or order == Order.ATTACK_MOVE:
+		var arrival_distance: float = maxf(0.65, radius * 0.8)
+		if global_position.distance_squared_to(destination) < arrival_distance * arrival_distance:
 			_complete_waypoint()
 		else:
 			desired_velocity = _path_velocity()
@@ -222,15 +235,20 @@ func _physics_process(delta: float) -> void:
 	# Plain movement may strike a pursuer in melee, but never chases it.
 	# A completed work/attack order can enter MOVE during this tick. Ordinary
 	# MOVE already followed its path above and must not update the agent twice.
-	if order == Order.MOVE and not _valid_target(target) and not path_velocity_requested:
-		desired_velocity = _path_velocity()
+	if order == Order.MOVE and not path_velocity_requested:
+		if target != checked_target:
+			target_valid = _valid_target(target)
+		if not target_valid:
+			desired_velocity = _path_velocity()
 	var is_moving: bool = desired_velocity.length_squared() > 0.08
 	if is_moving:
-		_face_direction(desired_velocity, delta)
+		facing_direction = desired_velocity
 		if unit_type == "knight" and _charge_cooldown <= 0.0:
 			_charge_time = minf(_charge_time + delta, 2.0)
 	else:
 		_charge_time = maxf(0.0, _charge_time - delta * 0.25)
+	if facing_direction.length_squared() > 0.001:
+		_face_direction(facing_direction, delta)
 	if is_moving != _moving:
 		_moving = is_moving
 		_model.set_motion(_moving)
@@ -248,20 +266,25 @@ func _chase_velocity(entity: Node3D) -> Vector3:
 	approach.y = 0.0
 	if approach.length_squared() < 0.01:
 		approach = Vector3.RIGHT
+	var target_radius: float = 0.0 if building else entity.radius
+	var spacing: float = maxf(attack_range * 0.6, min_attack_range + 0.35)
+	var chase_destination: Vector3 = attack_point + approach.normalized() * (target_radius + radius + spacing)
+	if entity is BattleUnit:
+		# A retreating target must not leave us parked at yesterday's contact
+		# point. Predict only one replan interval using observed velocity.
+		chase_destination += entity._observed_velocity * CHASE_PREDICTION_SECONDS
+	if _path_budget.try_direct_pursuit(self, chase_destination):
+		# The authoritative cell cache certifies the whole body corridor on
+		# this tick. Native RVO and CharacterBody collision still resolve motion.
+		var direction: Vector3 = chase_destination - global_position
+		direction.y = 0.0
+		return direction.normalized() * speed
 	if _repath_time <= 0.0 or _path_budget.is_finished(self):
 		_repath_time = randf_range(0.4, CHASE_PREDICTION_SECONDS)
-		var target_radius: float = 0.0 if building else entity.radius
-		var spacing: float = maxf(attack_range * 0.6, min_attack_range + 0.35)
-		var chase_destination: Vector3 = attack_point + approach.normalized() * (target_radius + radius + spacing)
-		if entity is BattleUnit:
-			# A retreating target must not leave us parked at yesterday's contact
-			# point. Predict only one replan interval using observed velocity;
-			# native corridors, collision and the shared path budget remain in use.
-			chase_destination += entity._observed_velocity * CHASE_PREDICTION_SECONDS
 		if _path_budget.is_finished(self) or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
 			_set_navigation_target(chase_destination)
 	var desired_velocity: Vector3 = _path_velocity()
-	if building and String(_stats.projectile).is_empty() and _path_budget.is_finished(self):
+	if building and _stats.projectile.is_empty() and _path_budget.is_finished(self):
 		# Finish contact with physical walls beyond a padded navigation edge.
 		var contact_distance: float = attack_range + radius + 1.0
 		if approach.length_squared() <= contact_distance * contact_distance:
@@ -316,33 +339,53 @@ func _face_direction(direction: Vector3, delta: float) -> void:
 
 func _valid_target(entity: Variant) -> bool:
 	# Freed cached targets must reach the validity guard before object-type checks.
-	return is_instance_valid(entity) and entity != self and entity.is_in_group("entities") and entity.alive and _game.are_hostile(self, entity) and _game.can_see_entity(owner_id, entity)
+	if not is_instance_valid(entity):
+		return false
+	# Combat has two concrete entity types. Typed reads avoid repeated dynamic
+	# property lookup, scene-path lookup and owner-to-alliance conversion in the
+	# hot pursuit loop. Visibility still uses the target's current position.
+	if entity is BattleUnit:
+		var unit: BattleUnit = entity
+		return unit.alive and unit.alliance_id != alliance_id and _fog.position_visible_to_alliance(alliance_id, unit.global_position)
+	if entity is BattleBuilding:
+		var building: BattleBuilding = entity
+		return building.alive and building.alliance_id != alliance_id and _fog.building_visible_to_alliance(alliance_id, building)
+	return false
 
 func _within_attack_range(entity: Node3D, extra: float = 0.0) -> bool:
-	var building: bool = entity.is_in_group("buildings")
-	var attack_point: Vector3 = entity.get_attack_position(global_position) if building else entity.global_position
+	var attack_point: Vector3
+	var target_radius: float = 0.0
+	if entity is BattleUnit:
+		var unit: BattleUnit = entity
+		attack_point = unit.global_position
+		target_radius = unit.radius
+	else:
+		var building: BattleBuilding = entity
+		attack_point = building.get_attack_position(global_position)
 	var distance: Vector3 = attack_point - global_position
 	distance.y = 0.0
-	var reach: float = attack_range + radius + (0.0 if building else entity.radius) + extra
-	var minimum: float = min_attack_range + radius + (0.0 if building else entity.radius) if min_attack_range > 0.0 else 0.0
-	return distance.length_squared() <= reach * reach and distance.length_squared() >= minimum * minimum
+	var reach: float = attack_range + radius + target_radius + extra
+	var minimum: float = min_attack_range + radius + target_radius if min_attack_range > 0.0 else 0.0
+	var distance_squared: float = distance.length_squared()
+	return distance_squared <= reach * reach and distance_squared >= minimum * minimum
 
 func _can_start_strike(entity: Node3D) -> bool:
 	if not _within_attack_range(entity):
 		return false
-	if String(_stats.projectile).is_empty() or not entity is BattleUnit:
+	if _stats.projectile.is_empty() or not entity is BattleUnit:
 		return true
 	# Ranged weapons plant during windup. Enter a release window before
 	# stopping so a steadily retreating target does not cause endless misses
 	# at maximum range. Only radial motion changes that window: extending a
 	# tangent vector would invent retreat for a target circling within reach
 	# and leave HOLD units waiting forever. Real release still checks distance.
-	var direction: Vector3 = entity.global_position - global_position
+	var unit: BattleUnit = entity
+	var direction: Vector3 = unit.global_position - global_position
 	direction.y = 0.0
-	var radial_speed: float = entity._observed_velocity.dot(direction.normalized())
+	var radial_speed: float = unit._observed_velocity.dot(direction.normalized())
 	var release_distance: float = direction.length() + radial_speed * (_windup_seconds() + get_physics_process_delta_time())
-	var reach: float = attack_range + radius + entity.radius
-	var minimum: float = min_attack_range + radius + entity.radius if min_attack_range > 0.0 else 0.0
+	var reach: float = attack_range + radius + unit.radius
+	var minimum: float = min_attack_range + radius + unit.radius if min_attack_range > 0.0 else 0.0
 	return release_distance <= reach and release_distance >= minimum
 
 func _refresh_target() -> void:
@@ -425,9 +468,7 @@ func _on_attack_windup_timeout() -> void:
 		return
 	# The Timer can run a few milliseconds before AnimationPlayer in the same frame.
 	# Apply the authored release pose before reading the moving weapon socket.
-	var pose_delay: float = attack_windup.wait_time - _attack_animation.current_animation_position
-	if pose_delay > 0.0:
-		_attack_animation.advance(pose_delay + 0.000001)
+	_model.prepare_attack_release(attack_windup.wait_time)
 	var upgrade_bonus: float = _game.get_player(owner_id).get_attack_bonus() if _stats.military else 0.0
 	var payload: DamagePayload = DamageResolver.snapshot(_stats, upgrade_bonus, owner_id, alliance_id)
 	if kind.is_empty():

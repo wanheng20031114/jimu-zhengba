@@ -3,6 +3,7 @@ extends Control
 signal map_clicked(world: Vector3, command: bool)
 var game: Node3D
 var _elapsed: float = 0
+@onready var terrain: TextureRect = $Terrain
 
 func _process(delta: float) -> void:
 	_elapsed += delta
@@ -18,36 +19,74 @@ func _world(point: Vector2) -> Vector3:
 	return game.clamp_to_map(Vector3(at.x, 0, at.y))
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size), Color("24251d"))
 	if not is_instance_valid(game) or not game._fog_ready:
+		draw_rect(Rect2(Vector2.ZERO, size), Color("24251d"))
 		return
 	var fog: FogOfWar = game.get_node("FogOfWar")
-	var cell_pixels := size / Vector2(fog.grid_size)
-	for z in range(fog.grid_size.y):
-		for x in range(fog.grid_size.x):
-			var world := Vector3((x + 0.5) * 2 - game.map_size.x * 0.5, 0, (z + 0.5) * 2 - game.map_size.y * 0.5)
-			var state := fog.cell_state(game.local_owner_id, world)
-			if state > 0:
-				draw_rect(Rect2(Vector2(x, z) * cell_pixels, cell_pixels + Vector2.ONE * 0.25), Color("907746") if state == 2 else Color("4b4630"))
-	for mine: ResourceVein in get_tree().get_nodes_in_group("resource_veins"):
-		if fog.explored(game.local_owner_id, mine.position):
-			var at := _map(mine.position)
-			draw_colored_polygon(PackedVector2Array([at + Vector2(0,-3), at + Vector2(3,0), at + Vector2(0,3), at + Vector2(-3,0)]), Color("efc75b"))
-	for entity: Node3D in get_tree().get_nodes_in_group("entities"):
-		if not entity.alive or not game.can_see_entity(game.local_owner_id, entity):
-			continue
-		var tint := FactionPalette.ui_color(FactionPalette.relation(entity.owner_id, entity.alliance_id, game))
-		var at := _map(entity.global_position)
-		if entity is BattleBuilding:
-			draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), tint)
-		else:
-			draw_circle(at, 2, tint)
-		if entity.selected:
-			draw_arc(at, 4.5, 0, TAU, 12, Color("fff1bc"), 1)
+	var visibility: Texture2D = fog.visibility_texture()
+	if terrain.texture != visibility:
+		terrain.texture = visibility
+	var local_owner: int = game.local_owner_id
+	var local_player: PlayerState = game.get_player(local_owner)
+	var local_alliance: int = local_player.alliance_id
+	var map_size: Vector2 = game.map_size
+	var map_scale: Vector2 = size / map_size
+	var map_center: Vector2 = size * 0.5
+	var self_color: Color = FactionPalette.ui_color(FactionPalette.SELF)
+	var ally_color: Color = FactionPalette.ui_color(FactionPalette.ALLY)
+	var enemy_color: Color = FactionPalette.ui_color(FactionPalette.ENEMY)
+	if local_player.is_participating():
+		for mine: ResourceVein in get_tree().get_nodes_in_group("resource_veins"):
+			var world_position: Vector3 = mine.position
+			if fog.explored(local_owner, world_position):
+				var at: Vector2 = Vector2(world_position.x, world_position.z) * map_scale + map_center
+				draw_colored_polygon(PackedVector2Array([at + Vector2(0,-3), at + Vector2(3,0), at + Vector2(0,3), at + Vector2(-3,0)]), Color("efc75b"))
+		# Keep scene-group order so overlapping dots, squares and selection rings
+		# retain their existing layering. Typed branches avoid per-marker dynamic
+		# entity/owner lookups; fog and the observer's palette are resolved once.
+		for entity: Node in get_tree().get_nodes_in_group("entities"):
+			var world_position: Vector3
+			var entity_owner: int
+			var alliance: int
+			var selected: bool
+			var is_building: bool = false
+			if entity is BattleUnit:
+				var unit: BattleUnit = entity
+				if not unit.alive:
+					continue
+				world_position = unit.global_position
+				alliance = unit.alliance_id
+				if alliance != local_alliance and not fog.position_visible_to_alliance(local_alliance, world_position):
+					continue
+				entity_owner = unit.owner_id
+				selected = unit.selected
+			elif entity is BattleBuilding:
+				var building: BattleBuilding = entity
+				if not building.alive:
+					continue
+				alliance = building.alliance_id
+				if alliance != local_alliance and not fog.building_visible_to_alliance(local_alliance, building):
+					continue
+				world_position = building.global_position
+				entity_owner = building.owner_id
+				selected = building.selected
+				is_building = true
+			else:
+				continue
+			var tint: Color = self_color if entity_owner == local_owner else (ally_color if alliance == local_alliance else enemy_color)
+			var at: Vector2 = Vector2(world_position.x, world_position.z) * map_scale + map_center
+			if is_building:
+				draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), tint)
+			else:
+				draw_circle(at, 2, tint)
+			if selected:
+				draw_arc(at, 4.5, 0, TAU, 12, Color("fff1bc"), 1)
 	var view := get_viewport().get_visible_rect().size
 	var corners := PackedVector2Array()
+	var camera: Node3D = game.camera_rig
 	for point in [Vector2.ZERO, Vector2(view.x, 0), Vector2(view.x, view.y - 172), Vector2(0, view.y - 172)]:
-		corners.append(_map(game.camera_rig.world_at(point)))
+		var world_position: Vector3 = camera.world_at(point)
+		corners.append(Vector2(world_position.x, world_position.z) * map_scale + map_center)
 	corners.append(corners[0])
 	draw_polyline(corners, Color(1, 0.94, 0.73, 0.85), 1.2, true)
 	draw_rect(Rect2(Vector2.ZERO, size), Color("b29559"), false, 1)

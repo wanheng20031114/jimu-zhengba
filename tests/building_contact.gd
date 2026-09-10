@@ -90,9 +90,7 @@ func _finish() -> void:
 		if entity is BattleUnit:
 			entity.navigation_agent.avoidance_enabled = false
 			entity.get_node("AttackWindup").stop()
-	for effect: Node in game.get_node("Effects").get_children():
-		if effect is BattleProjectile:
-			effect.set_physics_process(false)
+	game.get_node("ProjectilePool").reset_all()
 	await game.prepare_shutdown()
 	var report := FileAccess.open("res://artifacts/building_contact.json", FileAccess.WRITE)
 	report.store_string(JSON.stringify({"checks": check_count, "failures": failures}, "  "))

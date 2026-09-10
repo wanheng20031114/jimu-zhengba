@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
@@ -32,6 +32,7 @@
 [ext_resource type="PackedScene" path="res://scenes/match_replication.tscn" id="replication"]
 [ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="path_budget"]
 [ext_resource type="PackedScene" path="res://scenes/effect_pool.tscn" id="effect_pool"]
+[ext_resource type="PackedScene" path="res://scenes/projectile_pool.tscn" id="projectile_pool"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_material"]
 sky_top_color = Color(0.32,0.41,0.48,1)
@@ -137,6 +138,8 @@ visible = false
 [node name="OrderPlanOverlay" parent="." instance=ExtResource("order_plan")]
 
 [node name="EffectPool" parent="." instance=ExtResource("effect_pool")]
+
+[node name="ProjectilePool" parent="." instance=ExtResource("projectile_pool")]
 
 
 [node name="Audio" parent="." instance=ExtResource("audio")]

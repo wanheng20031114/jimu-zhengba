@@ -98,8 +98,8 @@ func _observe() -> void:
 	for unit: BattleUnit in get_nodes_in_group("units"):
 		if unit.alive and unit._attack_animation.is_playing():
 			attack_types[unit.unit_type] = true
-	for effect: Node in game.effect_container.get_children():
-		if effect is BattleProjectile and effect._active:
+	for effect: ProjectileFlight in game.get_node("ProjectilePool").active_flights:
+		if effect._active:
 			projectile_types[effect._kind] = true
 
 func _melee_attacking() -> int:
@@ -111,8 +111,8 @@ func _melee_attacking() -> int:
 
 func _siege_projectiles() -> int:
 	var count: int = 0
-	for effect: Node in game.effect_container.get_children():
-		if effect is BattleProjectile and effect._active and effect._kind in ["stone", "cannon"]:
+	for effect: ProjectileFlight in game.get_node("ProjectilePool").active_flights:
+		if effect._active and effect._kind in ["stone", "cannon"]:
 			count += 1
 	return count
 

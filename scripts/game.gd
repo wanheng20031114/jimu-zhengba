@@ -395,9 +395,11 @@ func forget_entity_selection(entity: Node3D) -> void:
 
 func own_selected_units() -> Array[Node3D]:
 	var result: Array[Node3D] = []
-	for entity in selection:
-		if is_instance_valid(entity) and entity.alive and entity.owner_id == local_owner_id and entity.is_in_group("units"):
-			result.append(entity)
+	for entity: Node3D in selection:
+		if is_instance_valid(entity) and entity is BattleUnit:
+			var unit: BattleUnit = entity
+			if unit.alive and unit.owner_id == local_owner_id:
+				result.append(unit)
 	return result
 
 func own_selected_assets() -> Array[Node3D]:
@@ -409,16 +411,24 @@ func own_selected_assets() -> Array[Node3D]:
 
 func own_selected_buildings() -> Array[BattleBuilding]:
 	var result: Array[BattleBuilding] = []
-	for entity: Node3D in own_selected_assets():
-		if entity is BattleBuilding:
-			result.append(entity)
+	for entity: Node3D in selection:
+		if is_instance_valid(entity) and entity is BattleBuilding:
+			var building: BattleBuilding = entity
+			if building.alive and building.owner_id == local_owner_id:
+				result.append(building)
 	return result
 
 func selected_building_ids() -> Array:
 	return own_selected_buildings().map(func(building): return building.entity_id)
 
 func own_selected_workers() -> Array[Node3D]:
-	return own_selected_units().filter(func(unit: Node3D): return unit.unit_type == "farmer")
+	var result: Array[Node3D] = []
+	for entity: Node3D in selection:
+		if is_instance_valid(entity) and entity is BattleUnit:
+			var unit: BattleUnit = entity
+			if unit.alive and unit.owner_id == local_owner_id and unit.unit_type == "farmer":
+				result.append(unit)
+	return result
 
 func _on_gathered(worker: Node3D, amount: int) -> void:
 	if is_authority and not finished and not get_tree().paused and worker.alive:
@@ -714,9 +724,9 @@ func spawn_unit(kind: String, faction: int, at: Vector3, id: int = 0) -> Node3D:
 func spawn_projectile(source: Node3D, target: Node3D, damage: DamagePayload, kind: String) -> void:
 	if not is_instance_valid(source) or not is_instance_valid(target):
 		return
-	var projectile = PROJECTILE_SCENE.instantiate()
-	effect_container.add_child(projectile)
-	projectile.initialize(source, target, damage, kind)
+	var projectile: ProjectileFlight = $ProjectilePool.launch(source, target, damage, kind)
+	if projectile == null:
+		return # A synchronous launch observer ended the match and retired this shot.
 	if online and is_authority:
 		for player: PlayerState in players:
 			if player.owner_id != local_owner_id and player.controller == "human" and can_see_position(player.owner_id, projectile._start) and can_see_position(player.owner_id, projectile._end):
@@ -777,8 +787,12 @@ func player_count() -> int:
 
 func enemy_count() -> int:
 	var count := 0
+	if not _fog_ready:
+		return count
+	var alliance: int = get_player(local_owner_id).alliance_id
+	var fog: FogOfWar = $FogOfWar
 	for unit: BattleUnit in get_tree().get_nodes_in_group("units"):
-		if unit.alive and unit.alliance_id != get_player(local_owner_id).alliance_id and can_see_entity(local_owner_id, unit):
+		if unit.alive and unit.alliance_id != alliance and fog.position_visible_to_alliance(alliance, unit.global_position):
 			count += 1
 	return count
 
@@ -861,6 +875,7 @@ func end_battle(victory: bool, winner: int = -2) -> void:
 		return
 	Session.record_diagnostic("match_finished", {"victory": victory, "online": online, "tick": simulation_tick})
 	finished = true
+	$ProjectilePool.reset_all()
 	$EnemyTimer.stop()
 	$IncomeTimer.stop()
 	for unit in get_tree().get_nodes_in_group("units"):
@@ -895,6 +910,7 @@ func prepare_shutdown() -> void:
 	Session.record_diagnostic("shutdown_begin", {"online": online, "tick": simulation_tick})
 	finished = true
 	$EffectPool.reset_all()
+	$ProjectilePool.reset_all()
 	if online:
 		replication.reset()
 	$IncomeTimer.stop()
@@ -1305,6 +1321,4 @@ func _play_network_visual(event: Dictionary) -> void:
 		"sound": $Audio.play_world(StringName(event.sound), at)
 		"projectile":
 			var origin: Array = event.from
-			var projectile: BattleProjectile = PROJECTILE_SCENE.instantiate()
-			effect_container.add_child(projectile)
-			projectile.initialize_visual(Vector3(float(origin[0]), float(origin[1]), float(origin[2])), at, str(event.projectile), float(event.duration), float(event.arc), entities_by_id.get(int(event.target)))
+			$ProjectilePool.launch_visual(Vector3(float(origin[0]), float(origin[1]), float(origin[2])), at, str(event.projectile), float(event.duration), float(event.arc), entities_by_id.get(int(event.target)))

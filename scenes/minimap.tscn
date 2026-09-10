@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/minimap.gd" id="script"]
+[ext_resource type="Shader" path="res://assets/shaders/minimap_visibility.gdshader" id="shader"]
+
+[sub_resource type="ShaderMaterial" id="terrain"]
+shader = ExtResource("shader")
+
+[node name="Minimap" type="Control"]
+clip_contents = true
+mouse_default_cursor_shape = 2
+script = ExtResource("script")
+
+[node name="Terrain" type="TextureRect" parent="."]
+show_behind_parent = true
+material = SubResource("terrain")
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1

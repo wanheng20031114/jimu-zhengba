@@ -41,7 +41,7 @@ func _spawn(kind: String, team: int, at: Vector3) -> BattleUnit:
 	return unit
 
 func _clear_host() -> void:
-	for container: String in ["Units", "Buildings", "Resources", "Effects"]:
+	for container: String in ["Units", "Resources", "Effects"]:
 		for entity: Node in host.get_node(container).get_children():
 			entity.queue_free()
 	await _ticks(4)
@@ -56,7 +56,9 @@ func _run() -> void:
 			print("FIXED_STEP_CONTRACT_TIMEOUT")
 			quit(3)
 	)
-	change_scene_to_file("res://tests/worker_ai_host.tscn")
+	# This native fixture supplies the same PlayerState, FogOfWar, PathBudget
+	# and DamagePayload contracts as the authoritative match.
+	change_scene_to_file("res://tests/balance_combat_host.tscn")
 	await scene_changed
 	host = current_scene
 	await _ticks(8)
@@ -69,6 +71,7 @@ func _run() -> void:
 	await scene_changed
 	game = current_scene
 	game.tests_running = true
+	game.bots.clear()
 	game.camera_rig.edge_scroll = false
 	game.get_node("EnemyTimer").stop()
 	game.get_node("IncomeTimer").stop()
@@ -102,13 +105,15 @@ func _work_contract(tps: int) -> void:
 	site.building_type = "defense_tower"
 	site.under_construction = true
 	site.position = Vector3(12, 0, 0)
-	host.get_node("Buildings").add_child(site)
-	var miner: BattleUnit = _spawn("farmer", 0, mine.position + Vector3(0, 0, 3.65))
+	# Static test work targets share the existing authored Resources container.
+	host.get_node("Resources").add_child(site)
+	var miner: BattleUnit = _spawn("farmer", 0, mine.get_node("GatherSlots/Slot0").global_position)
 	var builder: BattleUnit = _spawn("farmer", 0, site.get_attack_position(Vector3(12, 0, 10)) + Vector3(0, 0, 1.7))
 	miner.gathered.connect(host.on_gathered)
 	await _ticks(4)
 	miner.issue_gather(mine)
 	builder.issue_build(site)
+	_check(is_equal_approx(BalanceCatalog.ECONOMY.mining_seconds, 3.0) and is_equal_approx(BalanceCatalog.building(site.building_type).build_seconds, 20.0), label + "authored mining and construction cycles match the boundary fixture")
 	var half_second: int = tps / 2
 	await _ticks(half_second)
 	_check(miner._working and builder._working and is_equal_approx(miner._work_seconds, 0.5) and is_equal_approx(site.construction_progress, 0.025), label + "real workers accumulate exactly half a simulation second")
@@ -122,7 +127,7 @@ func _work_contract(tps: int) -> void:
 	await _ticks(tps * 3 - 1 - half_second)
 	_check(host.gathered_gold == 0 and miner._work_seconds < 3.0, label + "mining pays nothing on the tick before three active seconds")
 	await _ticks(1)
-	_check(host.gathered_gold == 3 and absf(miner._work_seconds) < 0.00001, label + "the three-second physics boundary awards exactly three gold")
+	_check(host.gathered_gold == BalanceCatalog.ECONOMY.mining_gold and absf(miner._work_seconds) < 0.00001, label + "the three-second physics boundary awards exactly one resource-defined mining payout")
 	miner.stop()
 	await _ticks(tps * 17 - 1)
 	_check(not site.is_constructed and site.construction_progress < 1.0, label + "tower remains unfinished one tick before twenty active seconds")
@@ -199,20 +204,22 @@ func _command_contract(tps: int) -> void:
 	game.select_entities([fighter])
 	var before_position: Vector3 = fighter.global_position
 	var before_tick: int = game.simulation_tick
-	var before_effects: int = game.effect_container.get_child_count()
+	var before_pending: int = game.command_bus.pending.size()
 	game.command_move(Vector3(0, 0, 12))
-	_check(fighter.order == BattleUnit.Order.MOVE and fighter.destination == Vector3(0, 0, 12) and game.simulation_tick == before_tick and fighter.global_position == before_position, label + "move command changes intent immediately without moving the body")
-	var marker: Node3D = game.effect_container.get_child(before_effects)
-	_check(marker.get_node("Ring").visible and marker.get_node("Direction").visible and marker.global_position == fighter.destination, label + "movement marker is visible before the next simulation tick")
+	var move_request: Dictionary = game.command_bus.pending.back()
+	_check(game.command_bus.pending.size() == before_pending + 1 and move_request.kind == "move" and move_request.units == [fighter.entity_id] and move_request.at == [0.0, 0.0, 12.0] and fighter.order == BattleUnit.Order.IDLE and game.simulation_tick == before_tick and fighter.global_position == before_position, label + "move intent queues immediately without executing outside physics")
+	var marker: Node3D = game.get_node("EffectPool")._active.back()
+	_check(marker.get_node("Ring").visible and marker.get_node("Direction").visible and marker.global_position == Vector3(0, 0, 12), label + "movement marker is visible before the next simulation tick")
 	var gap: Dictionary = await _observe_render_gap(fighter)
 	_check(gap.frames > 0 and gap.unchanged, label + "presentation frames never advance movement, HP, attack clock, or battle time")
 	# Native RVO returns the submitted velocity at its next synchronization.
 	await _ticks(1)
-	_check(fighter.global_position.distance_to(before_position) > 0.001, label + "native physics and avoidance consume the move intent within two ticks")
+	_check(game.command_bus.pending.is_empty() and fighter.order == BattleUnit.Order.MOVE and fighter.destination == Vector3(0, 0, 12) and fighter.global_position.distance_to(before_position) > 0.001, label + "fixed-tick validation, native physics and avoidance consume the move intent within two ticks")
 	fighter.stop()
 	var victim: BattleUnit = _spawn("knight", 1, fighter.global_position + Vector3(0, 0, -1.65))
 	victim.set_physics_process(false)
 	victim.navigation_agent.avoidance_enabled = false
+	game.get_node("FogOfWar")._recompute()
 	damage_outside_physics = 0
 	victim.damaged.connect(func(_entity: Node3D, _amount: float):
 		if not Engine.is_in_physics_frame():
@@ -220,10 +227,12 @@ func _command_contract(tps: int) -> void:
 	)
 	before_tick = game.simulation_tick
 	var before_hp: float = victim.hp
+	before_pending = game.command_bus.pending.size()
 	game.command_attack(victim)
-	_check(fighter.order == BattleUnit.Order.ATTACK and fighter.target == victim and game.simulation_tick == before_tick and victim.hp == before_hp and fighter.attack_windup.is_stopped(), label + "attack command updates intent immediately but starts no windup or damage outside physics")
+	var attack_request: Dictionary = game.command_bus.pending.back()
+	_check(game.command_bus.pending.size() == before_pending + 1 and attack_request.kind == "attack" and attack_request.target == victim.entity_id and fighter.order == BattleUnit.Order.IDLE and game.simulation_tick == before_tick and victim.hp == before_hp and fighter.attack_windup.is_stopped(), label + "attack intent queues immediately but starts no windup or damage outside physics")
 	await _ticks(1)
-	_check(not fighter.attack_windup.is_stopped() and fighter.attack_windup.process_callback == Timer.TIMER_PROCESS_PHYSICS and fighter._attack_animation.is_playing(), label + "next fixed tick starts the authored physics windup and attack animation")
+	_check(game.command_bus.pending.is_empty() and fighter.order == BattleUnit.Order.ATTACK and fighter.target == victim and not fighter.attack_windup.is_stopped() and fighter.attack_windup.process_callback == Timer.TIMER_PROCESS_PHYSICS and fighter._attack_animation.is_playing(), label + "next fixed tick validates the attack and starts its authored windup and animation")
 	var remaining: float = fighter.attack_windup.time_left
 	var cooldown: float = fighter._attack_cooldown
 	var animation_time: float = fighter._attack_animation.current_animation_position
@@ -236,7 +245,9 @@ func _command_contract(tps: int) -> void:
 	while victim.hp == before_hp and Engine.get_physics_frames() < deadline:
 		game.command_attack(victim)
 		await process_frame
-	_check(is_equal_approx(victim.hp, before_hp - maxf(1.0, fighter.attack_damage - victim.armor)) and damage_outside_physics == 0, label + "continuous presentation-rate attack orders still deliver one real hit inside physics")
+	var payload: DamagePayload = DamageResolver.snapshot(fighter.get_combat_definition(), game.get_player(fighter.owner_id).get_attack_bonus(), fighter.owner_id, fighter.alliance_id)
+	var expected_damage: float = DamageResolver.resolve(payload, victim.get_combat_definition(), game.get_player(victim.owner_id).get_defense_bonus())
+	_check(is_equal_approx(victim.hp, before_hp - expected_damage) and damage_outside_physics == 0, label + "continuous presentation-rate attack orders still deliver one category-and-armor-resolved hit inside physics")
 	samples.append({"tps": tps, "observed_attack_gap_frames": gap.frames, "damage_outside_physics": damage_outside_physics})
 	fighter.queue_free()
 	victim.queue_free()

@@ -80,9 +80,9 @@ func _payload(source: BattleUnit, legacy: bool = false) -> DamagePayload:
 		definition.bonuses = {&"infantry": 18, &"cavalry": 22, &"building": 50}
 	return DamageResolver.snapshot(definition, game.get_player(source.owner_id).get_attack_bonus(), source.owner_id, source.alliance_id)
 
-func _fire(source: BattleUnit, target: Node3D, legacy: bool = false) -> BattleProjectile:
+func _fire(source: BattleUnit, target: Node3D, legacy: bool = false) -> ProjectileFlight:
 	game.spawn_projectile(source, target, _payload(source, legacy), "stone")
-	return game.effect_container.get_child(game.effect_container.get_child_count() - 1) as BattleProjectile
+	return game.get_node("ProjectilePool").active_flights.back()
 
 func _target_batch(owner: int, legacy: bool) -> void:
 	var defender: int = (owner + 2) % 4
@@ -105,7 +105,7 @@ func _target_batch(owner: int, legacy: bool) -> void:
 	await physics_frame
 	for sample: Dictionary in pending:
 		var shot := _fire(sample.source, sample.target, legacy)
-		_check((shot._blast_query.collision_mask & sample.target.collision_layer) != 0,
+		_check((shot.collision_mask & sample.target.collision_layer) != 0,
 			"native blast mask includes owner %d %s" % [defender, sample.kind])
 	await create_timer(2.5, true, true).timeout
 	for sample: Dictionary in pending:
@@ -199,13 +199,14 @@ func _native_attack_release() -> void:
 		source.issue_attack(target)
 		source._start_attack()
 		await create_timer(0.65, true, true).timeout
-		var shots: Array = game.effect_container.get_children().filter(func(effect): return effect is BattleProjectile)
+		var shots: Array = game.get_node("ProjectilePool").active_flights
 		_check(shots.size() == 1, "authored attack windup creates a real stone against " + kind)
 		await create_timer(2.5, true, true).timeout
 		_check(is_equal_approx(target.max_hp - target.hp, expected), "native animation-release-flight-impact damages " + kind)
 		await _clear_case()
 
 func _clear_case() -> void:
+	game.get_node("ProjectilePool").reset_all()
 	game.headquarters = initial_headquarters
 	for entity: Node3D in case_entities:
 		if is_instance_valid(entity):

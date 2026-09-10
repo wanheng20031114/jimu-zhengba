@@ -124,7 +124,7 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
-	var training_seconds := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var training_seconds := {"swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 15], ["swordsman", "knight", 6],
@@ -136,7 +136,7 @@ func validate_resource_values() -> void:
 	var swordsman := BalanceCatalog.unit("swordsman")
 	check(archer.damage == 12 and archer.hp == 60 and archer.ranged_armor == 3 and archer.bonuses.is_empty() and archer.sight == 14
 		and swordsman.ranged_armor == 0 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
-		and swordsman.damage == 8 and swordsman.bonuses == {&"cavalry": 14} and swordsman.sight == 11,
+		and swordsman.damage == 8 and swordsman.bonuses == {&"cavalry": 14} and swordsman.sight == 14,
 		"packaged_archer_values_and_swordsman_anti_cavalry_bonus")
 	check(BalanceCatalog.unit("knight").sight == 16 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
@@ -145,18 +145,18 @@ func validate_resource_values() -> void:
 	var catapult := BalanceCatalog.unit("catapult")
 	check(catapult.range == 13 and catapult.damage == 18
 		and catapult.bonuses == {&"infantry": 6, &"building": 50}
-		and catapult.cost == 200 and catapult.hp == 140 and catapult.ranged_armor == 2 and catapult.cooldown == 3 and catapult.min_range == 3 and catapult.sight == 20,
+		and catapult.cost == 200 and catapult.hp == 140 and catapult.ranged_armor == 2 and catapult.cooldown == 3 and catapult.min_range == 3 and catapult.sight == 14,
 		"packaged_catapult_reach_damage_and_class_bonuses")
 	var stone := DamageResolver.snapshot(catapult, 0, 0, 0)
 	check(DamageResolver.resolve(stone, swordsman) == 24 and DamageResolver.resolve(stone, archer) == 15
 		and ceili(swordsman.hp / 24.0) == 5 and ceili(archer.hp / 15.0) == 4,
 		"packaged_catapult_needs_five_swordsman_hits_and_four_archer_hits")
 	var cannon := BalanceCatalog.unit("cannon")
-	check(cannon.damage == 26 and cannon.bonuses == {&"siege": 12, &"building": 150} and cannon.ranged_armor == 2, "packaged_cannon_base_damage_siege_and_building_bonus")
+	check(cannon.damage == 40 and cannon.bonuses == {&"building": 100} and cannon.ranged_armor == 2, "packaged_cannon_base_damage_and_building_only_bonus")
 	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
-	check(cannon_damage == 36 and ceili(cannon.hp / cannon_damage) == 5
-		and is_equal_approx((cannon.hp - 4 * cannon_damage) / cannon.hp, 0.2), "packaged_cannon_five_mirror_hits_to_destroy")
-	check(cannon.hp == 180 and cannon.cost == 250 and cannon.range == 13 and cannon.min_range == 2.5 and cannon.sight == 21
+	check(cannon_damage == 38 and ceili(cannon.hp / cannon_damage) == 5
+		and is_equal_approx(cannon.hp - 4 * cannon_damage, 28.0), "packaged_cannon_five_mirror_hits_to_destroy")
+	check(cannon.hp == 180 and cannon.cost == 250 and cannon.range == 13 and cannon.min_range == 2.5 and cannon.sight == 14
 		and is_equal_approx(cannon.cooldown, 3.2), "packaged_cannon_health_price_and_reach")
 	var defense_tower := BalanceCatalog.building("defense_tower")
 	check(defense_tower.cost == 150 and defense_tower.hp == 1000 and defense_tower.build_seconds == 20

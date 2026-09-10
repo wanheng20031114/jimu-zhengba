@@ -38,7 +38,7 @@ func _run() -> void:
 		building.set_physics_process(false)
 	await physics_frame
 	await physics_frame
-	game.effect_container.child_entered_tree.connect(func(effect: Node): projectiles += int(effect is BattleProjectile))
+	game.get_node("ProjectilePool").launched.connect(func(_flight: ProjectileFlight): projectiles += 1)
 	for mode: String in ["explicit", "idle", "attack_move"]:
 		for kind: String in KINDS:
 			await _repeat_case(kind, mode)
@@ -148,9 +148,7 @@ func _clear_case() -> void:
 			unit.get_node("AttackWindup").stop()
 			unit.queue_free()
 	case_units.clear()
-	for effect: Node in game.effect_container.get_children():
-		if effect is BattleProjectile:
-			effect.queue_free()
+	game.get_node("ProjectilePool").reset_all()
 	await physics_frame
 	await physics_frame
 

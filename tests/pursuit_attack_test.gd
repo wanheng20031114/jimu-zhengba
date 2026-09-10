@@ -82,7 +82,7 @@ func _clear() -> void:
 		entity.queue_free()
 	for effect: Node in host.get_node("Effects").get_children():
 		effect.queue_free()
-	host.hidden_entities.clear()
+	host.resume_vision()
 	host.get_node("Blocker").position = Vector3(0, -100, 0)
 	await _sync()
 
@@ -127,6 +127,10 @@ func _run() -> void:
 func _pursuit(kind: String, victim_kind: String, gap: float, seconds: float, minimum_hits: int) -> void:
 	var fighter := _spawn(kind, 0, Vector3(-27, 0, 0))
 	var victim := _spawn(victim_kind, 1, Vector3(-27 + gap, 0, 0))
+	if kind in ["catapult", "cannon"]:
+		# Siege vision is now 14. An inactive allied scout reveals the initial
+		# maximum-range target without changing its trajectory or attack reach.
+		_spawn("knight", 0, Vector3(-27 + gap * 0.5, 0, 10), true)
 	victim.hp = 10000.0
 	victim.max_hp = victim.hp
 	var hits: Array[int] = []
@@ -256,7 +260,7 @@ func _windup_change(kind: String, change: String) -> void:
 		"stop": fighter.stop()
 		"hold": fighter.hold()
 		"switch": fighter.issue_attack(_spawn("farmer", 1, Vector3(0, 0, gap), true))
-		"hide": host.hidden_entities[victim.entity_id] = true
+		"hide": host.suspend_alliance_vision(fighter.alliance_id)
 		"death":
 			victim.receive_damage(victim.hp)
 			hits.clear()

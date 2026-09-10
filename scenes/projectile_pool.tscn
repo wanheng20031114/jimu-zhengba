@@ -1,0 +1,263 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/projectile_pool.gd" id="pool"]
+[ext_resource type="PackedScene" path="res://scenes/projectile.tscn" id="projectile"]
+
+[node name="ProjectilePool" type="Node3D"]
+script = ExtResource("pool")
+
+[node name="Projectile000" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile001" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile002" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile003" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile004" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile005" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile006" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile007" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile008" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile009" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile010" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile011" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile012" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile013" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile014" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile015" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile016" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile017" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile018" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile019" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile020" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile021" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile022" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile023" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile024" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile025" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile026" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile027" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile028" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile029" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile030" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile031" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile032" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile033" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile034" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile035" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile036" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile037" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile038" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile039" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile040" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile041" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile042" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile043" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile044" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile045" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile046" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile047" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile048" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile049" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile050" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile051" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile052" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile053" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile054" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile055" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile056" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile057" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile058" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile059" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile060" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile061" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile062" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false
+
+[node name="Projectile063" parent="." instance=ExtResource("projectile")]
+process_mode = 4
+visible = false

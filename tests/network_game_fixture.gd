@@ -24,6 +24,9 @@ func _init() -> void:
 func _enter_tree() -> void:
 	get_tree().current_scene = self
 
+func _ready() -> void:
+	$FogOfWar.configure(self, Vector2(80, 80))
+
 func get_player(owner: int) -> PlayerState:
 	return players[owner]
 

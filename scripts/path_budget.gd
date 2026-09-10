@@ -6,6 +6,7 @@ extends Node
 ## https://docs.godotengine.org/en/stable/classes/class_navigationagent3d.html
 
 @export_range(1, 64, 1) var queries_per_tick: int = 24
+const DIRECT_PURSUIT_DISTANCE: float = 20.0
 
 class Route extends RefCounted:
 	var unit: WeakRef
@@ -21,6 +22,7 @@ class Route extends RefCounted:
 	var pending: bool = false
 	var waiting_for_map: bool = false
 	var generation: int = 0
+	var direct: bool = false
 
 var queries_this_tick: int = 0
 var query_usec_this_tick: int = 0
@@ -32,6 +34,26 @@ var _waiting_for_map: Dictionary = {}
 var _queue: Array[Array] = []
 var _head: int = 0
 var _serial: int = 0
+var _walkability: ConstructionNavigation
+
+func set_walkability(navigation: ConstructionNavigation) -> void:
+	# Authored battlefields publish an authoritative footprint cache. A scene
+	# using only a native NavigationRegion keeps the ordinary agent path route.
+	_walkability = navigation
+
+func try_direct_pursuit(unit: BattleUnit, at: Vector3) -> bool:
+	var route: Route = _routes[unit.get_instance_id()]
+	if _walkability == null or unit.global_position.distance_squared_to(at) > DIRECT_PURSUIT_DISTANCE * DIRECT_PURSUIT_DISTANCE or not _walkability.has_clear_corridor(unit.global_position, at, unit.radius):
+		if route.direct:
+			cancel(unit)
+		return false
+	if route.active or route.pending or route.waiting_for_map:
+		# Cancel the old corridor and its queued generation once when local
+		# steering takes over; a superseded A* must not consume the next budget.
+		cancel(unit)
+	route.goal = at
+	route.direct = true
+	return true
 
 func register(unit: BattleUnit) -> void:
 	var route := Route.new()
@@ -49,6 +71,7 @@ func unregister(unit: BattleUnit) -> void:
 
 func request(unit: BattleUnit, at: Vector3) -> void:
 	var route: Route = _routes[unit.get_instance_id()]
+	route.direct = false
 	at.y = 0.0
 	if (route.pending or route.active or route.waiting_for_map) and route.goal.distance_squared_to(at) < 0.0025:
 		return
@@ -57,6 +80,7 @@ func request(unit: BattleUnit, at: Vector3) -> void:
 
 func cancel(unit: BattleUnit) -> void:
 	var route: Route = _routes[unit.get_instance_id()]
+	route.direct = false
 	route.pending = false
 	route.waiting_for_map = false
 	_waiting_for_map.erase(unit.get_instance_id())

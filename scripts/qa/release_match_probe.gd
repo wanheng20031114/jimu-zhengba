@@ -226,7 +226,7 @@ func _inspect_catalogue() -> Dictionary:
 		result.economy.fresh[field] = fresh_economy.get(field)
 		check(result.economy.cached[field] == economy_fields[field] and result.economy.fresh[field] == economy_fields[field], "catalogue_economy_" + field)
 	result.training_seconds = {}
-	var training := {"farmer": 10.0, "swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0}
+	var training := {"farmer": 10.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0}
 	for kind: String in training:
 		var fresh_unit: UnitDefinition = ResourceLoader.load("res://data/units/%s.tres" % kind, "", ResourceLoader.CACHE_MODE_IGNORE)
 		var cached_seconds: float = BalanceCatalog.unit(kind).training_seconds

@@ -42,11 +42,14 @@ func _run() -> void:
 	var hud: Control = game.hud
 	var player: PlayerState = game.get_player(0)
 	player.gold = 999999
-	player.military_supply = 60
+	var army_limit: int = player.get_supply_limit()
+	player.military_supply = army_limit - 3
+	player.reserved_military_supply = 3
 	player.farmers = 3
 	player.reserved_farmers = 7
 	hud.refresh()
-	check(hud.get_node("%ArmyValue").text == "军事 60 / 60", "military supply has its own complete label")
+	check(hud.get_node("%ArmyValue").text == "军事 %d / %d" % [army_limit, army_limit], "military supply label includes three reserved trainees at the current cap")
+	check("训练中 3 人口" in hud.get_node("%ArmyValue").tooltip_text, "military tooltip identifies queued supply reservations")
 	check(hud.get_node("%FarmersValue").text == "农民 10 / 10", "farmer supply includes seven pending trainees")
 	check("训练中 7 人" in hud.get_node("%FarmersValue").tooltip_text, "farmer tooltip explains training reservations")
 	check(game.map_definition.display_name in hud.get_node("TopLeft/Location").text, "top-left title uses active map resource")

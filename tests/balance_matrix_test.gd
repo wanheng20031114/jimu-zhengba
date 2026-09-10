@@ -7,17 +7,17 @@ const EXPECTED_DAMAGE: Array = [
 	[12, 9, 6, 10, 10, 12],
 	[7, 12, 7, 20, 20, 9],
 	[24, 15, 12, 16, 16, 18],
-	[26, 23, 20, 36, 36, 26],
+	[40, 37, 34, 38, 38, 40],
 	[3, 5, 3, 5, 5, 5],
 ]
 const EXPECTED_HITS: Array = [
 	[17, 8, 6, 18, 23, 19], [9, 7, 20, 14, 18, 13],
 	[15, 5, 18, 7, 9, 17], [5, 4, 10, 9, 12, 9],
-	[4, 3, 6, 4, 5, 6], [34, 12, 40, 28, 36, 30],
+	[3, 2, 4, 4, 5, 4], [34, 12, 40, 28, 36, 30],
 ]
 const EXPECTED_HP: Array[int] = [100, 60, 120, 140, 180, 150]
 # Keep negative pre-floor damage: upgrades apply before the minimum-one clamp.
-const BUILDING_RAW_DAMAGE: Array[int] = [-2, 2, -1, 58, 166, -5]
+const BUILDING_RAW_DAMAGE: Array[int] = [-2, 2, -1, 58, 130, -5]
 const ATTACK_BONUS: Array[int] = [0, 1, 2, 4]
 const DEFENSE_BONUS: Array[int] = [0, 1, 2, 3]
 var checks: int = 0
@@ -94,10 +94,10 @@ func _test_snapshot() -> void:
 	var packet: DamagePayload = DamageResolver.snapshot(local_definition, 1, 3, 1)
 	local_definition.damage = 999
 	local_definition.bonuses[&"building"] = 999
-	_check(packet.base_damage == 26 and packet.attack_bonus == 1 and packet.bonuses == {&"siege": 12, &"building": 150}, "launch packet copies attacks and bonuses")
+	_check(packet.base_damage == 40 and packet.attack_bonus == 1 and packet.bonuses == {&"building": 100}, "launch packet copies attacks and bonuses")
 	_check(packet.owner_id == 3 and packet.alliance_id == 1, "launch packet retains player/alliance independently")
-	_check(DamageResolver.resolve(packet, BalanceCatalog.unit(&"catapult"), 2) == 35, "impact reads current defense without changing launch attack")
-	_check(BalanceCatalog.unit(&"cannon").damage == 26 and BalanceCatalog.unit(&"cannon").bonuses == {&"siege": 12, &"building": 150}, "catalog resource stays immutable")
+	_check(DamageResolver.resolve(packet, BalanceCatalog.unit(&"catapult"), 2) == 37, "impact reads current defense without changing launch attack")
+	_check(BalanceCatalog.unit(&"cannon").damage == 40 and BalanceCatalog.unit(&"cannon").bonuses == {&"building": 100}, "catalog resource stays immutable")
 
 func _test_siege() -> void:
 	for kind: StringName in [&"swordsman", &"archer"]:
@@ -117,10 +117,10 @@ func _test_siege() -> void:
 	var tower := BalanceCatalog.building(&"defense_tower")
 	_check(catapult.range == 13 and catapult.damage == 18 and catapult.cost == 200 and catapult.hp == 140 and catapult.cooldown == 3, "catapult uses approved health, attack, range, price and cycle")
 	_check(catapult.bonuses == {&"infantry": 6, &"building": 50}, "catapult has compact infantry bonus and building bonus only")
-	_check(cannon.range == 13 and cannon.damage == 26 and cannon.cost == 250 and cannon.hp == 180, "cannon uses approved health, attack, range and price")
-	_check(cannon.bonuses == {&"siege": 12, &"building": 150}, "cannon specializes against siege and buildings")
+	_check(cannon.range == 13 and cannon.damage == 40 and cannon.cost == 250 and cannon.hp == 180, "cannon uses approved health, attack, range and price")
+	_check(cannon.bonuses == {&"building": 100}, "cannon has a building bonus without a siege-class bonus")
 	var cannon_damage: float = DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
-	_check(cannon_damage == 36 and ceili(cannon.hp / cannon_damage) == 5, "unupgraded cannon mirror requires exactly five hits")
+	_check(cannon_damage == 38 and ceili(cannon.hp / cannon_damage) == 5, "unupgraded cannon mirror requires exactly five hits")
 	for level: int in range(4):
 		var upgraded: DamagePayload = DamageResolver.snapshot(cannon, ATTACK_BONUS[level], 0, 0)
 		var damage: float = DamageResolver.resolve(upgraded, cannon, DEFENSE_BONUS[level])
@@ -152,8 +152,10 @@ func _test_production_data() -> void:
 		_check(definition.supply == supply[kind], str(kind) + " approved military supply")
 		_check(BalanceCatalog.building(definition.production_building).produces.has(String(kind)), str(kind) + " production source agrees with building")
 		if definition.military:
-			var training: Dictionary = {&"swordsman": 6.0, &"archer": 8.0, &"knight": 10.0, &"catapult": 20.0, &"cannon": 20.0}
+			var training: Dictionary = {&"swordsman": 6.0, &"archer": 7.0, &"knight": 8.0, &"catapult": 20.0, &"cannon": 20.0}
 			_check(definition.training_seconds == training[kind], str(kind) + " timed military production")
+	for kind: StringName in [&"swordsman", &"catapult", &"cannon"]:
+		_check(BalanceCatalog.unit(kind).sight == 14.0, str(kind) + " uses fourteen-unit vision")
 	var tower := BalanceCatalog.building(&"defense_tower")
 	_check(tower.cost == 150 and tower.hp == 1000 and tower.build_seconds == 20, "tower costs one-hundred-fifty gold, has one thousand health and takes twenty seconds")
 	_check(tower.damage == 13 and tower.bonuses == {&"infantry": 3, &"cavalry": 9} and BalanceCatalog.building(&"headquarters").damage == 10, "tower uses class bonuses while headquarters retains its defensive attack")

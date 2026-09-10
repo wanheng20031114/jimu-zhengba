@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="hud"]
 
-[ext_resource type="Script" path="res://scripts/minimap.gd" id="minimap"]
+[ext_resource type="PackedScene" path="res://scenes/minimap.tscn" id="minimap"]
 
 [ext_resource type="PackedScene" path="res://scenes/model_previews.tscn" id="previews"]
 
@@ -362,13 +362,12 @@ vertical_alignment = 1
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.8,0.77,0.63,1)
 
-[node name="Minimap" type="Control" parent="MapFrame"]
+[node name="Minimap" parent="MapFrame" instance=ExtResource("minimap")]
 layout_mode = 0
 offset_left = 11
 offset_top = 32
 offset_right = 185
 offset_bottom = 192
-script = ExtResource("minimap")
 unique_name_in_owner = true
 clip_contents = true
 mouse_default_cursor_shape = 2

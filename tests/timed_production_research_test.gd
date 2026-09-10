@@ -64,7 +64,7 @@ func _run() -> void:
 	factory = _building("factory")
 	academy = _building("academy")
 	academy2 = _building("academy")
-	var durations := {"swordsman": 6.0, "archer": 8.0, "knight": 10.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var durations := {"swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in durations:
 		var producer: BattleBuilding = game.headquarters if kind == "farmer" else (factory if kind in ["catapult", "cannon"] else barracks)
 		await _ready_exit(producer, kind)

@@ -9,7 +9,7 @@ extends Node
 const FOOTPRINT_HALF: float = 2.0
 const NAV_PADDING: float = 1.15
 # Bound portal lengths for local path quality and stable float projections.
-const MAX_RECT_EDGE: int = 4
+const MAX_RECT_EDGE: int = 12
 
 var rebuild_count: int = 0
 var last_rebuild_usec: int = 0
@@ -22,6 +22,10 @@ var _revision: int = 0
 var _task_id: int = -1
 var _requested_sources: Array[Dictionary] = []
 var _job: MeshJob
+var _corridor_origin := Vector2i.ZERO
+var _corridor_size := Vector2i.ZERO
+var _corridor_stride: int = 0
+var _blocked_prefix := PackedInt32Array()
 
 class MeshJob extends RefCounted:
 	var revision: int
@@ -50,6 +54,8 @@ func _cache_sources() -> void:
 			cells.append(Vector2i(floori(center.x), floori(center.z)))
 		cells.sort_custom(func(a: Vector2i, b: Vector2i): return a.y < b.y if a.y != b.y else a.x < b.x)
 		_sources.append({"region": region, "mesh": source, "cells": cells})
+	var path_budget: PathBudget = game.get_node("PathBudget")
+	path_budget.set_walkability(self)
 
 func refresh() -> void:
 	_cache_sources()
@@ -77,6 +83,7 @@ func refresh() -> void:
 		# The worker owns immutable input containers and a new NavigationMesh;
 		# it never accesses a Node, live placement cache or active mesh resource.
 		_requested_sources.append({"mesh": source.mesh, "cells": source.cells, "walkable": walkable})
+	_rebuild_corridor_prefix()
 	rebuild_count += 1
 	_revision += 1
 	if _task_id < 0: _start_job()
@@ -210,6 +217,72 @@ func walkable_footprint(at: Vector3, size: Vector3 = Vector3(4, 6, 4)) -> bool:
 
 func is_placement_clear(at: Vector3) -> bool:
 	return walkable_footprint(at)
+
+func _rebuild_corridor_prefix() -> void:
+	# A summed-area table makes a conservative local corridor check O(1).
+	# Publish it with the logical footprint, before asynchronous mesh baking;
+	# a newly placed building therefore blocks direct pursuit immediately.
+	_blocked_prefix.clear()
+	_corridor_size = Vector2i.ZERO
+	if _walkable_cells.is_empty():
+		return
+	var low: Vector2i = _walkable_cells.keys()[0]
+	var high: Vector2i = low
+	for cell: Vector2i in _walkable_cells:
+		low = low.min(cell)
+		high = high.max(cell)
+	_corridor_origin = low
+	_corridor_size = high - low + Vector2i.ONE
+	_corridor_stride = _corridor_size.x + 1
+	_blocked_prefix.resize(_corridor_stride * (_corridor_size.y + 1))
+	_blocked_prefix.fill(0)
+	for z: int in range(_corridor_size.y):
+		var blocked_in_row: int = 0
+		var previous_row: int = z * _corridor_stride
+		var current_row: int = previous_row + _corridor_stride
+		for x: int in range(_corridor_size.x):
+			if not _walkable_cells.has(_corridor_origin + Vector2i(x, z)):
+				blocked_in_row += 1
+			_blocked_prefix[current_row + x + 1] = _blocked_prefix[previous_row + x + 1] + blocked_in_row
+
+func has_clear_corridor(from: Vector3, to: Vector3, body_radius: float) -> bool:
+	if _blocked_prefix.is_empty():
+		return false
+	# An empty bounding rectangle is the O(1) common case. For a diagonal near
+	# an obstacle, narrow each grid row to the body's conservative swept square:
+	# a rock beside the route must not force every pursuer to repeat native A*.
+	var margin: float = body_radius + 0.001
+	var low := Vector2i(floori(minf(from.x, to.x) - margin), floori(minf(from.z, to.z) - margin)) - _corridor_origin
+	var high := Vector2i(floori(maxf(from.x, to.x) + margin), floori(maxf(from.z, to.z) + margin)) - _corridor_origin + Vector2i.ONE
+	if low.x < 0 or low.y < 0 or high.x > _corridor_size.x or high.y > _corridor_size.y:
+		return false
+	var blocked: int = _blocked_prefix[high.y * _corridor_stride + high.x] - _blocked_prefix[low.y * _corridor_stride + high.x] - _blocked_prefix[high.y * _corridor_stride + low.x] + _blocked_prefix[low.y * _corridor_stride + low.x]
+	if blocked == 0:
+		return true
+	var dz: float = to.z - from.z
+	if absf(dz) < 0.000001:
+		return false # The bounding rectangle already is the horizontal sweep.
+	var inverse_z: float = 1.0 / dz
+	var dx: float = to.x - from.x
+	for row: int in range(low.y, high.y):
+		var z: float = float(row + _corridor_origin.y)
+		var enter: float = (z - margin - from.z) * inverse_z
+		var leave: float = (z + 1.0 + margin - from.z) * inverse_z
+		var start: float = clampf(minf(enter, leave), 0.0, 1.0)
+		var finish: float = clampf(maxf(enter, leave), 0.0, 1.0)
+		var first_x: float = from.x + dx * start
+		var last_x: float = from.x + dx * finish
+		var left: int = floori(minf(first_x, last_x) - margin) - _corridor_origin.x
+		var right: int = floori(maxf(first_x, last_x) + margin) - _corridor_origin.x + 1
+		# Floating-point endpoint arithmetic may widen by one cell; retain the
+		# already checked outer bounds instead of indexing outside the prefix.
+		left = maxi(low.x, left)
+		right = mini(high.x, right)
+		var current: int = row * _corridor_stride
+		var next: int = current + _corridor_stride
+		if _blocked_prefix[next + right] - _blocked_prefix[current + right] - _blocked_prefix[next + left] + _blocked_prefix[current + left] > 0:
+			return false
+	return true
 
 func contains_walkable_point(at: Vector3) -> bool:
 	var cell := Vector2i(floori(at.x), floori(at.z))

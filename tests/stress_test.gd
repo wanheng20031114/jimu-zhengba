@@ -150,7 +150,7 @@ func _run() -> void:
 			unit.issue_move(Vector3(x * 0.2, 0, 0), true)
 	game.select_army()
 	await _measure("160_mixed_battle", 12.0)
-	_check(game.effect_container.get_child_count() > 0, "large battle produces projectiles and effects")
+	_check(game.get_node("ProjectilePool").active_count() + game.get_node("EffectPool").active_count() > 0, "large battle produces projectiles and effects")
 	_check(game.player_count() > 0 and game.enemy_count() > 0, "both sides remain simulated under load")
 	# Kill an enemy referenced by multiple queued attack orders during combat.
 	var target: Node3D = get_nodes_in_group("enemy_units")[0]
@@ -215,6 +215,7 @@ func _test_screen_selection() -> void:
 func _clear_units() -> void:
 	game.select_entities([])
 	game.control_groups.clear()
+	game.get_node("ProjectilePool").reset_all()
 	for unit: Node in get_nodes_in_group("units"):
 		unit.queue_free()
 	for child: Node in game.effect_container.get_children():
@@ -247,7 +248,9 @@ func _measure(label: String, seconds: float) -> void:
 				"memory_mb": Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0,
 				"orphans": Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT),
 				"live_units": get_nodes_in_group("units").size(),
-				"effects": game.effect_container.get_child_count()})
+				"effects": game.get_node("ProjectilePool").visual_count() + game.get_node("EffectPool").active_count(),
+				"projectiles": game.get_node("ProjectilePool").active_count(),
+				"projectile_visuals": game.get_node("ProjectilePool").visual_count()})
 	frame_ms.sort()
 	var averages: Dictionary = {}
 	for key: String in samples[0]:

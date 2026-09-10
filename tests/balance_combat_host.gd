@@ -5,14 +5,25 @@ var is_authority: bool = true
 var local_owner_id: int = 0
 var finished: bool = false
 var players: Array[PlayerState] = [PlayerState.new(0, 0), PlayerState.new(1, 1), PlayerState.new(2, 0), PlayerState.new(3, 1)]
-var hidden_entities: Dictionary = {}
+var automatic_vision: bool = true
 var next_id: int = 1
 var gathered_gold: int = 0
 var projectile_count: int = 0
 
+@onready var combat_fog: FogOfWar = $FogOfWar
+
+func _ready() -> void:
+	combat_fog.configure(self, Vector2(80, 80))
+
+func _physics_process(delta: float) -> void:
+	if automatic_vision:
+		combat_fog.tick(delta)
+
 func register_entity(entity: Node3D) -> void:
 	entity.entity_id = next_id
 	next_id += 1
+	if automatic_vision:
+		combat_fog._recompute()
 
 func get_player(owner: int) -> PlayerState:
 	return players[owner]
@@ -20,11 +31,23 @@ func get_player(owner: int) -> PlayerState:
 func are_hostile(a: Node3D, b: Node3D) -> bool:
 	return a.alliance_id != b.alliance_id
 
-func can_see_entity(_owner: int, entity: Node3D) -> bool:
-	return not hidden_entities.has(entity.entity_id)
+func can_see_entity(owner: int, entity: Node3D) -> bool:
+	return combat_fog.entity_visible(owner, entity)
 
-func can_see_position(_owner: int, _at: Vector3) -> bool:
-	return true
+func can_see_position(owner: int, at: Vector3) -> bool:
+	return combat_fog.position_visible(owner, at)
+
+func suspend_alliance_vision(alliance: int) -> void:
+	# Publish a remembered-only native mask, then freeze its update while a
+	# committed windup tests loss of vision independently of target distance.
+	automatic_vision = false
+	var remembered: PackedByteArray = combat_fog._cells[alliance]
+	remembered.fill(1)
+	combat_fog._cells[alliance] = remembered
+
+func resume_vision() -> void:
+	automatic_vision = true
+	combat_fog._recompute()
 
 func clamp_to_map(at: Vector3) -> Vector3:
 	return Vector3(clampf(at.x, -40.0, 40.0), 0.0, clampf(at.z, -40.0, 40.0))

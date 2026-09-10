@@ -43,12 +43,12 @@ func _run() -> void:
 	var knight := BalanceCatalog.unit("knight")
 	var swordsman := BalanceCatalog.unit("swordsman")
 	check(archer.damage == 12 and archer.bonuses.is_empty(), "archer retains twelve base damage with no anti-cavalry bonus")
-	check(knight.sight == 15 and archer.sight == 13, "cavalry sees two world units farther than archers")
+	check(knight.sight == 16 and archer.sight == 14, "cavalry sees two world units farther than archers")
 	check(archer.range == 10 and is_equal_approx(archer.cooldown, 1.5), "archer reach and cadence stay at their approved values")
-	check(knight.ranged_armor == 4 and knight.melee_armor == 2 and knight.cost == 80, "cavalry has four ranged armor and costs eighty gold")
-	check(knight.bonuses[&"archer"] == 11 and knight.damage == 19, "anti-archer damage is a class bonus, not extra damage against all units")
-	check(swordsman.ranged_armor == 1 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100, "swordsman lowers only ranged armor to one while preserving melee armor, cost and health")
-	for pair: Array in [["knight", 8, 15], ["swordsman", 11, 10]]:
+	check(knight.ranged_armor == 6 and knight.melee_armor == 2 and knight.cost == 80, "cavalry has six ranged armor and costs eighty gold")
+	check(knight.bonuses[&"archer"] == 3 and knight.damage == 9, "anti-archer damage is a class bonus, not extra damage against all units")
+	check(swordsman.ranged_armor == 0 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100 and swordsman.sight == 14, "swordsman has zero ranged armor and fourteen-unit vision")
+	for pair: Array in [["knight", 6, 20], ["swordsman", 12, 9]]:
 		await _shoot_to_defeat(pair[0], pair[1], pair[2])
 	await _vision_case()
 	await _clear()
@@ -76,18 +76,18 @@ func _shoot_to_defeat(kind: String, per_hit: int, hit_count: int) -> void:
 	await _clear()
 
 func _vision_case() -> void:
-	# Both units sit on native two-meter cell centers, 14 units apart. This is
-	# inside cavalry sight (15) and outside archer sight (13), without edge rounding.
+	# Native two-meter cell centers with a (14, 6) offset are about 15.23 units
+	# apart: inside cavalry sight (16), outside archer sight (14), away from edges.
 	var knight := _unit("knight", 0, Vector3(-1, 0, -1))
-	var archer := _unit("archer", 1, Vector3(13, 0, -1))
+	var archer := _unit("archer", 1, Vector3(13, 0, 5))
 	host.fog.configure(host, Vector2(80, 80))
 	host.fog.apply_visibility(0)
-	check(host.can_see_entity(0, archer) and archer.visible, "knight discovers and displays archer at fourteen-unit distance")
+	check(host.can_see_entity(0, archer) and archer.visible, "knight discovers and displays archer between fourteen and sixteen units away")
 	check(not host.can_see_entity(1, knight), "archer cannot see the farther-sighted knight at the same separation")
 	check(host.can_see_entity(2, archer), "allied owner shares cavalry scouting vision")
 	check(knight._valid_target(archer) and not archer._valid_target(knight), "combat target validity obeys asymmetric current visibility")
 	check(not knight._within_attack_range(archer), "greater vision does not give cavalry a ranged attack")
-	check(is_equal_approx(knight._target_query.shape.radius, 15.0 + knight.radius), "native target sphere follows cavalry sight resource")
+	check(is_equal_approx(knight._target_query.shape.radius, BalanceCatalog.unit("knight").sight + knight.radius), "native target sphere follows cavalry sight resource")
 	knight.position = Vector3(-9, 0, -1)
 	host.fog.tick(0.2)
 	host.fog.apply_visibility(0)

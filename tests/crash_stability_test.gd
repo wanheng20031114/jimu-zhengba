@@ -117,8 +117,8 @@ func _round(index: int, config: Dictionary) -> void:
 	var fight_end: float = game.elapsed + 22.0
 	while game.elapsed < fight_end:
 		await _ticks(1)
-		peak_projectiles = maxi(peak_projectiles, game.effect_container.get_child_count())
-		for projectile: BattleProjectile in game.effect_container.get_children():
+		peak_projectiles = maxi(peak_projectiles, game.get_node("ProjectilePool").active_count())
+		for projectile: ProjectileFlight in game.get_node("ProjectilePool").active_flights:
 			projectiles_seen[projectile._kind] = true
 	_check(building.is_constructed and building.construction_progress == 1.0, "round %d completes fifteen seconds of actual worker construction" % index)
 	_check(damage_events > begin_damage and dead_units > begin_deaths, "round %d has native mixed battle damage and deaths" % index)
@@ -133,9 +133,9 @@ func _round(index: int, config: Dictionary) -> void:
 	var exit_at: Vector3 = game.find_build_location(0, "defense_tower", game.headquarters.position)
 	_check(exit_at.is_finite(), "round %d reserves a legal new site for teardown-during-build" % index)
 	var attack_deadline: float = game.elapsed + 4.0
-	while game.effect_container.get_child_count() == 0 and game.elapsed < attack_deadline:
+	while game.get_node("ProjectilePool").active_count() == 0 and game.elapsed < attack_deadline:
 		await _ticks(1)
-	var in_flight: int = game.effect_container.get_child_count()
+	var in_flight: int = game.get_node("ProjectilePool").active_count()
 	var audio_refs: Array[WeakRef] = game.get_node("Audio")._playbacks.duplicate()
 	_check(in_flight > 0 and audio_refs.any(func(ref): return ref.get_ref() != null), "round %d starts teardown with real projectiles and audio playbacks active" % index)
 	var exit_site: Dictionary = game.command_bus.execute({"kind": "build", "building_type": "defense_tower",
@@ -231,8 +231,10 @@ func _capture_battle_references() -> Array[WeakRef]:
 	for unit: BattleUnit in game.unit_container.get_children():
 		references.append(weakref(unit))
 		references.append(weakref(unit.navigation_agent))
-	for branch: Node in [game.get_node("Buildings"), game.effect_container]:
+	for branch: Node in [game.get_node("Buildings"), game.effect_container, game.get_node("ProjectilePool")]:
 		for child: Node in branch.get_children(): references.append(weakref(child))
+	for flight: ProjectileFlight in game.get_node("ProjectilePool").active_flights:
+		references.append(weakref(flight))
 	return references
 
 func _sample_lobby() -> Dictionary:

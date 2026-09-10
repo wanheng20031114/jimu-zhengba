@@ -124,6 +124,7 @@ func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 		"hp": entity.hp, "max_hp": entity.max_hp}
 	if entity is BattleUnit:
 		var unit := entity as BattleUnit
+		unit._model.synchronize_animation()
 		var animation: AnimationPlayer = unit._attack_animation
 		state.merge({"category": "unit", "kind": unit.unit_type, "moving": unit._moving, "attack_range": unit.attack_range,
 			"working": unit._working, "work": unit.work_progress,

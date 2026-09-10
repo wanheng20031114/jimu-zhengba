@@ -97,6 +97,7 @@ physics_interpolation_mode = 2
 script = ExtResource("1_script")
 
 [node name="Sparks" type="CPUParticles3D" parent="."]
+cast_shadow = 0
 emitting = false
 amount = 8
 lifetime = 0.55
@@ -118,6 +119,7 @@ scale_amount_curve = SubResource("Curve_spark")
 color_ramp = SubResource("Gradient_spark")
 
 [node name="Dust" type="CPUParticles3D" parent="."]
+cast_shadow = 0
 emitting = false
 amount = 12
 lifetime = 1.65
@@ -139,6 +141,7 @@ scale_amount_curve = SubResource("Curve_dust")
 color_ramp = SubResource("Gradient_dust")
 
 [node name="Debris" type="CPUParticles3D" parent="."]
+cast_shadow = 0
 emitting = false
 amount = 16
 lifetime = 1.5

@@ -67,8 +67,10 @@ func run() -> void:
 	check(barracks.production.recruit("knight").ok, "barracks queues knight")
 	check(player.military_supply == supply and player.reserved_military_supply == 1, "knight reserves one supply before training")
 	barracks.production.set_physics_process(false)
-	barracks.production._physics_process(10.1)
-	check(player.military_supply == supply + 1 and player.reserved_military_supply == 0, "knight consumes its one reserved supply after ten seconds")
+	barracks.production._physics_process(7.9)
+	check(player.military_supply == supply and player.reserved_military_supply == 1, "knight waits the complete eight-second training cycle")
+	barracks.production._physics_process(0.2)
+	check(player.military_supply == supply + 1 and player.reserved_military_supply == 0, "knight consumes its one reserved supply after eight seconds")
 	player.military_supply = player.get_supply_limit() - 1
 	gold_before = player.gold
 	check(not factory.production.recruit("cannon").ok and player.gold == gold_before, "three-supply cannon cannot fit in the final slot and is not charged")

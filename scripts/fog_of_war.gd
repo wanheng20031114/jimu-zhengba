@@ -81,19 +81,35 @@ func _recompute() -> void:
 		var previous: PackedByteArray = _cells[alliance]
 		var mask := PackedByteArray()
 		mask.resize(previous.size())
-		for index: int in range(previous.size()):
-			mask[index] = 1 if previous[index] > 0 else 0
+		# Each circular source contributes two endpoints per row. Resolve their
+		# union once per cell instead of writing every overlapping soldier's disc.
+		# Work is O(sources * sight_rows + map_cells), independent of overlap.
+		var stride: int = grid_size.x + 1
+		var spans := PackedInt32Array()
+		spans.resize(stride * grid_size.y)
+		spans.fill(0)
 		for source: Node3D in sources:
-			if not source.alive or source.alliance_id != alliance:
-				continue
-			var definition: CombatDefinition = source.get_combat_definition()
-			var sight: float = maxf(definition.range + source.radius, 12.0) if source.is_in_group("buildings") else (definition as UnitDefinition).sight
-			_stamp_circle(mask, source.global_position, sight)
+			if source is BattleUnit:
+				var unit: BattleUnit = source
+				if unit.alive and unit.alliance_id == alliance:
+					_accumulate_sight_spans(spans, unit.global_position, unit._stats.sight)
+			elif source is BattleBuilding:
+				var building: BattleBuilding = source
+				if building.alive and building.alliance_id == alliance:
+					_accumulate_sight_spans(spans, building.global_position, maxf(building.get_combat_definition().range + building.radius, 12.0))
+		for z: int in range(grid_size.y):
+			var row: int = z * grid_size.x
+			var span_row: int = z * stride
+			var coverage: int = 0
+			for x: int in range(grid_size.x):
+				coverage += spans[span_row + x]
+				var index: int = row + x
+				mask[index] = 2 if coverage > 0 else (1 if previous[index] > 0 else 0)
 		_cells[alliance] = mask
 	revision += 1
 	visibility_updated.emit(revision)
 
-func _stamp_circle(mask: PackedByteArray, at: Vector3, sight: float) -> void:
+func _accumulate_sight_spans(spans: PackedInt32Array, at: Vector3, sight: float) -> void:
 	var minimum: Vector2i = _cell_unclamped(at - Vector3(sight, 0, sight))
 	var maximum: Vector2i = _cell_unclamped(at + Vector3(sight, 0, sight))
 	var radius_squared: float = sight * sight
@@ -102,13 +118,14 @@ func _stamp_circle(mask: PackedByteArray, at: Vector3, sight: float) -> void:
 		var width_squared: float = radius_squared - dz * dz
 		if width_squared < 0.0:
 			continue
-		# Solve each circle row once; its contiguous span needs no per-cell distance math.
+		# The same cell-centre circle as gameplay visibility, including map edges.
 		var half_width: float = sqrt(width_squared)
 		var left: int = maxi(0, ceili((at.x - half_width + map_size.x * 0.5) / CELL_SIZE - 0.5))
 		var right: int = mini(grid_size.x - 1, floori((at.x + half_width + map_size.x * 0.5) / CELL_SIZE - 0.5))
-		var row: int = z * grid_size.x
-		for index: int in range(row + left, row + right + 1):
-			mask[index] = 2
+		if left <= right:
+			var row: int = z * (grid_size.x + 1)
+			spans[row + left] += 1
+			spans[row + right + 1] -= 1
 
 func _cell_unclamped(at: Vector3) -> Vector2i:
 	return Vector2i(floori((at.x + map_size.x * 0.5) / CELL_SIZE), floori((at.z + map_size.y * 0.5) / CELL_SIZE))
@@ -124,6 +141,14 @@ func cell_state(owner: int, at: Vector3) -> int:
 
 func position_visible(owner: int, at: Vector3) -> bool:
 	return cell_state(owner, at) == 2
+
+func position_visible_to_alliance(alliance: int, at: Vector3) -> bool:
+	# Authoritative units already bind their alliance at spawn. Resolve the cell
+	# directly, without repeating player lookup for every target/range check.
+	return _configured and _state(alliance, at) == 2
+
+func building_visible_to_alliance(alliance: int, building: BattleBuilding) -> bool:
+	return _configured and ((_revealed[building.alliance_id] != 0 and building.building_type in REVEAL_KINDS) or _footprint_visible(alliance, building.global_position, building.radius))
 
 func explored(owner: int, at: Vector3) -> bool:
 	return cell_state(owner, at) > 0
@@ -195,6 +220,10 @@ func _update_texture(alliance: int) -> void:
 	# The shader decodes native byte states directly; no RGBA repacking or texture allocation.
 	_image.set_data(grid_size.x, grid_size.y, false, Image.FORMAT_R8, _cells[alliance])
 	_texture.update(_image)
+
+func visibility_texture() -> Texture2D:
+	# The local battlefield and minimap consume the very same fog revision.
+	return _texture
 
 func snapshot_for(owner: int) -> Dictionary:
 	var alliance: int = _game.get_player(owner).alliance_id
