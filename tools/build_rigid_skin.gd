@@ -23,6 +23,8 @@ var _max_normal_error: float = 0.0
 var _max_socket_error: float = 0.0
 var _sample_count: int = 0
 var _vertex_comparisons: int = 0
+var _lod_summary: Array[Dictionary] = []
+var _lod_index_checks: int = 0
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -78,6 +80,8 @@ func _run() -> void:
 		"max_world_normal_error": _max_normal_error,
 		"max_socket_error": _max_socket_error,
 		"position_tolerance": POSITION_TOLERANCE, "normal_tolerance": NORMAL_TOLERANCE,
+		"lod_levels": _lod_summary, "lod_index_checks": _lod_index_checks,
+		"lod_scope": "Authored per-part LOD indices and scale-adjusted thresholds; equivalent for the game's orthographic views. Perspective per-part AABB distances are not identical after merging.",
 		"note": "CPU skin equation using Godot sampled bone poses; not a rendered GPU or FPS benchmark."
 	}
 	var output := FileAccess.open(args[0], FileAccess.WRITE)
@@ -244,6 +248,9 @@ func _combine_meshes(original: Node3D, skeleton: Skeleton3D) -> ArrayMesh:
 		var bone_index: int = _bone_for_path[String(original.get_path_to(part))]
 		var bind: Transform3D = skeleton.get_bone_global_rest(bone_index)
 		var normal_basis: Basis = bind.basis.inverse().transposed()
+		# ArrayMesh.surface_get_arrays() omits LODs. ImporterMesh exposes the
+		# native source LOD tables without depending on private serialized fields.
+		var imported: ImporterMesh = ImporterMesh.from_mesh(part.mesh)
 		_check(part.mesh.get_blend_shape_count() == 0, "No original blend shapes")
 		for surface: int in part.mesh.get_surface_count():
 			var arrays: Array = part.mesh.surface_get_arrays(surface)
@@ -260,7 +267,11 @@ func _combine_meshes(original: Node3D, skeleton: Skeleton3D) -> ArrayMesh:
 			var source_normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
 			var source_colors: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
 			var offset: int = vertices.size()
-			_segments.append({"part": part, "surface": surface, "start": offset, "count": source_vertices.size(), "bone": bone_index})
+			var source_indices: PackedInt32Array = _base_indices(arrays)
+			var lods: Dictionary = _read_lods(imported, surface)
+			var lod_scale: float = _max_axis_scale(bind.basis) * part.lod_bias
+			_segments.append({"part": part, "surface": surface, "start": offset, "count": source_vertices.size(), "bone": bone_index,
+				"indices": source_indices, "lods": lods, "lod_scale": lod_scale})
 			for vertex: int in source_vertices.size():
 				vertices.append(bind * source_vertices[vertex])
 				normals.append((normal_basis * source_normals[vertex]).normalized())
@@ -295,9 +306,122 @@ func _combine_meshes(original: Node3D, skeleton: Skeleton3D) -> ArrayMesh:
 		merged[Mesh.ARRAY_TANGENT] = tangents
 	var mesh := ArrayMesh.new()
 	mesh.resource_name = _kind.capitalize() + "RigidSkin"
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, merged)
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, merged, [], _merge_lods())
 	mesh.surface_set_material(0, material)
 	return mesh
+
+func _base_indices(arrays: Array) -> PackedInt32Array:
+	if arrays[Mesh.ARRAY_INDEX] != null:
+		return arrays[Mesh.ARRAY_INDEX]
+	var result := PackedInt32Array()
+	result.resize(arrays[Mesh.ARRAY_VERTEX].size())
+	for vertex: int in result.size():
+		result[vertex] = vertex
+	return result
+
+func _read_lods(imported: ImporterMesh, surface: int) -> Dictionary:
+	var result: Dictionary = {}
+	for level: int in imported.get_surface_lod_count(surface):
+		result[imported.get_surface_lod_size(surface, level)] = imported.get_surface_lod_indices(surface, level)
+	return result
+
+func _max_axis_scale(basis: Basis) -> float:
+	return maxf(basis.x.length(), maxf(basis.y.length(), basis.z.length()))
+
+func _scaled_lod_edge(edge: float, scale: float) -> float:
+	# RenderingServer stores edge_length as float32. Normalize here too so a
+	# boundary cannot silently change when the resource is saved/reloaded.
+	return PackedFloat32Array([edge * scale])[0]
+
+func _segment_indices(segment: Dictionary, budget: float) -> PackedInt32Array:
+	var chosen: PackedInt32Array = segment.indices
+	var edges: Array = segment.lods.keys()
+	edges.sort()
+	for edge: float in edges:
+		if _scaled_lod_edge(edge, segment.lod_scale) > budget:
+			break
+		chosen = segment.lods[edge]
+	return chosen
+
+func _merge_lods() -> Dictionary:
+	# Native Forward+ uses edge * max_axis_scale * lod_bias / distance. For
+	# orthographic views distance is 1, so all parts share the same budget.
+	# Preserve every distinct transition; never choose an LOD by ordinal.
+	var transitions: Dictionary = {}
+	for segment: Dictionary in _segments:
+		_check(segment.lod_scale > 0.0, "Positive LOD model scale/bias")
+		for edge: float in segment.lods:
+			transitions[_scaled_lod_edge(edge, segment.lod_scale)] = true
+	var edges: Array = transitions.keys()
+	edges.sort()
+	var merged: Dictionary = {}
+	_lod_summary.clear()
+	for edge: float in edges:
+		var indices := PackedInt32Array()
+		var parts: Array[Dictionary] = []
+		for segment: Dictionary in _segments:
+			var source_indices: PackedInt32Array = _segment_indices(segment, edge)
+			parts.append({"bone": segment.bone, "triangles": source_indices.size() / 3})
+			for index: int in source_indices:
+				indices.append(segment.start + index)
+		merged[edge] = indices
+		_lod_summary.append({"edge": edge, "indices": indices.size(), "triangles": indices.size() / 3, "parts": parts})
+	return merged
+
+func _validate_lods(combined: MeshInstance3D) -> void:
+	var imported: ImporterMesh = ImporterMesh.from_mesh(combined.mesh)
+	var actual: Dictionary = _read_lods(imported, 0)
+	_check(actual.size() == _lod_summary.size(), "All merged LOD transitions survive native upload/save")
+	var arrays: Array = combined.mesh.surface_get_arrays(0)
+	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+	for level: Dictionary in _lod_summary:
+		_check(actual.has(level.edge), "Exact float32 LOD threshold preserved")
+		if not actual.has(level.edge):
+			continue
+		var indices: PackedInt32Array = actual[level.edge]
+		_check(indices.size() == level.indices and indices.size() % 3 == 0, "LOD index/triangle count preserved")
+		var cursor: int = 0
+		for segment: Dictionary in _segments:
+			_check(segment.part.get_active_material(segment.surface).resource_path == combined.mesh.surface_get_material(0).resource_path, "LOD material preserved")
+			var source_indices: PackedInt32Array = _segment_indices(segment, level.edge)
+			for source_index: int in source_indices:
+				var expected: int = segment.start + source_index
+				_check(source_index >= 0 and source_index < segment.count, "Source LOD remains within its own rigid part")
+				_check(cursor < indices.size() and indices[cursor] == expected, "LOD winding/index equals authored source plus offset")
+				_check(bones[expected * 4] == segment.bone, "LOD vertex retains original bone ownership")
+				_lod_index_checks += 1
+				cursor += 1
+		_check(cursor == indices.size(), "LOD has no additional or missing part")
+	# Exercise the native screen-error comparison at midpoints and on both
+	# sides of every transition, including uniform root scale changes. This
+	# checks the selection independently from the merged index constructor.
+	var budgets: Array[float] = [0.0]
+	var previous: float = 0.0
+	for level: Dictionary in _lod_summary:
+		budgets.append((previous + level.edge) * 0.5)
+		budgets.append(level.edge)
+		previous = level.edge
+	budgets.append(previous * 2.0)
+	var merged_edges: Array = actual.keys()
+	merged_edges.sort()
+	for root_scale: float in [0.5, 1.0, 1.7]:
+		for budget: float in budgets:
+			var expected_count: int = 0
+			for segment: Dictionary in _segments:
+				var count: int = segment.indices.size()
+				var source_edges: Array = segment.lods.keys()
+				source_edges.sort()
+				for edge: float in source_edges:
+					if _scaled_lod_edge(edge, segment.lod_scale) * root_scale > budget * root_scale:
+						break
+					count = segment.lods[edge].size()
+				expected_count += count
+			var actual_count: int = arrays[Mesh.ARRAY_INDEX].size()
+			for edge: float in merged_edges:
+				if edge * root_scale > budget * root_scale:
+					break
+				actual_count = actual[edge].size()
+			_check(actual_count == expected_count, "Orthographic LOD selection matches all separate parts")
 
 func _restore_pose(original: Node3D, converted: Node3D, original_transforms: Array[Transform3D]) -> void:
 	for model: Node3D in [original, converted]:
@@ -326,6 +450,7 @@ func _validate(original: Node3D, converted: Node3D) -> void:
 		transforms.append(node.transform)
 	var cases: Array[Dictionary] = []
 	_validate_channels(converted)
+	_validate_lod_animation_domain(original)
 	for locomotion: String in ["idle", "walk"]:
 		var clip: Animation = original.get_node("Locomotion").get_animation(locomotion)
 		for step: int in 13:
@@ -409,6 +534,25 @@ func _validate_channels(converted: Node3D) -> void:
 				cursor += 1
 	_check(cursor == indices.size(), "No additional or dropped triangles")
 	_check(combined.mesh.surface_get_material(0).resource_path == _source_meshes[0].get_active_material(0).resource_path, "Native shared material path preserved after save")
+	_validate_lods(combined)
+
+func _validate_lod_animation_domain(original: Node3D) -> void:
+	# A single surface has one native LOD scale. Refuse newly authored dynamic
+	# scale on a LOD-bearing part rather than pretend fixed thresholds match it.
+	# Current bow strings have scale tracks but no LODs and remain valid.
+	for player_name: String in ["Locomotion", "Attack"]:
+		var player: AnimationPlayer = original.get_node(player_name)
+		for clip_name: StringName in player.get_animation_list():
+			var clip: Animation = player.get_animation(clip_name)
+			for track: int in clip.get_track_count():
+				if clip.track_get_type(track) != Animation.TYPE_SCALE_3D:
+					continue
+				var scaled_path: String = String(clip.track_get_path(track))
+				for segment: Dictionary in _segments:
+					if segment.lods.is_empty():
+						continue
+					var part_path: String = String(original.get_path_to(segment.part))
+					_check(part_path != scaled_path and not part_path.begins_with(scaled_path + "/"), "Animated scale does not change a LOD-bearing part's threshold")
 
 func _compare_pose(original: Node3D, converted: Node3D) -> void:
 	_sample_count += 1
@@ -420,6 +564,9 @@ func _compare_pose(original: Node3D, converted: Node3D) -> void:
 	var colors: PackedColorArray = merged[Mesh.ARRAY_COLOR]
 	for segment: Dictionary in _segments:
 		var part: MeshInstance3D = segment.part
+		if not segment.lods.is_empty():
+			var relative_scale: float = _max_axis_scale(part.global_basis) * part.lod_bias / _max_axis_scale(combined.global_basis)
+			_check(absf(relative_scale - float(segment.lod_scale)) < 0.00005, "Sampled part LOD scale remains equivalent after merge")
 		var arrays: Array = part.mesh.surface_get_arrays(segment.surface)
 		var source_vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 		var source_normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]

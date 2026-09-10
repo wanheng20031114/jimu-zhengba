@@ -153,15 +153,15 @@ _data = {
 &"strike": SubResource("Animation_hgoeb")
 }
 
-[node name="SwordsmanSkinned" type="Node3D" unique_id=1488356904]
+[node name="SwordsmanSkinned" type="Node3D" unique_id=868504968]
 script = ExtResource("1_bwqtb")
 projectile_socket = NodePath("Rig/Skeleton3D/ProjectileSocket")
 rigid_skin_skeleton = NodePath("Rig/Skeleton3D")
 rigid_skin_socket_bone = &"Rig__Action__ProjectileSocket"
 
-[node name="Rig" type="Node3D" parent="." unique_id=668313263]
+[node name="Rig" type="Node3D" parent="." unique_id=597957946]
 
-[node name="Skeleton3D" type="Skeleton3D" parent="Rig" unique_id=1741894476]
+[node name="Skeleton3D" type="Skeleton3D" parent="Rig" unique_id=293814770]
 modifier_callback_mode_process = 2
 bones/0/name = "Rig"
 bones/0/parent = -1
@@ -234,12 +234,12 @@ bones/9/position = Vector3(0, 1.4, -0.6)
 bones/9/rotation = Quaternion(0, 0, 0, 1)
 bones/9/scale = Vector3(1, 1, 1)
 
-[node name="ProjectileSocket" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=1638209262]
+[node name="ProjectileSocket" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=451830652]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4062222, -0.6)
 bone_name = "Rig__Action__ProjectileSocket"
 bone_idx = 9
 
-[node name="PoseInterpolation" type="SkeletonModifier3D" parent="Rig/Skeleton3D" unique_id=706783134]
+[node name="PoseInterpolation" type="SkeletonModifier3D" parent="Rig/Skeleton3D" unique_id=1396442599]
 unique_name_in_owner = false
 process_mode = 0
 process_priority = 0
@@ -259,21 +259,21 @@ influence = 1.0
 script = ExtResource("2_eik46")
 tracked_bones = PackedStringArray("Rig", "Rig__Action", "Rig__Action__Waist", "Rig__Action__Waist__Head", "Rig__Action__Waist__ArmLeft", "Rig__Action__Waist__ArmRight", "Rig__Action__LegLeft", "Rig__Action__LegRight")
 
-[node name="SkinnedMesh" type="MeshInstance3D" parent="Rig" unique_id=1179829806]
+[node name="SkinnedMesh" type="MeshInstance3D" parent="Rig" unique_id=1043399933]
 mesh = ExtResource("3_677f4")
 skin = SubResource("Skin_y7wis")
 skeleton = NodePath("../Skeleton3D")
 
-[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=766332539]
+[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=535548437]
 callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_iavlu")
 autoplay = &"idle"
 
-[node name="Attack" type="AnimationPlayer" parent="." unique_id=506490696]
+[node name="Attack" type="AnimationPlayer" parent="." unique_id=1354952289]
 callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_dl5q4")
 
-[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=1746321286]
+[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=1499165855]
 aabb = AABB(-4, -2, -4, 8, 9, 8)
 
 [connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]

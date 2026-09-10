@@ -237,16 +237,16 @@ _data = {
 &"strike": SubResource("Animation_2dook")
 }
 
-[node name="ArcherSkinned" type="Node3D" unique_id=1765814296]
+[node name="ArcherSkinned" type="Node3D" unique_id=2124603414]
 script = ExtResource("1_rxkpe")
 kind = "archer"
 projectile_socket = NodePath("Rig/Skeleton3D/ProjectileSocket")
 rigid_skin_skeleton = NodePath("Rig/Skeleton3D")
 rigid_skin_socket_bone = &"Rig__Action__Waist__ArmLeft__Bow__ProjectileSocket"
 
-[node name="Rig" type="Node3D" parent="." unique_id=1000249358]
+[node name="Rig" type="Node3D" parent="." unique_id=1831013512]
 
-[node name="Skeleton3D" type="Skeleton3D" parent="Rig" unique_id=1768694150]
+[node name="Skeleton3D" type="Skeleton3D" parent="Rig" unique_id=1528743174]
 modifier_callback_mode_process = 2
 bones/0/name = "Rig"
 bones/0/parent = -1
@@ -354,20 +354,20 @@ bones/14/position = Vector3(0.155, 0.75, 0)
 bones/14/rotation = Quaternion(0, 0, 0, 1)
 bones/14/scale = Vector3(1, 1, 1)
 
-[node name="ProjectileSocket" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=248514648]
+[node name="ProjectileSocket" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=461642921]
 transform = Transform3D(0.9999875, -0.0018791442, -0.0046371017, 0.0018706627, 0.99999654, -0.0018328503, 0.004640525, 0.0018241554, 0.9999876, -0.44596112, 0.753564, -0.98955494)
 bone_name = "Rig__Action__Waist__ArmLeft__Bow__ProjectileSocket"
 bone_idx = 10
 
-[node name="Prop_Rig__Action__Waist__ArmLeft__Bow__Arrow" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=2032894535]
+[node name="Prop_Rig__Action__Waist__ArmLeft__Bow__Arrow" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=1934673819]
 transform = Transform3D(0.9999875, -0.0018791442, -0.0046371017, 0.0018706627, 0.99999654, -0.0018328503, 0.004640525, 0.0018241554, 0.9999876, -0.4504591, 0.7517861, -0.019566998)
 bone_name = "Rig__Action__Waist__ArmLeft__Bow__Arrow"
 bone_idx = 9
 
-[node name="Mesh" type="MeshInstance3D" parent="Rig/Skeleton3D/Prop_Rig__Action__Waist__ArmLeft__Bow__Arrow" unique_id=1173866373]
+[node name="Mesh" type="MeshInstance3D" parent="Rig/Skeleton3D/Prop_Rig__Action__Waist__ArmLeft__Bow__Arrow" unique_id=1599801447]
 mesh = ExtResource("2_0s5bw")
 
-[node name="PoseInterpolation" type="SkeletonModifier3D" parent="Rig/Skeleton3D" unique_id=569612819]
+[node name="PoseInterpolation" type="SkeletonModifier3D" parent="Rig/Skeleton3D" unique_id=1344363905]
 unique_name_in_owner = false
 process_mode = 0
 process_priority = 0
@@ -387,21 +387,21 @@ influence = 1.0
 script = ExtResource("3_pbudn")
 tracked_bones = PackedStringArray("Rig", "Rig__Action", "Rig__Action__Waist", "Rig__Action__Waist__Head", "Rig__Action__Waist__ArmLeft", "Rig__Action__Waist__ArmLeft__Bow", "Rig__Action__Waist__ArmLeft__Bow__StringUpper", "Rig__Action__Waist__ArmLeft__Bow__StringLower", "Rig__Action__Waist__ArmLeft__Bow__Arrow", "Rig__Action__Waist__ArmRight", "Rig__Action__Waist__ArmRight__ForearmRight", "Rig__Action__LegLeft", "Rig__Action__LegRight")
 
-[node name="SkinnedMesh" type="MeshInstance3D" parent="Rig" unique_id=1512602224]
+[node name="SkinnedMesh" type="MeshInstance3D" parent="Rig" unique_id=79335141]
 mesh = ExtResource("4_dpovr")
 skin = SubResource("Skin_5b224")
 skeleton = NodePath("../Skeleton3D")
 
-[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=733694961]
+[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=973107311]
 callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_fn7xu")
 autoplay = &"idle"
 
-[node name="Attack" type="AnimationPlayer" parent="." unique_id=509370860]
+[node name="Attack" type="AnimationPlayer" parent="." unique_id=1625715016]
 callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_edtn0")
 
-[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=778373773]
+[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=867187650]
 aabb = AABB(-4, -2, -4, 8, 9, 8)
 
 [connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]

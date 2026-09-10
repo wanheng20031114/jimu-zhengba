@@ -620,16 +620,16 @@ _data = {
 &"strike": SubResource("Animation_n7m7u")
 }
 
-[node name="FarmerSkinned" type="Node3D" unique_id=416957332]
+[node name="FarmerSkinned" type="Node3D" unique_id=288026382]
 script = ExtResource("1_alkie")
 kind = "farmer"
 projectile_socket = NodePath("Rig/Skeleton3D/ProjectileSocket")
 rigid_skin_skeleton = NodePath("Rig/Skeleton3D")
 rigid_skin_socket_bone = &"Rig__Action__ProjectileSocket"
 
-[node name="Rig" type="Node3D" parent="." unique_id=51418176]
+[node name="Rig" type="Node3D" parent="." unique_id=1931644206]
 
-[node name="Skeleton3D" type="Skeleton3D" parent="Rig" unique_id=2132536672]
+[node name="Skeleton3D" type="Skeleton3D" parent="Rig" unique_id=816097271]
 modifier_callback_mode_process = 2
 bones/0/name = "Rig"
 bones/0/parent = -1
@@ -730,29 +730,29 @@ bones/13/position = Vector3(0, 1.4, -0.6)
 bones/13/rotation = Quaternion(0, 0, 0, 1)
 bones/13/scale = Vector3(1, 1, 1)
 
-[node name="ProjectileSocket" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=1413569296]
+[node name="ProjectileSocket" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=219880416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3401852, -0.6)
 bone_name = "Rig__Action__ProjectileSocket"
 bone_idx = 13
 
-[node name="Prop_Rig__Action__Waist__Pick" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=1785058692]
+[node name="Prop_Rig__Action__Waist__Pick" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=351419693]
 transform = Transform3D(0.9934232, 0.11424072, -0.0077043152, -0.018082108, 0.22296993, 0.97465765, 0.113063425, -0.96810824, 0.22356921, 0.011208272, 1.0273271, -0.323526)
 bone_name = "Rig__Action__Waist__Pick"
 bone_idx = 9
 
-[node name="Mesh" type="MeshInstance3D" parent="Rig/Skeleton3D/Prop_Rig__Action__Waist__Pick" unique_id=1388340730]
+[node name="Mesh" type="MeshInstance3D" parent="Rig/Skeleton3D/Prop_Rig__Action__Waist__Pick" unique_id=1272899273]
 mesh = ExtResource("2_brw4o")
 
-[node name="Prop_Rig__Action__Waist__Mallet" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=1577619845]
+[node name="Prop_Rig__Action__Waist__Mallet" type="BoneAttachment3D" parent="Rig/Skeleton3D" unique_id=1391251170]
 transform = Transform3D(0.99940044, 0.006846009, -0.033939146, -5.3502154e-06, 0.9802867, 0.19758023, 0.03462273, -0.19746159, 0.979699, 0.39151993, 0.78614634, -0.03715235)
 bone_name = "Rig__Action__Waist__Mallet"
 bone_idx = 10
 
-[node name="Mesh" type="MeshInstance3D" parent="Rig/Skeleton3D/Prop_Rig__Action__Waist__Mallet" unique_id=911769]
+[node name="Mesh" type="MeshInstance3D" parent="Rig/Skeleton3D/Prop_Rig__Action__Waist__Mallet" unique_id=636514154]
 visible = false
 mesh = ExtResource("3_1etre")
 
-[node name="PoseInterpolation" type="SkeletonModifier3D" parent="Rig/Skeleton3D" unique_id=1193020981]
+[node name="PoseInterpolation" type="SkeletonModifier3D" parent="Rig/Skeleton3D" unique_id=456235947]
 unique_name_in_owner = false
 process_mode = 0
 process_priority = 0
@@ -772,21 +772,21 @@ influence = 1.0
 script = ExtResource("4_fmiop")
 tracked_bones = PackedStringArray("Rig", "Rig__Action__Waist", "Rig__Action__Waist__Head", "Rig__Action__Waist__ArmLeft", "Rig__Action__Waist__ArmLeft__ForearmLeft", "Rig__Action__Waist__ArmRight", "Rig__Action__Waist__ArmRight__ForearmRight", "Rig__Action__Waist__Pick", "Rig__Action__Waist__Mallet", "Rig__Action__LegLeft", "Rig__Action__LegRight")
 
-[node name="SkinnedMesh" type="MeshInstance3D" parent="Rig" unique_id=1303703300]
+[node name="SkinnedMesh" type="MeshInstance3D" parent="Rig" unique_id=1790012739]
 mesh = ExtResource("5_hpy4j")
 skin = SubResource("Skin_obdkn")
 skeleton = NodePath("../Skeleton3D")
 
-[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=1272340201]
+[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=847114218]
 callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_mhbno")
 autoplay = &"idle"
 
-[node name="Attack" type="AnimationPlayer" parent="." unique_id=1816014903]
+[node name="Attack" type="AnimationPlayer" parent="." unique_id=95448853]
 callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_1ay8i")
 
-[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=204066139]
+[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=396665556]
 aabb = AABB(-4, -2, -4, 8, 9, 8)
 
 [connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]
