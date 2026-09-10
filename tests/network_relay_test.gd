@@ -59,6 +59,9 @@ func _run() -> void:
 	_key_path = _certificate_path.trim_suffix(".crt") + ".key"
 	_check("isolated test certificate generated", key.save(_key_path) == OK and certificate.save(_certificate_path) == OK)
 	relay = Server.new()
+	# This fixture deliberately tests the configurable one-room capacity edge;
+	# the production default remains eight, covered by the multi-room suite.
+	relay.max_rooms = 1
 	root.add_child(relay)
 	var bucket_session := {"snapshot_buckets": {}}
 	var accepted_burst := 0
@@ -75,21 +78,23 @@ func _run() -> void:
 	_check("valid fifteen-Hz arrival clusters survive jitter", clustered_ok)
 	var event_state := {"event_buckets": {}}
 	var visual_burst := 0
-	for _index in range(160):
-		visual_burst += int(relay._event_allowed(event_state, true, 1000))
-	_check("reliable visual burst bounded at one hundred fifty", visual_burst == 150)
-	_check("visual refill retains hundred per second boundary", not relay._event_allowed(event_state, true, 1009) and relay._event_allowed(event_state, true, 1010))
+	for _index in range(70):
+		visual_burst += int(relay._event_allowed(event_state, true, 1, 1000))
+	_check("reliable visual burst bounded at sixty per recipient", visual_burst == 60)
+	_check("visual refill retains twenty per second boundary", not relay._event_allowed(event_state, true, 1, 1049) and relay._event_allowed(event_state, true, 1, 1050))
+	_check("another recipient keeps an independent visual allowance", relay._event_allowed(event_state, true, 2, 1050))
 	var critical_burst := 0
-	for _index in range(60):
-		critical_burst += int(relay._event_allowed(event_state, false, 1017))
-	_check("critical budget independent of exhausted footsteps", critical_burst == 45)
-	_check("critical refill retains thirty per second boundary", not relay._event_allowed(event_state, false, 1050) and relay._event_allowed(event_state, false, 1051))
+	for _index in range(100):
+		critical_burst += int(relay._event_allowed(event_state, false, 1, 1017))
+	_check("critical budget independent of exhausted footsteps", critical_burst == 90)
+	_check("critical refill retains thirty per second boundary", not relay._event_allowed(event_state, false, 1, 1050) and relay._event_allowed(event_state, false, 1, 1051))
 	var clustered_events := {"event_buckets": {}}
 	var event_clusters_ok := true
 	for arrival in [1000, 3000, 3333, 3666, 4000, 4333]:
-		for _index in range(90 if arrival == 3000 else 15):
-			event_clusters_ok = relay._event_allowed(clustered_events, true, arrival) and event_clusters_ok
-	_check("two seconds reliable backlog plus forty-five Hz stream survives", event_clusters_ok)
+		for recipient in range(1, 4):
+			for _index in range(30 if arrival == 3000 else 5):
+				event_clusters_ok = relay._event_allowed(clustered_events, true, recipient, arrival) and event_clusters_ok
+	_check("three recipients keep fifteen Hz and two seconds reliable backlog", event_clusters_ok)
 	var result: Error = relay.start("127.0.0.1", 0, _key_path, _certificate_path)
 	_check("DTLS server starts", result == OK)
 	if result != OK:
@@ -138,9 +143,9 @@ func _run() -> void:
 	var visual_message := {"op": "event", "match": clients[0]._match.match_id, "to": 1,
 		"payload": {"kind": "visual_batch", "events": [{"kind": "sound", "sound": "footstep_dirt", "time": 1.0, "at": [0, 0, 0]}]}}
 	var visual_packet := Protocol.encode(visual_message)
-	for _index in range(151):
+	for _index in range(61):
 		relay._receive(host_peer, visual_packet, Protocol.EVENT_CHANNEL, receive_time)
-	_check("one hundred fifty-one visual burst only expires excess presentation", relay.dropped_visual_batches == 1 and int(host_state.strikes) == strikes_before)
+	_check("sixty-one visual burst only expires excess presentation", relay.dropped_visual_batches == 1 and int(host_state.strikes) == strikes_before)
 	for step in range(1, 11):
 		for _index in range(20):
 			relay._receive(host_peer, visual_packet, Protocol.EVENT_CHANNEL, receive_time + step * 100)
@@ -151,7 +156,9 @@ func _run() -> void:
 	_check("critical pause reaches all clients after full visual burst", events.filter(func(e): return e.data.kind == "pause").size() == 4)
 	var malformed_visual := Protocol.encode({"op": "event", "match": clients[0]._match.match_id, "to": 1, "payload": {"kind": "visual_batch", "events": {}}})
 	relay._receive(host_peer, malformed_visual, Protocol.EVENT_CHANNEL, receive_time + 1000)
-	_check("exhausted visual allowance still validates message structure", int(host_state.strikes) == strikes_before + 1)
+	_check("exhausted presentation does not walk a discarded batch", int(host_state.strikes) == strikes_before)
+	relay._receive(host_peer, malformed_visual, Protocol.EVENT_CHANNEL, receive_time + 1050)
+	_check("accepted presentation budget still enforces batch structure", int(host_state.strikes) == strikes_before + 1)
 	await create_timer(1.05).timeout
 	clients[2].send_command({"kind": "move", "units": [12, 13], "position": [2.0, 0.0, 5.0], "owner": 0})
 	await _until(func(): return messages.size() == 1)

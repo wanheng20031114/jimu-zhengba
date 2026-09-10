@@ -13,10 +13,18 @@ const DIAGNOSTIC_EVENTS_PER_SECOND: int = 64
 const DIAGNOSTIC_URGENT_PER_SECOND: int = 32
 const MAX_UI_NOTICE_CHARS: int = 512
 const DIAGNOSTIC_OPERATIONS: Array[String] = ["hello", "ping", "create", "join", "slot", "ready", "start", "command", "snapshot", "event", "finish", "leave"]
-const VISUAL_EVENT_RATE: float = 100.0
-const VISUAL_EVENT_BURST: float = 150.0
+const VISUAL_EVENT_RATE: float = 20.0
+const VISUAL_EVENT_BURST: float = 60.0
 const CRITICAL_EVENT_RATE: float = 30.0
-const CRITICAL_EVENT_BURST: float = 45.0
+const CRITICAL_EVENT_BURST: float = 90.0
+const RECEIVE_BURST_SECONDS: float = 3.0
+const CLIENT_PACKET_RATE: float = 200.0
+const HOST_BASE_PACKET_RATE: float = 170.0 # Control 120 + broadcast visual 20 + critical 30.
+const HOST_RECIPIENT_PACKET_RATE: float = 70.0 # Snapshot 20 + visual 20 + critical 30.
+const CLIENT_WIRE_RATE: float = 2097152.0
+const CLIENT_DECODED_RATE: float = 4194304.0
+const HOST_WIRE_RATE: float = 12582912.0
+const HOST_DECODED_RATE: float = 100663296.0
 const THROTTLE_INTERVAL_MS: int = 500
 const THROTTLE_ACCELERATION: int = 4
 const THROTTLE_DECELERATION: int = 1
@@ -34,6 +42,10 @@ var relayed_commands: int = 0
 var relayed_snapshots: int = 0
 var dropped_visual_batches: int = 0
 var dropped_notices: int = 0
+var dropped_notice_rate: int = 0
+var dropped_snapshots: int = 0
+var relayed_visual_batches: int = 0
+var relayed_critical_events: int = 0
 var connection: ENetConnection
 var rooms: Dictionary = {}
 var sessions: Dictionary = {}
@@ -49,6 +61,11 @@ var _diagnostic_urgent: int = 0
 var _diagnostic_summary_at: int = 0
 var _diagnostic_reported_suppressed: int = 0
 var _diagnostic_reported_notices: int = 0
+var _traffic_packets := PackedInt64Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+var _traffic_wire_bytes := PackedInt64Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+var _traffic_decoded_bytes := PackedInt64Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+var _traffic_reported: Dictionary = {}
+var _traffic_summary_at: int = 0
 
 func start(bind_address: String, port: int, key_path: String, cert_path: String) -> Error:
 	var key := CryptoKey.new()
@@ -87,6 +104,9 @@ func _process(_delta: float) -> void:
 	var now := Time.get_ticks_msec()
 	for _index in range(512):
 		var event: Array = connection.service(0)
+		# Decode/validation can span a meaningful portion of a second. Do not
+		# charge the whole serviced batch to the clock captured before its first packet.
+		now = Time.get_ticks_msec()
 		match int(event[0]):
 			ENetConnection.EVENT_NONE:
 				break
@@ -99,7 +119,7 @@ func _process(_delta: float) -> void:
 				# a second. Refresh the baseline while retaining congestion response.
 				# Configure only after CONNECT; ENet reliably applies it to both ends.
 				peer.throttle_configure(THROTTLE_INTERVAL_MS, THROTTLE_ACCELERATION, THROTTLE_DECELERATION)
-				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "event_buckets": {}, "control": 0, "strikes": 0, "last_op": "unparsed", "last_channel": -1, "packet_bytes": 0, "decoded_bytes": 0}
+				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "event_buckets": {}, "receive_bucket": {}, "control": 0, "strikes": 0, "last_op": "unparsed", "last_channel": -1, "packet_bytes": 0, "decoded_bytes": 0, "budget_kind": ""}
 				_peer_diagnostic("connected", peer)
 			ENetConnection.EVENT_RECEIVE:
 				var peer: ENetPacketPeer = event[1]
@@ -110,6 +130,7 @@ func _process(_delta: float) -> void:
 				push_error("RELAY_TRANSPORT_ERROR")
 				stop()
 				return
+	now = Time.get_ticks_msec()
 	if now >= _maintenance_at:
 		_maintenance_at = now + 100
 		_maintenance(now)
@@ -124,6 +145,13 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 	state.last_channel = channel
 	state.packet_bytes = packet.size()
 	state.decoded_bytes = Protocol.decoded_size(packet)
+	state.budget_kind = ""
+	if channel < Protocol.CONTROL_CHANNEL or channel >= Protocol.CHANNEL_COUNT:
+		_reject(peer, "invalid_channel", "消息通道不正确")
+		return
+	_traffic_packets[channel] += 1
+	_traffic_wire_bytes[channel] += packet.size()
+	_traffic_decoded_bytes[channel] += maxi(0, int(state.decoded_bytes))
 	if now - int(state.window) >= 1000:
 		state.window = now
 		state.bytes = 0
@@ -133,8 +161,9 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 		state.control = 0
 	state.bytes += packet.size()
 	state.packets += 1
-	# Aggregate bounds include rejected messages and all channels.
-	if state.bytes > 12582912 or state.packets > 400:
+	# Charge every packet before decompression, including rejected messages.
+	# Only a server-bound host identity receives the room's recipient-scaled budget.
+	if not _receive_allowed(state, packet.size(), maxi(0, int(state.decoded_bytes)), now):
 		_reject(peer, "rate_limit", "发送频率超过上限", true)
 		return
 	# Reject large low-privilege packets before bounded decompression/JSON parsing.
@@ -207,7 +236,7 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 				_broadcast_room(room)
 		"start": _start_match(peer, session, room)
 		"command": _command(peer, session, room, message)
-		"snapshot", "event": _host_packet(peer, session, room, message, now)
+		"snapshot", "event": _host_packet(peer, session, room, message, packet, now)
 		"finish":
 			if int(session.owner) != 0:
 				_reject(peer, "host_only", "仅房主可以发布对局结果")
@@ -223,6 +252,30 @@ func _valid_winner(room: Dictionary, winner: Variant) -> bool:
 	if not Protocol.integer(winner, -1, int(Protocol.MODES[room.mode].teams) - 1):
 		return false
 	return int(winner) == -1 or room.slots.any(func(slot: Dictionary): return slot.kind != "open" and int(slot.team_id) == int(winner))
+
+func _receive_allowed(state: Dictionary, wire_bytes: int, decoded_bytes: int, now: int) -> bool:
+	var session: Dictionary = sessions.get(state.token, {})
+	var room: Dictionary = rooms.get(session.get("code", ""), {})
+	var host: bool = state.hello and session.get("owner", -1) == 0 and session.get("peer") == state.peer and room.get("status") in ["match", "paused"]
+	# Updated on room membership changes, not by scanning recipients per packet.
+	var recipients: int = int(room.get("remote_humans", 0)) if host else 0
+	var profile: int = recipients + 1 if host else 0
+	var packet_rate: float = HOST_BASE_PACKET_RATE + HOST_RECIPIENT_PACKET_RATE * recipients if host else CLIENT_PACKET_RATE
+	var wire_rate: float = HOST_WIRE_RATE if host else CLIENT_WIRE_RATE
+	var decoded_rate: float = HOST_DECODED_RATE if host else CLIENT_DECODED_RATE
+	var bucket: Dictionary = state.receive_bucket
+	if bucket.get("profile", -1) != profile:
+		bucket = {"profile": profile, "at": now, "packets": packet_rate * RECEIVE_BURST_SECONDS, "wire": wire_rate * RECEIVE_BURST_SECONDS, "decoded": decoded_rate * RECEIVE_BURST_SECONDS}
+		state.receive_bucket = bucket
+	var elapsed: float = maxi(0, now - int(bucket.at)) / 1000.0
+	bucket.at = now
+	bucket.packets = minf(packet_rate * RECEIVE_BURST_SECONDS, float(bucket.packets) + elapsed * packet_rate) - 1.0
+	bucket.wire = minf(wire_rate * RECEIVE_BURST_SECONDS, float(bucket.wire) + elapsed * wire_rate) - wire_bytes
+	bucket.decoded = minf(decoded_rate * RECEIVE_BURST_SECONDS, float(bucket.decoded) + elapsed * decoded_rate) - decoded_bytes
+	state.packet_rate = packet_rate
+	state.packet_burst = packet_rate * RECEIVE_BURST_SECONDS
+	state.budget_kind = "packets" if bucket.packets < 0.0 else ("wire_bytes" if bucket.wire < 0.0 else ("decoded_bytes" if bucket.decoded < 0.0 else ""))
+	return state.budget_kind.is_empty()
 
 func _hello(peer: ENetPacketPeer, message: Dictionary, now: int) -> void:
 	if message.get("version") != Protocol.VERSION or message.get("build") != Protocol.BUILD_ID or message.get("content") != content_hash:
@@ -385,7 +438,7 @@ func _command(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, messa
 		_send(host.peer, {"op": "command", "match": room.match_id, "owner": int(session.owner), "payload": message.payload})
 		relayed_commands += 1
 
-func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, message: Dictionary, now: int) -> void:
+func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, message: Dictionary, packet: PackedByteArray, now: int) -> void:
 	if int(session.owner) != 0 or not message.get("payload") is Dictionary or not Protocol.integer(message.get("to"), -1, room.slots.size() - 1):
 		_reject(peer, "host_only", "仅房主可以发送权威状态")
 		return
@@ -410,31 +463,43 @@ func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, m
 			_reject(peer, "invalid_snapshot", "快照需要明确接收者和序号")
 			return
 		if not _snapshot_allowed(session, recipient, now):
+			dropped_snapshots += 1
 			return
-		_send_owner(room, recipient, {"op": "snapshot", "match": room.match_id, "sequence": message.sequence, "payload": message.payload}, Protocol.SNAPSHOT_CHANNEL)
-		relayed_snapshots += 1
+		# The original bounded JSON frame has already passed sender, recipient,
+		# channel, epoch, sequence and primitive validation. Receivers ignore the
+		# routing-only `to` field. Keep its bytes instead of stringify+Zstd again.
+		if _send_encoded_owner(room, recipient, packet, Protocol.SNAPSHOT_CHANNEL):
+			relayed_snapshots += 1
 	else:
 		# Relay lifecycle messages are reserved; a host cannot fake another connection.
 		if message.payload.get("kind", "") in ["host_paused", "host_resumed", "match_aborted", "player_disconnected", "player_reconnected", "bot_takeover"]:
 			_reject(peer, "reserved_event", "该事件由中继管理")
 			return
 		var visual: bool = message.payload.get("kind") == "visual_batch"
-		if visual and not _visual_batch_structure(message.payload):
-			_reject(peer, "invalid_visual_batch", "无效的表现批次")
-			return
-		# Identity, epoch, payload structure, channel, compressed/uncompressed
-		# byte caps and aggregate packet limits have all passed before this gate.
+		# Check the recipient's presentation allowance before walking up to 96
+		# items. Bounded JSON decoding remains necessary to identify a compressed
+		# event, and the predecode byte/packet buckets bound that work separately.
 		var state: Dictionary = _connections[peer.get_instance_id()]
-		if not _event_allowed(state, visual, now):
+		if not _event_allowed(state, visual, recipient, now):
 			if visual:
 				dropped_visual_batches += 1
+			elif _undeliverable_notice(message.payload):
+				# Many legitimate completions can share a tick. A UI notice is
+				# expendable; it must never turn batch production into a host kick.
+				dropped_notice_rate += 1
 			else:
 				_reject(peer, "event_limit", "关键事件发送过快")
 			return
+		if visual and not _visual_batch_structure(message.payload):
+			_reject(peer, "invalid_visual_batch", "无效的表现批次")
+			return
 		if recipient == -1:
-			_broadcast_event(room, message.payload)
+			for slot: Dictionary in room.slots:
+				_send_encoded_owner(room, int(slot.owner_id), packet, Protocol.EVENT_CHANNEL)
 		else:
-			_send_owner(room, recipient, {"op": "event", "match": room.match_id, "payload": message.payload}, Protocol.EVENT_CHANNEL)
+			_send_encoded_owner(room, recipient, packet, Protocol.EVENT_CHANNEL)
+		if visual: relayed_visual_batches += 1
+		else: relayed_critical_events += 1
 
 static func _undeliverable_notice(payload: Dictionary) -> bool:
 	return payload.size() == 2 and payload.get("kind") == "notice" and payload.get("text") is String and not payload.text.is_empty() and payload.text.length() <= MAX_UI_NOTICE_CHARS
@@ -464,11 +529,13 @@ func _snapshot_allowed(session: Dictionary, recipient: int, now: int) -> bool:
 	bucket.credits -= 1.0
 	return true
 
-func _event_allowed(state: Dictionary, visual: bool, now: int) -> bool:
+func _event_allowed(state: Dictionary, visual: bool, recipient: int, now: int) -> bool:
 	# Ordered reliable delivery can release >1s of accumulated visual batches
 	# together after a lost fragment. Retain a bounded burst, and reserve an
 	# independent budget for pause/notices so footsteps cannot consume it.
-	var key := "visual" if visual else "critical"
+	# A full room legitimately has seven independent 15 Hz visual streams.
+	# Broadcasting uses its own bounded stream; it never consumes private slots.
+	var key: int = (recipient + 1) * 2 + (0 if visual else 1)
 	var capacity: float = VISUAL_EVENT_BURST if visual else CRITICAL_EVENT_BURST
 	var rate: float = VISUAL_EVENT_RATE if visual else CRITICAL_EVENT_RATE
 	var bucket: Dictionary = state.event_buckets.get(key, {"at": now, "credits": capacity})
@@ -539,6 +606,7 @@ func _maintenance(now: int) -> void:
 		if diagnostic_suppressed != _diagnostic_reported_suppressed:
 			_diagnostic("logs_suppressed", {"count": diagnostic_suppressed - _diagnostic_reported_suppressed, "total": diagnostic_suppressed}, true)
 			_diagnostic_reported_suppressed = diagnostic_suppressed
+		_report_traffic(now)
 
 func _leave(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, now: int) -> void:
 	_peer_diagnostic("left", peer)
@@ -582,6 +650,11 @@ func _room_view(room: Dictionary) -> Dictionary:
 	return view
 
 func _broadcast_room(room: Dictionary) -> void:
+	# Membership changes are infrequent; the receive hot path reads this count.
+	var remote_humans: int = 0
+	for slot: Dictionary in room.slots:
+		if int(slot.owner_id) != 0 and slot.kind == "human": remote_humans += 1
+	room.remote_humans = remote_humans
 	_broadcast(room, {"op": "room", "room": _room_view(room)})
 
 func _broadcast_event(room: Dictionary, payload: Dictionary) -> void:
@@ -595,6 +668,15 @@ func _send_owner(room: Dictionary, owner: int, message: Dictionary, channel: int
 	var token: String = room.slots[owner].token
 	if sessions.has(token) and sessions[token].peer != null:
 		_send(sessions[token].peer, message, channel)
+
+func _send_encoded_owner(room: Dictionary, owner: int, packet: PackedByteArray, channel: int) -> bool:
+	var token: String = room.slots[owner].token
+	if not sessions.has(token) or sessions[token].peer == null:
+		return false
+	var peer: ENetPacketPeer = sessions[token].peer
+	if not peer.is_active() or peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
+		return false
+	return peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if channel == Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE) == OK
 
 func _send(peer: ENetPacketPeer, message: Dictionary, channel: int = Protocol.CONTROL_CHANNEL) -> void:
 	if not peer.is_active() or peer.get_state() != ENetPacketPeer.STATE_CONNECTED: return
@@ -622,8 +704,22 @@ func _peer_diagnostic(event: String, peer: ENetPacketPeer, details: Dictionary =
 	# Never emit credentials, addresses, invite codes, nicknames, or payloads.
 	# Operation labels are reduced to a fixed whitelist at the receive boundary.
 	var fields := {"peer": id, "owner": int(session.get("owner", -1)), "room": int(room.get("diagnostic_id", 0)), "op": state.get("last_op", "unparsed"), "channel": int(state.get("last_channel", -1)), "packet_bytes": int(state.get("packet_bytes", 0)), "decoded_bytes": int(state.get("decoded_bytes", 0)), "window_bytes": int(state.get("bytes", 0)), "window_packets": int(state.get("packets", 0)), "strikes": int(state.get("strikes", 0))}
+	fields.merge({"budget_kind": state.get("budget_kind", ""), "packet_rate": state.get("packet_rate", 0), "packet_burst": state.get("packet_burst", 0)})
 	fields.merge(details)
 	_diagnostic(event, fields, urgent)
+
+func _report_traffic(now: int) -> void:
+	var totals := {"snapshots": relayed_snapshots, "visual_batches": relayed_visual_batches, "critical_events": relayed_critical_events, "commands": relayed_commands, "snapshot_drops": dropped_snapshots, "visual_drops": dropped_visual_batches, "notice_rate_drops": dropped_notice_rate, "rejected": rejected_packets}
+	var fields := {"interval_ms": maxi(1, now - _traffic_summary_at), "channel_packets": Array(_traffic_packets), "channel_wire_bytes": Array(_traffic_wire_bytes), "channel_decoded_bytes": Array(_traffic_decoded_bytes)}
+	for key: String in totals:
+		fields[key] = int(totals[key]) - int(_traffic_reported.get(key, 0))
+	if _traffic_packets != PackedInt64Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]):
+		_diagnostic("traffic", fields)
+	_traffic_reported = totals
+	_traffic_summary_at = now
+	_traffic_packets.fill(0)
+	_traffic_wire_bytes.fill(0)
+	_traffic_decoded_bytes.fill(0)
 
 func _diagnostic(event: String, fields: Dictionary = {}, urgent: bool = false) -> void:
 	var now: int = Time.get_ticks_msec()

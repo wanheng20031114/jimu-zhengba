@@ -4,8 +4,7 @@ extends RefCounted
 
 const VERSION: int = 10
 const BUILD_ID: String = "0.11.0"
-# Experimental client label; the existing relay transport is left unchanged.
-const RELEASE_ID: String = "0.11.1-cpu-exp.1"
+const RELEASE_ID: String = "0.12.0"
 const TLS_NAME: String = "jimu-zhengba-relay"
 const PORT: int = 24571
 const CONTROL_CHANNEL: int = 0

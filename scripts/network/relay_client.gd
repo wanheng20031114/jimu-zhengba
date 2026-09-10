@@ -41,6 +41,7 @@ var _command_sequence: int = 0
 var _last_snapshot_sequence: int = -1
 var _snapshot_sequences: Dictionary = {}
 var _snapshot_sent_at: Dictionary = {}
+var _visual_sent_at: Dictionary = {}
 
 func _ready() -> void:
 	# Connections and grace periods continue while a gameplay SceneTree is paused.
@@ -139,13 +140,22 @@ func send_event(owner: int, event: Dictionary) -> Error:
 		return ERR_UNAUTHORIZED
 	if owner != -1 and not has_player_connection(owner):
 		return ERR_INVALID_PARAMETER
+	var visual: bool = event.get("kind") == "visual_batch"
+	var now := Time.get_ticks_msec()
+	# Physics catch-up must not turn queued presentation into a wall-clock burst.
+	# MatchReplication retains ERR_BUSY batches and expires obsolete effects.
+	if visual and now - int(_visual_sent_at.get(owner, -1000)) < 50:
+		return ERR_BUSY
 	var message := {"op": "event", "match": _match.match_id, "to": owner, "payload": event}
 	var packet := Protocol.encode(message)
 	if packet.is_empty():
 		return ERR_INVALID_DATA
 	if Protocol.decoded_size(packet) > Protocol.MAX_EVENT_BYTES:
 		return ERR_OUT_OF_MEMORY
-	return _send_packet(packet, Protocol.EVENT_CHANNEL)
+	var result := _send_packet(packet, Protocol.EVENT_CHANNEL)
+	if visual and result == OK:
+		_visual_sent_at[owner] = now
+	return result
 
 func has_player_connection(owner: int) -> bool:
 	# Room membership is distinct from simulation control. A disconnected human
@@ -182,6 +192,7 @@ func _clear_membership() -> void:
 	_last_snapshot_sequence = -1
 	_snapshot_sequences.clear()
 	_snapshot_sent_at.clear()
+	_visual_sent_at.clear()
 
 func _close_transport() -> void:
 	_peer = null
