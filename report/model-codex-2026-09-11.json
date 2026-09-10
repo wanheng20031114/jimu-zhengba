@@ -1,0 +1,753 @@
+{
+  "date": "2026-09-11",
+  "source_commits": [
+    "3168dff",
+    "584b355",
+    "82d496b"
+  ],
+  "model_native": {
+    "checks": 800,
+    "failures": 0,
+    "models": [
+      {
+        "arm_surfaces": 1,
+        "arm_triangles": 1184,
+        "kind": "swordsman",
+        "lod_count": 6,
+        "parts": 6,
+        "shadow_mesh": true
+      },
+      {
+        "arm_surfaces": 1,
+        "arm_triangles": 944,
+        "kind": "knight",
+        "lod_count": 6,
+        "parts": 10,
+        "shadow_mesh": true
+      }
+    ]
+  },
+  "model_geometry": {
+    "scope": "Authored shield main plate versus other body pieces, original attack quaternion curves; conservative convex hull LP, not screen-space or full weapon collision proof.",
+    "models": {
+      "swordsman": {
+        "changed_parts": [
+          "ArmLeft"
+        ],
+        "baseline": {
+          "samples": 73,
+          "intersecting_samples": 73,
+          "max_convex_interior_radius": 0.047500000000000375,
+          "parts": [
+            "Body",
+            "Head"
+          ]
+        },
+        "candidate": {
+          "samples": 73,
+          "intersecting_samples": 0,
+          "max_convex_interior_radius": 0.0,
+          "parts": []
+        },
+        "glb_sha256_before": "02681f183003b84629f0f69be88c3d1e96d03523dbb99ca81952ca368c0fe119",
+        "glb_sha256_after": "bded663b42fd92ddf8dc4646f0c8857247499657b9d6e693c44498f4cfe97e6e"
+      },
+      "knight": {
+        "changed_parts": [
+          "ArmLeft"
+        ],
+        "baseline": {
+          "samples": 72,
+          "intersecting_samples": 72,
+          "max_convex_interior_radius": 0.04750000000000032,
+          "parts": [
+            "Body",
+            "Head",
+            "HorseHead",
+            "Rider"
+          ]
+        },
+        "candidate": {
+          "samples": 72,
+          "intersecting_samples": 0,
+          "max_convex_interior_radius": 0.0,
+          "parts": []
+        },
+        "glb_sha256_before": "48674dd4e2d63f725a896e2f9c53b86cd2601cce4757cf3d5816f6164d6654b2",
+        "glb_sha256_after": "e379ba4fa0b4a7a7336e3e16f827d72a0608d6bee1ae609736047278ba3c8e99"
+      }
+    }
+  },
+  "unaffected_models": {
+    "archer": {
+      "parts": 11,
+      "changed_parts": []
+    },
+    "catapult": {
+      "parts": 7,
+      "changed_parts": []
+    },
+    "cannon": {
+      "parts": 4,
+      "changed_parts": []
+    },
+    "farmer": {
+      "parts": 10,
+      "changed_parts": []
+    }
+  },
+  "codex": {
+    "checks": 129,
+    "engine": "4.6.3-stable (official)",
+    "failures": [],
+    "resolution": [
+      1280,
+      720
+    ],
+    "results": [
+      {
+        "label": "manual_preview_no_physics_interpolation",
+        "ok": true
+      },
+      {
+        "label": "swordsman_model_matches",
+        "ok": true
+      },
+      {
+        "label": "swordsman_one_animation_clock",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_idle",
+        "ok": true
+      },
+      {
+        "label": "swordsman_walk_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_walk",
+        "ok": true
+      },
+      {
+        "label": "swordsman_attack_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_attack",
+        "ok": true
+      },
+      {
+        "label": "swordsman_pause_keeps_exact_pose",
+        "ok": true
+      },
+      {
+        "label": "swordsman_paused_cpu_stopped",
+        "ok": true
+      },
+      {
+        "label": "swordsman_paused_render_stopped",
+        "ok": true
+      },
+      {
+        "label": "swordsman_paused_rotation_redraw",
+        "ok": true
+      },
+      {
+        "label": "swordsman_resume_no_catchup",
+        "ok": true
+      },
+      {
+        "label": "swordsman_closed_stops_all",
+        "ok": true
+      },
+      {
+        "label": "swordsman_reopen_keeps_pose",
+        "ok": true
+      },
+      {
+        "label": "swordsman_attack_to_idle_restored",
+        "ok": true
+      },
+      {
+        "label": "swordsman_single_cycle_complete",
+        "ok": true
+      },
+      {
+        "label": "swordsman_replay_restarts",
+        "ok": true
+      },
+      {
+        "label": "swordsman_attack_cycle_keeps_cooldown",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_shield_150",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_shield_195",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_shield_260",
+        "ok": true
+      },
+      {
+        "label": "save_after_swordsman_shield_350",
+        "ok": true
+      },
+      {
+        "label": "archer_model_matches",
+        "ok": true
+      },
+      {
+        "label": "archer_one_animation_clock",
+        "ok": true
+      },
+      {
+        "label": "save_after_archer_idle",
+        "ok": true
+      },
+      {
+        "label": "archer_walk_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_archer_walk",
+        "ok": true
+      },
+      {
+        "label": "archer_attack_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_archer_attack",
+        "ok": true
+      },
+      {
+        "label": "archer_pause_keeps_exact_pose",
+        "ok": true
+      },
+      {
+        "label": "archer_paused_cpu_stopped",
+        "ok": true
+      },
+      {
+        "label": "archer_paused_render_stopped",
+        "ok": true
+      },
+      {
+        "label": "archer_paused_rotation_redraw",
+        "ok": true
+      },
+      {
+        "label": "archer_resume_no_catchup",
+        "ok": true
+      },
+      {
+        "label": "archer_closed_stops_all",
+        "ok": true
+      },
+      {
+        "label": "archer_reopen_keeps_pose",
+        "ok": true
+      },
+      {
+        "label": "archer_attack_to_idle_restored",
+        "ok": true
+      },
+      {
+        "label": "archer_single_cycle_complete",
+        "ok": true
+      },
+      {
+        "label": "archer_replay_restarts",
+        "ok": true
+      },
+      {
+        "label": "archer_attack_cycle_keeps_cooldown",
+        "ok": true
+      },
+      {
+        "label": "knight_model_matches",
+        "ok": true
+      },
+      {
+        "label": "knight_one_animation_clock",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_idle",
+        "ok": true
+      },
+      {
+        "label": "knight_walk_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_walk",
+        "ok": true
+      },
+      {
+        "label": "knight_attack_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_attack",
+        "ok": true
+      },
+      {
+        "label": "knight_pause_keeps_exact_pose",
+        "ok": true
+      },
+      {
+        "label": "knight_paused_cpu_stopped",
+        "ok": true
+      },
+      {
+        "label": "knight_paused_render_stopped",
+        "ok": true
+      },
+      {
+        "label": "knight_paused_rotation_redraw",
+        "ok": true
+      },
+      {
+        "label": "knight_resume_no_catchup",
+        "ok": true
+      },
+      {
+        "label": "knight_closed_stops_all",
+        "ok": true
+      },
+      {
+        "label": "knight_reopen_keeps_pose",
+        "ok": true
+      },
+      {
+        "label": "knight_attack_to_idle_restored",
+        "ok": true
+      },
+      {
+        "label": "knight_single_cycle_complete",
+        "ok": true
+      },
+      {
+        "label": "knight_replay_restarts",
+        "ok": true
+      },
+      {
+        "label": "knight_attack_cycle_keeps_cooldown",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_shield_150",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_shield_195",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_shield_260",
+        "ok": true
+      },
+      {
+        "label": "save_after_knight_shield_350",
+        "ok": true
+      },
+      {
+        "label": "catapult_model_matches",
+        "ok": true
+      },
+      {
+        "label": "catapult_one_animation_clock",
+        "ok": true
+      },
+      {
+        "label": "save_after_catapult_idle",
+        "ok": true
+      },
+      {
+        "label": "catapult_walk_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_catapult_walk",
+        "ok": true
+      },
+      {
+        "label": "catapult_attack_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_catapult_attack",
+        "ok": true
+      },
+      {
+        "label": "catapult_pause_keeps_exact_pose",
+        "ok": true
+      },
+      {
+        "label": "catapult_paused_cpu_stopped",
+        "ok": true
+      },
+      {
+        "label": "catapult_paused_render_stopped",
+        "ok": true
+      },
+      {
+        "label": "catapult_paused_rotation_redraw",
+        "ok": true
+      },
+      {
+        "label": "catapult_resume_no_catchup",
+        "ok": true
+      },
+      {
+        "label": "catapult_closed_stops_all",
+        "ok": true
+      },
+      {
+        "label": "catapult_reopen_keeps_pose",
+        "ok": true
+      },
+      {
+        "label": "catapult_attack_to_idle_restored",
+        "ok": true
+      },
+      {
+        "label": "catapult_single_cycle_complete",
+        "ok": true
+      },
+      {
+        "label": "catapult_replay_restarts",
+        "ok": true
+      },
+      {
+        "label": "catapult_attack_cycle_keeps_cooldown",
+        "ok": true
+      },
+      {
+        "label": "cannon_model_matches",
+        "ok": true
+      },
+      {
+        "label": "cannon_one_animation_clock",
+        "ok": true
+      },
+      {
+        "label": "save_after_cannon_idle",
+        "ok": true
+      },
+      {
+        "label": "cannon_walk_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_cannon_walk",
+        "ok": true
+      },
+      {
+        "label": "cannon_attack_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_cannon_attack",
+        "ok": true
+      },
+      {
+        "label": "cannon_pause_keeps_exact_pose",
+        "ok": true
+      },
+      {
+        "label": "cannon_paused_cpu_stopped",
+        "ok": true
+      },
+      {
+        "label": "cannon_paused_render_stopped",
+        "ok": true
+      },
+      {
+        "label": "cannon_paused_rotation_redraw",
+        "ok": true
+      },
+      {
+        "label": "cannon_resume_no_catchup",
+        "ok": true
+      },
+      {
+        "label": "cannon_closed_stops_all",
+        "ok": true
+      },
+      {
+        "label": "cannon_reopen_keeps_pose",
+        "ok": true
+      },
+      {
+        "label": "cannon_attack_to_idle_restored",
+        "ok": true
+      },
+      {
+        "label": "cannon_single_cycle_complete",
+        "ok": true
+      },
+      {
+        "label": "cannon_replay_restarts",
+        "ok": true
+      },
+      {
+        "label": "cannon_attack_cycle_keeps_cooldown",
+        "ok": true
+      },
+      {
+        "label": "farmer_model_matches",
+        "ok": true
+      },
+      {
+        "label": "farmer_one_animation_clock",
+        "ok": true
+      },
+      {
+        "label": "save_after_farmer_idle",
+        "ok": true
+      },
+      {
+        "label": "farmer_walk_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_farmer_walk",
+        "ok": true
+      },
+      {
+        "label": "farmer_attack_changes_pose",
+        "ok": true
+      },
+      {
+        "label": "save_after_farmer_attack",
+        "ok": true
+      },
+      {
+        "label": "farmer_pause_keeps_exact_pose",
+        "ok": true
+      },
+      {
+        "label": "farmer_paused_cpu_stopped",
+        "ok": true
+      },
+      {
+        "label": "farmer_paused_render_stopped",
+        "ok": true
+      },
+      {
+        "label": "farmer_paused_rotation_redraw",
+        "ok": true
+      },
+      {
+        "label": "farmer_resume_no_catchup",
+        "ok": true
+      },
+      {
+        "label": "farmer_closed_stops_all",
+        "ok": true
+      },
+      {
+        "label": "farmer_reopen_keeps_pose",
+        "ok": true
+      },
+      {
+        "label": "farmer_attack_to_idle_restored",
+        "ok": true
+      },
+      {
+        "label": "farmer_single_cycle_complete",
+        "ok": true
+      },
+      {
+        "label": "farmer_replay_restarts",
+        "ok": true
+      },
+      {
+        "label": "farmer_attack_cycle_keeps_cooldown",
+        "ok": true
+      },
+      {
+        "label": "farmer_gather_available",
+        "ok": true
+      },
+      {
+        "label": "save_after_farmer_gather",
+        "ok": true
+      },
+      {
+        "label": "gather_to_walk_clears_work",
+        "ok": true
+      },
+      {
+        "label": "save_after_farmer_controls_1280",
+        "ok": true
+      },
+      {
+        "label": "farmer_controls_fit_portrait_at_1280",
+        "ok": true
+      },
+      {
+        "label": "headquarters_static_preview",
+        "ok": true
+      },
+      {
+        "label": "barracks_static_preview",
+        "ok": true
+      },
+      {
+        "label": "factory_static_preview",
+        "ok": true
+      },
+      {
+        "label": "academy_static_preview",
+        "ok": true
+      },
+      {
+        "label": "defense_tower_static_preview",
+        "ok": true
+      },
+      {
+        "label": "technology_static_preview",
+        "ok": true
+      },
+      {
+        "label": "entry_change_resets_action_and_loop",
+        "ok": true
+      }
+    ]
+  },
+  "escape_input": {
+    "checks": [
+      {
+        "name": "escape_after_focus_Entries",
+        "passed": true
+      },
+      {
+        "name": "escape_after_focus_PreviewAttack",
+        "passed": true
+      },
+      {
+        "name": "escape_after_focus_PausePreview",
+        "passed": true
+      },
+      {
+        "name": "escape_after_focus_LoopPreview",
+        "passed": true
+      },
+      {
+        "name": "escape_after_focus_CloseCodex",
+        "passed": true
+      },
+      {
+        "name": "echo_does_not_close",
+        "passed": true
+      },
+      {
+        "name": "release_does_not_close",
+        "passed": true
+      },
+      {
+        "name": "other_key_does_not_close",
+        "passed": true
+      },
+      {
+        "name": "settings_escape_does_not_close_codex",
+        "passed": true
+      },
+      {
+        "name": "settings_rebind_escape_does_not_close_codex",
+        "passed": true
+      },
+      {
+        "name": "hidden_codex_does_not_close_again",
+        "passed": true
+      },
+      {
+        "name": "native_hover_is_attack_button",
+        "passed": true
+      },
+      {
+        "name": "native_hover_tooltip_was_visible",
+        "passed": true
+      },
+      {
+        "name": "escape_with_hover_tooltip",
+        "passed": true
+      },
+      {
+        "name": "tooltip_hidden_with_codex",
+        "passed": true
+      }
+    ],
+    "engine": "4.6.3-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "renderer": "forward_plus",
+    "results": [
+      {
+        "closed": true,
+        "focus": "Entries"
+      },
+      {
+        "closed": true,
+        "focus": "PreviewAttack"
+      },
+      {
+        "closed": true,
+        "focus": "PausePreview"
+      },
+      {
+        "closed": true,
+        "focus": "LoopPreview"
+      },
+      {
+        "closed": true,
+        "focus": "CloseCodex"
+      },
+      {
+        "tooltips_before_escape": [
+          {
+            "name": "@PopupPanel@179",
+            "visible": true
+          }
+        ]
+      },
+      {
+        "hover_escape_closed": true
+      }
+    ]
+  },
+  "interactive_final": {
+    "resolution": [
+      1920,
+      1080
+    ],
+    "steps": [
+      "主菜单打开战争图鉴",
+      "选择加农炮并点击开炮",
+      "确认悬停提示可见",
+      "一次Esc返回主菜单并关闭提示",
+      "主菜单退出游戏"
+    ],
+    "passed": true,
+    "runtime_errors": 0
+  },
+  "cleanup": {
+    "validation_processes_remaining": 0,
+    "preserved_editor_pid": 36624,
+    "temporary_file_removal": "blocked_by_automatic_policy",
+    "tool_reason": "blocked by policy",
+    "retained_paths": [
+      ".local/model-codex-20260911",
+      ".local/shield-model-fix-20260911",
+      "server/relay_bootstrap.gd.uid",
+      "tools/build_rigid_batches.gd.uid"
+    ]
+  }
+}
