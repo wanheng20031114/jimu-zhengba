@@ -1,0 +1,647 @@
+{
+  "version": "0.12.0",
+  "recorded_utc": "2026-09-10T18:06:28.032963+00:00",
+  "scope": "500-unit playability, normal fewer-human multiplayer; no further seven-human acceptance gate",
+  "package": {
+    "release": "0.12.0",
+    "source_commit": "90eb218e22f5315b5f2edf709ad10e519f319268",
+    "exported_at_utc": "2026-09-10T17:52:32.384197+00:00",
+    "engine": "Godot 4.6.3 official Windows release export",
+    "pid": 41996,
+    "exit_code": 0,
+    "process_exited": true,
+    "source_export_normalization": {
+      "default_bus_layout.tres": {
+        "before": "2dfd80d97b76523e0013a1f649756b07bf243e4cbca23a06c16d4f91d1eca9ec",
+        "after": "24a5ec1abdce8ff711364ba1e30c219bd7cc34b620cd7959207c9acb99b51a3f"
+      }
+    },
+    "output": "builds/windows-0.12.0",
+    "files": {
+      "积木争霸.exe": {
+        "bytes": 104588800,
+        "sha256": "332bb711a6d0aecebabe8001ca8b01c39c7a4934f89c27cdb576f7c5c65eca98"
+      },
+      "积木争霸.pck": {
+        "bytes": 49817316,
+        "sha256": "7f0ea14592d1fe327a5e647b90e127e3df97cc2578fe45b4577fdd0493155440"
+      },
+      "START_HERE.txt": {
+        "bytes": 14416,
+        "sha256": "05be0e91ae68a41f1672aef2cedbad3a27c03f6eb39d1e7394ff0a6553622cea"
+      },
+      "collect_diagnostics.ps1": {
+        "bytes": 10004,
+        "sha256": "e1ec5d2946d49876244a3006b8b5a854d3cc9cefdc7833e4b16cfa49b70319ea"
+      },
+      "COLLECT_DIAGNOSTICS.cmd": {
+        "bytes": 294,
+        "sha256": "e5163607f844620a5e2d6bd507f49c0fd54d8be6034bb77dce053b9e5fb7aca9"
+      }
+    },
+    "zip_path": "builds/积木争霸-0.12.0-Windows-x64.zip",
+    "zip_bytes": 67390355,
+    "zip_sha256": "9b4bad35f1b684ee176a1747e010a217659ea7d63189624de855d51a5490b299",
+    "default_windows_replaced": false,
+    "source_file_count": 1244
+  },
+  "artifact_audit": {
+    "schema": 1,
+    "source_commit": "90eb218e22f5315b5f2edf709ad10e519f319268",
+    "validated_product_base": "c402626",
+    "runtime_scope": [
+      "scripts",
+      "scenes",
+      "assets",
+      "data",
+      "shaders",
+      "project.godot",
+      "default_bus_layout.tres",
+      "export_presets.cfg"
+    ],
+    "runtime_changes": [],
+    "checks": [
+      {
+        "name": "runtime script scene asset data shader and config Git trees unchanged since c402626",
+        "ok": true
+      },
+      {
+        "name": "Git archive comment pins exact commit",
+        "ok": true
+      },
+      {
+        "name": "Git archive file list equals commit blob paths",
+        "ok": true
+      },
+      {
+        "name": "Every archived blob matches Git object ID",
+        "ok": true
+      },
+      {
+        "name": "Frozen source file count matches build receipt",
+        "ok": true
+      },
+      {
+        "name": "Exporter touched only the permitted audio serialization",
+        "ok": true
+      },
+      {
+        "name": "Normalization source hashes equal receipt",
+        "ok": true
+      },
+      {
+        "name": "Audio effect and bus nondefault values identical",
+        "ok": true
+      },
+      {
+        "name": "Only default zero gains Master name and false mute removed",
+        "ok": true
+      },
+      {
+        "name": "Only default false bus flags materialized",
+        "ok": true
+      },
+      {
+        "name": "Release directory contains exactly five deliverables",
+        "ok": true
+      },
+      {
+        "name": "Delivered file matches receipt: 积木争霸.exe",
+        "ok": true
+      },
+      {
+        "name": "Delivered file equals exporter frozen build output: 积木争霸.exe",
+        "ok": true
+      },
+      {
+        "name": "Delivered file matches receipt: 积木争霸.pck",
+        "ok": true
+      },
+      {
+        "name": "Delivered file equals exporter frozen build output: 积木争霸.pck",
+        "ok": true
+      },
+      {
+        "name": "Delivered file matches receipt: START_HERE.txt",
+        "ok": true
+      },
+      {
+        "name": "Delivered file equals exporter frozen build output: START_HERE.txt",
+        "ok": true
+      },
+      {
+        "name": "Delivered file matches receipt: collect_diagnostics.ps1",
+        "ok": true
+      },
+      {
+        "name": "Delivered file equals exporter frozen build output: collect_diagnostics.ps1",
+        "ok": true
+      },
+      {
+        "name": "Delivered file matches receipt: COLLECT_DIAGNOSTICS.cmd",
+        "ok": true
+      },
+      {
+        "name": "Delivered file equals exporter frozen build output: COLLECT_DIAGNOSTICS.cmd",
+        "ok": true
+      },
+      {
+        "name": "Support file equals committed source: START_HERE.txt",
+        "ok": true
+      },
+      {
+        "name": "Support file equals committed source: collect_diagnostics.ps1",
+        "ok": true
+      },
+      {
+        "name": "Support file equals committed source: COLLECT_DIAGNOSTICS.cmd",
+        "ok": true
+      },
+      {
+        "name": "ZIP size and SHA256 match receipt",
+        "ok": true
+      },
+      {
+        "name": "ZIP contains only five expected Windows files",
+        "ok": true
+      },
+      {
+        "name": "ZIP file equals delivered file: 积木争霸.exe",
+        "ok": true
+      },
+      {
+        "name": "ZIP file equals delivered file: 积木争霸.pck",
+        "ok": true
+      },
+      {
+        "name": "ZIP file equals delivered file: START_HERE.txt",
+        "ok": true
+      },
+      {
+        "name": "ZIP file equals delivered file: collect_diagnostics.ps1",
+        "ok": true
+      },
+      {
+        "name": "ZIP file equals delivered file: COLLECT_DIAGNOSTICS.cmd",
+        "ok": true
+      },
+      {
+        "name": "PCK version and creator are actual Godot 4.6.3",
+        "ok": true
+      },
+      {
+        "name": "PCK directory is unencrypted",
+        "ok": true
+      },
+      {
+        "name": "All PCK directory offsets sizes and content MD5 checksums validate",
+        "ok": true
+      },
+      {
+        "name": "PCK has no test relay private skinned or WALL driver paths",
+        "ok": true
+      },
+      {
+        "name": "Actual PCK manifest is byte-identical to frozen Git source",
+        "ok": true
+      },
+      {
+        "name": "PCK manifest SHA remains b78f1a",
+        "ok": true
+      },
+      {
+        "name": "Committed runtime contains no WALL profiler markers",
+        "ok": true
+      },
+      {
+        "name": "Formal main scene is lobby and only production Session autoload",
+        "ok": true
+      },
+      {
+        "name": "Formal batching pruning metadata flags enabled and six batched models selected",
+        "ok": true
+      },
+      {
+        "name": "Grid fast path and shared flow remain disabled",
+        "ok": true
+      },
+      {
+        "name": "Exporter completed normally and did not replace current Windows path",
+        "ok": true
+      }
+    ],
+    "failed": [],
+    "archive_files": 1244,
+    "archive_blob_mismatch": [],
+    "frozen_normalization": {
+      "default_bus_layout.tres": {
+        "before": "2dfd80d97b76523e0013a1f649756b07bf243e4cbca23a06c16d4f91d1eca9ec",
+        "after": "24a5ec1abdce8ff711364ba1e30c219bd7cc34b620cd7959207c9acb99b51a3f"
+      }
+    },
+    "audio_semantics": {
+      "unchanged": true,
+      "removed_default_properties": {
+        "('[sub_resource type=\"AudioEffectHardLimiter\" id=\"master_limiter\"]', 'pre_gain_db')": "0.0",
+        "('[sub_resource type=\"AudioEffectCompressor\" id=\"combat_compressor\"]', 'gain')": "0.0",
+        "('[resource]', 'bus/0/name')": "&\"Master\"",
+        "('[resource]', 'bus/0/mute')": "false"
+      },
+      "added_default_properties": {
+        "('[resource]', 'bus/1/solo')": "false",
+        "('[resource]', 'bus/1/mute')": "false",
+        "('[resource]', 'bus/1/bypass_fx')": "false",
+        "('[resource]', 'bus/2/solo')": "false",
+        "('[resource]', 'bus/2/mute')": "false",
+        "('[resource]', 'bus/2/bypass_fx')": "false",
+        "('[resource]', 'bus/3/solo')": "false",
+        "('[resource]', 'bus/3/mute')": "false",
+        "('[resource]', 'bus/3/bypass_fx')": "false"
+      },
+      "changed_common_properties": {}
+    },
+    "formal_defaults": {
+      "rigid_batches": true,
+      "stationary_rvo_pruning": true,
+      "omit_path_metadata": true,
+      "cache_map_iterations": true,
+      "grid_fast_override": false,
+      "shared_flow_override": false,
+      "batched_model_count": 6
+    },
+    "deliverables": {
+      "积木争霸.exe": {
+        "bytes": 104588800,
+        "sha256": "332bb711a6d0aecebabe8001ca8b01c39c7a4934f89c27cdb576f7c5c65eca98"
+      },
+      "积木争霸.pck": {
+        "bytes": 49817316,
+        "sha256": "7f0ea14592d1fe327a5e647b90e127e3df97cc2578fe45b4577fdd0493155440"
+      },
+      "START_HERE.txt": {
+        "bytes": 14416,
+        "sha256": "05be0e91ae68a41f1672aef2cedbad3a27c03f6eb39d1e7394ff0a6553622cea"
+      },
+      "collect_diagnostics.ps1": {
+        "bytes": 10004,
+        "sha256": "e1ec5d2946d49876244a3006b8b5a854d3cc9cefdc7833e4b16cfa49b70319ea"
+      },
+      "COLLECT_DIAGNOSTICS.cmd": {
+        "bytes": 294,
+        "sha256": "e5163607f844620a5e2d6bd507f49c0fd54d8be6034bb77dce053b9e5fb7aca9"
+      }
+    },
+    "zip_bytes": 67390355,
+    "zip_sha256": "9b4bad35f1b684ee176a1747e010a217659ea7d63189624de855d51a5490b299",
+    "pck": {
+      "format": 3,
+      "creator": [
+        4,
+        6,
+        3
+      ],
+      "directory_entries": 837,
+      "bad_md5": [],
+      "prohibited_paths": [],
+      "manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+      "directory_algorithm_reference": "https://github.com/godotengine/godot/blob/4.6-stable/core/io/file_access_pack.cpp#L267-L329"
+    },
+    "production_profiler_marker_hits": [],
+    "key_source_sha256": {
+      "scripts/game.gd": "cddc6a88a94bc1cbe5c29daa21b80fc70f2d7816be6fb6fb5344533bc8910233",
+      "scripts/network/relay_client.gd": "f2b70ed6d0e57ae9bcbc309ec830b10c6d2a6e07b115f3bbfefc0e9c9078312a",
+      "scripts/network/match_replication.gd": "fa1f05db1b44afb68d26c24fe13495f2bfb40f3f1ec9dc2cdbc3448fd77e0ab0",
+      "scripts/network/snapshot_json_batch_job.gd": "cc4f20d7711ce73468a31fe19582a02cb0af1ec984967b2a2cbfb48c7833b31e",
+      "scripts/network/network_protocol.gd": "2d6114cdc8520336cc001cb75ca9b76883ec6276c15625ef5558c050bac0af0e",
+      "scenes/main.tscn": "a29cc82826270dc3c078fc3704766c55e21bb84887b36286fcadc78427f7b1b0",
+      "project.godot": "c4bbc8e7147db6ed1b289e9f727f4aa2b9a529fbf52406ea59ebea1ddee2d194",
+      "export_presets.cfg": "a33844c0d0b83636e7a28fa095f1248cf4a91f5f1455da13b99d9bff17db238b"
+    },
+    "package_receipt_sha256": "daa865d14c9c44c8fb14ad5b48dad126b0c7269de18c90d2839ef9b31c19ac88",
+    "scope": "Read-only Git-object, frozen-file, PCK-directory and ZIP-byte audit; no engine started; source-level proof is not decompilation of exported bytecode."
+  },
+  "executable_checks": {
+    "vulkan": {
+      "mode": "vulkan",
+      "pid": 39868,
+      "exited": true,
+      "exit_code": 0,
+      "timeout": false,
+      "wall_seconds": 4.078000000008615,
+      "stderr_empty": true,
+      "pck_sha256": "7f0ea14592d1fe327a5e647b90e127e3df97cc2578fe45b4577fdd0493155440",
+      "exe_sha256": "332bb711a6d0aecebabe8001ca8b01c39c7a4934f89c27cdb576f7c5c65eca98",
+      "renderer_line": "Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 3080",
+      "passed": true
+    },
+    "network": {
+      "mode": "network",
+      "pid": 48668,
+      "exited": true,
+      "exit_code": 0,
+      "timeout": false,
+      "wall_seconds": 1.875,
+      "stderr_empty": true,
+      "pck_sha256": "7f0ea14592d1fe327a5e647b90e127e3df97cc2578fe45b4577fdd0493155440",
+      "exe_sha256": "332bb711a6d0aecebabe8001ca8b01c39c7a4934f89c27cdb576f7c5c65eca98",
+      "probe": {
+        "build": "0.11.0",
+        "catalogue_files": 95,
+        "catalogue_only": false,
+        "checks": 191,
+        "content_hash": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+        "error_codes": [],
+        "exported_template": true,
+        "failures": [],
+        "handshake_msec": 553,
+        "protocol": 10,
+        "resource_value_checks": 75
+      },
+      "passed": true
+    },
+    "match": {
+      "mode": "match",
+      "pid": 49112,
+      "exited": true,
+      "exit_code": 1,
+      "timeout": false,
+      "wall_seconds": 181.51500000001397,
+      "stderr_empty": false,
+      "pck_sha256": "7f0ea14592d1fe327a5e647b90e127e3df97cc2578fe45b4577fdd0493155440",
+      "exe_sha256": "332bb711a6d0aecebabe8001ca8b01c39c7a4934f89c27cdb576f7c5c65eca98",
+      "probe": {
+        "checks": 26,
+        "ok": false,
+        "failures": [
+          "natural_victory_destroyed_all_opposing_military_buildings"
+        ],
+        "finished": false,
+        "winner": -1,
+        "remaining_buildings": [
+          5,
+          5
+        ],
+        "damage_events": 2646,
+        "military_deaths": 514,
+        "first_damage": 49.0333333333331,
+        "harvested_gold": [
+          29540,
+          27252
+        ],
+        "produced": [
+          {
+            "archer": 64,
+            "cannon": 15,
+            "catapult": 10,
+            "farmer": 14,
+            "knight": 76,
+            "swordsman": 106
+          },
+          {
+            "archer": 58,
+            "cannon": 12,
+            "catapult": 15,
+            "farmer": 38,
+            "knight": 74,
+            "swordsman": 95
+          }
+        ],
+        "simulated_seconds": 1800.03333333235,
+        "step_seconds": 0.0333333333333333,
+        "wall_seconds": 179.814,
+        "observed_step_valid": true,
+        "speed": 10,
+        "source_editor_feature": false
+      },
+      "passed": false
+    }
+  },
+  "normal_multiplayer_report": "release-0.12-normal-two-player.json",
+  "performance_report": "release-0.12-performance.json",
+  "deploy_idle_fault_injection": {
+    "checks": 38,
+    "failed": [],
+    "assertions": [
+      {
+        "ok": true,
+        "label": "actual bundle accepted with exactly binary and adjacent PCK"
+      },
+      {
+        "ok": true,
+        "label": "actual Linux ELF template"
+      },
+      {
+        "ok": true,
+        "label": "official Linux release binary pin"
+      },
+      {
+        "ok": true,
+        "label": "wrong_runtime rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_platform rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_archive_pin rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_template_pin rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "missing_source rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "stale_source rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "outside_source rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_pck_digest rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_pck_size rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "missing_pck rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "extra_file rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "success connection closed"
+      },
+      {
+        "ok": true,
+        "label": "success expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "ExecStart uses content-addressed release directory"
+      },
+      {
+        "ok": true,
+        "label": "ExecStart does not pair immutable executable with mutable PCK path"
+      },
+      {
+        "ok": true,
+        "label": "installed executable verified"
+      },
+      {
+        "ok": true,
+        "label": "matching immutable adjacent PCK installed"
+      },
+      {
+        "ok": true,
+        "label": "immutable_upload connection closed"
+      },
+      {
+        "ok": true,
+        "label": "immutable_upload expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "failed immutable upload leaves shared configuration and old unit untouched"
+      },
+      {
+        "ok": true,
+        "label": "failed immutable upload leaves running service untouched"
+      },
+      {
+        "ok": true,
+        "label": "config_write connection closed"
+      },
+      {
+        "ok": true,
+        "label": "config_write expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "config_write restores all prior shared configuration and unit bytes"
+      },
+      {
+        "ok": true,
+        "label": "config_write starts restored prior service"
+      },
+      {
+        "ok": true,
+        "label": "config_write restores prior release symlink"
+      },
+      {
+        "ok": true,
+        "label": "start_identity connection closed"
+      },
+      {
+        "ok": true,
+        "label": "start_identity expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "start_identity restores all prior shared configuration and unit bytes"
+      },
+      {
+        "ok": true,
+        "label": "start_identity starts restored prior service"
+      },
+      {
+        "ok": true,
+        "label": "start_identity restores prior release symlink"
+      },
+      {
+        "ok": true,
+        "label": "became_busy connection closed"
+      },
+      {
+        "ok": true,
+        "label": "became_busy expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "failed immutable upload leaves shared configuration and old unit untouched"
+      },
+      {
+        "ok": true,
+        "label": "failed immutable upload leaves running service untouched"
+      }
+    ],
+    "scope": "read-only real bundle validation plus in-memory SSH/SFTP fault injection; no deployment/network/engine process",
+    "deploy_script_sha256": "90ecca1dee507828c96e22655862aba53170f24ac44b64993d0e24e5c6c3656d",
+    "bundle": {
+      "jimu-relay": {
+        "sha256": "d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63",
+        "bytes": 73519416
+      },
+      "jimu-relay.pck": {
+        "sha256": "0dd8ce00ea4ec389a308437878a3a75ec741085aa2a27aa868c63bbd49cdce81",
+        "bytes": 51068
+      }
+    }
+  },
+  "relay_latest_readonly": {
+    "read_utc": "2026-09-10T18:04:38.999701+00:00",
+    "scope": "entire current systemd invocation, bounded to 50000 rows, no remote mutation",
+    "service": {
+      "active": "active",
+      "pid": 288725,
+      "restarts": 0,
+      "invocation_sha256": "274bd583a000488051905e4efdaa387e60bfdfa46340ef2f44ec6f19b71ab7b7",
+      "unchanged_during_read": true
+    },
+    "journal_rows": 75,
+    "first_diagnostic_utc": "2026-09-10T17:43:25.105187+00:00",
+    "last_diagnostic_utc": "2026-09-10T17:59:57.984760+00:00",
+    "started_events": 1,
+    "suppressed_lifecycle_possible": false,
+    "complete_lifecycle_evidence": true,
+    "current": {
+      "rooms": 0,
+      "matches": 0,
+      "paused": 0,
+      "lobbies": 0,
+      "native_connections": 0,
+      "connected_in_room": 0
+    },
+    "diagnostic_events": {
+      "started": 1,
+      "connected": 10,
+      "handshake_accepted": 10,
+      "room_created": 3,
+      "joined": 10,
+      "traffic": 22,
+      "match_started": 3,
+      "room_ended": 3,
+      "disconnected": 10
+    },
+    "reject_codes": {},
+    "script_errors": 0,
+    "transport_errors": 0,
+    "recommendation": "idle at this instant; recheck immediately before any restart"
+  },
+  "relay_release_id": "4b53ad5b01390aa8",
+  "relay_pck_sha256": "0dd8ce00ea4ec389a308437878a3a75ec741085aa2a27aa868c63bbd49cdce81",
+  "accepted_limitations": [
+    "500-unit rendered average 38.74 FPS, not stable 60 FPS",
+    "Normal two-human + six-Bot network run is 42 seconds, not a long-duration soak",
+    "Natural Bot mirror victory failed after 1800 simulated seconds: 25/26 checks passed, two sides still have five buildings; no claim all checks passed",
+    "Bot, victory functions, resources and maps are unchanged from c67d54d; absence of an old same-seed run means movement-related behavior changes are not fully ruled out"
+  ],
+  "publication": {
+    "status": "pending"
+  },
+  "cleanup": {
+    "status": "pending",
+    "retained_rollback": ".local/recovery/pre-0.12-main-20260910",
+    "previously_blocked_cleanup_report": "release-0.11.0.3.md"
+  }
+}
