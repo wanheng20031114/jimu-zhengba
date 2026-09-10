@@ -42,8 +42,9 @@
     "zip_path": "builds/积木争霸-0.12.0-Windows-x64.zip",
     "zip_bytes": 67390355,
     "zip_sha256": "9b4bad35f1b684ee176a1747e010a217659ea7d63189624de855d51a5490b299",
-    "default_windows_replaced": false,
-    "source_file_count": 1244
+    "default_windows_replaced": true,
+    "source_file_count": 1244,
+    "default_zip_verified": true
   },
   "artifact_audit": {
     "schema": 1,
@@ -637,11 +638,173 @@
     "Bot, victory functions, resources and maps are unchanged from c67d54d; absence of an old same-seed run means movement-related behavior changes are not fully ruled out"
   ],
   "publication": {
-    "status": "pending"
+    "tag": "v0.12.0",
+    "source_commit": "90eb218e22f5315b5f2edf709ad10e519f319268",
+    "release_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/tag/v0.12.0",
+    "download_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.12.0/jimu-zhengba-0.12.0-Windows-x64.zip",
+    "zip_sha256": "9b4bad35f1b684ee176a1747e010a217659ea7d63189624de855d51a5490b299",
+    "github_digest": "sha256:9b4bad35f1b684ee176a1747e010a217659ea7d63189624de855d51a5490b299",
+    "zip_bytes": 67390355,
+    "asset_id": 555534897,
+    "prerelease": false,
+    "draft": false,
+    "status": "published"
   },
   "cleanup": {
-    "status": "pending",
+    "status": "blocked_by_automatic_approval_review",
+    "attempts_rejected": 2,
+    "reason": "blocked by policy",
+    "deletion_executed": false,
+    "retained_targets": [
+      {
+        "path": ".local/relay-0.12-audit-20260910",
+        "measured_bytes": 14706,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12",
+        "measured_bytes": 1473091730,
+        "cache_links": [
+          ".local\\release-0.12\\source\\.godot\\imported"
+        ]
+      },
+      {
+        "path": ".local/release-0.12-buffer-tests",
+        "measured_bytes": 64319,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-codec-tests",
+        "measured_bytes": 7429,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-deploy-tests",
+        "measured_bytes": 33867,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-ephemeral-release-profile",
+        "measured_bytes": 311906554,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-json-tests",
+        "measured_bytes": 153330,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-native-chain-audit",
+        "measured_bytes": 590708,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-network-tests",
+        "measured_bytes": 2527409,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-normal-two-player",
+        "measured_bytes": 311223551,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-online-tests",
+        "measured_bytes": 1983995,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-paced-release-profile",
+        "measured_bytes": 311495074,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-pacing-tests",
+        "measured_bytes": 38785,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-performance-tests",
+        "measured_bytes": 2022227022,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-phase-tests",
+        "measured_bytes": 19581,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-primitive-scan-tests",
+        "measured_bytes": 22183,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-relay-ephemeral-build",
+        "measured_bytes": 182976826,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-relay-flush-proof",
+        "measured_bytes": 83903,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-relay-runtime-tests",
+        "measured_bytes": 183013210,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-release-runtime-profile",
+        "measured_bytes": 266657852,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-replication-tests",
+        "measured_bytes": 132790,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-threaded-release-profile",
+        "measured_bytes": 312051976,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-visual-encode-tests",
+        "measured_bytes": 13305,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-visual-fairness-tests",
+        "measured_bytes": 26219,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-visual-unreliable-tests",
+        "measured_bytes": 890440,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-wall-profile",
+        "measured_bytes": 204565419,
+        "cache_links": []
+      },
+      {
+        "path": ".local/release-0.12-worker-json-tests",
+        "measured_bytes": 53549,
+        "cache_links": []
+      }
+    ],
+    "measured_retained_bytes": 5585865732,
+    "prior_blocked_targets_not_retried": true,
     "retained_rollback": ".local/recovery/pre-0.12-main-20260910",
-    "previously_blocked_cleanup_report": "release-0.11.0.3.md"
+    "previously_blocked_cleanup_report": "release-0.11.0.3.md",
+    "note": "First rejected release worktree/link removal; second rejected deletion of the 26 independent remaining directories, excluding the first target and its parent. No alternative deletion mechanism was attempted."
+  },
+  "rollback_stash": "c7214d1bb51e4b5398531a79efaa4b06f9e8c1a8",
+  "process_verification": {
+    "checked_utc": "2026-09-10T18:11:10.6388592Z",
+    "validation_game_processes": [],
+    "validation_python_processes": [],
+    "preserved_user_editor_pid": 36624
   }
 }
