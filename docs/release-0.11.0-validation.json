@@ -1,0 +1,175 @@
+{
+  "build": "0.11.0",
+  "protocol": 9,
+  "numerical_audit": {
+    "checks": 3020,
+    "failures": [],
+    "final_requirements_checked": true
+  },
+  "final_regressions": [
+    {
+      "test": "pursuit_attack_test",
+      "checks": 466,
+      "ok": true,
+      "seconds": 4.734
+    },
+    {
+      "test": "network_game_replication_test",
+      "checks": 124,
+      "ok": true,
+      "seconds": 2.234
+    },
+    {
+      "test": "network_command_validation_test",
+      "checks": 193,
+      "ok": true,
+      "seconds": 1.671
+    },
+    {
+      "test": "fog_state_test",
+      "checks": 274,
+      "ok": true,
+      "seconds": 0.844
+    },
+    {
+      "test": "fixed_step_contract_test",
+      "checks": 42,
+      "ok": true,
+      "seconds": 2.047
+    },
+    {
+      "test": "catapult_impact_test",
+      "checks": 255,
+      "ok": true,
+      "seconds": 2.141
+    },
+    {
+      "test": "ranged_balance_vision_test",
+      "checks": 74,
+      "ok": true,
+      "seconds": 0.75
+    },
+    {
+      "test": "special_upgrades_test",
+      "checks": 144,
+      "ok": true,
+      "seconds": 1.859
+    }
+  ],
+  "corridor_oracle": {
+    "checks": 5600,
+    "failures": [],
+    "oracle": "Native AABB.intersects_segment against every square-expanded blocked cell; eight random maps, 2800 independent sweeps and reverse-direction symmetry"
+  },
+  "visual_culling": {
+    "headless_checks": 1729,
+    "rendered_checks": 1734,
+    "failures": [],
+    "native_timer_release": "All six unit types: visible/hidden rigs match locomotion phase and projectile socket at their real windup; reentry phase difference <=1.4e-17.",
+    "scope": "Native visibility, paused clocks, manual network replicas, clips/AABB, work transitions, colors and death; separate from combat and FPS samples."
+  },
+  "projectile_and_effect_pools": {
+    "checks": 322,
+    "failures": [],
+    "report": "report/presentation-pools-0.11.0.json"
+  },
+  "release_match": {
+    "build": "0.11.0",
+    "mode": "1v1",
+    "checks": 26,
+    "failures": [],
+    "finished": true,
+    "winner": 0,
+    "simulated_seconds": 624.00000000009,
+    "wall_seconds": 64.431,
+    "speed": 10,
+    "step_seconds": 0.0333333333333333,
+    "observed_step_valid": true,
+    "military_deaths": 93,
+    "damage_events": 883,
+    "source_editor_feature": false,
+    "first_damage_seconds": null,
+    "ok": true,
+    "stderr_clean": true,
+    "rendered": true,
+    "packaged_validation": true,
+    "child_exited": true
+  },
+  "release_network": {
+    "ok": true,
+    "exit_code": 0,
+    "result": [
+      {
+        "build": "0.11.0",
+        "catalogue_files": 95,
+        "catalogue_only": false,
+        "checks": 191,
+        "content_hash": "46515ad0304939e2eef382c62d04382be2f300605834d39e0aba082c2d9d6377",
+        "error_codes": [],
+        "exported_template": true,
+        "failures": [],
+        "handshake_msec": 546,
+        "protocol": 9,
+        "resource_value_checks": 75
+      }
+    ],
+    "scope": "Actual Windows PCK via public Shanghai DTLS; 4v4 room with slots5,6 empty (4v2), Bot slots/start/finish/release. Not a multi-client network stress run."
+  },
+  "server": {
+    "server": "shanghai",
+    "service": "jimu-zhengba-relay.service",
+    "build": "0.11.0",
+    "release": "05350c9edc56bb64",
+    "pid": 284254,
+    "restarts": 0,
+    "active": true,
+    "ready": true,
+    "udp24571_listening": true,
+    "existing_relay_pid": 270544,
+    "udp24570_listening": true,
+    "legacy_active": "inactive",
+    "ok": true
+  },
+  "package": {
+    "path": "builds/积木争霸-0.11.0-Windows-x64.zip",
+    "bytes": 70570562,
+    "sha256": "6e223c601e7044d77d180e5e1ef28ce4fbcc987a813beadecb88ab3f7b1de7db",
+    "entries": [
+      "windows/积木争霸.exe",
+      "windows/积木争霸.pck",
+      "windows/START_HERE.txt",
+      "windows/collect_diagnostics.ps1",
+      "windows/COLLECT_DIAGNOSTICS.cmd"
+    ],
+    "exe_sha256": "4481449fe0eb96b2c7cd9faf0e4e92132e63fd101fabcd7c79c52367b755408b",
+    "pck_sha256": "7ea8a662af23f323709172d4c83bef7d852b1a0f8a1e17b3fff2ca3ae20edbec"
+  },
+  "manifest_sha256": "46515ad0304939e2eef382c62d04382be2f300605834d39e0aba082c2d9d6377",
+  "failed_attempts_not_counted_as_acceptance": [
+    "Initial full-match catalogue check retained old archer/knight training expectations 8/10. Actual PCK resources were already7/8. Updated probe, re-exported and completed another rendered full match.",
+    "An initial pursuit invocation omitted --fixed-fps120 and hit its45-second test watchdog; correct fixed-frame runner passed466.",
+    "One command-validation process reported a JoltShape allocation at exit despite193 passing assertions. A verbose diagnostic rerun and final sequential rerun exited cleanly; final packaged match exited without warnings/errors. Not claimed as a reproduced product crash fix."
+  ],
+  "performance_target": "896 units remains below target. See report/performance-0.11.0.md; no claim of stable60 FPS.",
+  "process_verification": {
+    "active_task_test_processes": 0,
+    "preserved_editor_pid": 33896,
+    "unrelated_project_processes_preserved": true,
+    "production_relay_preserved": true
+  },
+  "cleanup": {
+    "status": "blocked_by_automatic_approval",
+    "reason": "blocked by policy",
+    "deletion_command_executed": false,
+    "unversioned_build_alias_copy_executed": true,
+    "unversioned_build_alias_copy_scope": "Separate copy-only command; archive hash and launcher version match0.11.0. No deletion retried.",
+    "retained_directories": {
+      ".local/perf0110": 2584421315,
+      ".local/final0110": 1833495,
+      ".local/corridor0110": 3019,
+      ".local/network/runtime": 224274808
+    },
+    "preserve_private_key": ".local/network/relay-private.key",
+    "not_tracked_or_pushed": true
+  }
+}

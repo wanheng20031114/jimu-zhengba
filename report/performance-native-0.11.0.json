@@ -1,0 +1,1012 @@
+{
+  "schema_version": 1,
+  "build": "0.11.0",
+  "purpose": "Native CPU wall-time attribution for an experimental snapshot; not final release performance.",
+  "experiment_status": {
+    "engine": "Godot 4.6.3 stable custom_build",
+    "compiler": "MSVC 14.44",
+    "target": "template_release",
+    "optimize": "speed",
+    "lto": "none",
+    "debug_symbols": false,
+    "native_timing_enabled": true,
+    "decision_10hz_experiment": "present in this captured snapshot; subsequently reverted",
+    "final_release_fps_evidence": false,
+    "binary_sha256": "c6952fde157afd9b662d5b08e342a824498d260ede504fb4f1c0c8330f9f7b1d"
+  },
+  "workload": {
+    "mode": "4v4",
+    "players": 8,
+    "units": 896,
+    "military_units": 800,
+    "workers": 96,
+    "military_roster_per_player": {
+      "swordsman": 50,
+      "archer": 50
+    },
+    "hp_multiplier_for_stable_roster": 100,
+    "bots_active": false,
+    "passive_income_active": false,
+    "network_clients": 0,
+    "renderer": "Forward+",
+    "driver": "Vulkan",
+    "viewport": [
+      1600,
+      900
+    ],
+    "camera_size": 58,
+    "vsync": false,
+    "fps_limit": 0,
+    "harness_checks": 31,
+    "harness_failures": []
+  },
+  "selection": {
+    "source_log": "native_current.stdout.log",
+    "source_log_sha256": "2e8da71960223f460b333ea94189850f2741685c1994c31a2c48024295940467",
+    "measurement_begin_log_line": 9,
+    "measurement_end_log_line": 18,
+    "rule": "Keep only complete native report windows inside BEGIN/END. Discard the first report after BEGIN because its window starts before BEGIN; discard all reports after END.",
+    "included_windows": 5,
+    "included_window_usec": 11245280,
+    "included_physics_steps": 240,
+    "included_render_frames": 30,
+    "excluded_reports": [
+      {
+        "log_line": 5,
+        "reason": "before_measurement_begin"
+      },
+      {
+        "log_line": 6,
+        "reason": "before_measurement_begin"
+      },
+      {
+        "log_line": 7,
+        "reason": "before_measurement_begin"
+      },
+      {
+        "log_line": 8,
+        "reason": "before_measurement_begin"
+      },
+      {
+        "log_line": 10,
+        "reason": "first_window_overlaps_measurement_begin"
+      },
+      {
+        "log_line": 20,
+        "reason": "after_measurement_end"
+      }
+    ]
+  },
+  "aggregation": {
+    "mean_formula": "sum(sum_usec) / sum(count) / 1000",
+    "max_formula": "max(max_usec) / 1000",
+    "measurement_type": "inclusive monotonic wall time",
+    "percentiles_available": false,
+    "scope_relationships": {
+      "frame_work_contains": [
+        "physics_total",
+        "scene_process",
+        "process_messages",
+        "navigation_2d_process",
+        "navigation_3d_process",
+        "render_sync",
+        "render_draw"
+      ],
+      "physics_total_contains": [
+        "physics_prepare",
+        "physics_3d_sync_queries",
+        "physics_2d_sync_queries",
+        "scene_tree_physics",
+        "navigation_2d",
+        "navigation_3d",
+        "post_navigation_messages",
+        "physics_3d_step",
+        "physics_2d_step",
+        "post_physics_messages",
+        "physics_iteration_end"
+      ],
+      "scene_tree_physics_contains": [
+        "scene_pre_transform",
+        "scene_physics_callbacks",
+        "scene_messages",
+        "scene_timers",
+        "scene_tweens",
+        "scene_post_transform",
+        "scene_delete_idle"
+      ]
+    },
+    "navigation_3d_scope": "Map synchronization, avoidance/RVO, and velocity-computed callbacks including movement; not pure avoidance math.",
+    "physics_3d_step_scope": "PhysicsServer3D end_sync plus Jolt step. Does not include CharacterBody move_and_slide inside navigation callbacks.",
+    "scene_physics_callbacks_scope": "SceneTree::_process(true), including native and script node callbacks plus process-group dispatch.",
+    "render_draw_scope": "CPU wall time inside render draw submission; not isolated GPU elapsed time."
+  },
+  "totals": {
+    "physics_total": {
+      "sum_usec": 10130706,
+      "count": 240,
+      "max_usec": 58679,
+      "mean_ms": 42.211275,
+      "max_ms": 58.679
+    },
+    "physics_prepare": {
+      "sum_usec": 209408,
+      "count": 240,
+      "max_usec": 1490,
+      "mean_ms": 0.8725333333333333,
+      "max_ms": 1.49
+    },
+    "physics_3d_sync_queries": {
+      "sum_usec": 448,
+      "count": 240,
+      "max_usec": 5,
+      "mean_ms": 0.0018666666666666666,
+      "max_ms": 0.005
+    },
+    "physics_2d_sync_queries": {
+      "sum_usec": 1078,
+      "count": 240,
+      "max_usec": 8,
+      "mean_ms": 0.004491666666666666,
+      "max_ms": 0.008
+    },
+    "scene_tree_physics": {
+      "sum_usec": 7505348,
+      "count": 240,
+      "max_usec": 48064,
+      "mean_ms": 31.272283333333334,
+      "max_ms": 48.064
+    },
+    "navigation_2d": {
+      "sum_usec": 294,
+      "count": 240,
+      "max_usec": 3,
+      "mean_ms": 0.0012250000000000002,
+      "max_ms": 0.003
+    },
+    "navigation_3d": {
+      "sum_usec": 1982305,
+      "count": 240,
+      "max_usec": 10974,
+      "mean_ms": 8.259604166666666,
+      "max_ms": 10.974
+    },
+    "post_navigation_messages": {
+      "sum_usec": 134,
+      "count": 240,
+      "max_usec": 2,
+      "mean_ms": 0.0005583333333333333,
+      "max_ms": 0.002
+    },
+    "physics_3d_step": {
+      "sum_usec": 135166,
+      "count": 240,
+      "max_usec": 808,
+      "mean_ms": 0.5631916666666668,
+      "max_ms": 0.808
+    },
+    "physics_2d_step": {
+      "sum_usec": 1724,
+      "count": 240,
+      "max_usec": 11,
+      "mean_ms": 0.007183333333333333,
+      "max_ms": 0.011
+    },
+    "post_physics_messages": {
+      "sum_usec": 91,
+      "count": 240,
+      "max_usec": 1,
+      "mean_ms": 0.00037916666666666665,
+      "max_ms": 0.001
+    },
+    "physics_iteration_end": {
+      "sum_usec": 294435,
+      "count": 240,
+      "max_usec": 2127,
+      "mean_ms": 1.2268125,
+      "max_ms": 2.127
+    },
+    "scene_pre_transform": {
+      "sum_usec": 25,
+      "count": 240,
+      "max_usec": 1,
+      "mean_ms": 0.00010416666666666667,
+      "max_ms": 0.001
+    },
+    "scene_physics_callbacks": {
+      "sum_usec": 7311616,
+      "count": 240,
+      "max_usec": 46776,
+      "mean_ms": 30.465066666666665,
+      "max_ms": 46.776
+    },
+    "scene_messages": {
+      "sum_usec": 122,
+      "count": 240,
+      "max_usec": 1,
+      "mean_ms": 0.0005083333333333333,
+      "max_ms": 0.001
+    },
+    "scene_timers": {
+      "sum_usec": 124,
+      "count": 240,
+      "max_usec": 1,
+      "mean_ms": 0.0005166666666666667,
+      "max_ms": 0.001
+    },
+    "scene_tweens": {
+      "sum_usec": 16,
+      "count": 240,
+      "max_usec": 1,
+      "mean_ms": 6.666666666666667e-05,
+      "max_ms": 0.001
+    },
+    "scene_post_transform": {
+      "sum_usec": 186245,
+      "count": 240,
+      "max_usec": 1250,
+      "mean_ms": 0.7760208333333334,
+      "max_ms": 1.25
+    },
+    "scene_delete_idle": {
+      "sum_usec": 281,
+      "count": 240,
+      "max_usec": 4,
+      "mean_ms": 0.0011708333333333334,
+      "max_ms": 0.004
+    },
+    "scene_process": {
+      "sum_usec": 781606,
+      "count": 30,
+      "max_usec": 29675,
+      "mean_ms": 26.053533333333334,
+      "max_ms": 29.675
+    },
+    "process_messages": {
+      "sum_usec": 5,
+      "count": 30,
+      "max_usec": 1,
+      "mean_ms": 0.00016666666666666666,
+      "max_ms": 0.001
+    },
+    "navigation_2d_process": {
+      "sum_usec": 40,
+      "count": 30,
+      "max_usec": 3,
+      "mean_ms": 0.0013333333333333333,
+      "max_ms": 0.003
+    },
+    "navigation_3d_process": {
+      "sum_usec": 29,
+      "count": 30,
+      "max_usec": 3,
+      "mean_ms": 0.0009666666666666667,
+      "max_ms": 0.003
+    },
+    "render_sync": {
+      "sum_usec": 10,
+      "count": 30,
+      "max_usec": 1,
+      "mean_ms": 0.0003333333333333333,
+      "max_ms": 0.001
+    },
+    "render_draw": {
+      "sum_usec": 325814,
+      "count": 30,
+      "max_usec": 13289,
+      "mean_ms": 10.860466666666667,
+      "max_ms": 13.289
+    },
+    "frame_work": {
+      "sum_usec": 11244179,
+      "count": 30,
+      "max_usec": 403932,
+      "mean_ms": 374.8059666666667,
+      "max_ms": 403.932
+    }
+  },
+  "raw_windows": [
+    {
+      "starts_after_log_line": 10,
+      "ends_at_log_line": 11,
+      "window_usec": 2155272,
+      "stages": {
+        "physics_total": {
+          "sum_usec": 1928619,
+          "count": 48,
+          "max_usec": 48597
+        },
+        "physics_prepare": {
+          "sum_usec": 44092,
+          "count": 48,
+          "max_usec": 1490
+        },
+        "physics_3d_sync_queries": {
+          "sum_usec": 93,
+          "count": 48,
+          "max_usec": 4
+        },
+        "physics_2d_sync_queries": {
+          "sum_usec": 215,
+          "count": 48,
+          "max_usec": 7
+        },
+        "scene_tree_physics": {
+          "sum_usec": 1419736,
+          "count": 48,
+          "max_usec": 35760
+        },
+        "navigation_2d": {
+          "sum_usec": 61,
+          "count": 48,
+          "max_usec": 3
+        },
+        "navigation_3d": {
+          "sum_usec": 381620,
+          "count": 48,
+          "max_usec": 10640
+        },
+        "post_navigation_messages": {
+          "sum_usec": 27,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_3d_step": {
+          "sum_usec": 26115,
+          "count": 48,
+          "max_usec": 618
+        },
+        "physics_2d_step": {
+          "sum_usec": 343,
+          "count": 48,
+          "max_usec": 10
+        },
+        "post_physics_messages": {
+          "sum_usec": 20,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_iteration_end": {
+          "sum_usec": 56248,
+          "count": 48,
+          "max_usec": 1565
+        },
+        "scene_pre_transform": {
+          "sum_usec": 6,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_physics_callbacks": {
+          "sum_usec": 1380111,
+          "count": 48,
+          "max_usec": 34974
+        },
+        "scene_messages": {
+          "sum_usec": 26,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_timers": {
+          "sum_usec": 22,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_tweens": {
+          "sum_usec": 2,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_post_transform": {
+          "sum_usec": 38156,
+          "count": 48,
+          "max_usec": 971
+        },
+        "scene_delete_idle": {
+          "sum_usec": 50,
+          "count": 48,
+          "max_usec": 2
+        },
+        "scene_process": {
+          "sum_usec": 157860,
+          "count": 6,
+          "max_usec": 28759
+        },
+        "process_messages": {
+          "sum_usec": 1,
+          "count": 6,
+          "max_usec": 1
+        },
+        "navigation_2d_process": {
+          "sum_usec": 6,
+          "count": 6,
+          "max_usec": 1
+        },
+        "navigation_3d_process": {
+          "sum_usec": 8,
+          "count": 6,
+          "max_usec": 3
+        },
+        "render_sync": {
+          "sum_usec": 3,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_draw": {
+          "sum_usec": 67226,
+          "count": 6,
+          "max_usec": 13289
+        },
+        "frame_work": {
+          "sum_usec": 2155007,
+          "count": 6,
+          "max_usec": 368450
+        }
+      }
+    },
+    {
+      "starts_after_log_line": 11,
+      "ends_at_log_line": 13,
+      "window_usec": 2249194,
+      "stages": {
+        "physics_total": {
+          "sum_usec": 2019464,
+          "count": 48,
+          "max_usec": 48464
+        },
+        "physics_prepare": {
+          "sum_usec": 43129,
+          "count": 48,
+          "max_usec": 1448
+        },
+        "physics_3d_sync_queries": {
+          "sum_usec": 88,
+          "count": 48,
+          "max_usec": 3
+        },
+        "physics_2d_sync_queries": {
+          "sum_usec": 211,
+          "count": 48,
+          "max_usec": 7
+        },
+        "scene_tree_physics": {
+          "sum_usec": 1497406,
+          "count": 48,
+          "max_usec": 36670
+        },
+        "navigation_2d": {
+          "sum_usec": 59,
+          "count": 48,
+          "max_usec": 3
+        },
+        "navigation_3d": {
+          "sum_usec": 392873,
+          "count": 48,
+          "max_usec": 10375
+        },
+        "post_navigation_messages": {
+          "sum_usec": 22,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_3d_step": {
+          "sum_usec": 26829,
+          "count": 48,
+          "max_usec": 774
+        },
+        "physics_2d_step": {
+          "sum_usec": 351,
+          "count": 48,
+          "max_usec": 10
+        },
+        "post_physics_messages": {
+          "sum_usec": 15,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_iteration_end": {
+          "sum_usec": 58425,
+          "count": 48,
+          "max_usec": 1847
+        },
+        "scene_pre_transform": {
+          "sum_usec": 6,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_physics_callbacks": {
+          "sum_usec": 1458685,
+          "count": 48,
+          "max_usec": 35874
+        },
+        "scene_messages": {
+          "sum_usec": 28,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_timers": {
+          "sum_usec": 26,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_tweens": {
+          "sum_usec": 5,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_post_transform": {
+          "sum_usec": 37225,
+          "count": 48,
+          "max_usec": 1105
+        },
+        "scene_delete_idle": {
+          "sum_usec": 60,
+          "count": 48,
+          "max_usec": 4
+        },
+        "scene_process": {
+          "sum_usec": 161450,
+          "count": 6,
+          "max_usec": 29675
+        },
+        "process_messages": {
+          "sum_usec": 2,
+          "count": 6,
+          "max_usec": 1
+        },
+        "navigation_2d_process": {
+          "sum_usec": 7,
+          "count": 6,
+          "max_usec": 2
+        },
+        "navigation_3d_process": {
+          "sum_usec": 6,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_sync": {
+          "sum_usec": 2,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_draw": {
+          "sum_usec": 66832,
+          "count": 6,
+          "max_usec": 11780
+        },
+        "frame_work": {
+          "sum_usec": 2248965,
+          "count": 6,
+          "max_usec": 382846
+        }
+      }
+    },
+    {
+      "starts_after_log_line": 13,
+      "ends_at_log_line": 14,
+      "window_usec": 2276837,
+      "stages": {
+        "physics_total": {
+          "sum_usec": 2057984,
+          "count": 48,
+          "max_usec": 58679
+        },
+        "physics_prepare": {
+          "sum_usec": 40220,
+          "count": 48,
+          "max_usec": 1256
+        },
+        "physics_3d_sync_queries": {
+          "sum_usec": 91,
+          "count": 48,
+          "max_usec": 4
+        },
+        "physics_2d_sync_queries": {
+          "sum_usec": 219,
+          "count": 48,
+          "max_usec": 6
+        },
+        "scene_tree_physics": {
+          "sum_usec": 1525902,
+          "count": 48,
+          "max_usec": 48064
+        },
+        "navigation_2d": {
+          "sum_usec": 61,
+          "count": 48,
+          "max_usec": 2
+        },
+        "navigation_3d": {
+          "sum_usec": 403697,
+          "count": 48,
+          "max_usec": 9928
+        },
+        "post_navigation_messages": {
+          "sum_usec": 26,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_3d_step": {
+          "sum_usec": 27871,
+          "count": 48,
+          "max_usec": 808
+        },
+        "physics_2d_step": {
+          "sum_usec": 349,
+          "count": 48,
+          "max_usec": 11
+        },
+        "post_physics_messages": {
+          "sum_usec": 19,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_iteration_end": {
+          "sum_usec": 59464,
+          "count": 48,
+          "max_usec": 1530
+        },
+        "scene_pre_transform": {
+          "sum_usec": 3,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_physics_callbacks": {
+          "sum_usec": 1486335,
+          "count": 48,
+          "max_usec": 46776
+        },
+        "scene_messages": {
+          "sum_usec": 26,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_timers": {
+          "sum_usec": 26,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_tweens": {
+          "sum_usec": 0,
+          "count": 48,
+          "max_usec": 0
+        },
+        "scene_post_transform": {
+          "sum_usec": 38044,
+          "count": 48,
+          "max_usec": 1250
+        },
+        "scene_delete_idle": {
+          "sum_usec": 64,
+          "count": 48,
+          "max_usec": 3
+        },
+        "scene_process": {
+          "sum_usec": 154327,
+          "count": 6,
+          "max_usec": 26982
+        },
+        "process_messages": {
+          "sum_usec": 1,
+          "count": 6,
+          "max_usec": 1
+        },
+        "navigation_2d_process": {
+          "sum_usec": 9,
+          "count": 6,
+          "max_usec": 2
+        },
+        "navigation_3d_process": {
+          "sum_usec": 4,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_sync": {
+          "sum_usec": 2,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_draw": {
+          "sum_usec": 63119,
+          "count": 6,
+          "max_usec": 11057
+        },
+        "frame_work": {
+          "sum_usec": 2276633,
+          "count": 6,
+          "max_usec": 403932
+        }
+      }
+    },
+    {
+      "starts_after_log_line": 14,
+      "ends_at_log_line": 15,
+      "window_usec": 2222758,
+      "stages": {
+        "physics_total": {
+          "sum_usec": 2004884,
+          "count": 48,
+          "max_usec": 48257
+        },
+        "physics_prepare": {
+          "sum_usec": 39461,
+          "count": 48,
+          "max_usec": 1213
+        },
+        "physics_3d_sync_queries": {
+          "sum_usec": 82,
+          "count": 48,
+          "max_usec": 3
+        },
+        "physics_2d_sync_queries": {
+          "sum_usec": 208,
+          "count": 48,
+          "max_usec": 7
+        },
+        "scene_tree_physics": {
+          "sum_usec": 1481080,
+          "count": 48,
+          "max_usec": 38085
+        },
+        "navigation_2d": {
+          "sum_usec": 54,
+          "count": 48,
+          "max_usec": 2
+        },
+        "navigation_3d": {
+          "sum_usec": 396858,
+          "count": 48,
+          "max_usec": 10974
+        },
+        "post_navigation_messages": {
+          "sum_usec": 35,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_3d_step": {
+          "sum_usec": 27007,
+          "count": 48,
+          "max_usec": 698
+        },
+        "physics_2d_step": {
+          "sum_usec": 337,
+          "count": 48,
+          "max_usec": 9
+        },
+        "post_physics_messages": {
+          "sum_usec": 24,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_iteration_end": {
+          "sum_usec": 59688,
+          "count": 48,
+          "max_usec": 1608
+        },
+        "scene_pre_transform": {
+          "sum_usec": 7,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_physics_callbacks": {
+          "sum_usec": 1442921,
+          "count": 48,
+          "max_usec": 37334
+        },
+        "scene_messages": {
+          "sum_usec": 21,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_timers": {
+          "sum_usec": 25,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_tweens": {
+          "sum_usec": 4,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_post_transform": {
+          "sum_usec": 36688,
+          "count": 48,
+          "max_usec": 1173
+        },
+        "scene_delete_idle": {
+          "sum_usec": 55,
+          "count": 48,
+          "max_usec": 2
+        },
+        "scene_process": {
+          "sum_usec": 153612,
+          "count": 6,
+          "max_usec": 27158
+        },
+        "process_messages": {
+          "sum_usec": 1,
+          "count": 6,
+          "max_usec": 1
+        },
+        "navigation_2d_process": {
+          "sum_usec": 8,
+          "count": 6,
+          "max_usec": 2
+        },
+        "navigation_3d_process": {
+          "sum_usec": 6,
+          "count": 6,
+          "max_usec": 2
+        },
+        "render_sync": {
+          "sum_usec": 1,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_draw": {
+          "sum_usec": 62857,
+          "count": 6,
+          "max_usec": 11024
+        },
+        "frame_work": {
+          "sum_usec": 2222570,
+          "count": 6,
+          "max_usec": 377312
+        }
+      }
+    },
+    {
+      "starts_after_log_line": 15,
+      "ends_at_log_line": 16,
+      "window_usec": 2341219,
+      "stages": {
+        "physics_total": {
+          "sum_usec": 2119755,
+          "count": 48,
+          "max_usec": 53728
+        },
+        "physics_prepare": {
+          "sum_usec": 42506,
+          "count": 48,
+          "max_usec": 1282
+        },
+        "physics_3d_sync_queries": {
+          "sum_usec": 94,
+          "count": 48,
+          "max_usec": 5
+        },
+        "physics_2d_sync_queries": {
+          "sum_usec": 225,
+          "count": 48,
+          "max_usec": 8
+        },
+        "scene_tree_physics": {
+          "sum_usec": 1581224,
+          "count": 48,
+          "max_usec": 43072
+        },
+        "navigation_2d": {
+          "sum_usec": 59,
+          "count": 48,
+          "max_usec": 2
+        },
+        "navigation_3d": {
+          "sum_usec": 407257,
+          "count": 48,
+          "max_usec": 9641
+        },
+        "post_navigation_messages": {
+          "sum_usec": 24,
+          "count": 48,
+          "max_usec": 2
+        },
+        "physics_3d_step": {
+          "sum_usec": 27344,
+          "count": 48,
+          "max_usec": 696
+        },
+        "physics_2d_step": {
+          "sum_usec": 344,
+          "count": 48,
+          "max_usec": 10
+        },
+        "post_physics_messages": {
+          "sum_usec": 13,
+          "count": 48,
+          "max_usec": 1
+        },
+        "physics_iteration_end": {
+          "sum_usec": 60610,
+          "count": 48,
+          "max_usec": 2127
+        },
+        "scene_pre_transform": {
+          "sum_usec": 3,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_physics_callbacks": {
+          "sum_usec": 1543564,
+          "count": 48,
+          "max_usec": 42337
+        },
+        "scene_messages": {
+          "sum_usec": 21,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_timers": {
+          "sum_usec": 25,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_tweens": {
+          "sum_usec": 5,
+          "count": 48,
+          "max_usec": 1
+        },
+        "scene_post_transform": {
+          "sum_usec": 36132,
+          "count": 48,
+          "max_usec": 963
+        },
+        "scene_delete_idle": {
+          "sum_usec": 52,
+          "count": 48,
+          "max_usec": 2
+        },
+        "scene_process": {
+          "sum_usec": 154357,
+          "count": 6,
+          "max_usec": 26638
+        },
+        "process_messages": {
+          "sum_usec": 0,
+          "count": 6,
+          "max_usec": 0
+        },
+        "navigation_2d_process": {
+          "sum_usec": 10,
+          "count": 6,
+          "max_usec": 3
+        },
+        "navigation_3d_process": {
+          "sum_usec": 5,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_sync": {
+          "sum_usec": 2,
+          "count": 6,
+          "max_usec": 1
+        },
+        "render_draw": {
+          "sum_usec": 65780,
+          "count": 6,
+          "max_usec": 11335
+        },
+        "frame_work": {
+          "sum_usec": 2341004,
+          "count": 6,
+          "max_usec": 400495
+        }
+      }
+    }
+  ],
+  "marker_comparison": {
+    "marker_scope": "Begin/End priority-node bracket inside SceneTree::_process(true)",
+    "marker_physics_steps": 328,
+    "marker_duration_seconds": 15.332009,
+    "marker_mean_ms": 28.5013475609756,
+    "native_complete_window_physics_steps": 240,
+    "native_complete_window_mean_ms": 30.465066666666665,
+    "paired_sample_comparison_available": false,
+    "explanation": "The marker averages all 328 measured steps, while the native archive keeps only 240 steps in five complete windows. The selected native callbacks average rises from 28.7523125 to 32.1575833 ms across windows, so cropping changes the mean. Native scope also includes group queues/sorting/dispatch outside the marker bracket. Their difference cannot be assigned wholly to native overhead without identical paired samples."
+  },
+  "limitations": [
+    "MSVC custom-engine absolute FPS is not comparable to the official MinGW release; this experimental snapshot is not final shipped code.",
+    "The 10 Hz combat-decision experiment present in this capture was subsequently reverted.",
+    "Inclusive parents overlap children; never sum the parent with its children.",
+    "No step-level sample series was retained, so no P95/P99 can be computed from these aggregate windows.",
+    "No pure-RVO-only timing was collected; navigation includes movement callbacks.",
+    "This is a short local 896-unit stress case, not complete eight-client network/Bot load or a GPU bottleneck measurement."
+  ]
+}

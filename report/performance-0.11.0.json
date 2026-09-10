@@ -1,0 +1,1568 @@
+{
+  "schema_version": 1,
+  "game": "积木争霸",
+  "build": "0.11.0",
+  "protocol": 9,
+  "archive_timestamp_utc": "2026-09-10T07:25:00.543837+00:00",
+  "summary": {
+    "standard_272": "130.797 FPS, 29.999 TPS; frame P95 14.896 ms/P99 17.696 ms in this short local sample, not a stable-60 guarantee.",
+    "maximum_896": "3.306 FPS, 25.386 TPS; frame P95 346.321 ms/P99 347.524 ms. Extreme population target remains unmet.",
+    "cpu_gpu_attribution": "In the instrumented early sample, disabling 3D reduced measured GPU mean 10.422 to 0.972 ms while FPS remained 1.688 versus 1.676. Supports a dominant CPU bottleneck for that scenario; no final-release GPU timings were collected."
+  },
+  "machine_conditions": {
+    "cpu": "Intel Core i9-10900KF",
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "os": "Windows",
+    "shared_workstation": true,
+    "retained_process_roles": [
+      "user Godot editor",
+      "user game instance"
+    ],
+    "note": "User processes were not stopped. Process IDs, machine paths, usernames and connection credentials are excluded. The 0.10.0 process set differs."
+  },
+  "metric_definitions": {
+    "frame_ms": "Process-frame wall-clock spacing, including physics catch-up and OS scheduling; not GPU render duration.",
+    "physics_logic_ms": "SceneTree physics callbacks bracketed by priority-marker Nodes; excludes engine work before/after these nodes, including Navigation callbacks and PhysicsServer step. A P95 below 33.3 ms here does not prove the complete engine tick meets its budget.",
+    "observed_tps": "Actual authoritative ticks divided by elapsed wall time; 30 is configured, not substituted for the observed value.",
+    "path_query_ms": "Actual PathBudget native path query time accumulated per authoritative tick; already a subset of other CPU scopes.",
+    "cached_engine_monitors": "Per-frame observations of cached Performance values, including one-second physics peaks. They are retained for audit and must not be described as actual per-step mean/P95.",
+    "instrument_inclusive_ms": "Accumulated parent/child durations from temporary wrappers. Overlapping intervals must not be summed. Wrappers are absent from final per-unit production callbacks.",
+    "zero_sample_gpu": "All GPU/render-CPU distributions with samples=0 are represented with null statistics instead of misleading zero values."
+  },
+  "final_sample": {
+    "source_file": "release_final.json",
+    "source_sha256": "852947dc4c04bb8ddb4f962f052453301136db2d058c4387692c6ad0b63f95d7",
+    "role": "final_release_template",
+    "interpretation": "Official Windows 4.6.3 release template, production main scene and unit scripts; top-level benchmark only, no per-unit wrapper. Both standard and maximum phases.",
+    "data": {
+      "actualbuffer_size": 262144,
+      "benchmark_fps_limit": 0,
+      "benchmark_vsync": 0,
+      "build": "0.11.0",
+      "camera_size": 58.0,
+      "checks": 57,
+      "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+      "failures": [],
+      "geometry_with_instance_uniforms": 10674,
+      "godot": "4.6.3-stable (official)",
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "harness_check_only": false,
+      "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+      "mode": "4v4",
+      "msaa_3d": 2,
+      "physics_interpolation": true,
+      "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+      "physics_ticks_per_second": 30,
+      "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+      "rendered": true,
+      "renderer": "forward_plus",
+      "restored_settings_fps_limit_before_override": 240,
+      "restored_settings_vsync_before_override": 1,
+      "sample_seconds_per_phase": 15.0,
+      "shadow_atlas_size": 4096,
+      "shadow_max_distance": 135.0,
+      "taa": true,
+      "viewport_size": "(1600.0, 900.0)",
+      "warmup_seconds_per_phase": 6.0,
+      "window_size": "(1600, 900)",
+      "phases": [
+        {
+          "army_capacity_level": 0,
+          "authority_ticks": 450,
+          "damage_events": 1885,
+          "duration_seconds": 15.000339,
+          "ending_units": 272,
+          "engine_physics_monitor_ms": {
+            "max": 16.417,
+            "mean": 11.3094311111112,
+            "p50": 10.762,
+            "p95": 16.417,
+            "p99": 16.417,
+            "samples": 450
+          },
+          "frame_count": 1962,
+          "frame_ms": {
+            "max": 29.401,
+            "mean": 7.64543017329255,
+            "p50": 5.807,
+            "p95": 14.896,
+            "p99": 17.696,
+            "samples": 1962
+          },
+          "frame_p95_under_16ms": true,
+          "gpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "instrument_calls": {},
+          "instrument_inclusive_ms": {},
+          "logic_p95_under_33ms": true,
+          "measured_fps": 130.797043986806,
+          "military_roster_per_player": {
+            "archer": 6,
+            "cannon": 2,
+            "catapult": 2,
+            "knight": 4,
+            "swordsman": 10
+          },
+          "military_supply_limit_per_player": 50,
+          "name": "standard_192_military_80_workers",
+          "navigation_ms": {
+            "max": 2.784,
+            "mean": 1.49356666666667,
+            "p50": 1.394,
+            "p95": 2.784,
+            "p99": 2.784,
+            "samples": 450
+          },
+          "observed_tps": 29.9993220153225,
+          "path_query_count": {
+            "max": 5.0,
+            "mean": 0.502222222222222,
+            "p50": 0.0,
+            "p95": 2.0,
+            "p99": 4.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 1.505,
+            "mean": 0.158431111111111,
+            "p50": 0.0,
+            "p95": 0.645,
+            "p99": 1.163,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 14.007,
+            "mean": 5.86525555555556,
+            "p50": 5.537,
+            "p95": 8.061,
+            "p99": 9.761,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 17.657,
+            "mean": 11.1286574923547,
+            "p50": 10.727,
+            "p95": 17.657,
+            "p99": 17.657,
+            "samples": 1962
+          },
+          "render_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "render_setup_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "starting_units": 272,
+          "visible_units_in_camera_at_end": 124,
+          "visible_units_in_camera_at_start": 131,
+          "workers_per_player": 10,
+          "workforce_level": 0,
+          "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+        },
+        {
+          "army_capacity_level": 2,
+          "authority_ticks": 384,
+          "damage_events": 2780,
+          "duration_seconds": 15.126219,
+          "ending_units": 896,
+          "engine_physics_monitor_ms": {
+            "max": 42.943,
+            "mean": 38.16732,
+            "p50": 38.407,
+            "p95": 42.3,
+            "p99": 42.943,
+            "samples": 50
+          },
+          "frame_count": 50,
+          "frame_ms": {
+            "max": 354.314,
+            "mean": 302.52312,
+            "p50": 314.675,
+            "p95": 346.321,
+            "p99": 347.524,
+            "samples": 50
+          },
+          "frame_p95_under_16ms": false,
+          "gpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "instrument_calls": {
+            "complete_catchup_tick": 334
+          },
+          "instrument_inclusive_ms": {
+            "complete_catchup_tick": 11122.051
+          },
+          "logic_p95_under_33ms": true,
+          "measured_fps": 3.30551871554947,
+          "military_roster_per_player": {
+            "archer": 50,
+            "swordsman": 50
+          },
+          "military_supply_limit_per_player": 100,
+          "name": "maximum_800_military_96_workers",
+          "navigation_ms": {
+            "max": 9.695,
+            "mean": 7.8999,
+            "p50": 7.599,
+            "p95": 9.395,
+            "p99": 9.695,
+            "samples": 50
+          },
+          "observed_tps": 25.3863837354199,
+          "path_query_count": {
+            "max": 24.0,
+            "mean": 13.0494791666667,
+            "p50": 12.0,
+            "p95": 24.0,
+            "p99": 24.0,
+            "samples": 384
+          },
+          "path_query_ms": {
+            "max": 7.418,
+            "mean": 3.50283333333334,
+            "p50": 3.369,
+            "p95": 6.456,
+            "p99": 6.938,
+            "samples": 384
+          },
+          "physics_logic_ms": {
+            "max": 30.21,
+            "mean": 21.5388671875,
+            "p50": 21.432,
+            "p95": 27.729,
+            "p99": 28.906,
+            "samples": 384
+          },
+          "process_ms": {
+            "max": 57.384,
+            "mean": 47.7755,
+            "p50": 48.105,
+            "p95": 54.301,
+            "p99": 57.384,
+            "samples": 50
+          },
+          "render_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "render_setup_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "starting_units": 896,
+          "visible_units_in_camera_at_end": 359,
+          "visible_units_in_camera_at_start": 446,
+          "workers_per_player": 12,
+          "workforce_level": 1,
+          "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings.",
+          "derived_same_render_catchup_interval_ms": 33.29955389221557,
+          "same_render_catchup_interval_scope": "334 consecutive main-loop physics callback entry intervals within the same render frame. These are wall-clock intervals spanning prior tail/current preparation; not a complete engine per-step P95 and not GPU time."
+        }
+      ],
+      "run": {
+        "exit_code": 0,
+        "elapsed": 49.21899999998277,
+        "label": "release_final"
+      }
+    }
+  },
+  "diagnostic_samples": {
+    "baseline": {
+      "source_file": "baseline.json",
+      "source_sha256": "8ee29d7b81d4fe0d6fbaf135c3fa101fd07d8dac00c675c0b1b7172d2c3e9c94",
+      "role": "diagnostic_editor_instrumented",
+      "interpretation": "Early 0.11.0 official editor executable and instrumented temporary scene; maximum phase only. Not a final release measurement.",
+      "data": {
+        "actualbuffer_size": 262144,
+        "benchmark_fps_limit": 0,
+        "benchmark_vsync": 0,
+        "build": "0.11.0",
+        "camera_size": 58.0,
+        "checks": 31,
+        "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+        "failures": [],
+        "geometry_with_instance_uniforms": 10674,
+        "godot": "4.6.3-stable (official)",
+        "gpu": "NVIDIA GeForce RTX 3080",
+        "harness_check_only": false,
+        "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+        "mode": "4v4",
+        "msaa_3d": 2,
+        "physics_interpolation": true,
+        "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+        "physics_ticks_per_second": 30,
+        "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+        "rendered": true,
+        "renderer": "forward_plus",
+        "restored_settings_fps_limit_before_override": 240,
+        "restored_settings_vsync_before_override": 1,
+        "sample_seconds_per_phase": 15.0,
+        "shadow_atlas_size": 4096,
+        "shadow_max_distance": 135.0,
+        "taa": true,
+        "viewport_size": "(1600.0, 900.0)",
+        "warmup_seconds_per_phase": 6.0,
+        "window_size": "(1600, 900)",
+        "phases": [
+          {
+            "army_capacity_level": 2,
+            "authority_ticks": 208,
+            "damage_events": 1763,
+            "duration_seconds": 15.400038,
+            "ending_units": 896,
+            "engine_physics_monitor_ms": {
+              "max": 84.494,
+              "mean": 73.492,
+              "p50": 73.379,
+              "p95": 81.477,
+              "p99": 84.494,
+              "samples": 26
+            },
+            "frame_count": 26,
+            "frame_ms": {
+              "max": 634.269,
+              "mean": 592.306769230769,
+              "p50": 595.238,
+              "p95": 616.048,
+              "p99": 616.516,
+              "samples": 26
+            },
+            "frame_p95_under_16ms": false,
+            "gpu_ms": {
+              "max": 23.6030006408691,
+              "mean": 10.4215769217565,
+              "p50": 3.76600003242493,
+              "p95": 22.6949996948242,
+              "p99": 22.9860000610352,
+              "samples": 26
+            },
+            "instrument_calls": {
+              "_chase_velocity": 101553,
+              "_path_velocity": 106365,
+              "_physics_process": 186368,
+              "_recompute": 35,
+              "_refresh_target": 16989,
+              "_valid_target": 348955,
+              "_work_velocity": 19968,
+              "apply_visibility": 26,
+              "chase_finished": 116,
+              "chase_interval": 5288,
+              "game_physics": 208,
+              "game_process": 26,
+              "native_move_and_slide": 153246,
+              "nav_request": 5404
+            },
+            "instrument_inclusive_ms": {
+              "_chase_velocity": 953.402000000658,
+              "_path_velocity": 578.187999999307,
+              "_physics_process": 5549.06500000104,
+              "_recompute": 291.342,
+              "_refresh_target": 121.994000000026,
+              "_valid_target": 1923.41200001111,
+              "_work_velocity": 184.192000000029,
+              "apply_visibility": 130.536,
+              "game_physics": 295.341,
+              "game_process": 206.566,
+              "native_move_and_slide": 871.398999998995
+            },
+            "logic_p95_under_33ms": false,
+            "measured_fps": 1.68830752235806,
+            "military_roster_per_player": {
+              "archer": 50,
+              "swordsman": 50
+            },
+            "military_supply_limit_per_player": 100,
+            "name": "maximum_800_military_96_workers",
+            "navigation_ms": {
+              "max": 10.214,
+              "mean": 8.78919230769231,
+              "p50": 8.607,
+              "p95": 9.264,
+              "p99": 10.214,
+              "samples": 26
+            },
+            "observed_tps": 13.5064601788645,
+            "path_query_count": {
+              "max": 24.0,
+              "mean": 22.8894230769231,
+              "p50": 24.0,
+              "p95": 24.0,
+              "p99": 24.0,
+              "samples": 208
+            },
+            "path_query_ms": {
+              "max": 17.525,
+              "mean": 11.3780961538462,
+              "p50": 11.751,
+              "p95": 12.598,
+              "p99": 12.961,
+              "samples": 208
+            },
+            "physics_logic_ms": {
+              "max": 64.98,
+              "mean": 49.5728509615384,
+              "p50": 48.618,
+              "p95": 57.264,
+              "p99": 58.621,
+              "samples": 208
+            },
+            "process_ms": {
+              "max": 75.859,
+              "mean": 68.149,
+              "p50": 66.843,
+              "p95": 74.246,
+              "p99": 75.859,
+              "samples": 26
+            },
+            "render_cpu_ms": {
+              "max": 3.73799991607666,
+              "mean": 3.30711538058061,
+              "p50": 3.30599999427795,
+              "p95": 3.66499996185303,
+              "p99": 3.73699998855591,
+              "samples": 26
+            },
+            "render_setup_cpu_ms": {
+              "max": 5.132,
+              "mean": 4.31442307692308,
+              "p50": 4.35,
+              "p95": 4.542,
+              "p99": 4.856,
+              "samples": 26
+            },
+            "starting_units": 896,
+            "visible_units_in_camera_at_end": 688,
+            "visible_units_in_camera_at_start": 486,
+            "workers_per_player": 12,
+            "workforce_level": 1,
+            "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+          }
+        ],
+        "run": {
+          "exit_code": 0,
+          "elapsed": 32.0,
+          "label": "baseline"
+        }
+      }
+    },
+    "no3d": {
+      "source_file": "no3d.json",
+      "source_sha256": "d5851dee1895150074357ffefaca9afc9e64549bdaf8e10ba69feb7c0c1b79a5",
+      "role": "diagnostic_editor_no_3d",
+      "interpretation": "Same diagnostic family, root viewport disable_3d=true; original generic conditions string does not reflect this explicit rendering override.",
+      "data": {
+        "actualbuffer_size": 262144,
+        "benchmark_fps_limit": 0,
+        "benchmark_vsync": 0,
+        "build": "0.11.0",
+        "camera_size": 58.0,
+        "checks": 31,
+        "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+        "failures": [],
+        "geometry_with_instance_uniforms": 10674,
+        "godot": "4.6.3-stable (official)",
+        "gpu": "NVIDIA GeForce RTX 3080",
+        "harness_check_only": false,
+        "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+        "mode": "4v4",
+        "msaa_3d": 2,
+        "physics_interpolation": true,
+        "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+        "physics_ticks_per_second": 30,
+        "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+        "rendered": true,
+        "renderer": "forward_plus",
+        "restored_settings_fps_limit_before_override": 240,
+        "restored_settings_vsync_before_override": 1,
+        "sample_seconds_per_phase": 15.0,
+        "shadow_atlas_size": 4096,
+        "shadow_max_distance": 135.0,
+        "taa": true,
+        "viewport_size": "(1600.0, 900.0)",
+        "warmup_seconds_per_phase": 6.0,
+        "window_size": "(1600, 900)",
+        "phases": [
+          {
+            "army_capacity_level": 2,
+            "authority_ticks": 208,
+            "damage_events": 1786,
+            "duration_seconds": 15.509032,
+            "ending_units": 896,
+            "engine_physics_monitor_ms": {
+              "max": 79.392,
+              "mean": 72.3546153846154,
+              "p50": 73.175,
+              "p95": 77.033,
+              "p99": 77.033,
+              "samples": 26
+            },
+            "frame_count": 26,
+            "frame_ms": {
+              "max": 634.373,
+              "mean": 596.498423076923,
+              "p50": 600.57,
+              "p95": 626.407,
+              "p99": 633.101,
+              "samples": 26
+            },
+            "frame_p95_under_16ms": false,
+            "gpu_ms": {
+              "max": 2.29900002479553,
+              "mean": 0.971846155822277,
+              "p50": 1.21099996566772,
+              "p95": 1.59700000286102,
+              "p99": 1.7389999628067,
+              "samples": 26
+            },
+            "instrument_calls": {
+              "_chase_velocity": 99381,
+              "_path_velocity": 104558,
+              "_physics_process": 186368,
+              "_recompute": 35,
+              "_refresh_target": 16977,
+              "_valid_target": 348707,
+              "_work_velocity": 19968,
+              "apply_visibility": 26,
+              "chase_finished": 99,
+              "chase_interval": 5171,
+              "game_physics": 208,
+              "game_process": 26,
+              "native_move_and_slide": 154039,
+              "nav_request": 5270
+            },
+            "instrument_inclusive_ms": {
+              "_chase_velocity": 945.698000000552,
+              "_path_velocity": 573.965999999272,
+              "_physics_process": 5583.44500000092,
+              "_recompute": 290.853,
+              "_refresh_target": 125.465000000024,
+              "_valid_target": 1947.72900001198,
+              "_work_velocity": 187.222000000028,
+              "apply_visibility": 131.69,
+              "game_physics": 294.917,
+              "game_process": 207.966,
+              "native_move_and_slide": 880.079999998942
+            },
+            "logic_p95_under_33ms": false,
+            "measured_fps": 1.67644247558455,
+            "military_roster_per_player": {
+              "archer": 50,
+              "swordsman": 50
+            },
+            "military_supply_limit_per_player": 100,
+            "name": "maximum_800_military_96_workers",
+            "navigation_ms": {
+              "max": 10.856,
+              "mean": 9.01326923076923,
+              "p50": 8.98,
+              "p95": 9.648,
+              "p99": 9.648,
+              "samples": 26
+            },
+            "observed_tps": 13.4115398046764,
+            "path_query_count": {
+              "max": 24.0,
+              "mean": 22.625,
+              "p50": 24.0,
+              "p95": 24.0,
+              "p99": 24.0,
+              "samples": 208
+            },
+            "path_query_ms": {
+              "max": 16.147,
+              "mean": 11.4656105769231,
+              "p50": 11.82,
+              "p95": 13.608,
+              "p99": 14.151,
+              "samples": 208
+            },
+            "physics_logic_ms": {
+              "max": 60.894,
+              "mean": 50.0478846153846,
+              "p50": 49.163,
+              "p95": 57.845,
+              "p99": 58.987,
+              "samples": 208
+            },
+            "process_ms": {
+              "max": 70.358,
+              "mean": 66.2454615384615,
+              "p50": 65.826,
+              "p95": 69.938,
+              "p99": 70.358,
+              "samples": 26
+            },
+            "render_cpu_ms": {
+              "max": 1.39800000190735,
+              "mean": 0.93157692368214,
+              "p50": 0.875999987125397,
+              "p95": 1.05999994277954,
+              "p99": 1.27900004386902,
+              "samples": 26
+            },
+            "render_setup_cpu_ms": {
+              "max": 6.228,
+              "mean": 4.45911538461538,
+              "p50": 4.374,
+              "p95": 4.826,
+              "p99": 4.856,
+              "samples": 26
+            },
+            "starting_units": 896,
+            "visible_units_in_camera_at_end": 629,
+            "visible_units_in_camera_at_start": 490,
+            "workers_per_player": 12,
+            "workforce_level": 1,
+            "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+          }
+        ],
+        "run": {
+          "exit_code": 0,
+          "elapsed": 31.937999999994645,
+          "label": "no3d"
+        }
+      }
+    },
+    "whole_callback": {
+      "source_file": "whole_callback.json",
+      "source_sha256": "d01e46ee6405898aef4881f70b9afd74986df858b05cdf277b16788e0a6e42f9",
+      "role": "diagnostic_editor_instrumented",
+      "interpretation": "Intermediate wrapper instrumentation includes all movement callback and nested native move_and_slide; inclusive parent/child costs must not be added.",
+      "data": {
+        "actualbuffer_size": 262144,
+        "benchmark_fps_limit": 0,
+        "benchmark_vsync": 0,
+        "build": "0.11.0",
+        "camera_size": 58.0,
+        "checks": 31,
+        "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+        "failures": [],
+        "geometry_with_instance_uniforms": 10674,
+        "godot": "4.6.3-stable (official)",
+        "gpu": "NVIDIA GeForce RTX 3080",
+        "harness_check_only": false,
+        "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+        "mode": "4v4",
+        "msaa_3d": 2,
+        "physics_interpolation": true,
+        "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+        "physics_ticks_per_second": 30,
+        "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+        "rendered": true,
+        "renderer": "forward_plus",
+        "restored_settings_fps_limit_before_override": 240,
+        "restored_settings_vsync_before_override": 1,
+        "sample_seconds_per_phase": 15.0,
+        "shadow_atlas_size": 4096,
+        "shadow_max_distance": 135.0,
+        "taa": true,
+        "viewport_size": "(1600.0, 900.0)",
+        "warmup_seconds_per_phase": 6.0,
+        "window_size": "(1600, 900)",
+        "phases": [
+          {
+            "army_capacity_level": 2,
+            "authority_ticks": 280,
+            "damage_events": 2030,
+            "duration_seconds": 15.051784,
+            "ending_units": 896,
+            "engine_physics_monitor_ms": {
+              "max": 67.708,
+              "mean": 57.0536857142857,
+              "p50": 56.004,
+              "p95": 67.708,
+              "p99": 67.708,
+              "samples": 35
+            },
+            "frame_count": 35,
+            "frame_ms": {
+              "max": 455.259,
+              "mean": 430.049342857143,
+              "p50": 431.319,
+              "p95": 453.494,
+              "p99": 454.113,
+              "samples": 35
+            },
+            "frame_p95_under_16ms": false,
+            "gpu_ms": {
+              "max": 23.9729995727539,
+              "mean": 10.5813427720751,
+              "p50": 3.83400011062622,
+              "p95": 23.128999710083,
+              "p99": 23.378999710083,
+              "samples": 35
+            },
+            "instrument_calls": {
+              "_chase_velocity": 149417,
+              "_draw": 35,
+              "_path_velocity": 38331,
+              "_physics_process": 250880,
+              "_profile_move_body": 250880,
+              "_recompute": 47,
+              "_refresh_target": 22771,
+              "_valid_target": 278402,
+              "_work_velocity": 26880,
+              "apply_visibility": 35,
+              "chase_finished": 695,
+              "chase_interval": 1435,
+              "complete_catchup_tick": 245,
+              "game_physics": 280,
+              "game_process": 35,
+              "native_move_and_slide": 212655,
+              "nav_request": 2133
+            },
+            "instrument_inclusive_ms": {
+              "_chase_velocity": 1084.98999999859,
+              "_draw": 539.009,
+              "_path_velocity": 217.617999999938,
+              "_physics_process": 5180.90099999857,
+              "_profile_move_body": 2124.35200000284,
+              "_recompute": 401.085,
+              "_refresh_target": 107.89300000002,
+              "_valid_target": 788.698000001222,
+              "_work_velocity": 248.661000000056,
+              "apply_visibility": 173.866,
+              "complete_catchup_tick": 11703.082,
+              "game_physics": 405.93,
+              "game_process": 276.643,
+              "native_move_and_slide": 1236.06500000113
+            },
+            "logic_p95_under_33ms": false,
+            "measured_fps": 2.32530575777596,
+            "military_roster_per_player": {
+              "archer": 50,
+              "swordsman": 50
+            },
+            "military_supply_limit_per_player": 100,
+            "name": "maximum_800_military_96_workers",
+            "navigation_ms": {
+              "max": 11.498,
+              "mean": 10.5186571428571,
+              "p50": 10.387,
+              "p95": 11.294,
+              "p99": 11.498,
+              "samples": 35
+            },
+            "observed_tps": 18.6024460622076,
+            "path_query_count": {
+              "max": 24.0,
+              "mean": 7.7,
+              "p50": 7.0,
+              "p95": 19.0,
+              "p99": 23.0,
+              "samples": 280
+            },
+            "path_query_ms": {
+              "max": 7.308,
+              "mean": 2.10205357142857,
+              "p50": 1.918,
+              "p95": 4.855,
+              "p99": 6.001,
+              "samples": 280
+            },
+            "physics_logic_ms": {
+              "max": 49.835,
+              "mean": 30.9646,
+              "p50": 29.984,
+              "p95": 38.842,
+              "p99": 41.764,
+              "samples": 280
+            },
+            "process_ms": {
+              "max": 52.516,
+              "mean": 47.8842,
+              "p50": 47.66,
+              "p95": 51.048,
+              "p99": 52.516,
+              "samples": 35
+            },
+            "render_cpu_ms": {
+              "max": 3.44899988174438,
+              "mean": 3.05497140203203,
+              "p50": 3.03999996185303,
+              "p95": 3.39199995994568,
+              "p99": 3.40400004386902,
+              "samples": 35
+            },
+            "render_setup_cpu_ms": {
+              "max": 4.952,
+              "mean": 4.51757142857143,
+              "p50": 4.52,
+              "p95": 4.759,
+              "p99": 4.779,
+              "samples": 35
+            },
+            "starting_units": 896,
+            "visible_units_in_camera_at_end": 608,
+            "visible_units_in_camera_at_start": 482,
+            "workers_per_player": 12,
+            "workforce_level": 1,
+            "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings.",
+            "derived_movement_cost_per_authority_tick_ms": {
+              "all_movement_callbacks_inclusive": 7.586971428581572,
+              "nested_native_move_and_slide": 4.414517857146893,
+              "denominator_authority_ticks": 280,
+              "scope": "All units combined per authoritative tick. The native call cost is included in the movement callback cost."
+            }
+          }
+        ],
+        "run": {
+          "exit_code": 0,
+          "elapsed": 29.625,
+          "label": "whole_callback"
+        }
+      }
+    },
+    "release_plain": {
+      "source_file": "release_plain.json",
+      "source_sha256": "ce3d10967de0191eeb2fd44ab3a7dc3331f10384139074ae577612eaa2837dfe",
+      "role": "nonfinal_release_template",
+      "interpretation": "Intermediate official release template, production scene at that time; before final code freeze. Not a controlled A/B against the final sample.",
+      "data": {
+        "actualbuffer_size": 262144,
+        "benchmark_fps_limit": 0,
+        "benchmark_vsync": 0,
+        "build": "0.11.0",
+        "camera_size": 58.0,
+        "checks": 31,
+        "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+        "failures": [],
+        "geometry_with_instance_uniforms": 10674,
+        "godot": "4.6.3-stable (official)",
+        "gpu": "NVIDIA GeForce RTX 3080",
+        "harness_check_only": false,
+        "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+        "mode": "4v4",
+        "msaa_3d": 2,
+        "physics_interpolation": true,
+        "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+        "physics_ticks_per_second": 30,
+        "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+        "rendered": true,
+        "renderer": "forward_plus",
+        "restored_settings_fps_limit_before_override": 240,
+        "restored_settings_vsync_before_override": 1,
+        "sample_seconds_per_phase": 15.0,
+        "shadow_atlas_size": 4096,
+        "shadow_max_distance": 135.0,
+        "taa": true,
+        "viewport_size": "(1600.0, 900.0)",
+        "warmup_seconds_per_phase": 6.0,
+        "window_size": "(1600, 900)",
+        "phases": [
+          {
+            "army_capacity_level": 2,
+            "authority_ticks": 384,
+            "damage_events": 2475,
+            "duration_seconds": 15.045141,
+            "ending_units": 896,
+            "engine_physics_monitor_ms": {
+              "max": 44.841,
+              "mean": 38.78002,
+              "p50": 39.469,
+              "p95": 43.371,
+              "p99": 44.841,
+              "samples": 50
+            },
+            "frame_count": 50,
+            "frame_ms": {
+              "max": 342.865,
+              "mean": 300.90188,
+              "p50": 315.242,
+              "p95": 337.131,
+              "p99": 342.795,
+              "samples": 50
+            },
+            "frame_p95_under_16ms": false,
+            "gpu_ms": {
+              "max": null,
+              "mean": null,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "samples": 0,
+              "status": "not_sampled; source zero placeholders are not measured zero cost"
+            },
+            "instrument_calls": {
+              "complete_catchup_tick": 334
+            },
+            "instrument_inclusive_ms": {
+              "complete_catchup_tick": 11432.442
+            },
+            "logic_p95_under_33ms": true,
+            "measured_fps": 3.32333209771846,
+            "military_roster_per_player": {
+              "archer": 50,
+              "swordsman": 50
+            },
+            "military_supply_limit_per_player": 100,
+            "name": "maximum_800_military_96_workers",
+            "navigation_ms": {
+              "max": 8.907,
+              "mean": 7.76714,
+              "p50": 7.574,
+              "p95": 8.847,
+              "p99": 8.907,
+              "samples": 50
+            },
+            "observed_tps": 25.5231905104778,
+            "path_query_count": {
+              "max": 24.0,
+              "mean": 14.1848958333333,
+              "p50": 15.0,
+              "p95": 24.0,
+              "p99": 24.0,
+              "samples": 384
+            },
+            "path_query_ms": {
+              "max": 7.817,
+              "mean": 3.79558072916666,
+              "p50": 3.962,
+              "p95": 6.337,
+              "p99": 6.921,
+              "samples": 384
+            },
+            "physics_logic_ms": {
+              "max": 32.509,
+              "mean": 22.5358619791667,
+              "p50": 22.442,
+              "p95": 28.458,
+              "p99": 30.007,
+              "samples": 384
+            },
+            "process_ms": {
+              "max": 41.394,
+              "mean": 38.63248,
+              "p50": 38.824,
+              "p95": 41.326,
+              "p99": 41.394,
+              "samples": 50
+            },
+            "render_cpu_ms": {
+              "max": null,
+              "mean": null,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "samples": 0,
+              "status": "not_sampled; source zero placeholders are not measured zero cost"
+            },
+            "render_setup_cpu_ms": {
+              "max": null,
+              "mean": null,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "samples": 0,
+              "status": "not_sampled; source zero placeholders are not measured zero cost"
+            },
+            "starting_units": 896,
+            "visible_units_in_camera_at_end": 608,
+            "visible_units_in_camera_at_start": 478,
+            "workers_per_player": 12,
+            "workforce_level": 1,
+            "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+          }
+        ],
+        "run": {
+          "exit_code": 0,
+          "elapsed": 28.062000000005355,
+          "label": "release_plain"
+        }
+      }
+    },
+    "release_noanim": {
+      "source_file": "release_noanim.json",
+      "source_sha256": "85ca81726854d6c2a1d44a62f202e67a6e0ffc825823e5da7a7816f977ebaf38",
+      "role": "nonfinal_release_animation_ablation",
+      "interpretation": "Intermediate official release template with ALL unit locomotion/attack AnimationPlayer active=false. Diagnostic only; this changes visual/attack socket behavior and is not the shipping offscreen sleep policy.",
+      "data": {
+        "actualbuffer_size": 262144,
+        "benchmark_fps_limit": 0,
+        "benchmark_vsync": 0,
+        "build": "0.11.0",
+        "camera_size": 58.0,
+        "checks": 31,
+        "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+        "failures": [],
+        "geometry_with_instance_uniforms": 10674,
+        "godot": "4.6.3-stable (official)",
+        "gpu": "NVIDIA GeForce RTX 3080",
+        "harness_check_only": false,
+        "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+        "mode": "4v4",
+        "msaa_3d": 2,
+        "physics_interpolation": true,
+        "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+        "physics_ticks_per_second": 30,
+        "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+        "rendered": true,
+        "renderer": "forward_plus",
+        "restored_settings_fps_limit_before_override": 240,
+        "restored_settings_vsync_before_override": 1,
+        "sample_seconds_per_phase": 15.0,
+        "shadow_atlas_size": 4096,
+        "shadow_max_distance": 135.0,
+        "taa": true,
+        "viewport_size": "(1600.0, 900.0)",
+        "warmup_seconds_per_phase": 6.0,
+        "window_size": "(1600, 900)",
+        "phases": [
+          {
+            "army_capacity_level": 2,
+            "authority_ticks": 449,
+            "damage_events": 3392,
+            "duration_seconds": 15.104375,
+            "ending_units": 896,
+            "engine_physics_monitor_ms": {
+              "max": 39.505,
+              "mean": 31.5873543307087,
+              "p50": 31.822,
+              "p95": 36.018,
+              "p99": 39.505,
+              "samples": 127
+            },
+            "frame_count": 127,
+            "frame_ms": {
+              "max": 239.975,
+              "mean": 118.932039370079,
+              "p50": 107.86,
+              "p95": 209.269,
+              "p99": 238.072,
+              "samples": 127
+            },
+            "frame_p95_under_16ms": false,
+            "gpu_ms": {
+              "max": null,
+              "mean": null,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "samples": 0,
+              "status": "not_sampled; source zero placeholders are not measured zero cost"
+            },
+            "instrument_calls": {
+              "complete_catchup_tick": 322
+            },
+            "instrument_inclusive_ms": {
+              "complete_catchup_tick": 8317.668
+            },
+            "logic_p95_under_33ms": true,
+            "measured_fps": 8.40815988744983,
+            "military_roster_per_player": {
+              "archer": 50,
+              "swordsman": 50
+            },
+            "military_supply_limit_per_player": 100,
+            "name": "maximum_800_military_96_workers",
+            "navigation_ms": {
+              "max": 9.204,
+              "mean": 8.60142519685039,
+              "p50": 8.512,
+              "p95": 9.204,
+              "p99": 9.204,
+              "samples": 127
+            },
+            "observed_tps": 29.7264865312203,
+            "path_query_count": {
+              "max": 24.0,
+              "mean": 6.82628062360802,
+              "p50": 5.0,
+              "p95": 17.0,
+              "p99": 20.0,
+              "samples": 449
+            },
+            "path_query_ms": {
+              "max": 7.211,
+              "mean": 1.98198663697104,
+              "p50": 1.658,
+              "p95": 4.813,
+              "p99": 6.404,
+              "samples": 449
+            },
+            "physics_logic_ms": {
+              "max": 28.735,
+              "mean": 15.6542494432071,
+              "p50": 15.038,
+              "p95": 21.373,
+              "p99": 24.491,
+              "samples": 449
+            },
+            "process_ms": {
+              "max": 39.524,
+              "mean": 35.3966692913386,
+              "p50": 36.351,
+              "p95": 38.793,
+              "p99": 39.524,
+              "samples": 127
+            },
+            "render_cpu_ms": {
+              "max": null,
+              "mean": null,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "samples": 0,
+              "status": "not_sampled; source zero placeholders are not measured zero cost"
+            },
+            "render_setup_cpu_ms": {
+              "max": null,
+              "mean": null,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "samples": 0,
+              "status": "not_sampled; source zero placeholders are not measured zero cost"
+            },
+            "starting_units": 896,
+            "visible_units_in_camera_at_end": 523,
+            "visible_units_in_camera_at_start": 482,
+            "workers_per_player": 12,
+            "workforce_level": 1,
+            "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+          }
+        ],
+        "run": {
+          "exit_code": 0,
+          "elapsed": 27.890999999974156,
+          "label": "release_noanim"
+        }
+      }
+    }
+  },
+  "historical_reference": {
+    "source_file": "report/performance-0.10.0.json",
+    "source_sha256": "7495dde43395b44aa3f2083f3de1110862eb2a051498733824b1f490270c07d2",
+    "role": "historical_editor_not_release_template",
+    "interpretation": "Official 4.6.3 editor executable; different binary role and background process set. No causal performance delta can be assigned wholly to code.",
+    "data": {
+      "actualbuffer_size": 262144,
+      "benchmark_fps_limit": 0,
+      "benchmark_vsync": 0,
+      "build": "0.10.0",
+      "camera_size": 58.0,
+      "checks": 57,
+      "conditions": "Native 4v4 map, starting HQs/towers, model detail, shadows, AA, audio, fog, gathering, attacks and navigation are unchanged. Bots/passive income are stopped to keep roster fixed. HP x100 stabilizes population only. Standard is 192 mixed military +80 workers; researched cap is 800 light military +96 upgraded workers. Each maximum owner completes army_capacity_2 and workforce_1 through PlayerState and reads the resulting live capacity. No network clients run in this sample. Camera remains centered at zoom 58; all four native 4v4 lanes are simulated, not necessarily all visible in that view.",
+      "failures": [],
+      "geometry_with_instance_uniforms": 10674,
+      "godot": "4.6.3-stable (official)",
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "harness_check_only": false,
+      "limitations": "Short local performance sample; no claim of an isolated workstation, GPU-exclusive timing, complete multiplayer/Bot load, or regression delta against a previous build.",
+      "mode": "4v4",
+      "msaa_3d": 2,
+      "physics_interpolation": true,
+      "physics_metric": "physics_logic_ms brackets actual SceneTree physics callbacks with native priority markers; it excludes PhysicsServer work outside SceneTree. Cached engine physics monitor is reported separately. Neither substitutes 33.3 ms tick arrival spacing for logic cost.",
+      "physics_ticks_per_second": 30,
+      "render_metric": "frame_ms is measured process-frame wall-clock spacing at uncapped Forward+ 1600x900, not GPU timestamp duration. Native fog/culling remains enabled; visible in-camera unit counts are reported separately from total simulated units.",
+      "rendered": true,
+      "renderer": "forward_plus",
+      "restored_settings_fps_limit_before_override": 240,
+      "restored_settings_vsync_before_override": 1,
+      "sample_seconds_per_phase": 15.0,
+      "shadow_atlas_size": 4096,
+      "shadow_max_distance": 135.0,
+      "taa": true,
+      "viewport_size": "(1600.0, 900.0)",
+      "warmup_seconds_per_phase": 6.0,
+      "window_size": "(1600, 900)",
+      "ok": true,
+      "phases": [
+        {
+          "army_capacity_level": 0,
+          "authority_ticks": 450,
+          "damage_events": 2027,
+          "duration_seconds": 15.000666,
+          "ending_units": 272,
+          "engine_physics_monitor_ms": {
+            "max": 24.697,
+            "mean": 17.5216488888889,
+            "p50": 17.348,
+            "p95": 19.922,
+            "p99": 19.922,
+            "samples": 450
+          },
+          "frame_count": 1116,
+          "frame_ms": {
+            "max": 53.884,
+            "mean": 13.4414516129032,
+            "p50": 6.891,
+            "p95": 42.622,
+            "p99": 44.954,
+            "samples": 1116
+          },
+          "frame_p95_under_16ms": false,
+          "logic_p95_under_33ms": true,
+          "measured_fps": 74.3966967866627,
+          "military_roster_per_player": {
+            "archer": 6,
+            "cannon": 2,
+            "catapult": 2,
+            "knight": 4,
+            "swordsman": 10
+          },
+          "military_supply_limit_per_player": 50,
+          "name": "standard_192_military_80_workers",
+          "navigation_ms": {
+            "max": 2.092,
+            "mean": 1.26325777777777,
+            "p50": 1.19,
+            "p95": 1.804,
+            "p99": 1.804,
+            "samples": 450
+          },
+          "observed_tps": 29.9986680591382,
+          "path_query_count": {
+            "max": 5.0,
+            "mean": 1.11555555555556,
+            "p50": 1.0,
+            "p95": 3.0,
+            "p99": 4.0,
+            "samples": 450
+          },
+          "path_query_ms": {
+            "max": 2.594,
+            "mean": 0.655293333333334,
+            "p50": 0.602,
+            "p95": 1.747,
+            "p99": 2.188,
+            "samples": 450
+          },
+          "physics_logic_ms": {
+            "max": 16.95,
+            "mean": 10.3231444444444,
+            "p50": 9.943,
+            "p95": 13.364,
+            "p99": 14.728,
+            "samples": 450
+          },
+          "process_ms": {
+            "max": 41.522,
+            "mean": 32.4041406810038,
+            "p50": 31.708,
+            "p95": 41.522,
+            "p99": 41.522,
+            "samples": 1116
+          },
+          "starting_units": 272,
+          "visible_units_in_camera_at_end": 135,
+          "visible_units_in_camera_at_start": 135,
+          "workers_per_player": 10,
+          "workforce_level": 0,
+          "gpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "render_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "render_setup_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+        },
+        {
+          "army_capacity_level": 2,
+          "authority_ticks": 232,
+          "damage_events": 1732,
+          "duration_seconds": 15.277076,
+          "ending_units": 896,
+          "engine_physics_monitor_ms": {
+            "max": 69.654,
+            "mean": 65.0624827586207,
+            "p50": 65.941,
+            "p95": 68.27,
+            "p99": 69.654,
+            "samples": 29
+          },
+          "frame_count": 29,
+          "frame_ms": {
+            "max": 550.75,
+            "mean": 526.793275862069,
+            "p50": 538.163,
+            "p95": 546.932,
+            "p99": 547.646,
+            "samples": 29
+          },
+          "frame_p95_under_16ms": false,
+          "logic_p95_under_33ms": false,
+          "measured_fps": 1.89826901430614,
+          "military_roster_per_player": {
+            "archer": 50,
+            "swordsman": 50
+          },
+          "military_supply_limit_per_player": 100,
+          "name": "maximum_800_military_96_workers",
+          "navigation_ms": {
+            "max": 9.166,
+            "mean": 8.09196551724138,
+            "p50": 8.071,
+            "p95": 8.962,
+            "p99": 9.166,
+            "samples": 29
+          },
+          "observed_tps": 15.1861521144491,
+          "path_query_count": {
+            "max": 24.0,
+            "mean": 22.7586206896552,
+            "p50": 24.0,
+            "p95": 24.0,
+            "p99": 24.0,
+            "samples": 232
+          },
+          "path_query_ms": {
+            "max": 15.735,
+            "mean": 11.3561939655172,
+            "p50": 11.736,
+            "p95": 13.053,
+            "p99": 13.582,
+            "samples": 232
+          },
+          "physics_logic_ms": {
+            "max": 53.194,
+            "mean": 42.3811422413793,
+            "p50": 41.793,
+            "p95": 50.178,
+            "p99": 51.934,
+            "samples": 232
+          },
+          "process_ms": {
+            "max": 71.699,
+            "mean": 67.5419310344828,
+            "p50": 67.705,
+            "p95": 69.947,
+            "p99": 71.699,
+            "samples": 29
+          },
+          "starting_units": 896,
+          "visible_units_in_camera_at_end": 585,
+          "visible_units_in_camera_at_start": 450,
+          "workers_per_player": 12,
+          "workforce_level": 1,
+          "gpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "render_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "render_setup_cpu_ms": {
+            "max": null,
+            "mean": null,
+            "p50": null,
+            "p95": null,
+            "p99": null,
+            "samples": 0,
+            "status": "not_sampled; source zero placeholders are not measured zero cost"
+          },
+          "cached_monitor_scope": "engine_physics_monitor_ms, navigation_ms and process_ms are distributions of cached engine monitors read by the frame sampler; repeated values are not independent physics-step timings."
+        }
+      ],
+      "run": {
+        "elapsed_seconds": 53.703,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    }
+  },
+  "native_diagnostic": {
+    "markdown": "report/performance-native-0.11.0.md",
+    "json": "report/performance-native-0.11.0.json",
+    "source_sha256": "9d7cc95b73ed0071289f8206b5e4be14860b3949b6fbd674a86e4b2c4a51bffa",
+    "role": "MSVC custom optimized timing engine, 10 Hz experiment later reverted; not final release FPS",
+    "retained_windows": 5,
+    "retained_authority_steps": 240,
+    "complete_physics_ms": 42.211275,
+    "scene_tree_callbacks_ms": 30.465067,
+    "navigation_including_movement_callbacks_ms": 8.259604,
+    "jolt_end_sync_and_step_ms": 0.563192,
+    "overlap_note": "SceneTree callbacks are inside SceneTree; Navigation includes movement/RVO callbacks, not only RVO solver; Jolt server step excludes character movement queries."
+  },
+  "targeted_checks": {
+    "final_performance_checks": 57,
+    "final_failures": [],
+    "pool_lifecycle_effect_impact": {
+      "checks": 322,
+      "failures": [],
+      "report": "report/presentation-pools-0.11.0.json",
+      "sha256": "0aa8bb6dd6b827ee7dde1a4363a3120c23ebe104d616dc115e351b46a1135957"
+    },
+    "conservative_corridor_native_oracle": {
+      "checks": 5600,
+      "failures": [],
+      "oracle": "Native AABB.intersects_segment against every square-expanded blocked cell; eight random maps, 2800 independent sweeps and reverse-direction symmetry",
+      "source_file": "result.json",
+      "source_sha256": "36bf00c5a612c83de7dc7df45b7deb6a931e25ca770a814515b788802945eafe"
+    }
+  },
+  "implementation": {
+    "projectiles": {
+      "authored_prewarm": 64,
+      "visual_growth_batch": 16,
+      "max_visuals": 256,
+      "prewarmed_flight_records": 64,
+      "max_idle_flight_cache": 1024,
+      "active_flight_limit": null,
+      "overflow": "Visual admission can be skipped; authoritative flight/damage is never dropped for visual capacity."
+    },
+    "effects": {
+      "authored_instances": 128,
+      "small_effect_cell_pixels": 64,
+      "small_effect_window_ms": 100,
+      "large_explosions_and_commands": "Bypass small-effect density/viewport filter and preempt small effects when full."
+    },
+    "audio": {
+      "existing_native_voice_pool": {
+        "UI": 6,
+        "Combat": 24,
+        "Foley": 8
+      },
+      "bgm": false,
+      "visual_pool_independent": true
+    },
+    "resources": "Shared authored mesh/material resources and instance team-color uniforms; inactive particle/visual instances disabled. Shared resources do not guarantee one draw call.",
+    "fog": "Per-row circle span endpoints and difference-prefix accumulation; same team visibility rules and 0.2-second authoritative fog interval.",
+    "minimap": "Native TextureRect shader uses shared local R8 fog ImageTexture; removes up to 9216 script rectangle draws, not visibility checks.",
+    "navigation": "Compact authored walkability polygons, shared edges, blocked-cell prefix table; O(1) empty bounding rectangle or conservative row sweep for short direct pursuit. RVO and native A* remain active; blocked corridors fall back to scheduled pathfinding.",
+    "animation": "VisibleOnScreenNotifier3D suspends only offscreen/fog-hidden automatic AnimationPlayer callbacks with process_mode; authoritative combat timers continue, release socket samples same authored animation clock and visible return restores pose/interpolation.",
+    "reverted_experiment": "10 Hz combat decision scheduling is absent from final release; authority target stays 30 TPS."
+  },
+  "provenance": {
+    "frozen_source_hash_scope": "Hashes taken from frozen working-tree files during report archival; they identify final sources, not prior diagnostic snapshots. Ancestor commit alone does not identify these uncommitted changes.",
+    "ancestor_commit": "973338c84be4327fdde38d3393e00d00584415c7",
+    "source_sha256": {
+      "assets/models/units/archer.tscn": "67bb805b12091331ad7035c76de447f9749edb293e9ddd369fcb47e8f7dad321",
+      "assets/models/units/cannon.tscn": "60ab9dae3632f3295ffe8e59c713b15c421255989082fb15b5ee15f42685640d",
+      "assets/models/units/catapult.tscn": "900ff80fa64eb4ef9c49c474bae3a55306ea691026473bb6d36aed9673a59ea6",
+      "assets/models/units/farmer.tscn": "0ff6ae4b699ae6b8c807a5990a6e326aa6fa21018bb1578598c9f9d74b5dedaa",
+      "assets/models/units/knight.tscn": "ecb5e15b3fe123d16618aac3e6763f442970f5610495b53f6e0686c9b9891e25",
+      "assets/models/units/swordsman.tscn": "b6c2b399a2a01251196cbc7764c5b0aed025c5502da14c0fbb1f9a3aca9718a3",
+      "assets/shaders/minimap_visibility.gdshader": "7ebcf61c9cee7d6ef38e2d5ccb4bcc1439cd8fbca833c72e5961752bafa526fd",
+      "data/content_manifest.json": "46515ad0304939e2eef382c62d04382be2f300605834d39e0aba082c2d9d6377",
+      "data/units/archer.tres": "a7bf3d3a3e99f7a772c3d6021b0babb0cbc77ea24fa0d0f3ac896463045491a7",
+      "data/units/cannon.tres": "fe0ecb90785515498f761e847530b6aa011689d2f63d9c8e3a33a1ee720afb58",
+      "data/units/catapult.tres": "4f40d0bc8886ecf31f963c052064d99778539ef6ec047b389d9ce2b7d3dee6ee",
+      "data/units/farmer.tres": "5bd248e875e1ebb188b0f663751271db327f24e54c3a6cbecac683d70f0442a4",
+      "data/units/knight.tres": "b08a319826d6b5680253916d0383de36c1e6cf6d9bcd843a296f03794f6e693a",
+      "data/units/swordsman.tres": "27b1867047cac16624da988bebc06ac1ed74d891227e103284652c41830efc52",
+      "default_bus_layout.tres": "3557482ceccc47016701b04ef6508469e3da370906cfa7a390276f438f906fad",
+      "project.godot": "dab3766a1ba71eca94e5bb79273a42bbc4f7b453edc54aee62a133cd496de6b4",
+      "scenes/audio.tscn": "022f98e33f01f253aa2b19410912d4ccd2a0f75c0be8bc99805cd1372b95a6d5",
+      "scenes/battle_effect.tscn": "f3d0ffcdeebe976e14f6bfe89af3b51f6fd9e97c27e451f2ec5f5e278d81f00d",
+      "scenes/effect_pool.tscn": "580ae75b9b42019d25cad3a84542d78818a5dbfeb9de8621dd0f605bd4fa347f",
+      "scenes/fog_of_war.tscn": "a96a5cb1206ac40c185f705f8b1804ff318a5215b98408898d8292e7e4946a29",
+      "scenes/main.tscn": "ee8119867aa1184b05946b74d54faada1a5ee81c3e4d16eab9aad02d77f611f6",
+      "scenes/maps/four_banners_4v4.tscn": "e7c42bcef3f5703e1715f2ce91c287707620bf8e85f0b11b345d5b6f6feddee0",
+      "scenes/maps/four_banners_4v4_layout.json": "f9a9eaf67f72583876a867bd67223b6e5bf768548b36347826f9e5d78026aa11",
+      "scenes/maps/four_banners_4v4_navigation.tres": "23fb251d4b51522210d059793e2772d9dd18ca777da1346e5b21a18032f17993",
+      "scenes/minimap.tscn": "956d368f980b097394817fbb9ad939d00b8b1c58cc7559e9fe2f76f96c461006",
+      "scenes/projectile.tscn": "20d01c0bddbb4b5ed4ad5514d188f2fa6bd3331fcc934e2abe7c3dc62afd4fdc",
+      "scenes/projectile_pool.tscn": "ba5109611e2aa28da924be92f2777d80e7a96d497479b70df01c4ad2fa89aa92",
+      "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+      "scripts/audio_director.gd": "170ffb36a733a0361e89787f648412a6a41d147d1488fcc7212b8e01c440bd3e",
+      "scripts/battle_effect.gd": "abc24daac59e9156fab1f379e0e6133707af4949fd7c302a7cedf9dea4655b65",
+      "scripts/battle_unit.gd": "b7272763201a44e959ccc5bec9808d33330914d0f3fcc6603f2a7cf502a32149",
+      "scripts/construction_navigation.gd": "daed224844ba1e7e347eeb68db8c6edb8a97005bdf1d8585e107505d3357884d",
+      "scripts/effect_pool.gd": "6c241ea157d0ee0dcf4d8d85f161a9abbb64e18e4d6519cf3a8c114e45c19fe3",
+      "scripts/fog_of_war.gd": "b3229b24ab264f24562b194a851862519ea5d0d52fa3570e60fd6e95aaeba702",
+      "scripts/game.gd": "f8c170557be57a6fa36abe93f428d1de68f91c3b05ce3eece0e1dc4e9f74a222",
+      "scripts/minimap.gd": "61db29830998a486f095359075a414aed12613fd5a1cb09509d76462a97e7693",
+      "scripts/network/match_replication.gd": "605d9fe7b95743bc83c93c3d6877151c263b8eec79f1666be43e6543c913fb7b",
+      "scripts/network/network_protocol.gd": "fa6ca49b9f0380f01420a76e666b34e146217d9857f7d8ab5dfd312fef26204a",
+      "scripts/path_budget.gd": "f40c1f557389601eff20fadc3efcab2b22ca72c3b3bbd230a5a07e16eb1d9143",
+      "scripts/projectile.gd": "c3c7f252e4312090615dbab37af349b02bb2b9478478bce2362975d2c5434f46",
+      "scripts/projectile_flight.gd": "c0ca3ea4d72478c725173fcd350ffa9df835704ea8045809b804cb845b5077ad",
+      "scripts/projectile_pool.gd": "51782af542b5d25de128e1320dfab8ee512a4c0f2f3b21f46cea3c39b6d7390f",
+      "scripts/sound_bank.gd": "2f06120607cf37315e2036f76d413ceaffda5d5462ea5fe84c2a621d372e9056",
+      "scripts/unit_visual.gd": "34b08cda38e9ab4f227953afb191cd129786d3c9460d69a69df75ef728e54855",
+      "tests/six_player_performance.gd": "a20984631a9e39139c4fc0870b018fa09281944ddec982e3686365cb429651ca",
+      "tests/skirmish_profile_probe.gd": "284349f01579b7563b5597ac35b59deb1dd1acd9feb98054f9271b221625cf9d",
+      "tests/skirmish_profile_probe.tscn": "aa52830b1f3d2e1c7d7f0e4d01616f3e3655e7b47a5d0e93afc06b0b1c793087",
+      "tests/skirmish_stress_test.gd": "3cdaa318414f9a5818e5243dbf4645e2d9612d1d4b1301f954d08e5717ab7f9d"
+    },
+    "source_set_sha256": "56d6528e029e5957560e3660754f77a80ea6d27902f53f7502b7d6f2b74be7d3",
+    "final_harness_and_binary_sha256": {
+      "bench.gd": "e6b8f1f8f6f74aff112ff3540b09dd54c4711949c02286e402aebaf6127e7fe7",
+      "stress_base.gd": "4b315b1864d39f6c550af0089b15f491c5c2d1221b4015a9e041d8b3caeca314",
+      "metrics.gd": "c6090be0a43286de6a0a3c9a22e77059e2b22747ecd75fd65d38fd7c9f9e5680",
+      "pack_probe.py": "be3148f9ff0a276a7e9e9b5e5f1c33f45603bfd204a4d4d91cc486eb11f5d182",
+      "run.py": "ecea4ce8863dd048b6af70dde0fcd308d56b6358f8d944e6c6fa2ea79c7ff478",
+      "perf_release.exe": "91724f15024a3a545e28ccd83134403d31ce2323a38e51c95e4dfa282f732ab6",
+      "perf_release.pck": "5f2e6e8fb55374e4d23e76cc399c9f3ef218dd67ca9c8fddaa72c99400169d95"
+    },
+    "raw_data_policy": "Compact per-phase distributions, inclusive counters, path-query distributions, checks and conditions retained. Per-frame monitor arrays, stdout, machine paths, PIDs and sensitive network data omitted."
+  },
+  "limitations": [
+    "One short 15-second sample per phase after 6-second warmup; maximum run has only 50 rendered frames, so tail percentiles are coarse.",
+    "HP multiplied by 100 to stabilize roster. Bots/passive income stopped; no network clients. This is not a full real match or eight-client pressure test.",
+    "Camera remains at zoom 58 and native fog/culling; not all 896 simulated units are simultaneously visible.",
+    "Even with a seeded harness, asynchronous path publication, frame scheduling, prior standard phase and random consumption produce different battlefield states between independent runs. No strict single-change causal FPS claims.",
+    "Official editor, official release template, and custom MSVC diagnostic engine are distinct binaries and must not be merged into a single release benchmark series.",
+    "Final GPU timing was not sampled. The early no3d experiment is evidence for that CPU bottleneck, not a GPU estimate for the final scene.",
+    "Production animation sleep is narrower than the diagnostic full-animation-disable experiment; the latter is not a shippable performance result.",
+    "The maximum-population performance issue remains unresolved."
+  ]
+}
