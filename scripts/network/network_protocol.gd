@@ -118,6 +118,20 @@ static func _encode_json(message: Dictionary) -> PackedByteArray:
 	# Native JSON serializes the fixed schema; the size cap is always enforced,
 	# including on trusted authority snapshots, before ENet can fragment a packet.
 	var raw := JSON.stringify(message, "", false).to_utf8_buffer()
+	return _encode_bytes(raw)
+
+static func encode_snapshot_json(snapshot_json: String, recipient: int, sequence: int, match_id: String) -> PackedByteArray:
+	# Same authority-only trust boundary as encode_snapshot(). Every payload
+	# fragment was produced by native JSON.stringify in MatchReplication; this
+	# is not a raw-JSON entry point for commands, events or relay forwarding.
+	if snapshot_json.is_empty() or recipient < 0 or recipient >= MAX_PLAYERS or sequence < 1 or sequence > 2147483647 or match_id.length() != 32:
+		return PackedByteArray()
+	var raw := ("{\"op\":\"snapshot\",\"match\":" + JSON.stringify(match_id)
+		+ ",\"to\":" + JSON.stringify(recipient) + ",\"sequence\":" + JSON.stringify(sequence)
+		+ ",\"payload\":" + snapshot_json + "}").to_utf8_buffer()
+	return _encode_bytes(raw)
+
+static func _encode_bytes(raw: PackedByteArray) -> PackedByteArray:
 	if raw.size() + HEADER_BYTES > MAX_PACKET_BYTES:
 		return PackedByteArray()
 	var body := raw

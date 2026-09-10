@@ -115,6 +115,14 @@ func send_command(command: Dictionary) -> Error:
 	return _send_packet(packet, Protocol.CONTROL_CHANNEL)
 
 func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
+	return _snapshot_to(owner, snapshot, "")
+
+func snapshot_json_to(owner: int, snapshot_json: String) -> Error:
+	if snapshot_json.is_empty():
+		return ERR_INVALID_DATA
+	return _snapshot_to(owner, {}, snapshot_json)
+
+func _snapshot_to(owner: int, snapshot: Dictionary, snapshot_json: String) -> Error:
 	if not is_host or _match.is_empty() or connection_state != "match":
 		return ERR_UNAUTHORIZED
 	if not has_player_connection(owner):
@@ -126,7 +134,7 @@ func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 	if now - int(_snapshot_sent_at.get(owner, -1000)) < 50:
 		return ERR_BUSY
 	var sequence: int = int(_snapshot_sequences.get(owner, 0)) + 1
-	var packet := Protocol.encode_snapshot(snapshot, owner, sequence, _match.match_id)
+	var packet: PackedByteArray = Protocol.encode_snapshot(snapshot, owner, sequence, _match.match_id) if snapshot_json.is_empty() else Protocol.encode_snapshot_json(snapshot_json, owner, sequence, _match.match_id)
 	if packet.is_empty():
 		return ERR_INVALID_DATA
 	var result := _send_packet(packet, Protocol.SNAPSHOT_CHANNEL + owner)

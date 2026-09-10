@@ -567,5 +567,214 @@
       "Manual authored animations isolate codec, distributed positions/yaw/attack phase improve payload representativeness.",
       "JSON stringify, UTF8, ZSTD, header timers sequential and disjoint. Official whole encoder is a separate duplicate measurement, not additive."
     ]
+  },
+  "shared_json_encoding": {
+    "raw": {
+      "checks": 4551,
+      "cpu_samples": [
+        {
+          "build_ms": 10.094,
+          "iteration": 4,
+          "json_batch_ms": 0.001,
+          "packets_ms": 22.062,
+          "recipients": 4,
+          "total_ms": 32.157,
+          "variant": 0,
+          "wire_bytes": 35060
+        },
+        {
+          "build_ms": 10.656,
+          "iteration": 4,
+          "json_batch_ms": 11.218,
+          "packets_ms": 1.183,
+          "recipients": 4,
+          "total_ms": 23.057,
+          "variant": 1,
+          "wire_bytes": 35060
+        },
+        {
+          "build_ms": 8.642,
+          "iteration": 5,
+          "json_batch_ms": 0.002,
+          "packets_ms": 16.555,
+          "recipients": 3,
+          "total_ms": 25.199,
+          "variant": 0,
+          "wire_bytes": 26175
+        },
+        {
+          "build_ms": 9.349,
+          "iteration": 5,
+          "json_batch_ms": 9.785,
+          "packets_ms": 0.888,
+          "recipients": 3,
+          "total_ms": 20.022,
+          "variant": 1,
+          "wire_bytes": 26175
+        },
+        {
+          "build_ms": 10.026,
+          "iteration": 6,
+          "json_batch_ms": 11.236,
+          "packets_ms": 1.085,
+          "recipients": 4,
+          "total_ms": 22.347,
+          "variant": 1,
+          "wire_bytes": 35065
+        },
+        {
+          "build_ms": 10.616,
+          "iteration": 6,
+          "json_batch_ms": 0.002,
+          "packets_ms": 21.956,
+          "recipients": 4,
+          "total_ms": 32.574,
+          "variant": 0,
+          "wire_bytes": 35065
+        },
+        {
+          "build_ms": 8.682,
+          "iteration": 7,
+          "json_batch_ms": 9.733,
+          "packets_ms": 0.821,
+          "recipients": 3,
+          "total_ms": 19.236,
+          "variant": 1,
+          "wire_bytes": 26180
+        },
+        {
+          "build_ms": 9.263,
+          "iteration": 7,
+          "json_batch_ms": 0.003,
+          "packets_ms": 16.455,
+          "recipients": 3,
+          "total_ms": 25.721,
+          "variant": 0,
+          "wire_bytes": 26180
+        },
+        {
+          "build_ms": 9.864,
+          "iteration": 8,
+          "json_batch_ms": 0.0,
+          "packets_ms": 21.896,
+          "recipients": 4,
+          "total_ms": 31.76,
+          "variant": 0,
+          "wire_bytes": 35065
+        },
+        {
+          "build_ms": 10.577,
+          "iteration": 8,
+          "json_batch_ms": 11.424,
+          "packets_ms": 1.114,
+          "recipients": 4,
+          "total_ms": 23.115,
+          "variant": 1,
+          "wire_bytes": 35065
+        },
+        {
+          "build_ms": 8.667,
+          "iteration": 9,
+          "json_batch_ms": 0.002,
+          "packets_ms": 16.597,
+          "recipients": 3,
+          "total_ms": 25.266,
+          "variant": 0,
+          "wire_bytes": 26178
+        },
+        {
+          "build_ms": 9.19,
+          "iteration": 9,
+          "json_batch_ms": 9.731,
+          "packets_ms": 0.831,
+          "recipients": 3,
+          "total_ms": 19.752,
+          "variant": 1,
+          "wire_bytes": 26178
+        },
+        {
+          "build_ms": 9.817,
+          "iteration": 10,
+          "json_batch_ms": 11.309,
+          "packets_ms": 1.103,
+          "recipients": 4,
+          "total_ms": 22.229,
+          "variant": 1,
+          "wire_bytes": 35065
+        },
+        {
+          "build_ms": 10.717,
+          "iteration": 10,
+          "json_batch_ms": 0.002,
+          "packets_ms": 21.92,
+          "recipients": 4,
+          "total_ms": 32.639,
+          "variant": 0,
+          "wire_bytes": 35065
+        },
+        {
+          "build_ms": 8.593,
+          "iteration": 11,
+          "json_batch_ms": 9.713,
+          "packets_ms": 0.875,
+          "recipients": 3,
+          "total_ms": 19.181,
+          "variant": 1,
+          "wire_bytes": 26176
+        },
+        {
+          "build_ms": 8.855,
+          "iteration": 11,
+          "json_batch_ms": 0.002,
+          "packets_ms": 16.542,
+          "recipients": 3,
+          "total_ms": 25.399,
+          "variant": 0,
+          "wire_bytes": 26176
+        }
+      ],
+      "cpu_scope": "500 distributed six-type authored units, MANUAL animation. AB/BA alternating same-state build plus full native encode; 4 warmup and 8 measured phases per variant. No game TPS claim.",
+      "failures": [],
+      "scope": "Actual authored units, production batch builder and native codec; local ENet send gates. No public throughput or FPS claim."
+    },
+    "receipt": {
+      "before_utc": "2026-09-10T15:42:31.362715+00:00",
+      "before": {
+        "match_replication": "0fa7a8d9ad40736a472c9f91c8c58c0b9653df6faac391e70a49e87976bcbf50",
+        "network_protocol": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b",
+        "relay_client": "80127faf0dc550b4c77a91bddb0e54e70a1743a909027968baab544abc4c99da"
+      },
+      "pid": 42880,
+      "exit": 0,
+      "after": {
+        "match_replication": "0fa7a8d9ad40736a472c9f91c8c58c0b9653df6faac391e70a49e87976bcbf50",
+        "network_protocol": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b",
+        "relay_client": "80127faf0dc550b4c77a91bddb0e54e70a1743a909027968baab544abc4c99da"
+      },
+      "exited": true,
+      "after_utc": "2026-09-10T15:42:33.581536+00:00"
+    },
+    "mean_by_variant": {
+      "0": {
+        "build_ms": 9.58975,
+        "json_batch_ms": 0.00175,
+        "packets_ms": 19.247875,
+        "total_ms": 28.839375,
+        "wire_bytes": 30620.5
+      },
+      "1": {
+        "build_ms": 9.61125,
+        "json_batch_ms": 10.518625,
+        "packets_ms": 0.9875,
+        "total_ms": 21.117375,
+        "wire_bytes": 30620.5
+      }
+    },
+    "variant_names": {
+      "0": "original full native encode_snapshot",
+      "1": "shared public JSON + native UTF8/ZSTD/envelope"
+    },
+    "source_stable": true,
+    "wire_compatibility": "Exact payload text, object/array insertion order, complete decoded tree and encoded packet bytes match. Protocol/schema/version unchanged."
   }
 }

@@ -82,9 +82,10 @@ func tick(_delta: float) -> void:
 			if current_tick % SNAPSHOT_TICKS == (player.owner_id - 1) % SNAPSHOT_TICKS:
 				recipients.append(player.owner_id)
 	var snapshots: Dictionary[int, Dictionary] = build_snapshots(recipients)
+	var encoded: Dictionary[int, String] = snapshot_batch_json(snapshots)
 	for recipient: int in recipients:
 		_flush_visual(recipient)
-		var error := relay.snapshot_to(recipient, snapshots[recipient])
+		var error := relay.snapshot_json_to(recipient, encoded[recipient])
 		if error == OK:
 			_send_errors.erase(recipient)
 		elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(recipient) != error:
@@ -149,6 +150,42 @@ func build_snapshots(recipients: Array[int]) -> Dictionary[int, Dictionary]:
 				_append_entity_private_state(state, entity)
 			snapshots[recipient].entities.append(state)
 	return snapshots
+
+static func snapshot_batch_json(snapshots: Dictionary[int, Dictionary]) -> Dictionary[int, String]:
+	# This cache lives for exactly one already-built authority batch. An owner's
+	# complete state is encoded separately; only the same public dictionary may
+	# be reused by other recipients. Fog and visibility stay in the existing
+	# builder, and no received packet or client dictionary enters this path.
+	var public_entities: Dictionary[int, String] = {}
+	var public_players: Dictionary[int, String] = {}
+	var public_mines: Dictionary[int, String] = {}
+	var result: Dictionary[int, String] = {}
+	for recipient: int in snapshots:
+		var snapshot: Dictionary = snapshots[recipient]
+		var fields := PackedStringArray()
+		for key: String in snapshot:
+			var value_json: String
+			if key in ["entities", "players", "mines"]:
+				var items := PackedStringArray()
+				for state: Dictionary in snapshot[key]:
+					var id: int = int(state.owner_id) if key == "players" else int(state.id)
+					var owner: int = int(state.owner_id) if key == "players" else int(state.get("owner", -1))
+					if owner == recipient:
+						# The owner-only version includes orders, queues, gold and
+						# research. It must never enter a shared public cache.
+						items.append(JSON.stringify(state, "", false))
+						continue
+					var cache: Dictionary[int, String] = public_entities
+					if key == "players": cache = public_players
+					elif key == "mines": cache = public_mines
+					if not cache.has(id): cache[id] = JSON.stringify(state, "", false)
+					items.append(cache[id])
+				value_json = "[" + ",".join(items) + "]"
+			else:
+				value_json = JSON.stringify(snapshot[key], "", false)
+			fields.append(JSON.stringify(key) + ":" + value_json)
+		result[recipient] = "{" + ",".join(fields) + "}"
+	return result
 
 func _entity_public_state(entity: Node3D) -> Dictionary:
 	var state := {"id": entity.entity_id, "owner": entity.owner_id,
