@@ -109,5 +109,219 @@
     "JSON serialization and ZSTD compression are measured together through the existing actual encoder; no separate attribution",
     "User editor and formal game remained open; no other validation process at final window check",
     "Initial attempts parse1/measure1 exited at parse stage due to missing new-worktree class cache; not measurements; imported resources/class cache reused for successful run"
-  ]
+  ],
+  "offscreen_animation_profile": {
+    "raw": {
+      "headless_suspended_models": 500,
+      "samples": [
+        {
+          "animation_calls": 2000,
+          "build_ms": 41.468,
+          "encode_ms": 20.074,
+          "engine_physics_frame": 2,
+          "entity_state_inclusive_ms": 33.285,
+          "mode": "legacy",
+          "recipients": 4,
+          "state_calls": 2000,
+          "synchronize_animation_ms": 17.368
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 18.966,
+          "encode_ms": 14.59,
+          "engine_physics_frame": 3,
+          "entity_state_inclusive_ms": 11.048,
+          "mode": "batch",
+          "recipients": 3,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.466
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 19.395,
+          "encode_ms": 19.46,
+          "engine_physics_frame": 4,
+          "entity_state_inclusive_ms": 11.161,
+          "mode": "batch",
+          "recipients": 4,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.493
+        },
+        {
+          "animation_calls": 1500,
+          "build_ms": 26.977,
+          "encode_ms": 14.496,
+          "engine_physics_frame": 5,
+          "entity_state_inclusive_ms": 20.112,
+          "mode": "legacy",
+          "recipients": 3,
+          "state_calls": 1500,
+          "synchronize_animation_ms": 9.409
+        },
+        {
+          "animation_calls": 2000,
+          "build_ms": 34.464,
+          "encode_ms": 19.241,
+          "engine_physics_frame": 6,
+          "entity_state_inclusive_ms": 25.118,
+          "mode": "legacy",
+          "recipients": 4,
+          "state_calls": 2000,
+          "synchronize_animation_ms": 10.691
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 20.186,
+          "encode_ms": 15.352,
+          "engine_physics_frame": 7,
+          "entity_state_inclusive_ms": 11.444,
+          "mode": "batch",
+          "recipients": 3,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.458
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 18.672,
+          "encode_ms": 19.874,
+          "engine_physics_frame": 8,
+          "entity_state_inclusive_ms": 10.623,
+          "mode": "batch",
+          "recipients": 4,
+          "state_calls": 500,
+          "synchronize_animation_ms": 6.958
+        },
+        {
+          "animation_calls": 1500,
+          "build_ms": 26.145,
+          "encode_ms": 14.266,
+          "engine_physics_frame": 9,
+          "entity_state_inclusive_ms": 19.511,
+          "mode": "legacy",
+          "recipients": 3,
+          "state_calls": 1500,
+          "synchronize_animation_ms": 8.978
+        },
+        {
+          "animation_calls": 2000,
+          "build_ms": 32.994,
+          "encode_ms": 19.012,
+          "engine_physics_frame": 10,
+          "entity_state_inclusive_ms": 23.854,
+          "mode": "legacy",
+          "recipients": 4,
+          "state_calls": 2000,
+          "synchronize_animation_ms": 10.048
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 18.4,
+          "encode_ms": 14.346,
+          "engine_physics_frame": 11,
+          "entity_state_inclusive_ms": 10.557,
+          "mode": "batch",
+          "recipients": 3,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.026
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 18.91,
+          "encode_ms": 19.245,
+          "engine_physics_frame": 12,
+          "entity_state_inclusive_ms": 10.857,
+          "mode": "batch",
+          "recipients": 4,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.249
+        },
+        {
+          "animation_calls": 1500,
+          "build_ms": 26.399,
+          "encode_ms": 14.261,
+          "engine_physics_frame": 13,
+          "entity_state_inclusive_ms": 19.608,
+          "mode": "legacy",
+          "recipients": 3,
+          "state_calls": 1500,
+          "synchronize_animation_ms": 9.005
+        },
+        {
+          "animation_calls": 2000,
+          "build_ms": 33.391,
+          "encode_ms": 19.04,
+          "engine_physics_frame": 14,
+          "entity_state_inclusive_ms": 24.153,
+          "mode": "legacy",
+          "recipients": 4,
+          "state_calls": 2000,
+          "synchronize_animation_ms": 10.1
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 18.372,
+          "encode_ms": 14.277,
+          "engine_physics_frame": 15,
+          "entity_state_inclusive_ms": 10.611,
+          "mode": "batch",
+          "recipients": 3,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.095
+        },
+        {
+          "animation_calls": 500,
+          "build_ms": 19.297,
+          "encode_ms": 19.082,
+          "engine_physics_frame": 16,
+          "entity_state_inclusive_ms": 11.075,
+          "mode": "batch",
+          "recipients": 4,
+          "state_calls": 500,
+          "synchronize_animation_ms": 7.41
+        },
+        {
+          "animation_calls": 1500,
+          "build_ms": 26.49,
+          "encode_ms": 14.992,
+          "engine_physics_frame": 17,
+          "entity_state_inclusive_ms": 19.805,
+          "mode": "legacy",
+          "recipients": 3,
+          "state_calls": 1500,
+          "synchronize_animation_ms": 9.044
+        }
+      ],
+      "scope": "500 mixed authored rigs, actual offscreen native animation advancement; alternating ABBA across separate physics steps; diagnostic wrappers add timing overhead. Entity state includes synchronize_animation, legacy also includes private fields; not additive. No rendering/GPU/FPS/network-throughput measurement.",
+      "units": 500
+    },
+    "summary_excluding_first_4": {
+      "legacy": {
+        "build_ms": 29.9805,
+        "encode_ms": 16.802,
+        "entity_state_inclusive_ms": 22.008166666666668,
+        "synchronize_animation_ms": 9.644333333333334,
+        "state_calls": 1750,
+        "animation_calls": 1750
+      },
+      "batch": {
+        "build_ms": 18.972833333333334,
+        "encode_ms": 17.029333333333334,
+        "entity_state_inclusive_ms": 10.861166666666666,
+        "synchronize_animation_ms": 7.199333333333334,
+        "state_calls": 500,
+        "animation_calls": 500
+      }
+    },
+    "receipt": {
+      "source_sha256_before": "fb8efc76bae1a39f7bc00a7e9c93240f0d3debee4e68194b75c40f0c327d63e8",
+      "legacy_sha256": "80d638f6f728f082f8abddf9f8162379e896cc2bfaee494e35b266d0a8a1d851",
+      "source_sha256_after": "fb8efc76bae1a39f7bc00a7e9c93240f0d3debee4e68194b75c40f0c327d63e8"
+    },
+    "limitations": [
+      "Separate temporary timing-instrumented script copies, not shipping scripts; interval timers add overhead",
+      "Mixed original rigs, 500 offscreen suspended native AnimationPlayers; one variant on each physics step, ABBA, no same-frame second variant advantage",
+      "Native state timer includes synchronize_animation; legacy state timer also includes owner private assembly, batch timer excludes it, so scopes are not identical",
+      "One failed profile attempt due to temporary typed-array ternary assignment; own PID stopped; corrected fixture ran to exit0, original failed logs retained"
+    ]
+  }
 }
