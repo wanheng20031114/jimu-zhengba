@@ -1,0 +1,2441 @@
+{
+  "date": "2026-09-10",
+  "project": "积木争霸",
+  "status": "research checkpoint; first candidate failed performance gate; second/third candidates not rendered-benchmarked; no navigation prototype in current release",
+  "performance_problem_resolved": false,
+  "defaults_at_archive": {
+    "shared_paths_enabled": {
+      "value": false,
+      "source_file_at_archive": {
+        "path": "scripts/path_budget.gd",
+        "sha256": "7b83f4eaf9b223e6affa5b1d2f112ad30d9b0fd21f1d452af0763ef81cd5c87c",
+        "bytes": 11455
+      }
+    },
+    "fast_path_enabled": {
+      "value": false,
+      "source_file_at_archive": {
+        "path": "scripts/navigation/static_motion_grid.gd",
+        "sha256": "dc7042dde1dad505f47aab65800c63c73f3c8c036a20eea00ba90a266d6a5671",
+        "bytes": 10760
+      }
+    }
+  },
+  "recovery": {
+    "baseline_commit": "dc32f9ca3d7a50117e9f435bb47cc5eb895fbea8",
+    "branch": "codex/snapshot-rts-navigation-20260910",
+    "protected_directory": ".local/recovery/rts-navigation-20260910"
+  },
+  "scope": "Summary extracted from retained local results and metadata, with actual SHA256. No new benchmark was run to create this archive. Sample hashes and archive-time hashes are distinguished.",
+  "region_cache_microdiagnostic": {
+    "result_file": {
+      "path": ".local/static-motion-20260910/region-result.json",
+      "sha256": "9a13fd4d80fe6011a2228404512790bb5b0c000793a385667dffce29ff927e19",
+      "bytes": 11912
+    },
+    "metadata_file": {
+      "path": ".local/static-motion-20260910/region-metadata.json",
+      "sha256": "582a91123673ccf536b371960ccef20e2d819e810de337d2b2d5ce16813a75bf",
+      "bytes": 2734
+    },
+    "checks": 229415,
+    "failures": 0,
+    "inputs_and_timing": {
+      "purpose": "paired cached center-region callback diagnostic; never headless FPS",
+      "unit_count": 32,
+      "map_scene": "res://scenes/maps/four_banners_4v4.tscn",
+      "obstacle_count": 414,
+      "pairs": 24,
+      "warmup_pairs": 2,
+      "order": "AB/BA alternating whole segments; native publication step after reset",
+      "steps_per_uninterrupted_segment": 90,
+      "delta_min": 0.0333333333333333,
+      "delta_max": 0.0333333333333333,
+      "limitations": [
+        "32 native units; cannot extrapolate full 896-unit SceneTree scale",
+        "user game PID44396 was reported active; no system FPS conclusions",
+        "physics delta fixed 1/30, headless execution is accelerated",
+        "timing only synchronous callback; native publication separate; descendant/render flush excluded",
+        "RVO disabled; exact safe velocities supplied; no footstep event threshold crossed",
+        "travel group genuinely advances all 90 consecutive steps with no position reset"
+      ]
+    },
+    "max_endpoint_error": 0.0,
+    "max_velocity_error": 0.0,
+    "max_observed_velocity_error": 0.0,
+    "results": {
+      "hot_grid": {
+        "callback": {
+          "count": 17280,
+          "mean_usec": 4.82731481481482,
+          "p50_usec": 4,
+          "p95_usec": 7,
+          "p99_usec": 9,
+          "sum_usec": 83416.0
+        },
+        "calls": 17280,
+        "fast_steps": 17280,
+        "native_steps": 0,
+        "region_queries": 192,
+        "sum_displacement": 2052.00190544128,
+        "synchronous_publish": {
+          "count": 17280,
+          "mean_usec": 0.825810185185185,
+          "p50_usec": 1,
+          "p95_usec": 2,
+          "p99_usec": 2,
+          "sum_usec": 14270.0
+        },
+        "tile_crossings": 0
+      },
+      "hot_native": {
+        "callback": {
+          "count": 17280,
+          "mean_usec": 5.8556712962963,
+          "p50_usec": 5,
+          "p95_usec": 10,
+          "p99_usec": 12,
+          "sum_usec": 101186.0
+        },
+        "calls": 17280,
+        "fast_steps": 0,
+        "native_steps": 17280,
+        "region_queries": 0,
+        "sum_displacement": 2052.00190544128,
+        "synchronous_publish": {
+          "count": 17280,
+          "mean_usec": 0.732118055555556,
+          "p50_usec": 1,
+          "p95_usec": 2,
+          "p99_usec": 2,
+          "sum_usec": 12651.0
+        },
+        "tile_crossings": 0
+      },
+      "travel_grid": {
+        "callback": {
+          "count": 34560,
+          "mean_usec": 4.23796296296296,
+          "p50_usec": 4,
+          "p95_usec": 7,
+          "p99_usec": 12,
+          "sum_usec": 146464.0
+        },
+        "calls": 34560,
+        "fast_steps": 34560,
+        "native_steps": 0,
+        "region_queries": 2352,
+        "sum_displacement": 4053.60973834991,
+        "synchronous_publish": {
+          "count": 34560,
+          "mean_usec": 0.631712962962963,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 1,
+          "sum_usec": 21832.0
+        },
+        "tile_crossings": 1968
+      },
+      "travel_native": {
+        "callback": {
+          "count": 34560,
+          "mean_usec": 4.9548900462963,
+          "p50_usec": 5,
+          "p95_usec": 6,
+          "p99_usec": 8,
+          "sum_usec": 171241.0
+        },
+        "calls": 34560,
+        "fast_steps": 0,
+        "native_steps": 34560,
+        "region_queries": 0,
+        "sum_displacement": 4053.60973834991,
+        "synchronous_publish": {
+          "count": 34560,
+          "mean_usec": 0.605584490740741,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 1,
+          "sum_usec": 20929.0
+        },
+        "tile_crossings": 1968
+      },
+      "wall_grid": {
+        "callback": {
+          "count": 17280,
+          "mean_usec": 14.5072337962963,
+          "p50_usec": 14,
+          "p95_usec": 19,
+          "p99_usec": 24,
+          "sum_usec": 250685.0
+        },
+        "calls": 17280,
+        "fast_steps": 0,
+        "native_steps": 17280,
+        "region_queries": 192,
+        "sum_displacement": 1984.78112339973,
+        "synchronous_publish": {
+          "count": 17280,
+          "mean_usec": 0.637962962962963,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 1,
+          "sum_usec": 11024.0
+        },
+        "tile_crossings": 8640
+      },
+      "wall_native": {
+        "callback": {
+          "count": 17280,
+          "mean_usec": 13.9450231481481,
+          "p50_usec": 13,
+          "p95_usec": 18,
+          "p99_usec": 23,
+          "sum_usec": 240970.0
+        },
+        "calls": 17280,
+        "fast_steps": 0,
+        "native_steps": 17280,
+        "region_queries": 0,
+        "sum_displacement": 1984.78112339973,
+        "synchronous_publish": {
+          "count": 17280,
+          "mean_usec": 0.630902777777778,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 1,
+          "sum_usec": 10902.0
+        },
+        "tile_crossings": 8640
+      }
+    },
+    "run": {
+      "console_pid": 34356,
+      "actual_godot_pid": 46596,
+      "exit_code": 0,
+      "wall_seconds": 7.375,
+      "own_processes_verified_exited": true,
+      "context_note": "The parent reported user game 44396 active before this local diagnostic. Root also started stable interactive game 32708; no user/editor process was modified. This was a synchronous callback comparison, not a rendered FPS benchmark.",
+      "user_game_pid_reported_active": 44396
+    },
+    "source_hashes_at_run": {
+      "scripts/battle_unit.gd": "f1d6a9507d7063c31b063d8add1d96c0d486ab2e1061a7d1f5731e37e0f7b3ae",
+      "scripts/navigation/static_motion_grid.gd": "3a99dbb9435e91a217bb4edd2c2a81680d19593f509c69f984e0933d6938d01f",
+      "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+      "scenes/maps/four_banners_4v4.tscn": "e7c42bcef3f5703e1715f2ce91c287707620bf8e85f0b11b345d5b6f6feddee0",
+      ".local/static-motion-20260910/callback_probe.gd": "a0a887493ed0c77ac8dde6adb4c04d370c6bc589433e0692a04e01c74d8a2913",
+      ".local/static-motion-20260910/region_runner.gd": "e525cc6cde6fb7325711946858d91b2528275ad8c76dff17dac6a6c284c7034d",
+      ".local/static-motion-20260910/region_scene.tscn": "065fcbd1d0078c90d86e8c906518fe925dad1a224c20b66f4bebf1ba374bec0a",
+      ".local/static-motion-20260910/region_probe.gd": "23a4994868630d77e31f166da1d92c00ba8d16ce4c32fbea4804bc91af1e6b70"
+    },
+    "source_unchanged_during_run": true,
+    "derived_cold_query_ratio": {
+      "numerator": 2352,
+      "denominator": 34560,
+      "ratio": 0.06805555555555555
+    }
+  },
+  "uncached_callback_microdiagnostic": {
+    "result_file": {
+      "path": ".local/static-motion-20260910/callback-result.json",
+      "sha256": "d747e542956a5531bcc0af47537e87c2266908908ed012c008a52f9e13583359",
+      "bytes": 12511
+    },
+    "metadata_file": {
+      "path": ".local/static-motion-20260910/callback-metadata.json",
+      "sha256": "a9f62df649d15b521aeb032280e966ed73bb378e39284baf0d026d6124881b22",
+      "bytes": 3202
+    },
+    "checks": 42370,
+    "failures": 0,
+    "inputs_and_timing": {
+      "purpose": "paired synchronous production movement-callback diagnostic; not FPS",
+      "unit_count": 32,
+      "map_scene": "res://scenes/maps/four_banners_4v4.tscn",
+      "obstacle_count": 414,
+      "pairs": 240,
+      "warmup_pairs": 12,
+      "order": "AB/BA alternating each pair; reset/publication in prior physics step",
+      "delta_min": 0.0333333333333333,
+      "delta_max": 0.0333333333333333,
+      "physics_tps": 30,
+      "limitations": [
+        "32 native units do not reproduce 896-unit scene-tree scale",
+        "callback microsecond timer includes synchronous native calls only; separate force_update_transform is also recorded",
+        "does not capture deferred full descendant/render transform flushing",
+        "RVO disabled: safe velocity supplied identically, no navigation timing",
+        "no footstep threshold crossed in these single-step samples",
+        "fixed-fps headless execution provides simulation timing, never rendered FPS"
+      ]
+    },
+    "max_endpoint_error": 0.0,
+    "max_velocity_error": 0.0,
+    "max_observed_velocity_error": 0.0,
+    "results": {
+      "open_grid": {
+        "callback": {
+          "count": 3840,
+          "mean_usec": 5.74114583333333,
+          "p50_usec": 5,
+          "p95_usec": 10,
+          "p99_usec": 13,
+          "sum_usec": 22046.0
+        },
+        "calls": 3840,
+        "fast_steps": 3840,
+        "mean_displacement": 0.120832802262157,
+        "mean_input_speed": 3.62499999254942,
+        "mean_observed_speed": 3.62498384714127,
+        "mean_output_speed": 3.62499999254942,
+        "native_steps": 0,
+        "synchronous_publish": {
+          "count": 3840,
+          "mean_usec": 0.773177083333333,
+          "p50_usec": 1,
+          "p95_usec": 2,
+          "p99_usec": 2,
+          "sum_usec": 2969.0
+        }
+      },
+      "open_native": {
+        "callback": {
+          "count": 3840,
+          "mean_usec": 5.34114583333333,
+          "p50_usec": 5,
+          "p95_usec": 9,
+          "p99_usec": 11,
+          "sum_usec": 20510.0
+        },
+        "calls": 3840,
+        "fast_steps": 0,
+        "mean_displacement": 0.120832802262157,
+        "mean_input_speed": 3.62499999254942,
+        "mean_observed_speed": 3.62498384714127,
+        "mean_output_speed": 3.62499999254942,
+        "native_steps": 3840,
+        "synchronous_publish": {
+          "count": 3840,
+          "mean_usec": 0.674479166666667,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 2,
+          "sum_usec": 2590.0
+        }
+      },
+      "wall_grid": {
+        "callback": {
+          "count": 3840,
+          "mean_usec": 16.3052083333333,
+          "p50_usec": 15,
+          "p95_usec": 24,
+          "p99_usec": 29,
+          "sum_usec": 62612.0
+        },
+        "calls": 3840,
+        "fast_steps": 0,
+        "mean_displacement": 0.111452424898744,
+        "mean_input_speed": 3.45625016093254,
+        "mean_observed_speed": 3.3435724824667,
+        "mean_output_speed": 3.45625016093254,
+        "native_steps": 3840,
+        "synchronous_publish": {
+          "count": 3840,
+          "mean_usec": 0.704947916666667,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 2,
+          "sum_usec": 2707.0
+        }
+      },
+      "wall_native": {
+        "callback": {
+          "count": 3840,
+          "mean_usec": 14.00625,
+          "p50_usec": 13,
+          "p95_usec": 20,
+          "p99_usec": 24,
+          "sum_usec": 53784.0
+        },
+        "calls": 3840,
+        "fast_steps": 0,
+        "mean_displacement": 0.111452424898744,
+        "mean_input_speed": 3.45625016093254,
+        "mean_observed_speed": 3.3435724824667,
+        "mean_output_speed": 3.45625016093254,
+        "native_steps": 3840,
+        "synchronous_publish": {
+          "count": 3840,
+          "mean_usec": 0.681770833333333,
+          "p50_usec": 1,
+          "p95_usec": 1,
+          "p99_usec": 2,
+          "sum_usec": 2618.0
+        }
+      }
+    },
+    "run": {
+      "console_pid": 6060,
+      "exit_code": 0,
+      "wall_seconds": 3.10999999998603,
+      "execution_context": {
+        "user_game_pid_reported_active_before_run": 44396,
+        "own_console_pid": 6060,
+        "own_processes_verified_exited": true,
+        "own_godot_pid": 33960,
+        "user_editor_pid": 33896,
+        "user_game_and_editor_verified_alive_after_run": true,
+        "global_fps_conclusions_allowed": false,
+        "timing_scope": "Synchronous _apply_velocity only; force_update_transform measured separately; reset and subsequent whole-tree flushing excluded"
+      }
+    },
+    "source_hashes_at_run": {
+      "scripts/battle_unit.gd": "aa8897cd0fb1486243bc4780d0c7f4a23ad73e1a1bab5c06053aa23bffdfc51b",
+      "scripts/navigation/static_motion_grid.gd": "5db19ced6a9bc6a049ce8ada3b9c5c15c338f89f15a94751c739fd2a63e6f444",
+      "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+      ".local/static-motion-20260910/callback_runner.gd": "20da5ba6a00280ea01228f804a18124b19e1ae7f2d36aadc96f7d0d91470029d",
+      ".local/static-motion-20260910/callback_scene.tscn": "366e43f8b466f18f6de0c3f35567afcef899139ba8d5548fdaf2715bb8b81f02",
+      ".local/static-motion-20260910/callback_probe.gd": "a0a887493ed0c77ac8dde6adb4c04d370c6bc589433e0692a04e01c74d8a2913"
+    },
+    "source_unchanged_during_run": true
+  },
+  "static_physics_oracle": {
+    "result_file": {
+      "path": ".local/static-motion-20260910/result.json",
+      "sha256": "4825a59bb1ba3133ddf8e2d83bd691fe83a543cfbab393cfe632d890132550c1",
+      "bytes": 1976
+    },
+    "metadata_file": {
+      "path": ".local/static-motion-20260910/run-metadata.json",
+      "sha256": "f905cb3b208d02572f22ce561fd28196d08fd3b61ec7a94a0458337045ab43c7",
+      "bytes": 966
+    },
+    "result": {
+      "cache_metadata": [
+        {
+          "floor_shapes_omitted": 1,
+          "grid_size": "(384, 368)",
+          "name": "production",
+          "obstacles": 414,
+          "rebuild_usec": 12493
+        },
+        {
+          "floor_shapes_omitted": 1,
+          "grid_size": "(160, 160)",
+          "name": "transformed_fixtures",
+          "obstacles": 6,
+          "rebuild_usec": 1650
+        }
+      ],
+      "checks": 15445,
+      "conditions": "Headless physics oracle, actual 4v4 static shapes and separate native transformed fixtures. Capsule radii 0.357/0.408/0.663/0.85/0.8925, native height1.8, safe_margin0.001. Checks native initial intersections, cast_motion, body_test_motion. No FPS claim.",
+      "failures": [],
+      "godot": "4.6.3-stable (official)",
+      "samples": [
+        {
+          "body_test_motion_hits": 530,
+          "cast_motion_hits": 171,
+          "certified_clear": 3953,
+          "conservative_rejects": 515,
+          "examples": [],
+          "false_clear": 0,
+          "initial_overlaps": 366,
+          "name": "production_4v4",
+          "native_clear": 4468,
+          "samples": 5000
+        },
+        {
+          "body_test_motion_hits": 4968,
+          "cast_motion_hits": 4920,
+          "certified_clear": 12,
+          "conservative_rejects": 0,
+          "examples": [],
+          "false_clear": 0,
+          "initial_overlaps": 550,
+          "name": "production_shape_edges",
+          "native_clear": 12,
+          "samples": 4980
+        },
+        {
+          "body_test_motion_hits": 98,
+          "cast_motion_hits": 28,
+          "certified_clear": 4629,
+          "conservative_rejects": 273,
+          "examples": [],
+          "false_clear": 0,
+          "initial_overlaps": 70,
+          "name": "transformed_primitives",
+          "native_clear": 4902,
+          "samples": 5000
+        },
+        {
+          "body_test_motion_hits": 384,
+          "cast_motion_hits": 384,
+          "certified_clear": 56,
+          "conservative_rejects": 8,
+          "examples": [],
+          "false_clear": 0,
+          "initial_overlaps": 0,
+          "name": "transformed_shape_edges",
+          "native_clear": 64,
+          "samples": 448
+        }
+      ],
+      "wall_seconds": 1.338
+    },
+    "source_hashes_at_run": {
+      "scripts/navigation/static_motion_grid.gd": "85ed491983935a40921a862322359a8562ef057c3236115be21bd729a47015ec",
+      ".local/static-motion-20260910/oracle.gd": "ffd67ef1f716592a1d361c4e2ac9dad2571c5706cef11409f9e932f797ec582d",
+      ".local/static-motion-20260910/oracle_scene.tscn": "e3c5e7c09afaf318157aff84d586b53a60c05a08f3204c8c4d11fb6a319904d2"
+    },
+    "run": {
+      "console_pid": 43948,
+      "actual_godot_pid": 19708,
+      "exit_code": 0,
+      "wall_seconds": 2.1559999999881256,
+      "remaining_auxiliary_processes": 0
+    }
+  },
+  "flow_kernel_oracle": {
+    "result_file": {
+      "path": ".local/flow-kernel-20260910/result.json",
+      "sha256": "e6ade3101a35ec9c1787ac65e7f44b150c9d6ba4be8dfbcecd8f1057e769804a",
+      "bytes": 94
+    },
+    "result": {
+      "cases": 144,
+      "checks": 69875,
+      "failures": [],
+      "pid": 3544,
+      "worker_build_usec": 9288
+    }
+  },
+  "final_integration": {
+    "result_file": {
+      "path": ".local/flow-kernel-20260910/integration-result.json",
+      "sha256": "d45f2415725df5f42a7095ccedd546258bc370d374025f902950ed289a82ff6b",
+      "bytes": 107
+    },
+    "log_file": {
+      "path": ".local/flow-kernel-20260910/final-integration.log",
+      "sha256": "2324b966bd0496ec617dc8921d65443a7065af8c1b50eab608e1374896e88cbe",
+      "bytes": 952
+    },
+    "result": {
+      "checks": 112,
+      "failures": [],
+      "maximum_post_arrival_slot_distance": 3.93190741539001,
+      "pid": 31176
+    },
+    "source_hash_at_run": null,
+    "fixture_files_at_archive": [
+      {
+        "path": ".local/flow-kernel-20260910/integration.gd",
+        "sha256": "b382a5920899486022abc9f4d8de9ea40c15a3ef67fc32614454a2ad13392945",
+        "bytes": 15569
+      },
+      {
+        "path": ".local/flow-kernel-20260910/integration_host.tscn",
+        "sha256": "f4246575a94b6aa420f0be177af70f6bf0c9ab524789da4484776252d0ea152a",
+        "bytes": 1647
+      }
+    ],
+    "limitation": "No historical per-source run manifest exists for this final integration result. Fixture hashes here are archive-time only, not reconstructed run-time metadata. Post-arrival RVO displacement has no old-version comparison."
+  },
+  "flow_rejection_diagnostic": {
+    "result_file": {
+      "path": ".local/flow-kernel-20260910/diagnostic-result.json",
+      "sha256": "68f31b58bd3899bb76a20295f9ea43fa94fd0f1bb3927649fe4962dfaa5f29fc",
+      "bytes": 21935
+    },
+    "result": {
+      "centered_clear_failures": 740,
+      "checks": 19,
+      "elapsed_wall_seconds": 34.585157,
+      "failures": [],
+      "fields_built": 8,
+      "invalid_fields": 0,
+      "native_queries": 2919,
+      "note": "Headless diagnostic wrappers. Not a performance result. Original 4v4 detour roster/seed and commands; observer adds extra read-only checks and bounded test_move queries.",
+      "owners": {
+        "0": {
+          "military": 100,
+          "native": 95,
+          "pending": 0,
+          "plan": 5,
+          "shared": 5
+        },
+        "1": {
+          "military": 100,
+          "native": 95,
+          "pending": 1,
+          "plan": 5,
+          "shared": 5
+        },
+        "2": {
+          "military": 100,
+          "native": 97,
+          "pending": 0,
+          "plan": 3,
+          "shared": 3
+        },
+        "3": {
+          "military": 100,
+          "native": 87,
+          "pending": 1,
+          "plan": 13,
+          "shared": 13
+        },
+        "4": {
+          "military": 100,
+          "native": 88,
+          "pending": 0,
+          "plan": 12,
+          "shared": 12
+        },
+        "5": {
+          "military": 100,
+          "native": 90,
+          "pending": 0,
+          "plan": 10,
+          "shared": 10
+        },
+        "6": {
+          "military": 100,
+          "native": 94,
+          "pending": 0,
+          "plan": 6,
+          "shared": 6
+        },
+        "7": {
+          "military": 100,
+          "native": 95,
+          "pending": 2,
+          "plan": 5,
+          "shared": 5
+        }
+      },
+      "physical_clear_failures": 674,
+      "pid": 39968,
+      "reasons": {
+        "corridor_rejected": 740,
+        "field_pending": 12200,
+        "flow_edge": 187575,
+        "private_slot": 30,
+        "status:BLOCKED": 1
+      },
+      "retained_after_failure": 0,
+      "shared_calls": 200546,
+      "shared_requests": 800,
+      "shared_samples": 187605,
+      "tick": 661,
+      "transitions": {
+        "adopt": 796,
+        "drop:corridor_rejected": 737
+      },
+      "unique_shared_units": 800,
+      "unique_units_lost_plan": 741
+    },
+    "fixture_files_at_archive": [
+      {
+        "path": ".local/flow-kernel-20260910/diagnostic_budget.gd",
+        "sha256": "88ac6da8f7b73ebe2692d09fd1a7c7387d6ac7f4474b138e8663f3a809907b03",
+        "bytes": 5550
+      },
+      {
+        "path": ".local/flow-kernel-20260910/diagnostic_run.gd",
+        "sha256": "6cf426cfa3fa50c4b57ba16a6743168a3638dac0f3200e82aa3f9ddf9228ab35",
+        "bytes": 2377
+      },
+      {
+        "path": ".local/flow-kernel-20260910/diagnostic_main.tscn",
+        "sha256": "affe81bdd2edbc52aa9fd2666735372083e4d3f102c23b34b790f704d27079ff",
+        "bytes": 5707
+      }
+    ]
+  },
+  "rendered_first_candidate": [
+    {
+      "variant": "baseline",
+      "manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/baseline/manifest.json",
+        "sha256": "f0b171ca3246aeedbbb5bef70be9507568d0b4844b92cbbd0870f806f3e8ae4e",
+        "bytes": 74824
+      },
+      "pack_manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/baseline/pack_manifest.json",
+        "sha256": "973cdfc443096bac4374fcc3dd87114867d2a3fb049a438dbe0aad745e89c78b",
+        "bytes": 297268
+      },
+      "source_hashes_at_pack": {
+        "default_bus_layout.tres": "3557482ceccc47016701b04ef6508469e3da370906cfa7a390276f438f906fad",
+        "project.godot": "dab3766a1ba71eca94e5bb79273a42bbc4f7b453edc54aee62a133cd496de6b4",
+        "scenes/main.tscn": "ce4c187d086f0817e6c00c108041f3defba8190ac26af6e89c10b8351376a648",
+        "scenes/maps/four_banners_4v4.tscn": "e7c42bcef3f5703e1715f2ce91c287707620bf8e85f0b11b345d5b6f6feddee0",
+        "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+        "scripts/battle_unit.gd": "3bf0d117091a9f5a8b98efc1ef11de3ed057df73841b19d768f853814ce15e2b",
+        "scripts/game.gd": "27f53baf5905c4aea9472cb867f03ca8c03df5b1889ced083acf87f47438d6b6",
+        "scripts/path_budget.gd": "f40c1f557389601eff20fadc3efcab2b22ca72c3b3bbd230a5a07e16eb1d9143"
+      },
+      "runs": [
+        {
+          "name": "standard-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/standard-1.json",
+            "sha256": "5f9eba9ff5bc4c8199bc8c73d5e22dd83ca498462f3451660d9e16b6aa834d26",
+            "bytes": 9351
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/standard-1.run.json",
+            "sha256": "d430dcbca4fa1e98e60dc92e2fea2d437328056797dc7c393b8d61e857f57afe",
+            "bytes": 1436
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 4948,
+            "wall_seconds": 25.619320154190063,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "standard",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 29,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 450,
+              "consecutive_tick_ms": {
+                "max": 0,
+                "mean": 0,
+                "p50": 0,
+                "p95": 0,
+                "p99": 0,
+                "samples": 0
+              },
+              "damage_events": 1959,
+              "duration_seconds": 15.002593,
+              "ending_units": 272,
+              "frame_count": 2021,
+              "frame_ms": {
+                "max": 20.113,
+                "mean": 7.42334933201386,
+                "p50": 5.661,
+                "p95": 14.344,
+                "p99": 16.425,
+                "samples": 2021
+              },
+              "max_pending_since_spawn": 272,
+              "max_wait_ticks_since_spawn": 11,
+              "measured_fps": 134.710046456636,
+              "name": "standard",
+              "observed_tps": 29.9948148963316,
+              "path_query_count": {
+                "max": 5.0,
+                "mean": 0.371111111111111,
+                "p50": 0.0,
+                "p95": 2.0,
+                "p99": 2.0,
+                "samples": 450
+              },
+              "path_query_ms": {
+                "max": 1.377,
+                "mean": 0.117722222222222,
+                "p50": 0.0,
+                "p95": 0.559,
+                "p99": 0.692,
+                "samples": 450
+              },
+              "physics_logic_ms": {
+                "max": 9.534,
+                "mean": 5.67276444444444,
+                "p50": 5.352,
+                "p95": 7.782,
+                "p99": 8.681,
+                "samples": 450
+              },
+              "queries_during_sample": 167,
+              "starting_units": 272,
+              "visible_units_at_end": 135,
+              "visible_units_at_start": 126
+            }
+          ]
+        },
+        {
+          "name": "combat-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/combat-1.json",
+            "sha256": "edcdaf810ab467e473588ce0b089e72c0060f02178c7c590e98875feb22d6253",
+            "bytes": 8318
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/combat-1.run.json",
+            "sha256": "c4fdf238feae5e165b7cfaa40071384b4a5697173c857df2d775f56180a6148d",
+            "bytes": 1480
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 33512,
+            "wall_seconds": 26.464272499084473,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "combat",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 29,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 402,
+              "consecutive_tick_ms": {
+                "max": 44.415,
+                "mean": 31.0083219373219,
+                "p50": 30.334,
+                "p95": 36.129,
+                "p99": 37.588,
+                "samples": 351
+              },
+              "damage_events": 2647,
+              "duration_seconds": 15.09557,
+              "ending_units": 896,
+              "frame_count": 51,
+              "frame_ms": {
+                "max": 317.604,
+                "mean": 295.991490196078,
+                "p50": 300.771,
+                "p95": 313.735,
+                "p99": 314.371,
+                "samples": 51
+              },
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 3.37847461208818,
+              "name": "combat",
+              "observed_tps": 26.6303292952833,
+              "path_query_count": {
+                "max": 18.0,
+                "mean": 5.06218905472637,
+                "p50": 5.0,
+                "p95": 12.0,
+                "p99": 15.0,
+                "samples": 402
+              },
+              "path_query_ms": {
+                "max": 5.131,
+                "mean": 1.40386069651741,
+                "p50": 1.328,
+                "p95": 3.153,
+                "p99": 3.972,
+                "samples": 402
+              },
+              "physics_logic_ms": {
+                "max": 26.882,
+                "mean": 19.3779502487562,
+                "p50": 18.674,
+                "p95": 24.251,
+                "p99": 26.094,
+                "samples": 402
+              },
+              "queries_during_sample": 2035,
+              "starting_units": 896,
+              "visible_units_at_end": 669,
+              "visible_units_at_start": 494
+            }
+          ]
+        },
+        {
+          "name": "combat-2",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/combat-2.json",
+            "sha256": "318647734cf03ef70f0e442e26f6812c2737a2d9df1265964ab7fd0c9bd50946",
+            "bytes": 8538
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/combat-2.run.json",
+            "sha256": "2b54c11697eec89d58dc757db8b449c03a276ceb22038b2ba4e94b9b7645b250",
+            "bytes": 1478
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 32584,
+            "wall_seconds": 26.860883712768555,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "combat",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 29,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 420,
+              "consecutive_tick_ms": {
+                "max": 49.184,
+                "mean": 30.4308857938719,
+                "p50": 30.12,
+                "p95": 35.864,
+                "p99": 38.603,
+                "samples": 359
+              },
+              "damage_events": 3413,
+              "duration_seconds": 15.179906,
+              "ending_units": 896,
+              "frame_count": 61,
+              "frame_ms": {
+                "max": 319.204,
+                "mean": 248.850868852459,
+                "p50": 285.704,
+                "p95": 309.376,
+                "p99": 316.846,
+                "samples": 61
+              },
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 4.01847020660075,
+              "name": "combat",
+              "observed_tps": 27.6681555208576,
+              "path_query_count": {
+                "max": 24.0,
+                "mean": 11.9785714285714,
+                "p50": 12.0,
+                "p95": 23.0,
+                "p99": 24.0,
+                "samples": 420
+              },
+              "path_query_ms": {
+                "max": 9.345,
+                "mean": 3.1725119047619,
+                "p50": 3.203,
+                "p95": 6.141,
+                "p99": 6.409,
+                "samples": 420
+              },
+              "physics_logic_ms": {
+                "max": 36.707,
+                "mean": 20.2558476190476,
+                "p50": 20.07,
+                "p95": 25.288,
+                "p99": 28.136,
+                "samples": 420
+              },
+              "queries_during_sample": 5031,
+              "starting_units": 896,
+              "visible_units_at_end": 309,
+              "visible_units_at_start": 445
+            }
+          ]
+        },
+        {
+          "name": "march-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/march-1.json",
+            "sha256": "84557e6b6f104d4c4aaa5323e21bbc13144bb128866e531ba4dcb46e8c095a16",
+            "bytes": 10046
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/march-1.run.json",
+            "sha256": "3f1c8fdf90637ce5142c0d56d07c6c4390e81eab0b0bcdbbc3def741a86e0af4",
+            "bytes": 1457
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 37328,
+            "wall_seconds": 26.161706686019897,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "march",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 29,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 450,
+              "consecutive_tick_ms": {
+                "max": 25.98,
+                "mean": 19.5951265822785,
+                "p50": 19.401,
+                "p95": 20.795,
+                "p99": 23.563,
+                "samples": 79
+              },
+              "damage_events": 0,
+              "duration_seconds": 15.002429,
+              "ending_units": 896,
+              "frame_count": 371,
+              "frame_ms": {
+                "max": 66.681,
+                "mean": 40.4378032345013,
+                "p50": 36.615,
+                "p95": 61.236,
+                "p99": 64.676,
+                "samples": 371
+              },
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 24.7293288306847,
+              "name": "march",
+              "observed_tps": 29.9951427865448,
+              "path_query_count": {
+                "max": 8.0,
+                "mean": 2.61555555555556,
+                "p50": 2.0,
+                "p95": 6.0,
+                "p99": 8.0,
+                "samples": 450
+              },
+              "path_query_ms": {
+                "max": 2.446,
+                "mean": 0.83376,
+                "p50": 0.692,
+                "p95": 1.822,
+                "p99": 2.343,
+                "samples": 450
+              },
+              "physics_logic_ms": {
+                "max": 17.587,
+                "mean": 10.6678688888889,
+                "p50": 9.872,
+                "p95": 15.288,
+                "p99": 16.526,
+                "samples": 450
+              },
+              "queries_during_sample": 1177,
+              "starting_units": 896,
+              "visible_units_at_end": 335,
+              "visible_units_at_start": 283
+            }
+          ]
+        },
+        {
+          "name": "detour-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/detour-1.json",
+            "sha256": "4a819186637b8c89d59cf8f37ebbe3a472ae6caa2702dcd102fa9a3e12b10e26",
+            "bytes": 9871
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline/detour-1.run.json",
+            "sha256": "bbde27e3ded410a952e3f9244adae0b6a66f879ad8671f4e96f9ebbcc60c517e",
+            "bytes": 1474
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 37668,
+            "wall_seconds": 26.259315252304077,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "detour",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 29,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 450,
+              "consecutive_tick_ms": {
+                "max": 30.415,
+                "mean": 21.7434981949459,
+                "p50": 21.147,
+                "p95": 26.383,
+                "p99": 27.693,
+                "samples": 277
+              },
+              "damage_events": 0,
+              "duration_seconds": 15.001375,
+              "ending_units": 896,
+              "frame_count": 173,
+              "frame_ms": {
+                "max": 135.938,
+                "mean": 86.7131329479769,
+                "p50": 91.243,
+                "p95": 114.896,
+                "p99": 133.684,
+                "samples": 173
+              },
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 11.5322762080143,
+              "name": "detour",
+              "observed_tps": 29.9972502520602,
+              "path_query_count": {
+                "max": 8.0,
+                "mean": 2.52444444444444,
+                "p50": 2.0,
+                "p95": 6.0,
+                "p99": 7.0,
+                "samples": 450
+              },
+              "path_query_ms": {
+                "max": 3.202,
+                "mean": 1.01696222222222,
+                "p50": 0.866,
+                "p95": 2.292,
+                "p99": 2.774,
+                "samples": 450
+              },
+              "physics_logic_ms": {
+                "max": 20.484,
+                "mean": 12.1636311111111,
+                "p50": 11.445,
+                "p95": 16.764,
+                "p99": 18.056,
+                "samples": 450
+              },
+              "queries_during_sample": 1136,
+              "starting_units": 896,
+              "visible_units_at_end": 530,
+              "visible_units_at_start": 519
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/candidate/manifest.json",
+        "sha256": "5b7db1ffbb114573eba7d9af71d7684d323ae4a0120d889bba186ec655910cd7",
+        "bytes": 75872
+      },
+      "pack_manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/candidate/pack_manifest.json",
+        "sha256": "f6819549ddc9bc287f81d73a2a828ee552e61eb4b34e2c1cfa381c67b52e8892",
+        "bytes": 299667
+      },
+      "source_hashes_at_pack": {
+        "default_bus_layout.tres": "3557482ceccc47016701b04ef6508469e3da370906cfa7a390276f438f906fad",
+        "project.godot": "dab3766a1ba71eca94e5bb79273a42bbc4f7b453edc54aee62a133cd496de6b4",
+        "scenes/main.tscn": "a338f9e4fd385f788d496b4aa0ee7f8be278194b011a1fbf4ba7deb4fbfdeb09",
+        "scenes/maps/four_banners_4v4.tscn": "e7c42bcef3f5703e1715f2ce91c287707620bf8e85f0b11b345d5b6f6feddee0",
+        "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+        "scripts/battle_unit.gd": "aa8897cd0fb1486243bc4780d0c7f4a23ad73e1a1bab5c06053aa23bffdfc51b",
+        "scripts/game.gd": "c64f39250c112aaad7870eb645d246649c7c8c91fd6ca0469bba07edd81de5c2",
+        "scripts/navigation/movement_plan.gd": "9122a9bc1a491295c7687c3e68021e91c73e5ccd352cc775bc0cbd288a37ec11",
+        "scripts/navigation/movement_plan.gd.uid": "93b2d80596306cf7b87bfeff28539e31a8533f5cf8cb7f23dd3fb80217fd3677",
+        "scripts/navigation/shared_flow_field.gd": "ba140299336f7c19939cd4861806a24c0df9c4b477c60dc81ede46ab175dc983",
+        "scripts/navigation/shared_flow_field.gd.uid": "e147b06960c13f718db4102edaf9494b495db15c280d0ed93952705dff2d9c24",
+        "scripts/navigation/shared_path_service.gd": "1936dc4ca5a33f83bc35cf144b044571aa8c054ed7c56c7ddba094234a813f1c",
+        "scripts/navigation/shared_path_service.gd.uid": "266431c0eab169ce5b5f18608290d23397a32341aa8a4d3525ab607673eff7e7",
+        "scripts/navigation/static_motion_grid.gd": "5db19ced6a9bc6a049ce8ada3b9c5c15c338f89f15a94751c739fd2a63e6f444",
+        "scripts/navigation/static_motion_grid.gd.uid": "ade9c3920938e50abebd604bab8142ef0a6aa66f4f941cca069b650b4e1adf10",
+        "scripts/path_budget.gd": "3507dca82d4011cd35d60a1d2ad325adb9af87d6c5f209af7d6dd5da305f8775"
+      },
+      "runs": [
+        {
+          "name": "standard-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/standard-1.json",
+            "sha256": "1894f882e28977a0b5a7baa7aec757eb382d808075deb1b458269b15d6fbe1c1",
+            "bytes": 11724
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/standard-1.run.json",
+            "sha256": "938b571eb63f1f34bf3447bfb1aede660570ed67a083eeeefb0121cb22e780c1",
+            "bytes": 3883
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 18804,
+            "wall_seconds": 26.586638927459717,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "standard",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 30,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 450,
+              "consecutive_tick_ms": {
+                "max": 0,
+                "mean": 0,
+                "p50": 0,
+                "p95": 0,
+                "p99": 0,
+                "samples": 0
+              },
+              "counters_after": {
+                "fast_steps": 64019,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 595,
+                "native_steps": 684,
+                "shared_enabled": true,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "counters_before": {
+                "fast_steps": 29147,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 346,
+                "native_steps": 523,
+                "shared_enabled": true,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "damage_events": 1846,
+              "duration_seconds": 15.001595,
+              "ending_units": 272,
+              "frame_count": 1962,
+              "frame_ms": {
+                "max": 21.058,
+                "mean": 7.64607084607543,
+                "p50": 5.775,
+                "p95": 14.736,
+                "p99": 16.537,
+                "samples": 1962
+              },
+              "implementation_variant": "full",
+              "max_pending_since_spawn": 272,
+              "max_wait_ticks_since_spawn": 11,
+              "measured_fps": 130.786093078769,
+              "name": "standard",
+              "observed_tps": 29.9968103391673,
+              "path_query_count": {
+                "max": 5.0,
+                "mean": 0.553333333333333,
+                "p50": 0.0,
+                "p95": 2.0,
+                "p99": 3.0,
+                "samples": 450
+              },
+              "path_query_ms": {
+                "max": 1.429,
+                "mean": 0.175955555555556,
+                "p50": 0.0,
+                "p95": 0.654,
+                "p99": 1.107,
+                "samples": 450
+              },
+              "physics_logic_ms": {
+                "max": 10.943,
+                "mean": 5.90658888888889,
+                "p50": 5.64,
+                "p95": 7.966,
+                "p99": 8.562,
+                "samples": 450
+              },
+              "queries_during_sample": 249,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 0,
+                  "mean": 0,
+                  "p50": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "samples": 0
+                },
+                "idle": 0,
+                "moving": 0,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 0,
+                "within_arrival_distance": 0
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 0,
+                  "mean": 0,
+                  "p50": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "samples": 0
+                },
+                "idle": 0,
+                "moving": 0,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 0,
+                "within_arrival_distance": 0
+              },
+              "shared_samples_per_tick": {
+                "max": 0.0,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "samples": 450
+              },
+              "starting_units": 272,
+              "ticks_with_shared_and_native_queries": 0,
+              "visible_units_at_end": 127,
+              "visible_units_at_start": 129
+            }
+          ]
+        },
+        {
+          "name": "combat-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/combat-1.json",
+            "sha256": "7ae332a3e1839aa5af9694dd34e3b181474a99b815341b400b1ea6395f8b4cfa",
+            "bytes": 10681
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/combat-1.run.json",
+            "sha256": "ebb4001acd13bbf5e906961b3d4f7cfae4c1a67981a5090352169c73513c78de",
+            "bytes": 3921
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 4848,
+            "wall_seconds": 26.676488876342773,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "combat",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 30,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 395,
+              "consecutive_tick_ms": {
+                "max": 41.987,
+                "mean": 32.5797813411079,
+                "p50": 32.401,
+                "p95": 38.47,
+                "p99": 40.678,
+                "samples": 343
+              },
+              "counters_after": {
+                "fast_steps": 412992,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 5385,
+                "native_steps": 15057,
+                "shared_enabled": true,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "counters_before": {
+                "fast_steps": 125564,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 986,
+                "native_steps": 682,
+                "shared_enabled": true,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "damage_events": 2817,
+              "duration_seconds": 15.26055,
+              "ending_units": 896,
+              "frame_count": 52,
+              "frame_ms": {
+                "max": 342.052,
+                "mean": 293.471788461538,
+                "p50": 307.586,
+                "p95": 332.075,
+                "p99": 339.436,
+                "samples": 52
+              },
+              "implementation_variant": "full",
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 3.40747876059513,
+              "name": "combat",
+              "observed_tps": 25.8837328929822,
+              "path_query_count": {
+                "max": 24.0,
+                "mean": 11.1367088607595,
+                "p50": 12.0,
+                "p95": 24.0,
+                "p99": 24.0,
+                "samples": 395
+              },
+              "path_query_ms": {
+                "max": 6.716,
+                "mean": 2.95531139240506,
+                "p50": 3.067,
+                "p95": 6.165,
+                "p99": 6.633,
+                "samples": 395
+              },
+              "physics_logic_ms": {
+                "max": 30.207,
+                "mean": 21.2442,
+                "p50": 21.148,
+                "p95": 26.995,
+                "p99": 29.416,
+                "samples": 395
+              },
+              "queries_during_sample": 4399,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 0,
+                  "mean": 0,
+                  "p50": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "samples": 0
+                },
+                "idle": 0,
+                "moving": 0,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 0,
+                "within_arrival_distance": 0
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 0,
+                  "mean": 0,
+                  "p50": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "samples": 0
+                },
+                "idle": 0,
+                "moving": 0,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 0,
+                "within_arrival_distance": 0
+              },
+              "shared_samples_per_tick": {
+                "max": 0.0,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "samples": 395
+              },
+              "starting_units": 896,
+              "ticks_with_shared_and_native_queries": 0,
+              "visible_units_at_end": 522,
+              "visible_units_at_start": 481
+            }
+          ]
+        },
+        {
+          "name": "combat-no_grid-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/combat-no_grid-1.json",
+            "sha256": "0570178ab0e8281f4b6093228d8c9c50df8f916574fca42c9dc8f8bf85052bb4",
+            "bytes": 10471
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/combat-no_grid-1.run.json",
+            "sha256": "6516d0e70a5705cefd88e81b773e154ed811b08b14cdc24d2ecdc280793c908e",
+            "bytes": 3928
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 47040,
+            "wall_seconds": 26.75330948829651,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "combat",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 30,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 388,
+              "consecutive_tick_ms": {
+                "max": 43.64,
+                "mean": 32.2531479289941,
+                "p50": 32.081,
+                "p95": 38.126,
+                "p99": 39.899,
+                "samples": 338
+              },
+              "counters_after": {
+                "fast_steps": 0,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": false,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 3502,
+                "native_steps": 420514,
+                "shared_enabled": true,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "counters_before": {
+                "fast_steps": 0,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": false,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 985,
+                "native_steps": 126497,
+                "shared_enabled": true,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "damage_events": 2975,
+              "duration_seconds": 15.040518,
+              "ending_units": 896,
+              "frame_count": 50,
+              "frame_ms": {
+                "max": 343.664,
+                "mean": 300.81028,
+                "p50": 308.319,
+                "p95": 336.664,
+                "p99": 341.555,
+                "samples": 50
+              },
+              "implementation_variant": "no_grid",
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 3.3243535894176,
+              "name": "combat",
+              "observed_tps": 25.7969838538806,
+              "path_query_count": {
+                "max": 21.0,
+                "mean": 6.48711340206186,
+                "p50": 6.0,
+                "p95": 15.0,
+                "p99": 18.0,
+                "samples": 388
+              },
+              "path_query_ms": {
+                "max": 6.291,
+                "mean": 1.83064175257732,
+                "p50": 1.634,
+                "p95": 4.284,
+                "p99": 5.267,
+                "samples": 388
+              },
+              "physics_logic_ms": {
+                "max": 37.791,
+                "mean": 20.5860206185567,
+                "p50": 20.198,
+                "p95": 26.172,
+                "p99": 29.053,
+                "samples": 388
+              },
+              "queries_during_sample": 2517,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 0,
+                  "mean": 0,
+                  "p50": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "samples": 0
+                },
+                "idle": 0,
+                "moving": 0,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 0,
+                "within_arrival_distance": 0
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 0,
+                  "mean": 0,
+                  "p50": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "samples": 0
+                },
+                "idle": 0,
+                "moving": 0,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 0,
+                "within_arrival_distance": 0
+              },
+              "shared_samples_per_tick": {
+                "max": 0.0,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "samples": 388
+              },
+              "starting_units": 896,
+              "ticks_with_shared_and_native_queries": 0,
+              "visible_units_at_end": 774,
+              "visible_units_at_start": 479
+            }
+          ]
+        },
+        {
+          "name": "march-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/march-1.json",
+            "sha256": "1f3b23f17b13a0c4f239876a8ed1f00f0c995a68935849e953bcdadbefb3cb6c",
+            "bytes": 12645
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/march-1.run.json",
+            "sha256": "7c643c2ca568f17a443a2bce01443783cabe7146943762e3afbd1bc9d25cdcfb",
+            "bytes": 4132
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 37116,
+            "wall_seconds": 26.33690905570984,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "march",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 30,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 452,
+              "consecutive_tick_ms": {
+                "max": 26.08,
+                "mean": 20.6836261682243,
+                "p50": 20.267,
+                "p95": 25.121,
+                "p99": 25.617,
+                "samples": 107
+              },
+              "counters_after": {
+                "fast_steps": 460310,
+                "field_cache_hits": 4,
+                "fields_built": 4,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 2,
+                "last_field_build_worker_usec": 269166,
+                "native_queries": 2351,
+                "native_steps": 31924,
+                "shared_enabled": true,
+                "shared_samples": 80821,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 560622
+              },
+              "counters_before": {
+                "fast_steps": 125944,
+                "field_cache_hits": 4,
+                "fields_built": 4,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 2,
+                "last_field_build_worker_usec": 269166,
+                "native_queries": 928,
+                "native_steps": 4623,
+                "shared_enabled": true,
+                "shared_samples": 51286,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 560622
+              },
+              "damage_events": 0,
+              "duration_seconds": 15.045928,
+              "ending_units": 896,
+              "frame_count": 345,
+              "frame_ms": {
+                "max": 67.817,
+                "mean": 43.6113768115942,
+                "p50": 38.921,
+                "p95": 63.227,
+                "p99": 66.887,
+                "samples": 345
+              },
+              "implementation_variant": "full",
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 24,
+              "measured_fps": 22.9297920340972,
+              "name": "march",
+              "observed_tps": 30.0413507229331,
+              "path_query_count": {
+                "max": 12.0,
+                "mean": 3.14823008849558,
+                "p50": 3.0,
+                "p95": 6.0,
+                "p99": 9.0,
+                "samples": 452
+              },
+              "path_query_ms": {
+                "max": 3.561,
+                "mean": 0.993756637168141,
+                "p50": 0.965,
+                "p95": 1.854,
+                "p99": 2.641,
+                "samples": 452
+              },
+              "physics_logic_ms": {
+                "max": 17.514,
+                "mean": 11.6237123893805,
+                "p50": 10.895,
+                "p95": 15.982,
+                "p99": 16.53,
+                "samples": 452
+              },
+              "queries_during_sample": 1423,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 108.270362854004,
+                  "mean": 49.3150219565257,
+                  "p50": 55.0573043823242,
+                  "p95": 79.2115325927734,
+                  "p99": 93.1870193481445,
+                  "samples": 800
+                },
+                "idle": 4,
+                "moving": 793,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 5
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 130.432647705078,
+                  "mean": 86.3783775472641,
+                  "p50": 82.1167602539063,
+                  "p95": 115.575607299805,
+                  "p99": 121.738403320313,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 796,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "shared_samples_per_tick": {
+                "max": 201.0,
+                "mean": 65.3429203539823,
+                "p50": 63.0,
+                "p95": 152.0,
+                "p99": 187.0,
+                "samples": 452
+              },
+              "starting_units": 896,
+              "ticks_with_shared_and_native_queries": 421,
+              "visible_units_at_end": 343,
+              "visible_units_at_start": 272
+            }
+          ]
+        },
+        {
+          "name": "detour-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/detour-1.json",
+            "sha256": "9804e8a9b3b2eda00a298ec7558c61e1b85a59596abc61e3cbe464d6cb383703",
+            "bytes": 12465
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/detour-1.run.json",
+            "sha256": "995dac171b901693782b8dbf5504442e006b30370d6dbcc9a6135c61d05f9019",
+            "bytes": 4143
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 5480,
+            "wall_seconds": 26.32619833946228,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "detour",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 30,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 450,
+              "consecutive_tick_ms": {
+                "max": 30.379,
+                "mean": 23.2031588785047,
+                "p50": 22.817,
+                "p95": 27.856,
+                "p99": 28.913,
+                "samples": 321
+              },
+              "counters_after": {
+                "fast_steps": 460039,
+                "field_cache_hits": 0,
+                "fields_built": 8,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 284432,
+                "native_queries": 2596,
+                "native_steps": 32389,
+                "shared_enabled": true,
+                "shared_samples": 192361,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 2180872
+              },
+              "counters_before": {
+                "fast_steps": 129582,
+                "field_cache_hits": 0,
+                "fields_built": 8,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 284432,
+                "native_queries": 1200,
+                "native_steps": 2776,
+                "shared_enabled": true,
+                "shared_samples": 95849,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 2180872
+              },
+              "damage_events": 0,
+              "duration_seconds": 15.000235,
+              "ending_units": 896,
+              "frame_count": 129,
+              "frame_ms": {
+                "max": 165.602,
+                "mean": 116.280759689922,
+                "p50": 110.602,
+                "p95": 141.044,
+                "p99": 150.051,
+                "samples": 129
+              },
+              "implementation_variant": "full",
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 33,
+              "measured_fps": 8.59986526877746,
+              "name": "detour",
+              "observed_tps": 29.9995300073632,
+              "path_query_count": {
+                "max": 10.0,
+                "mean": 3.10222222222222,
+                "p50": 3.0,
+                "p95": 6.0,
+                "p99": 8.0,
+                "samples": 450
+              },
+              "path_query_ms": {
+                "max": 3.751,
+                "mean": 1.20607555555555,
+                "p50": 1.154,
+                "p95": 2.472,
+                "p99": 2.914,
+                "samples": 450
+              },
+              "physics_logic_ms": {
+                "max": 20.346,
+                "mean": 13.7959133333333,
+                "p50": 13.222,
+                "p95": 18.399,
+                "p99": 19.692,
+                "samples": 450
+              },
+              "queries_during_sample": 1396,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 120.606163024902,
+                  "mean": 69.2817173957825,
+                  "p50": 71.1337127685547,
+                  "p95": 109.383163452148,
+                  "p99": 115.209976196289,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 798,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 137.090896606445,
+                  "mean": 99.1585692071915,
+                  "p50": 82.0253067016602,
+                  "p95": 130.075057983398,
+                  "p99": 132.997329711914,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 799,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "shared_samples_per_tick": {
+                "max": 499.0,
+                "mean": 214.471111111111,
+                "p50": 190.0,
+                "p95": 446.0,
+                "p99": 485.0,
+                "samples": 450
+              },
+              "starting_units": 896,
+              "ticks_with_shared_and_native_queries": 417,
+              "visible_units_at_end": 694,
+              "visible_units_at_start": 545
+            }
+          ]
+        },
+        {
+          "name": "detour-no_shared-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/detour-no_shared-1.json",
+            "sha256": "e9bc1f61b3ee17d8b61b75c01fee8b8240ec6839621b4b7d0cf42ef304898c25",
+            "bytes": 12410
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/candidate/detour-no_shared-1.run.json",
+            "sha256": "f67012855aead418af8901e47d0452605aa66950d28ed9a3b0da89a472742e59",
+            "bytes": 4099
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 40004,
+            "wall_seconds": 26.93339729309082,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "detour",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 30,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 451,
+              "consecutive_tick_ms": {
+                "max": 27.159,
+                "mean": 21.07048046875,
+                "p50": 20.419,
+                "p95": 25.942,
+                "p99": 26.729,
+                "samples": 256
+              },
+              "counters_after": {
+                "fast_steps": 480977,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 2127,
+                "native_steps": 8132,
+                "shared_enabled": false,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "counters_before": {
+                "fast_steps": 127373,
+                "field_cache_hits": 0,
+                "fields_built": 0,
+                "grid_current": true,
+                "grid_enabled": true,
+                "grid_obstacles": 414,
+                "grid_rebuild_count": 1,
+                "grid_unavailable_reason": "",
+                "invalid_fields": 0,
+                "last_field_build_worker_usec": 0,
+                "native_queries": 981,
+                "native_steps": 916,
+                "shared_enabled": false,
+                "shared_samples": 0,
+                "stale_fields": 0,
+                "total_field_build_worker_usec": 0
+              },
+              "damage_events": 0,
+              "duration_seconds": 15.014766,
+              "ending_units": 896,
+              "frame_count": 195,
+              "frame_ms": {
+                "max": 112.419,
+                "mean": 76.9987846153846,
+                "p50": 72.754,
+                "p95": 104.08,
+                "p99": 111.034,
+                "samples": 195
+              },
+              "implementation_variant": "no_shared",
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 12.9872153851748,
+              "name": "detour",
+              "observed_tps": 30.0370981472505,
+              "path_query_count": {
+                "max": 10.0,
+                "mean": 2.5410199556541,
+                "p50": 2.0,
+                "p95": 6.0,
+                "p99": 8.0,
+                "samples": 451
+              },
+              "path_query_ms": {
+                "max": 4.671,
+                "mean": 1.01095121951219,
+                "p50": 0.862,
+                "p95": 2.242,
+                "p99": 2.814,
+                "samples": 451
+              },
+              "physics_logic_ms": {
+                "max": 19.831,
+                "mean": 12.2430199556541,
+                "p50": 11.542,
+                "p95": 16.711,
+                "p99": 17.742,
+                "samples": 451
+              },
+              "queries_during_sample": 1146,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 130.644439697266,
+                  "mean": 72.7074054288864,
+                  "p50": 75.5551834106445,
+                  "p95": 116.604164123535,
+                  "p99": 123.362686157227,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 799,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 140.207733154297,
+                  "mean": 102.141634912491,
+                  "p50": 82.7265853881836,
+                  "p95": 136.314102172852,
+                  "p99": 138.181167602539,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 800,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "shared_samples_per_tick": {
+                "max": 0.0,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "samples": 451
+              },
+              "starting_units": 896,
+              "ticks_with_shared_and_native_queries": 0,
+              "visible_units_at_end": 595,
+              "visible_units_at_start": 511
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "baseline_progress",
+      "manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/baseline_progress/manifest.json",
+        "sha256": "06fe31f1b8d11fbaaa19ad2b93a6a8bceb42045b14cbeef34ebb1320e0e4d6aa",
+        "bytes": 74824
+      },
+      "pack_manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/baseline_progress/pack_manifest.json",
+        "sha256": "bf55a2d93db2dc0aecf293693ecb40022d7ea5e15460cfcdb313e572335558c4",
+        "bytes": 303298
+      },
+      "source_hashes_at_pack": {
+        "default_bus_layout.tres": "3557482ceccc47016701b04ef6508469e3da370906cfa7a390276f438f906fad",
+        "project.godot": "dab3766a1ba71eca94e5bb79273a42bbc4f7b453edc54aee62a133cd496de6b4",
+        "scenes/main.tscn": "ce4c187d086f0817e6c00c108041f3defba8190ac26af6e89c10b8351376a648",
+        "scenes/maps/four_banners_4v4.tscn": "e7c42bcef3f5703e1715f2ce91c287707620bf8e85f0b11b345d5b6f6feddee0",
+        "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+        "scripts/battle_unit.gd": "3bf0d117091a9f5a8b98efc1ef11de3ed057df73841b19d768f853814ce15e2b",
+        "scripts/game.gd": "27f53baf5905c4aea9472cb867f03ca8c03df5b1889ced083acf87f47438d6b6",
+        "scripts/path_budget.gd": "f40c1f557389601eff20fadc3efcab2b22ca72c3b3bbd230a5a07e16eb1d9143"
+      },
+      "runs": [
+        {
+          "name": "detour-1",
+          "result_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline_progress/detour-1.json",
+            "sha256": "c2f564ac16978d66285d9dafb4d429825fac5199da897574c7a2e0f26fc18d61",
+            "bytes": 11044
+          },
+          "metadata_file": {
+            "path": ".local/rts-implementation-perf-20260910/baseline_progress/detour-1.run.json",
+            "sha256": "c3089ae06de73c63f36b43cd3560e576117eabb4af45d2fc0b4023ee46dae482",
+            "bytes": 2686
+          },
+          "run": {
+            "exit_code": 0,
+            "pid": 41536,
+            "wall_seconds": 27.351549863815308,
+            "timed_out": false,
+            "process_exit_verified": true
+          },
+          "conditions": {
+            "godot": "4.6.3-stable (official)",
+            "gpu": "NVIDIA GeForce RTX 3080",
+            "gpu_timing": null,
+            "conditions": "Official 4.6.3 release template; native 4v4; bots/income stopped; HP x100 only; real navigation, RVO, movement, models, animation, fog, work, effects and audio. 272 mixed or 896 light+worker roster. No network clients. Native saved priority markers; no unit wrappers.",
+            "metrics": "Frame intervals are wall-clock presentation spacing. SceneTree marker excludes other engine physics/navigation work. Consecutive tick intervals include adjacent full tick segments in one rendered frame, but are not independently timestamped engine begin/end. GPU timing was not collected.",
+            "scenario": "detour",
+            "rendered": true,
+            "renderer": "forward_plus",
+            "viewport_size": "(1600.0, 900.0)",
+            "window_size": "(1600, 900)",
+            "msaa_3d": 2,
+            "taa": true,
+            "shadow_atlas_size": 4096,
+            "physics_ticks_per_second": 30,
+            "physics_interpolation": true,
+            "warmup_seconds": 6.0,
+            "sample_seconds": 15.0,
+            "checks": 29,
+            "failures": []
+          },
+          "phases": [
+            {
+              "authority_ticks": 451,
+              "consecutive_tick_ms": {
+                "max": 26.283,
+                "mean": 20.5301759656652,
+                "p50": 19.956,
+                "p95": 25.157,
+                "p99": 25.744,
+                "samples": 233
+              },
+              "damage_events": 0,
+              "duration_seconds": 15.030204,
+              "ending_units": 896,
+              "frame_count": 218,
+              "frame_ms": {
+                "max": 102.748,
+                "mean": 68.9458669724771,
+                "p50": 67.03,
+                "p95": 97.082,
+                "p99": 99.893,
+                "samples": 218
+              },
+              "max_pending_since_spawn": 896,
+              "max_wait_ticks_since_spawn": 37,
+              "measured_fps": 14.5041278215519,
+              "name": "detour",
+              "observed_tps": 30.0062460895408,
+              "path_query_count": {
+                "max": 10.0,
+                "mean": 2.50332594235033,
+                "p50": 2.0,
+                "p95": 6.0,
+                "p99": 7.0,
+                "samples": 451
+              },
+              "path_query_ms": {
+                "max": 3.755,
+                "mean": 0.995880266075388,
+                "p50": 0.878,
+                "p95": 2.257,
+                "p99": 2.702,
+                "samples": 451
+              },
+              "physics_logic_ms": {
+                "max": 17.578,
+                "mean": 11.715667405765,
+                "p50": 11.018,
+                "p95": 16.101,
+                "p99": 16.55,
+                "samples": 451
+              },
+              "queries_during_sample": 1129,
+              "route_progress_after": {
+                "distance_to_original_slot": {
+                  "max": 130.120483398438,
+                  "mean": 72.1274598264694,
+                  "p50": 73.9452514648438,
+                  "p95": 116.030891418457,
+                  "p99": 121.363128662109,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 800,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "route_progress_before": {
+                "distance_to_original_slot": {
+                  "max": 140.268753051758,
+                  "mean": 102.26763882637,
+                  "p50": 82.8358688354492,
+                  "p95": 136.407562255859,
+                  "p99": 138.182678222656,
+                  "samples": 800
+                },
+                "idle": 0,
+                "moving": 800,
+                "note": "Measured once outside each sample boundary. Original per-unit formation slots are immutable; no requirement that long routes complete within 21 wall-clock seconds.",
+                "recorded_military": 800,
+                "within_arrival_distance": 0
+              },
+              "starting_units": 896,
+              "visible_units_at_end": 539,
+              "visible_units_at_start": 506
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "unmeasured_candidates": [
+    {
+      "candidate": 2,
+      "change": "valid adjacent flow edges may use actual physical sweep certificate after conservative navigation-rectangle rejection",
+      "rendered_896_fps": null,
+      "rendered_896_tps": null,
+      "status": "frozen pack exists; no rendered run result",
+      "manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/candidate2/manifest.json",
+        "sha256": "8a3dfcde3a165f4bae4629f093d10a3faee95ad38664a85f42f3f2cbda7510db",
+        "bytes": 75803
+      },
+      "pack_manifest_file": {
+        "path": ".local/rts-implementation-perf-20260910/candidate2/pack_manifest.json",
+        "sha256": "33822ab0c0f57dadc9003cdc599b95ab1bf31e264301bcbc475394e4cfafc7c7",
+        "bytes": 300346
+      }
+    },
+    {
+      "candidate": 3,
+      "change": "unit-local 2m center-region positive and negative motion certificates",
+      "rendered_896_fps": null,
+      "rendered_896_tps": null,
+      "status": "microdiagnostic only; no rendered run result"
+    }
+  ]
+}

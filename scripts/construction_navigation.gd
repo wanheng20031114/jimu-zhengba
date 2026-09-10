@@ -26,6 +26,7 @@ var _corridor_origin := Vector2i.ZERO
 var _corridor_size := Vector2i.ZERO
 var _corridor_stride: int = 0
 var _blocked_prefix := PackedInt32Array()
+var _flow_blocked := PackedByteArray()
 
 class MeshJob extends RefCounted:
 	var revision: int
@@ -125,6 +126,14 @@ func is_rebuilding() -> bool:
 	# its normal asynchronous region/map iterations after this task finishes.
 	return _task_id >= 0
 
+func topology_revision() -> int:
+	return _revision
+
+func flow_snapshot() -> Dictionary:
+	# Packed arrays use copy-on-write. Rebuild allocates a new buffer before
+	# editing, so worker tasks keep a stable immutable navigation snapshot.
+	return {"blocked": _flow_blocked, "origin": _corridor_origin, "size": _corridor_size}
+
 func _exit_tree() -> void:
 	# A scene cannot release its resource inputs while its own task is active.
 	if _task_id >= 0:
@@ -223,6 +232,7 @@ func _rebuild_corridor_prefix() -> void:
 	# Publish it with the logical footprint, before asynchronous mesh baking;
 	# a newly placed building therefore blocks direct pursuit immediately.
 	_blocked_prefix.clear()
+	_flow_blocked = PackedByteArray()
 	_corridor_size = Vector2i.ZERO
 	if _walkable_cells.is_empty():
 		return
@@ -234,6 +244,8 @@ func _rebuild_corridor_prefix() -> void:
 	_corridor_origin = low
 	_corridor_size = high - low + Vector2i.ONE
 	_corridor_stride = _corridor_size.x + 1
+	_flow_blocked.resize(_corridor_size.x * _corridor_size.y)
+	_flow_blocked.fill(0)
 	_blocked_prefix.resize(_corridor_stride * (_corridor_size.y + 1))
 	_blocked_prefix.fill(0)
 	for z: int in range(_corridor_size.y):
@@ -243,6 +255,7 @@ func _rebuild_corridor_prefix() -> void:
 		for x: int in range(_corridor_size.x):
 			if not _walkable_cells.has(_corridor_origin + Vector2i(x, z)):
 				blocked_in_row += 1
+				_flow_blocked[z * _corridor_size.x + x] = 1
 			_blocked_prefix[current_row + x + 1] = _blocked_prefix[previous_row + x + 1] + blocked_in_row
 
 func has_clear_corridor(from: Vector3, to: Vector3, body_radius: float) -> bool:

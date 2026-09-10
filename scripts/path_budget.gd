@@ -6,6 +6,9 @@ extends Node
 ## https://docs.godotengine.org/en/stable/classes/class_navigationagent3d.html
 
 @export_range(1, 64, 1) var queries_per_tick: int = 24
+# Opt in during controlled profiling. Correctness alone is not evidence that
+# the shared GDScript follower beats native navigation in a complete battle.
+@export var shared_paths_enabled: bool = false
 const DIRECT_PURSUIT_DISTANCE: float = 20.0
 
 class Route extends RefCounted:
@@ -23,6 +26,8 @@ class Route extends RefCounted:
 	var waiting_for_map: bool = false
 	var generation: int = 0
 	var direct: bool = false
+	var plan: MovementPlan
+	var shared_following: bool = false
 
 var queries_this_tick: int = 0
 var query_usec_this_tick: int = 0
@@ -35,6 +40,9 @@ var _queue: Array[Array] = []
 var _head: int = 0
 var _serial: int = 0
 var _walkability: ConstructionNavigation
+var shared_samples_this_tick: int = 0
+var total_shared_samples: int = 0
+var shared_paths := SharedPathService.new()
 
 func set_walkability(navigation: ConstructionNavigation) -> void:
 	# Authored battlefields publish an authoritative footprint cache. A scene
@@ -47,7 +55,7 @@ func try_direct_pursuit(unit: BattleUnit, at: Vector3) -> bool:
 		if route.direct:
 			cancel(unit)
 		return false
-	if route.active or route.pending or route.waiting_for_map:
+	if route.active or route.pending or route.waiting_for_map or route.plan != null:
 		# Cancel the old corridor and its queued generation once when local
 		# steering takes over; a superseded A* must not consume the next budget.
 		cancel(unit)
@@ -71,6 +79,8 @@ func unregister(unit: BattleUnit) -> void:
 
 func request(unit: BattleUnit, at: Vector3) -> void:
 	var route: Route = _routes[unit.get_instance_id()]
+	route.plan = null
+	route.shared_following = false
 	route.direct = false
 	at.y = 0.0
 	if (route.pending or route.active or route.waiting_for_map) and route.goal.distance_squared_to(at) < 0.0025:
@@ -78,8 +88,21 @@ func request(unit: BattleUnit, at: Vector3) -> void:
 	route.goal = at
 	_enqueue(unit.get_instance_id(), route)
 
+func request_shared(unit: BattleUnit, at: Vector3, plan: MovementPlan) -> void:
+	# Native paths remain responsive while the shared field is being built.
+	# A formation's final per-unit destination is never replaced by its center.
+	request(unit, at)
+	_routes[unit.get_instance_id()].plan = plan
+
+func release_shared_plan(unit: BattleUnit) -> void:
+	# An explicit attack no longer owns a group command. If the old shared
+	# route is needed again, next_position performs the native handoff once.
+	_routes[unit.get_instance_id()].plan = null
+
 func cancel(unit: BattleUnit) -> void:
 	var route: Route = _routes[unit.get_instance_id()]
+	route.plan = null
+	route.shared_following = false
 	route.direct = false
 	route.pending = false
 	route.waiting_for_map = false
@@ -102,7 +125,7 @@ func target_position(unit: BattleUnit) -> Vector3:
 
 func is_finished(unit: BattleUnit) -> bool:
 	var route: Route = _routes[unit.get_instance_id()]
-	return route.finished and not route.pending and not route.waiting_for_map
+	return not route.shared_following and route.finished and not route.pending and not route.waiting_for_map
 
 func pending_count() -> int:
 	var count: int = 0
@@ -124,7 +147,10 @@ func _enqueue(id: int, route: Route) -> void:
 func _physics_process(_delta: float) -> void:
 	queries_this_tick = 0
 	query_usec_this_tick = 0
+	shared_samples_this_tick = 0
 	if not get_parent().is_authority: return
+	if _walkability != null:
+		shared_paths.poll(_walkability.topology_revision())
 	var tick: int = Engine.get_physics_frames()
 	for id: int in _waiting_for_map.keys():
 		var waiting: Route = _waiting_for_map[id]
@@ -179,6 +205,25 @@ func _physics_process(_delta: float) -> void:
 
 func next_position(unit: BattleUnit) -> Vector3:
 	var route: Route = _routes[unit.get_instance_id()]
+	if shared_paths_enabled and route.plan != null and _walkability != null:
+		var shared_next: Vector3 = _shared_next(unit, route)
+		if shared_next.is_finite():
+			if not route.shared_following:
+				route.pending = false
+				route.waiting_for_map = false
+				_waiting_for_map.erase(unit.get_instance_id())
+				route.active = false
+				route.finished = false
+				route.path.clear()
+				route.shared_following = true
+			shared_samples_this_tick += 1
+			total_shared_samples += 1
+			return shared_next
+	if route.shared_following:
+		# A changed footprint, unreachable field cell or blocked final slot
+		# resumes the native route without completing the player's order.
+		route.shared_following = false
+		_enqueue(unit.get_instance_id(), route)
 	if not route.active or route.finished: return unit.global_position
 	var tick: int = Engine.get_physics_frames()
 	if route.sampled_tick == tick: return route.next
@@ -199,7 +244,39 @@ func next_position(unit: BattleUnit) -> Vector3:
 	return route.next
 
 func _on_finished(id: int) -> void:
-	_routes[id].finished = true
+	var route: Route = _routes[id]
+	if route.active and not route.shared_following:
+		route.finished = true
+
+func _shared_next(unit: BattleUnit, route: Route) -> Vector3:
+	var field: SharedFlowField = shared_paths.resolve(route.plan, _walkability)
+	if field == null: return Vector3(INF, INF, INF)
+	var at: Vector3 = unit.global_position
+	# Once the actual slot is in clear local reach, leave the group direction
+	# and converge independently; this avoids piling everyone on the same cell.
+	if at.distance_squared_to(route.goal) <= DIRECT_PURSUIT_DISTANCE * DIRECT_PURSUIT_DISTANCE and _walkability.has_clear_corridor(at, route.goal, unit.radius):
+		return route.goal
+	if field.status_at(Vector2(at.x, at.z)) == SharedFlowField.SampleStatus.ARRIVED:
+		# Reaching the group center is not reaching this member's final slot.
+		route.plan = null
+		return Vector3(INF, INF, INF)
+	var next: Vector2 = field.next_position_at(Vector2(at.x, at.z))
+	if not next.is_finite():
+		route.plan = null
+		return Vector3(INF, INF, INF)
+	var point := Vector3(next.x, 0.0, next.y)
+	# This adjacent field edge crosses only cells validated by the solver
+	# (including both side cells on diagonals). A unit displaced within its
+	# cell by RVO may fail the padded navigation rectangle even though its
+	# actual capsule can sweep to the waypoint. Use the real shape certificate
+	# only for this local edge, never for an arbitrary long-distance shortcut.
+	if not _walkability.has_clear_corridor(at, point, unit.radius) and not unit._motion_grid.clear_sweep(at, point, unit._motion_clearance):
+		route.plan = null
+		return Vector3(INF, INF, INF)
+	return point
+
+func _exit_tree() -> void:
+	shared_paths.shutdown()
 
 func _on_path_changed() -> void:
 	# Counts actual queries, including accidental budget escapes in tests.
