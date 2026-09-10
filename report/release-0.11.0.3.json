@@ -1,0 +1,1622 @@
+{
+  "release": {
+    "tag": "v0.11.0.3",
+    "source_commit": "79d7961bb20e0691d7887dfa48a9ad2cf433e0b2",
+    "release_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/tag/v0.11.0.3",
+    "download_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.3/jimu-zhengba-0.11.0.3-Windows-x64.zip",
+    "zip_sha256": "c26a0c97afa13b683ec727e438a9ee88375aca7085eb554fa5504c80a831fb3a",
+    "github_digest": "sha256:c26a0c97afa13b683ec727e438a9ee88375aca7085eb554fa5504c80a831fb3a",
+    "zip_bytes": 67321569,
+    "asset_id": 554907842,
+    "prerelease": false,
+    "draft": false,
+    "anonymous_api_verified": true
+  },
+  "package": {
+    "source_commit": "79d7961bb20e0691d7887dfa48a9ad2cf433e0b2",
+    "release": "0.11.0.3",
+    "zip_sha256": "c26a0c97afa13b683ec727e438a9ee88375aca7085eb554fa5504c80a831fb3a",
+    "zip_bytes": 67321569,
+    "pck_sha256": "bd2da6d029f381da37571b5f3e14db51e8e80d38473cd6d309375d30f8e79cc7",
+    "exe_sha256": "214ebf12dd9f73bf628667f74d830f5ed206858da51597fcc0ecf9f526c26476",
+    "outputs": [
+      "C:\\Users\\wh\\Documents\\middle-ages-battle\\builds\\windows-0.11.0.3",
+      "C:\\Users\\wh\\Documents\\middle-ages-battle\\builds\\windows"
+    ],
+    "previous_versioned_releases_retained": true
+  },
+  "export": {
+    "source_commit": "79d7961bb20e0691d7887dfa48a9ad2cf433e0b2",
+    "release": "0.11.0.3",
+    "build_id": "0.11.0",
+    "protocol": 10,
+    "manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+    "source_origin": "git archive of exact committed tree; no working-tree configuration or experimental code copied",
+    "engine": "Godot 4.6.3 official Windows release template",
+    "launcher_file_version": "0.11.0.3",
+    "deliverables": [
+      {
+        "path": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\source\\builds\\windows\\积木争霸.exe",
+        "relative_path": "builds/windows/积木争霸.exe",
+        "bytes": 104588800,
+        "sha256": "214ebf12dd9f73bf628667f74d830f5ed206858da51597fcc0ecf9f526c26476"
+      },
+      {
+        "path": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\source\\builds\\windows\\积木争霸.pck",
+        "relative_path": "builds/windows/积木争霸.pck",
+        "bytes": 49673540,
+        "sha256": "bd2da6d029f381da37571b5f3e14db51e8e80d38473cd6d309375d30f8e79cc7"
+      },
+      {
+        "path": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\source\\builds\\windows\\START_HERE.txt",
+        "relative_path": "builds/windows/START_HERE.txt",
+        "bytes": 14028,
+        "sha256": "8553136ac012ee805867bb4e45ccc47e9a2c3d288663b3133033bd4d4c29ef64"
+      },
+      {
+        "path": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\source\\builds\\windows\\collect_diagnostics.ps1",
+        "relative_path": "builds/windows/collect_diagnostics.ps1",
+        "bytes": 10004,
+        "sha256": "e1ec5d2946d49876244a3006b8b5a854d3cc9cefdc7833e4b16cfa49b70319ea"
+      },
+      {
+        "path": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\source\\builds\\windows\\COLLECT_DIAGNOSTICS.cmd",
+        "relative_path": "builds/windows/COLLECT_DIAGNOSTICS.cmd",
+        "bytes": 294,
+        "sha256": "e5163607f844620a5e2d6bd507f49c0fd54d8be6034bb77dce053b9e5fb7aca9"
+      },
+      {
+        "path": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\source\\builds\\积木争霸-Windows-x64.zip",
+        "relative_path": "builds/积木争霸-Windows-x64.zip",
+        "bytes": 67321569,
+        "sha256": "c26a0c97afa13b683ec727e438a9ee88375aca7085eb554fa5504c80a831fb3a"
+      }
+    ],
+    "validation": {
+      "packaged_main": {
+        "checks": 12,
+        "engine": "4.6.3-stable (official)",
+        "errors": [],
+        "manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+        "protocol": 10,
+        "release": "0.11.0.3",
+        "requested_speed": 3.7,
+        "restored_native_speed": 3.70000004768372,
+        "scope": "Official PCK loaded with official Godot, narrow actual main/match/version/crowd-method checks; not a performance or public network test."
+      },
+      "native_release": {
+        "pid": 18436,
+        "exit_code": 0,
+        "quit_after_frames": 180,
+        "renderer": "Vulkan 1.4.351 / Forward+ / NVIDIA GeForce RTX 3080",
+        "engine_log": "C:\\Users\\wh\\Documents\\middle-ages-battle\\.local\\release-0.11.0.3-20260910\\native-launch.engine.log",
+        "stderr_bytes": 0
+      },
+      "source_archive_matches": [
+        {
+          "path": "project.godot",
+          "sha256": "c4bbc8e7147db6ed1b289e9f727f4aa2b9a529fbf52406ea59ebea1ddee2d194",
+          "committed_sha256": "c4bbc8e7147db6ed1b289e9f727f4aa2b9a529fbf52406ea59ebea1ddee2d194",
+          "exact_archive_match": true
+        },
+        {
+          "path": "export_presets.cfg",
+          "sha256": "e127ff74cb2f1ccaf27f47202571f23694a335fd1d83deaeb0ea6395fe1bffc0",
+          "committed_sha256": "e127ff74cb2f1ccaf27f47202571f23694a335fd1d83deaeb0ea6395fe1bffc0",
+          "exact_archive_match": true
+        },
+        {
+          "path": "default_bus_layout.tres",
+          "sha256": "24a5ec1abdce8ff711364ba1e30c219bd7cc34b620cd7959207c9acb99b51a3f",
+          "committed_sha256": "2dfd80d97b76523e0013a1f649756b07bf243e4cbca23a06c16d4f91d1eca9ec",
+          "exact_archive_match": false
+        },
+        {
+          "path": "scripts/battle_unit.gd",
+          "sha256": "d6a69655f862e5920b866e1b773eb7ea604c755daa078ae2872ff3a78e72a145",
+          "committed_sha256": "d6a69655f862e5920b866e1b773eb7ea604c755daa078ae2872ff3a78e72a145",
+          "exact_archive_match": true
+        },
+        {
+          "path": "scripts/game.gd",
+          "sha256": "ccda46b53495b9c66093e83b09ec3f586345fc41649bf7873d06d37b4657c939",
+          "committed_sha256": "ccda46b53495b9c66093e83b09ec3f586345fc41649bf7873d06d37b4657c939",
+          "exact_archive_match": true
+        },
+        {
+          "path": "scripts/path_budget.gd",
+          "sha256": "f40c1f557389601eff20fadc3efcab2b22ca72c3b3bbd230a5a07e16eb1d9143",
+          "committed_sha256": "f40c1f557389601eff20fadc3efcab2b22ca72c3b3bbd230a5a07e16eb1d9143",
+          "exact_archive_match": true
+        },
+        {
+          "path": "scenes/main.tscn",
+          "sha256": "ce4c187d086f0817e6c00c108041f3defba8190ac26af6e89c10b8351376a648",
+          "committed_sha256": "ce4c187d086f0817e6c00c108041f3defba8190ac26af6e89c10b8351376a648",
+          "exact_archive_match": true
+        },
+        {
+          "path": "scripts/network/network_protocol.gd",
+          "sha256": "1d6823d74f97038d573b61e5e9d152971a74a8a29376739c7051e52880e475a5",
+          "committed_sha256": "1d6823d74f97038d573b61e5e9d152971a74a8a29376739c7051e52880e475a5",
+          "exact_archive_match": true
+        }
+      ],
+      "editor_resource_normalization": "Godot first import resaved default_bus_layout.tres with resource UID and explicit default flags; original bus volumes and effect values remain unchanged; no working-tree configuration was copied.",
+      "zip_entries": [
+        {
+          "name": "windows/积木争霸.exe",
+          "bytes": 104588800
+        },
+        {
+          "name": "windows/积木争霸.pck",
+          "bytes": 49673540
+        },
+        {
+          "name": "windows/START_HERE.txt",
+          "bytes": 14028
+        },
+        {
+          "name": "windows/collect_diagnostics.ps1",
+          "bytes": 10004
+        },
+        {
+          "name": "windows/COLLECT_DIAGNOSTICS.cmd",
+          "bytes": 294
+        }
+      ],
+      "helpers_exited": [
+        41092,
+        5168,
+        48200,
+        18436,
+        48008,
+        49024
+      ],
+      "process_verification": "Known owned helper PIDs verified absent by CIM after all local checks; normal user editor and unrelated helpers are preserved",
+      "initial_check_note": "Exact native float comparison rejected 3.70000004768372 vs 3.7; corrected fixture uses is_equal_approx; package unchanged",
+      "export_note": "Godot_console.exe used for synchronous official build_windows.ps1 exit code after GUI wrapper yielded no LASTEXITCODE"
+    }
+  },
+  "relay_before": {
+    "checked_at_utc": "2026-09-10T11:40:53.553591+00:00",
+    "read_only": true,
+    "local_commit": "322cfcf55e0236c5b24f70e6346ed3f4e90895db",
+    "service": {
+      "name": "jimu-zhengba-relay.service",
+      "active": true,
+      "substate": "running",
+      "pid": 285128,
+      "restarts": 0,
+      "invocation_sha256": "5f5342054fa852a87e8de2b15e414d4bc0177e90550172db600b2d286bd4c2df",
+      "identity_unchanged_during_read": true,
+      "release_directory_id": "d403f9736d5bf600",
+      "computed_payload_id": "d403f9736d5bf600"
+    },
+    "capacity": {
+      "port": 24571,
+      "max_rooms": 8,
+      "max_humans": 8,
+      "human_seats": 64,
+      "peer_capacity": 80
+    },
+    "remote_protocol": {
+      "VERSION": "10",
+      "BUILD_ID": "0.11.0",
+      "RELEASE_ID": "0.11.0.1",
+      "TLS_NAME": "jimu-zhengba-relay",
+      "PORT": "24571",
+      "CHANNEL_COUNT": "10",
+      "MAX_PLAYERS": "8"
+    },
+    "main_322cfcf_protocol": {
+      "VERSION": "10",
+      "BUILD_ID": "0.11.0",
+      "RELEASE_ID": "0.11.0.2",
+      "TLS_NAME": "jimu-zhengba-relay",
+      "PORT": "24571",
+      "CHANNEL_COUNT": "10",
+      "MAX_PLAYERS": "8"
+    },
+    "file_hashes": {
+      "project.godot": {
+        "remote_sha256": "62500f49f7ee2cacdd6c9ad2300b3ac2a88b59fb56feed54c7ad4d93be98db1b",
+        "main_322cfcf_sha256": "62500f49f7ee2cacdd6c9ad2300b3ac2a88b59fb56feed54c7ad4d93be98db1b",
+        "identical": true
+      },
+      "scripts/network/network_protocol.gd": {
+        "remote_sha256": "508f618ba8b2c32a4c47020a90a23b5523538299c85e66247ecf0ede94bec1d3",
+        "main_322cfcf_sha256": "a8fb2d4a4d74bdd28ebcd25405cfac76f67c75b52a538a97129ec861bf711567",
+        "identical": false
+      },
+      "server/relay_server.gd": {
+        "remote_sha256": "a550058c33b8b1f712b7e7c9fdc568be57dac37379995cc62e830fefda90ea38",
+        "main_322cfcf_sha256": "f1e82be0bfdb686d608a37c2f41d45829a87977ec280fdcbbee219cb0acf2499",
+        "identical": false
+      },
+      "server/relay_main.gd": {
+        "remote_sha256": "e72d11da4b2564a8cb161a6c644adea9a31a14c383659342a69371e108ce9f82",
+        "main_322cfcf_sha256": "b949805853c37bb5af6a17c040b7c62b957c477cd00c2128548c129a1994f43c",
+        "identical": false
+      },
+      "server/relay.tscn": {
+        "remote_sha256": "750d1ef13175327027d4dd58e6c2d527ada5c8c6865c9b5d640475694e387ba1",
+        "main_322cfcf_sha256": "750d1ef13175327027d4dd58e6c2d527ada5c8c6865c9b5d640475694e387ba1",
+        "identical": true
+      },
+      "data/content_manifest.json": {
+        "remote_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+        "main_322cfcf_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+        "identical": true
+      }
+    },
+    "public_certificate_sha256": "04434bf90c411f087d37eb48564dc3c481b20b553502458bceaac03e20cb3174",
+    "public_certificate_matches_main": true,
+    "manifest_identical": true,
+    "protocol_handshake_constants_identical": true,
+    "compatible_with_main_322cfcf": true,
+    "journal": {
+      "scope": "current systemd invocation; previous 30 wall-clock minutes; capped at 10000 lines",
+      "returned_line_count": 4,
+      "possibly_truncated": false,
+      "error_counts": {
+        "script_errors": 0,
+        "engine_error_lines": 0,
+        "transport_error_lines": 0,
+        "tls_handshake_errors": 0,
+        "fatal_rejections": 0
+      },
+      "event_counts": {
+        "disconnected": 2,
+        "left": 1,
+        "room_ended": 1
+      },
+      "rejection_code_counts": {},
+      "disconnect_reason_counts": {
+        "transport_disconnect": 2
+      },
+      "raw_lines_saved": false
+    },
+    "recommendation": "No relay restart required for a client-only RELEASE_ID 0.11.0.3 change; preserve VERSION/BUILD_ID/content manifest/public trust certificate. Existing rooms should remain running.",
+    "normalized_source_comparison": {
+      "scripts/network/network_protocol.gd": {
+        "normalized_identical": false,
+        "normalized_remote_sha256": "b5a6aee7c471b760fe09e303c127e6d1d87478c3c87685fa98195f80adf278d6",
+        "normalized_main_sha256": "a8fb2d4a4d74bdd28ebcd25405cfac76f67c75b52a538a97129ec861bf711567",
+        "diff_line_count": 26,
+        "differences": [
+          "Online RELEASE_ID 0.11.0.1 versus main 0.11.0.2; RELEASE_ID is not part of relay handshake.",
+          "Main adds valid_kill_totals pure validation helper; relay_server and relay_main do not call it."
+        ]
+      },
+      "server/relay_server.gd": {
+        "normalized_identical": true,
+        "normalized_remote_sha256": "f1e82be0bfdb686d608a37c2f41d45829a87977ec280fdcbbee219cb0acf2499",
+        "normalized_main_sha256": "f1e82be0bfdb686d608a37c2f41d45829a87977ec280fdcbbee219cb0acf2499",
+        "diff_line_count": 0,
+        "byte_difference_reason": "CRLF/LF line endings only"
+      },
+      "server/relay_main.gd": {
+        "normalized_identical": true,
+        "normalized_remote_sha256": "b949805853c37bb5af6a17c040b7c62b957c477cd00c2128548c129a1994f43c",
+        "normalized_main_sha256": "b949805853c37bb5af6a17c040b7c62b957c477cd00c2128548c129a1994f43c",
+        "diff_line_count": 0,
+        "byte_difference_reason": "CRLF/LF line endings only"
+      }
+    },
+    "followup_checked_at_utc": "2026-09-10T11:41:55.143424+00:00",
+    "remote_mutations": [],
+    "local_helper_processes_started": [],
+    "limitations": [
+      "This audit checks service identity, deployed sources, trust certificate, settings and bounded current-invocation logs; it does not establish a new ENet client session or exercise matchmaking.",
+      "Thirty-minute journal window may contain no player traffic; absence of logged errors is not a load or connectivity test."
+    ]
+  },
+  "online_game": {
+    "started_utc": "2026-09-10T11:53:16.171288+00:00",
+    "source_commit": "79d7961",
+    "exe_sha256": "214ebf12dd9f73bf628667f74d830f5ed206858da51597fcc0ecf9f526c26476",
+    "pck_sha256": "bd2da6d029f381da37571b5f3e14db51e8e80d38473cd6d309375d30f8e79cc7",
+    "background_before": [
+      {
+        "pid": 36624,
+        "name": "Godot.exe"
+      }
+    ],
+    "failures": [],
+    "peers": [
+      {
+        "checks": 24,
+        "commands_sent": 10,
+        "content_hash": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+        "failures": [],
+        "finish_received": true,
+        "health": [
+          {
+            "authority_tick": 8,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 0,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 39,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 1015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 69,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 2015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 99,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 3015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 129,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 4015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 159,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 5015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 189,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 6015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 219,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 7015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 249,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 8015,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 279,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 9017,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 310,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 10040,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 340,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 11041,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 370,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 12041,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 400,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 13041,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 431,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 14065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 461,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 15065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 491,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 16065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 521,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 17065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 551,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 18065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 581,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 19065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 611,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 20065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 641,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 21065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 671,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 22065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 701,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 23065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 731,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 24065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 761,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 25065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 791,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 26065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 821,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 27065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 851,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 28065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 881,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 29065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 911,
+            "bot_military": [
+              1,
+              1
+            ],
+            "finished": false,
+            "ms": 30065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 941,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 31065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 971,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 32065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1001,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 33065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1031,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 34065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1061,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 35065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1091,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 36065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1121,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 37065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1151,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 38065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1181,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 39065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1211,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 40065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1241,
+            "bot_military": [
+              2,
+              2
+            ],
+            "finished": false,
+            "ms": 41065,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          }
+        ],
+        "last_snapshot_tick": -1,
+        "notice_received": false,
+        "observed_wall_ms": 42743,
+        "peer": 0,
+        "pid": 42064,
+        "protocol": 10,
+        "rejected_snapshots": 0,
+        "release": "0.11.0.3",
+        "release_template": false,
+        "remote_commands": 10,
+        "runtime_mode": "official-engine",
+        "scope": "Official Godot 4.6.3 engine loads unchanged formal PCK; not the distribution EXE. External launch-only SceneTree, original packaged certificate and TLS name, public relay, one privately created 2v2 room, two humans plus two actual Bots, native Session.start_online and main scene. Headless real logic/network validation; not rendered performance.",
+        "snapshot_gap_max_ms": 0,
+        "snapshots": 0,
+        "states": [
+          {
+            "ms": 2,
+            "state": "connecting"
+          },
+          {
+            "ms": 555,
+            "state": "connected"
+          },
+          {
+            "ms": 605,
+            "state": "lobby"
+          },
+          {
+            "ms": 1080,
+            "state": "match"
+          },
+          {
+            "ms": 43767,
+            "state": "finished"
+          },
+          {
+            "ms": 44243,
+            "state": "connected"
+          },
+          {
+            "ms": 44420,
+            "state": "disconnected"
+          }
+        ],
+        "transport_errors": []
+      },
+      {
+        "checks": 23,
+        "commands_sent": 10,
+        "content_hash": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+        "failures": [],
+        "finish_received": true,
+        "health": [
+          {
+            "authority_tick": 0,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 1,
+            "snapshot_tick": -1,
+            "snapshots": 0,
+            "state": "match"
+          },
+          {
+            "authority_tick": 30,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 1025,
+            "snapshot_tick": 38,
+            "snapshots": 14,
+            "state": "match"
+          },
+          {
+            "authority_tick": 64,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 2025,
+            "snapshot_tick": 68,
+            "snapshots": 27,
+            "state": "match"
+          },
+          {
+            "authority_tick": 94,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 3025,
+            "snapshot_tick": 98,
+            "snapshots": 40,
+            "state": "match"
+          },
+          {
+            "authority_tick": 124,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 4025,
+            "snapshot_tick": 128,
+            "snapshots": 54,
+            "state": "match"
+          },
+          {
+            "authority_tick": 154,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 5025,
+            "snapshot_tick": 158,
+            "snapshots": 66,
+            "state": "match"
+          },
+          {
+            "authority_tick": 184,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 6025,
+            "snapshot_tick": 186,
+            "snapshots": 79,
+            "state": "match"
+          },
+          {
+            "authority_tick": 214,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 7025,
+            "snapshot_tick": 218,
+            "snapshots": 93,
+            "state": "match"
+          },
+          {
+            "authority_tick": 244,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 8026,
+            "snapshot_tick": 248,
+            "snapshots": 106,
+            "state": "match"
+          },
+          {
+            "authority_tick": 276,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 9051,
+            "snapshot_tick": 278,
+            "snapshots": 119,
+            "state": "match"
+          },
+          {
+            "authority_tick": 306,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 10075,
+            "snapshot_tick": 310,
+            "snapshots": 131,
+            "state": "match"
+          },
+          {
+            "authority_tick": 336,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 11075,
+            "snapshot_tick": 338,
+            "snapshots": 144,
+            "state": "match"
+          },
+          {
+            "authority_tick": 366,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 12075,
+            "snapshot_tick": 368,
+            "snapshots": 158,
+            "state": "match"
+          },
+          {
+            "authority_tick": 396,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 13075,
+            "snapshot_tick": 398,
+            "snapshots": 171,
+            "state": "match"
+          },
+          {
+            "authority_tick": 426,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 14075,
+            "snapshot_tick": 430,
+            "snapshots": 185,
+            "state": "match"
+          },
+          {
+            "authority_tick": 456,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 15075,
+            "snapshot_tick": 458,
+            "snapshots": 198,
+            "state": "match"
+          },
+          {
+            "authority_tick": 486,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 16075,
+            "snapshot_tick": 488,
+            "snapshots": 212,
+            "state": "match"
+          },
+          {
+            "authority_tick": 516,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 17075,
+            "snapshot_tick": 516,
+            "snapshots": 223,
+            "state": "match"
+          },
+          {
+            "authority_tick": 546,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 18075,
+            "snapshot_tick": 548,
+            "snapshots": 237,
+            "state": "match"
+          },
+          {
+            "authority_tick": 576,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 19075,
+            "snapshot_tick": 578,
+            "snapshots": 251,
+            "state": "match"
+          },
+          {
+            "authority_tick": 606,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 20075,
+            "snapshot_tick": 608,
+            "snapshots": 265,
+            "state": "match"
+          },
+          {
+            "authority_tick": 636,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 21075,
+            "snapshot_tick": 638,
+            "snapshots": 278,
+            "state": "match"
+          },
+          {
+            "authority_tick": 666,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 22075,
+            "snapshot_tick": 668,
+            "snapshots": 291,
+            "state": "match"
+          },
+          {
+            "authority_tick": 696,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 23075,
+            "snapshot_tick": 698,
+            "snapshots": 304,
+            "state": "match"
+          },
+          {
+            "authority_tick": 726,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 24075,
+            "snapshot_tick": 728,
+            "snapshots": 318,
+            "state": "match"
+          },
+          {
+            "authority_tick": 756,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 25075,
+            "snapshot_tick": 758,
+            "snapshots": 331,
+            "state": "match"
+          },
+          {
+            "authority_tick": 786,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 26075,
+            "snapshot_tick": 788,
+            "snapshots": 345,
+            "state": "match"
+          },
+          {
+            "authority_tick": 816,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 27075,
+            "snapshot_tick": 818,
+            "snapshots": 359,
+            "state": "match"
+          },
+          {
+            "authority_tick": 846,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 28075,
+            "snapshot_tick": 848,
+            "snapshots": 373,
+            "state": "match"
+          },
+          {
+            "authority_tick": 876,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 29075,
+            "snapshot_tick": 880,
+            "snapshots": 386,
+            "state": "match"
+          },
+          {
+            "authority_tick": 906,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 30075,
+            "snapshot_tick": 910,
+            "snapshots": 400,
+            "state": "match"
+          },
+          {
+            "authority_tick": 936,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 31075,
+            "snapshot_tick": 940,
+            "snapshots": 414,
+            "state": "match"
+          },
+          {
+            "authority_tick": 966,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 32075,
+            "snapshot_tick": 968,
+            "snapshots": 427,
+            "state": "match"
+          },
+          {
+            "authority_tick": 996,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 33075,
+            "snapshot_tick": 1000,
+            "snapshots": 441,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1026,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 34075,
+            "snapshot_tick": 1028,
+            "snapshots": 455,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1056,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 35075,
+            "snapshot_tick": 1056,
+            "snapshots": 467,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1086,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 36075,
+            "snapshot_tick": 1086,
+            "snapshots": 478,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1116,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 37075,
+            "snapshot_tick": 1118,
+            "snapshots": 490,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1146,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 38075,
+            "snapshot_tick": 1146,
+            "snapshots": 502,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1176,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 39075,
+            "snapshot_tick": 1178,
+            "snapshots": 516,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1206,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 40075,
+            "snapshot_tick": 1208,
+            "snapshots": 530,
+            "state": "match"
+          },
+          {
+            "authority_tick": 1236,
+            "bot_military": [
+              0,
+              0
+            ],
+            "finished": false,
+            "ms": 41075,
+            "snapshot_tick": 1238,
+            "snapshots": 543,
+            "state": "match"
+          }
+        ],
+        "last_snapshot_tick": 1270,
+        "notice_received": true,
+        "observed_wall_ms": 42728,
+        "peer": 1,
+        "pid": 32688,
+        "protocol": 10,
+        "rejected_snapshots": 0,
+        "release": "0.11.0.3",
+        "release_template": false,
+        "remote_commands": 0,
+        "runtime_mode": "official-engine",
+        "scope": "Official Godot 4.6.3 engine loads unchanged formal PCK; not the distribution EXE. External launch-only SceneTree, original packaged certificate and TLS name, public relay, one privately created 2v2 room, two humans plus two actual Bots, native Session.start_online and main scene. Headless real logic/network validation; not rendered performance.",
+        "snapshot_gap_max_ms": 153,
+        "snapshots": 558,
+        "states": [
+          {
+            "ms": 2,
+            "state": "connecting"
+          },
+          {
+            "ms": 554,
+            "state": "connected"
+          },
+          {
+            "ms": 604,
+            "state": "lobby"
+          },
+          {
+            "ms": 729,
+            "state": "match"
+          },
+          {
+            "ms": 43403,
+            "state": "finished"
+          },
+          {
+            "ms": 43878,
+            "state": "connected"
+          },
+          {
+            "ms": 44055,
+            "state": "disconnected"
+          }
+        ],
+        "transport_errors": []
+      }
+    ],
+    "public_relay": true,
+    "mode": "2v2",
+    "humans": 2,
+    "bots": 2,
+    "runtime_mode": "official-engine",
+    "helper_pids": [
+      42064,
+      32688
+    ],
+    "exit_codes": [
+      0,
+      0
+    ],
+    "background_after": [
+      {
+        "pid": 36624,
+        "name": "Godot.exe"
+      }
+    ],
+    "helpers_absent": true,
+    "artifact_hashes_unchanged": true,
+    "stderr_bytes": [
+      0,
+      0
+    ],
+    "passed": true
+  },
+  "native_exe_network": {
+    "started_utc": "2026-09-10T11:54:31.152458+00:00",
+    "exe_sha256": "214ebf12dd9f73bf628667f74d830f5ed206858da51597fcc0ecf9f526c26476",
+    "pck_sha256": "bd2da6d029f381da37571b5f3e14db51e8e80d38473cd6d309375d30f8e79cc7",
+    "background_before": [
+      {
+        "pid": 36624,
+        "name": "Godot.exe"
+      }
+    ],
+    "scope": "Actual unchanged distribution EXE and adjacent PCK, built-in --network-smoke. Public DTLS handshake, fingerprint, private room, bots roster, start and reliable finish. This entry never loads Game and does not prove a 40-second gameplay session.",
+    "pid": 37916,
+    "exit_code": 0,
+    "probe": {
+      "build": "0.11.0",
+      "catalogue_files": 95,
+      "catalogue_only": false,
+      "checks": 191,
+      "content_hash": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+      "error_codes": [],
+      "exported_template": true,
+      "failures": [],
+      "handshake_msec": 1560,
+      "protocol": 10,
+      "resource_value_checks": 75
+    },
+    "stderr_bytes": 0,
+    "background_after": [
+      {
+        "pid": 36624,
+        "name": "Godot.exe"
+      }
+    ],
+    "helper_absent": true,
+    "artifact_hashes_unchanged": true,
+    "passed": true
+  },
+  "cleanup": {
+    "own_validation_godot_processes_exited": true,
+    "temporary_files": {
+      "status": "retained: automatic approval blocked scoped recursive deletion",
+      "reason": "blocked by policy",
+      "path": ".local/release-0.11.0.3-20260910",
+      "bytes": 367015565,
+      "retry_or_workaround": false
+    },
+    "unrelated_experiments_and_recovery_snapshots": "retained"
+  },
+  "relay_after": {
+    "checked_at_utc": "2026-09-10T11:57:02.924403+00:00",
+    "read_only": true,
+    "remote_mutations": [],
+    "previous_receipt": "relay-readonly.json",
+    "service": {
+      "name": "jimu-zhengba-relay.service",
+      "active": true,
+      "substate": "running",
+      "pid": 285128,
+      "restarts": 0,
+      "invocation_sha256": "5f5342054fa852a87e8de2b15e414d4bc0177e90550172db600b2d286bd4c2df",
+      "identity_unchanged_during_read": true,
+      "same_pid_as_before_tests": true,
+      "same_invocation_as_before_tests": true,
+      "same_restarts_as_before_tests": true
+    },
+    "journal": {
+      "scope": "current systemd invocation; previous 10 wall-clock minutes; at most 10000 journal entries",
+      "entry_count": 18,
+      "possibly_truncated": false,
+      "error_counts": {
+        "script_errors": 0,
+        "engine_error_lines": 0,
+        "transport_error_lines": 0,
+        "tls_handshake_errors": 0,
+        "fatal_rejections": 0
+      },
+      "event_counts": {
+        "connected": 3,
+        "handshake_accepted": 3,
+        "room_created": 2,
+        "joined": 3,
+        "match_started": 2,
+        "room_ended": 2,
+        "disconnected": 3
+      },
+      "rejection_code_counts": {},
+      "disconnect_reason_counts": {
+        "transport_disconnect": 3
+      },
+      "first_event_utc": "2026-09-10T11:53:17.598431+00:00",
+      "last_event_utc": "2026-09-10T11:54:34.366433+00:00",
+      "raw_player_data_saved": false
+    },
+    "lifecycle_evidence": {
+      "connections_created_in_window": 3,
+      "those_connections_with_disconnect": 3,
+      "those_connections_without_disconnect": 0,
+      "rooms_created_in_window": 2,
+      "those_rooms_with_end": 2,
+      "those_rooms_without_end": 0,
+      "last_diagnostic_counts_after_immediate_erase": {
+        "rooms": 0,
+        "sessions": 0,
+        "connections": 0,
+        "event": "disconnected"
+      },
+      "room_lifecycle_times_without_ids": [
+        {
+          "created_at_utc": "2026-09-10T11:53:17.647636+00:00",
+          "ended_at_utc": "2026-09-10T11:54:00.800309+00:00"
+        },
+        {
+          "created_at_utc": "2026-09-10T11:54:34.249753+00:00",
+          "ended_at_utc": "2026-09-10T11:54:34.349807+00:00"
+        }
+      ]
+    },
+    "limitations": [
+      "Live room dictionaries are not exposed by this read-only audit; exit is inferred from matched lifecycle logs and the counter state at the last logged event.",
+      "Validation attribution is based on both supplied UTC run windows and exact expected connection/room counts, with no participant identifiers stored."
+    ],
+    "validation_attribution": {
+      "source": "Validation owner supplied UTC run windows; both match relay lifecycle timestamps.",
+      "real_game": {
+        "started_at_utc": "2026-09-10T11:53:16.171+00:00",
+        "ended_at_utc_approximate": "2026-09-10T11:54:02+00:00",
+        "expected_connections": 2,
+        "expected_rooms": 1,
+        "room_created_in_window": true,
+        "room_ended_in_window": true
+      },
+      "formal_exe_probe": {
+        "started_at_utc": "2026-09-10T11:54:31.152+00:00",
+        "ended_at_utc_approximate": "2026-09-10T11:54:35+00:00",
+        "expected_connections": 1,
+        "expected_rooms": 1,
+        "room_created_in_window": true,
+        "room_ended_in_window": true
+      }
+    },
+    "validation_receipts": {
+      "online-smoke/attempt-3/summary.json": {
+        "sha256": "b7c4260cda57ba8d3745b35ece714ad6bd674c001047af2eabe494db5e0fc463"
+      },
+      "online-smoke/formal-exe-probe/summary.json": {
+        "sha256": "66fca65f805dc22454c0ca4ee68829cd6b2e34e6cc5eb796c9ea04e0f89213db"
+      }
+    },
+    "conclusion": "Service identity is unchanged and running with zero restarts. All three validation connections and both temporary rooms have matched exit events; last diagnostic state implies zero rooms, sessions and connections. No relay restart or configuration change is needed."
+  }
+}

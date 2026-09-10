@@ -91,6 +91,7 @@ var _strike_target: Node3D
 var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
 var _moving: bool = false
+var _avoidance_moving: bool = false
 var _observed_velocity := Vector3.ZERO
 var _move_retaliation: Node3D
 var _retaliation_time: float = 0.0
@@ -153,9 +154,9 @@ func _ready() -> void:
 	rotation.y = 0.0
 	_model.set_motion(false)
 	navigation_agent.radius = radius
-	navigation_agent.max_speed = speed
+	navigation_agent.max_speed = 0.0
 	navigation_agent.neighbor_distance = 5.5
-	navigation_agent.avoidance_priority = 0.6 if unit_type in ["knight", "catapult", "cannon"] else 0.5
+	navigation_agent.avoidance_priority = 1.0
 	var capsule: CapsuleShape3D = $CollisionShape3D.shape
 	capsule.radius = radius * 0.85
 	capsule.height = maxf(radius * 1.7, 1.8)
@@ -264,6 +265,7 @@ func _physics_process(delta: float) -> void:
 		_moving = is_moving
 		_model.set_motion(_moving)
 	if navigation_agent.avoidance_enabled:
+		_set_avoidance_moving(is_moving)
 		# NavigationAgent stops forwarding velocity after its path completes.
 		# Drive the same native RVO agent directly, including the final wall step.
 		NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), desired_velocity)
@@ -311,6 +313,15 @@ func _path_velocity() -> Vector3:
 			_face_direction(_path_budget.target_position(self) - global_position, get_physics_process_delta_time())
 		return Vector3.ZERO
 	return direction.normalized() * speed
+
+func _set_avoidance_moving(moving: bool) -> void:
+	if _avoidance_moving == moving:
+		return
+	_avoidance_moving = moving
+	# RVO must route moving troops around units that have planted to attack,
+	# hold or work. A zero desired velocity alone still permits lateral shoves.
+	navigation_agent.max_speed = speed if moving else 0.0
+	navigation_agent.avoidance_priority = 0.5 if moving else 1.0
 
 func _apply_velocity(safe_velocity: Vector3) -> void:
 	if not alive:
@@ -421,6 +432,7 @@ func _can_start_strike(entity: Node3D) -> bool:
 	return release_distance <= reach and release_distance >= minimum
 
 func _refresh_target() -> void:
+	var keep_current_target: bool = false
 	# Workers finish economic orders even under fire. An explicit attack still
 	# lets the player use a pickaxe for self-defence.
 	if unit_type == "farmer" and order != Order.ATTACK:
@@ -439,19 +451,24 @@ func _refresh_target() -> void:
 			target = null
 			issue_move(_home_position)
 			return
+		elif order in [Order.IDLE, Order.ATTACK_MOVE] and attack_windup.is_stopped() and not _within_attack_range(target):
+			# Crowded fronts can block the original automatic target while another
+			# enemy is already in reach. Preserve explicit orders and active swings.
+			keep_current_target = true
 		else:
 			return
 	else:
 		if order == Order.ATTACK_MOVE and target != null:
 			_set_navigation_target(destination)
 		target = null
+	var previous_target: Variant = target
 	var best_distance: float = INF
 	_target_query.transform.origin = global_position + Vector3.UP
 	for hit: Dictionary in _space_state.intersect_shape(_target_query, 64):
 		var entity: Node3D = hit.collider
 		if not _valid_target(entity):
 			continue
-		if order == Order.HOLD and not _within_attack_range(entity):
+		if (order == Order.HOLD or keep_current_target) and not _within_attack_range(entity):
 			continue
 		var distance: float = global_position.distance_squared_to(entity.global_position)
 		var sight: float = attack_range + radius + entity.radius if order == Order.HOLD else float(_stats.sight) + entity.radius
@@ -462,7 +479,7 @@ func _refresh_target() -> void:
 		if priority_distance < best_distance:
 			best_distance = priority_distance
 			target = entity
-	if target != null:
+	if target != null and target != previous_target:
 		_repath_time = 0.0
 
 func _start_attack() -> void:
@@ -809,6 +826,7 @@ func _finish_order() -> void:
 	# Stop presentation state synchronously: battle completion may disable
 	# physics and avoidance before another velocity callback can arrive.
 	_moving = false
+	_set_avoidance_moving(false)
 	_model.set_motion(false)
 	_path_budget.cancel(self)
 	velocity = Vector3.ZERO
