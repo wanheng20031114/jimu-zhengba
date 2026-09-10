@@ -776,5 +776,418 @@
     },
     "source_stable": true,
     "wire_compatibility": "Exact payload text, object/array insertion order, complete decoded tree and encoded packet bytes match. Protocol/schema/version unchanged."
+  },
+  "latest_state_publication": {
+    "raw": {
+      "checks": 4583,
+      "cpu_scope": "500 distributed six-type MANUAL authored units; same state and shared JSON algorithm. Compare two phase batches versus one whole-recipient batch per 66.7ms publication interval. Includes assembly/full encode, excludes real pose debt/motion/public transfer. AB/BA, 4 warmup plus 8 measured intervals per case.",
+      "failures": [],
+      "publication_cpu_samples": [
+        {
+          "build_ms": 18.868,
+          "iteration": 4,
+          "json_ms": 21.396,
+          "packets_ms": 1.807,
+          "remote_count": 6,
+          "total_ms": 42.071,
+          "variant": 0,
+          "wire_bytes": 52485
+        },
+        {
+          "build_ms": 12.942,
+          "iteration": 4,
+          "json_ms": 15.118,
+          "packets_ms": 1.624,
+          "remote_count": 6,
+          "total_ms": 29.684,
+          "variant": 1,
+          "wire_bytes": 52485
+        },
+        {
+          "build_ms": 18.537,
+          "iteration": 5,
+          "json_ms": 21.221,
+          "packets_ms": 1.812,
+          "remote_count": 6,
+          "total_ms": 41.57,
+          "variant": 0,
+          "wire_bytes": 52488
+        },
+        {
+          "build_ms": 12.925,
+          "iteration": 5,
+          "json_ms": 14.987,
+          "packets_ms": 1.642,
+          "remote_count": 6,
+          "total_ms": 29.554,
+          "variant": 1,
+          "wire_bytes": 52488
+        },
+        {
+          "build_ms": 12.887,
+          "iteration": 6,
+          "json_ms": 15.108,
+          "packets_ms": 1.698,
+          "remote_count": 6,
+          "total_ms": 29.693,
+          "variant": 1,
+          "wire_bytes": 52488
+        },
+        {
+          "build_ms": 18.572,
+          "iteration": 6,
+          "json_ms": 21.298,
+          "packets_ms": 1.779,
+          "remote_count": 6,
+          "total_ms": 41.649,
+          "variant": 0,
+          "wire_bytes": 52488
+        },
+        {
+          "build_ms": 12.908,
+          "iteration": 7,
+          "json_ms": 15.298,
+          "packets_ms": 1.793,
+          "remote_count": 6,
+          "total_ms": 29.999,
+          "variant": 1,
+          "wire_bytes": 52490
+        },
+        {
+          "build_ms": 18.288,
+          "iteration": 7,
+          "json_ms": 21.138,
+          "packets_ms": 1.741,
+          "remote_count": 6,
+          "total_ms": 41.167,
+          "variant": 0,
+          "wire_bytes": 52490
+        },
+        {
+          "build_ms": 18.421,
+          "iteration": 8,
+          "json_ms": 21.152,
+          "packets_ms": 1.796,
+          "remote_count": 6,
+          "total_ms": 41.369,
+          "variant": 0,
+          "wire_bytes": 52489
+        },
+        {
+          "build_ms": 12.872,
+          "iteration": 8,
+          "json_ms": 15.162,
+          "packets_ms": 1.8,
+          "remote_count": 6,
+          "total_ms": 29.834,
+          "variant": 1,
+          "wire_bytes": 52489
+        },
+        {
+          "build_ms": 18.574,
+          "iteration": 9,
+          "json_ms": 21.313,
+          "packets_ms": 1.879,
+          "remote_count": 6,
+          "total_ms": 41.766,
+          "variant": 0,
+          "wire_bytes": 52491
+        },
+        {
+          "build_ms": 13.017,
+          "iteration": 9,
+          "json_ms": 15.033,
+          "packets_ms": 1.675,
+          "remote_count": 6,
+          "total_ms": 29.725,
+          "variant": 1,
+          "wire_bytes": 52491
+        },
+        {
+          "build_ms": 12.998,
+          "iteration": 10,
+          "json_ms": 15.032,
+          "packets_ms": 1.665,
+          "remote_count": 6,
+          "total_ms": 29.695,
+          "variant": 1,
+          "wire_bytes": 52491
+        },
+        {
+          "build_ms": 18.588,
+          "iteration": 10,
+          "json_ms": 21.393,
+          "packets_ms": 1.853,
+          "remote_count": 6,
+          "total_ms": 41.834,
+          "variant": 0,
+          "wire_bytes": 52491
+        },
+        {
+          "build_ms": 12.962,
+          "iteration": 11,
+          "json_ms": 15.06,
+          "packets_ms": 1.803,
+          "remote_count": 6,
+          "total_ms": 29.825,
+          "variant": 1,
+          "wire_bytes": 52491
+        },
+        {
+          "build_ms": 18.469,
+          "iteration": 11,
+          "json_ms": 20.838,
+          "packets_ms": 1.777,
+          "remote_count": 6,
+          "total_ms": 41.084,
+          "variant": 0,
+          "wire_bytes": 52491
+        },
+        {
+          "build_ms": 19.89,
+          "iteration": 4,
+          "json_ms": 22.672,
+          "packets_ms": 2.162,
+          "remote_count": 7,
+          "total_ms": 44.724,
+          "variant": 0,
+          "wire_bytes": 61235
+        },
+        {
+          "build_ms": 14.19,
+          "iteration": 4,
+          "json_ms": 16.242,
+          "packets_ms": 1.904,
+          "remote_count": 7,
+          "total_ms": 32.336,
+          "variant": 1,
+          "wire_bytes": 61235
+        },
+        {
+          "build_ms": 19.947,
+          "iteration": 5,
+          "json_ms": 22.463,
+          "packets_ms": 1.988,
+          "remote_count": 7,
+          "total_ms": 44.398,
+          "variant": 0,
+          "wire_bytes": 61238
+        },
+        {
+          "build_ms": 14.25,
+          "iteration": 5,
+          "json_ms": 16.315,
+          "packets_ms": 1.982,
+          "remote_count": 7,
+          "total_ms": 32.547,
+          "variant": 1,
+          "wire_bytes": 61238
+        },
+        {
+          "build_ms": 14.046,
+          "iteration": 6,
+          "json_ms": 17.057,
+          "packets_ms": 2.011,
+          "remote_count": 7,
+          "total_ms": 33.114,
+          "variant": 1,
+          "wire_bytes": 61238
+        },
+        {
+          "build_ms": 19.747,
+          "iteration": 6,
+          "json_ms": 22.508,
+          "packets_ms": 2.275,
+          "remote_count": 7,
+          "total_ms": 44.53,
+          "variant": 0,
+          "wire_bytes": 61238
+        },
+        {
+          "build_ms": 14.165,
+          "iteration": 7,
+          "json_ms": 16.691,
+          "packets_ms": 2.057,
+          "remote_count": 7,
+          "total_ms": 32.913,
+          "variant": 1,
+          "wire_bytes": 61240
+        },
+        {
+          "build_ms": 19.8,
+          "iteration": 7,
+          "json_ms": 22.399,
+          "packets_ms": 2.071,
+          "remote_count": 7,
+          "total_ms": 44.27,
+          "variant": 0,
+          "wire_bytes": 61240
+        },
+        {
+          "build_ms": 19.798,
+          "iteration": 8,
+          "json_ms": 22.794,
+          "packets_ms": 2.026,
+          "remote_count": 7,
+          "total_ms": 44.618,
+          "variant": 0,
+          "wire_bytes": 61239
+        },
+        {
+          "build_ms": 14.184,
+          "iteration": 8,
+          "json_ms": 16.957,
+          "packets_ms": 1.905,
+          "remote_count": 7,
+          "total_ms": 33.046,
+          "variant": 1,
+          "wire_bytes": 61239
+        },
+        {
+          "build_ms": 20.087,
+          "iteration": 9,
+          "json_ms": 22.32,
+          "packets_ms": 2.235,
+          "remote_count": 7,
+          "total_ms": 44.642,
+          "variant": 0,
+          "wire_bytes": 61241
+        },
+        {
+          "build_ms": 14.193,
+          "iteration": 9,
+          "json_ms": 16.932,
+          "packets_ms": 2.063,
+          "remote_count": 7,
+          "total_ms": 33.188,
+          "variant": 1,
+          "wire_bytes": 61241
+        },
+        {
+          "build_ms": 14.203,
+          "iteration": 10,
+          "json_ms": 16.31,
+          "packets_ms": 2.258,
+          "remote_count": 7,
+          "total_ms": 32.771,
+          "variant": 1,
+          "wire_bytes": 61241
+        },
+        {
+          "build_ms": 20.14,
+          "iteration": 10,
+          "json_ms": 22.981,
+          "packets_ms": 2.23,
+          "remote_count": 7,
+          "total_ms": 45.351,
+          "variant": 0,
+          "wire_bytes": 61241
+        },
+        {
+          "build_ms": 14.133,
+          "iteration": 11,
+          "json_ms": 16.38,
+          "packets_ms": 2.008,
+          "remote_count": 7,
+          "total_ms": 32.521,
+          "variant": 1,
+          "wire_bytes": 61241
+        },
+        {
+          "build_ms": 19.966,
+          "iteration": 11,
+          "json_ms": 22.917,
+          "packets_ms": 2.127,
+          "remote_count": 7,
+          "total_ms": 45.01,
+          "variant": 0,
+          "wire_bytes": 61241
+        }
+      ],
+      "scope": "Actual authored units, production batch builder and native codec; local ENet send gates. No public throughput or FPS claim."
+    },
+    "receipt": {
+      "before_utc": "2026-09-10T15:51:42.669416+00:00",
+      "before": {
+        "match_replication": "bde7cbd7a02e28a5faf81d1b9e3a2b3b2ae9f5148f3a6c20bb11b8f524acbd7d",
+        "network_protocol": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b",
+        "relay_client": "4f2010d9ccfc3708b441db2f9007073bd28c231eb8d7c19eb57866bf55764e06"
+      },
+      "pid": 48992,
+      "exit": 0,
+      "after": {
+        "match_replication": "bde7cbd7a02e28a5faf81d1b9e3a2b3b2ae9f5148f3a6c20bb11b8f524acbd7d",
+        "network_protocol": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b",
+        "relay_client": "4f2010d9ccfc3708b441db2f9007073bd28c231eb8d7c19eb57866bf55764e06"
+      },
+      "exited": true,
+      "after_utc": "2026-09-10T15:51:46.368388+00:00"
+    },
+    "mean_per_66_7ms_publication_interval": {
+      "6": {
+        "0": {
+          "build_ms": 18.539625,
+          "json_ms": 21.218625,
+          "packets_ms": 1.8054999999999999,
+          "total_ms": 41.56375,
+          "wire_bytes": 52489.125
+        },
+        "1": {
+          "build_ms": 12.938875,
+          "json_ms": 15.09975,
+          "packets_ms": 1.7125,
+          "total_ms": 29.751125000000002,
+          "wire_bytes": 52489.125
+        }
+      },
+      "7": {
+        "0": {
+          "build_ms": 19.921875,
+          "json_ms": 22.63175,
+          "packets_ms": 2.13925,
+          "total_ms": 44.692875,
+          "wire_bytes": 61239.125
+        },
+        "1": {
+          "build_ms": 14.170499999999999,
+          "json_ms": 16.6105,
+          "packets_ms": 2.0235,
+          "total_ms": 32.8045,
+          "wire_bytes": 61239.125
+        }
+      }
+    },
+    "source_stable": true,
+    "game_sha256_recorded_after_run": "cddc6a88a94bc1cbe5c29daa21b80fc70f2d7816be6fb6fb5344533bc8910233",
+    "existing_regression": {
+      "checks": 124,
+      "failures": 0,
+      "pid": 38384,
+      "exit_code": 0,
+      "stderr_bytes": 0
+    },
+    "game_scene_load": {
+      "pid": 49860,
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "scope": "main.tscn loaded after autoload initialization; not full Game startup"
+    },
+    "failed_attempts": [
+      {
+        "label": "publish_measure1",
+        "reason": "Temporary TickRelay recorded JSON float ticks but compared against integer arrays; additionally found publication deadline could expire while encoding, fixed by transport minimum interval and advancing expired completion deadline. Original failure logs retained."
+      },
+      {
+        "label": "scene_game_parse1",
+        "reason": "Using game.gd directly as --script --check-only compiles before the Session autoload; failed with Identifier not found Session. Subsequent ordinary SceneTree deferred-load succeeded; no product edit was made for this command-context issue."
+      }
+    ],
+    "wire_change": false,
+    "limits": [
+      "One publication covers latest completed authority state; no intermediate catch-up snapshot history is sent.",
+      "15Hz wall-clock target, no while loop or catch-up packet replay; client 120ms interpolation unchanged.",
+      "Both CPU variants already use shared JSON. Static MANUAL pose, not the additional real offscreen animation debt or a rendering measurement.",
+      "Compare costs per 66.7ms publication interval; do not call full-batch32.8ms a cost on every30TPS step."
+    ]
   }
 }

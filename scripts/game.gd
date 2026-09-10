@@ -163,12 +163,13 @@ func _physics_process(delta: float) -> void:
 			check_victory()
 		simulation_tick += 1
 		elapsed += delta
-		if online:
-			replication.tick(delta)
 
 func _process(delta: float) -> void:
-	if online and not is_authority:
-		replication.render(delta)
+	if online:
+		if is_authority:
+			replication.publish_latest()
+		else:
+			replication.render(delta)
 	if _fog_ready:
 		$FogOfWar.apply_visibility(local_owner_id)
 	_ui_accumulator += delta

@@ -333,6 +333,10 @@ func _send_packet(packet: PackedByteArray, channel: int) -> Error:
 		return ERR_UNAVAILABLE
 	return _peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if channel >= Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE)
 
+func flush_outbound() -> void:
+	if _connection != null:
+		_connection.flush()
+
 func _lost(now: int, reason: String = "transport_lost") -> void:
 	_diagnostic("connection_lost", {"reason": reason, "receive_age_ms": maxi(0, now - _last_received)})
 	_close_transport()

@@ -14,6 +14,8 @@ class RecordingRelay extends RelayClient:
 			captured[owner] = []
 		captured[owner].append(int(snapshot.tick))
 		return OK
+	func snapshot_json_to(owner: int, snapshot_json: String) -> Error:
+		return snapshot_to(owner, JSON.parse_string(snapshot_json))
 	func send_event(owner: int, event: Dictionary) -> Error:
 		visual_packets.append({"owner": owner, "event": event})
 		return OK
@@ -351,11 +353,12 @@ func _run() -> void:
 	for index in range(300):
 		sender.queue_host_visual(1, {"kind": "effect", "effect": "muzzle", "at": [0, 0, 0]})
 	check(sender._outbound_visual[1].size() == Replication.MAX_VISUAL_EVENTS, "outbound_visual_backlog_is_bounded")
-	for simulation_frame in range(7, 13):
+	for simulation_frame in [8, 10, 12]:
 		host.simulation_tick = simulation_frame
-		sender.tick(1.0 / 30.0)
-		sender.tick(1.0 / 30.0)
-	check(recording.captured[1] == [8, 10, 12] and recording.captured[2] == [7, 9, 11] and recording.captured[3] == [8, 10, 12], "three_clients_each_15hz_without_three_snapshots_in_one_tick")
+		sender._next_publish_usec = 0
+		sender.publish_latest()
+		sender.publish_latest()
+	check(recording.captured[1] == [8, 10, 12] and recording.captured[2] == [8, 10, 12] and recording.captured[3] == [8, 10, 12], "three_clients_share_latest_publication_without_duplicate_state")
 	check(not recording.captured.has(0), "host_does_not_replicate_to_itself")
 	check(recording.visual_packets.size() == 3 and recording.visual_packets[0].event.events.size() == 96 and recording.visual_packets[2].event.events.size() == 64, "300_battle_effects_use_three_bounded_reliable_batches")
 	check(recording.visual_packets.all(func(packet): return NetworkProtocol.decoded_size(NetworkProtocol.encode({"op": "event", "payload": packet.event})) < NetworkProtocol.MAX_EVENT_BYTES), "visual_batches_respect_transport_size_limit")

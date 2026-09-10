@@ -10,6 +10,7 @@ signal visual_event_due(event: Dictionary)
 
 const INTERPOLATION_SECONDS: float = 0.12
 const SNAPSHOT_TICKS: int = 2
+const SNAPSHOT_INTERVAL_USEC: int = 66667
 const MAX_BUFFERED_SNAPSHOTS: int = 12
 # Eight expanded armies can contain 896 units; leave room for production lines,
 # defenses and rebuilding sites without rejecting an otherwise valid snapshot.
@@ -26,6 +27,7 @@ var relay: RelayClient
 var last_received_tick: int = -1
 var last_applied_tick: int = -1
 var _last_sent_tick: int = -1
+var _next_publish_usec: int = 0
 var _frames: Array[Dictionary] = []
 var _replicas: Dictionary = {}
 var _playback_time: float = 0.0
@@ -56,6 +58,7 @@ func reset() -> void:
 	last_received_tick = -1
 	last_applied_tick = -1
 	_last_sent_tick = -1
+	_next_publish_usec = 0
 	_playback_time = 0.0
 	_last_arrival_msec = 0
 	_send_errors.clear()
@@ -67,20 +70,31 @@ func reset() -> void:
 	relay = null
 	_fog = null
 
-func tick(_delta: float) -> void:
-	if game == null or not game.is_authority or relay.connection_state != "match":
+func publish_latest() -> void:
+	# Network publication follows wall time after the native physics frame. A
+	# render hitch may execute several authority steps, but intermediate states
+	# are already obsolete: build/encode only the latest complete state once.
+	if game == null or not game.is_authority or game.finished or get_tree().paused or relay.connection_state != "match":
 		return
 	var current_tick: int = game.simulation_tick
 	if current_tick <= _last_sent_tick:
 		return
+	var now: int = Time.get_ticks_usec()
+	if now < _next_publish_usec:
+		return
+	if _next_publish_usec == 0:
+		_next_publish_usec = now + SNAPSHOT_INTERVAL_USEC
+	else:
+		# Skip expired deadlines arithmetically, never by sending catch-up packets.
+		_next_publish_usec += (int((now - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
+	# A late frame may land immediately before the following deadline. Respect
+	# the transport's existing 50 ms minimum before doing another expensive build.
+	_next_publish_usec = maxi(_next_publish_usec, now + 50000)
 	_last_sent_tick = current_tick
 	var recipients: Array[int] = []
 	for player: PlayerState in game.players:
 		if player.owner_id != game.local_owner_id and player.controller == "human":
-			# Every recipient still gets 15 Hz; phase the native simulation's two
-			# ticks so an eight-human match sends at most four snapshots at once.
-			if current_tick % SNAPSHOT_TICKS == (player.owner_id - 1) % SNAPSHOT_TICKS:
-				recipients.append(player.owner_id)
+			recipients.append(player.owner_id)
 	var snapshots: Dictionary[int, Dictionary] = build_snapshots(recipients)
 	var encoded: Dictionary[int, String] = snapshot_batch_json(snapshots)
 	for recipient: int in recipients:
@@ -91,6 +105,12 @@ func tick(_delta: float) -> void:
 		elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(recipient) != error:
 			_send_errors[recipient] = error
 			replication_error.emit(recipient, error)
+	# Session's transport process can precede Game._process. Flush this bounded
+	# latest-state batch now instead of letting it accumulate until another frame.
+	relay.flush_outbound()
+	var completed: int = Time.get_ticks_usec()
+	if _next_publish_usec <= completed:
+		_next_publish_usec += (int((completed - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
 
 func build_snapshot(recipient: int) -> Dictionary:
 	# Standalone reads are fresh even if callers change orders or destroy an
