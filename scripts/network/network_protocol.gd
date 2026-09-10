@@ -5,7 +5,7 @@ extends RefCounted
 const VERSION: int = 10
 const BUILD_ID: String = "0.11.0"
 # Transport/content compatibility stays stable across this client-only hotfix.
-const RELEASE_ID: String = "0.11.0.2"
+const RELEASE_ID: String = "0.11.0.3"
 const TLS_NAME: String = "jimu-zhengba-relay"
 const PORT: int = 24571
 const CONTROL_CHANNEL: int = 0
