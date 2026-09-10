@@ -1,4 +1,7 @@
 extends Node3D
+## Authored model variants for the separate CPU experiment. Empty keeps every
+## original rigid-part scene; no per-frame model switching or runtime baking.
+@export var unit_model_overrides: Dictionary[String, PackedScene] = {}
 
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit.tscn")
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
@@ -90,6 +93,8 @@ func _ready() -> void:
 	_placement_query.shape = footprint
 	_placement_query.collision_mask = 6 | 128
 	$ConstructionNavigation.refresh()
+	if is_authority and ($PathBudget.shared_paths_enabled or $StaticMotionGrid.fast_path_enabled):
+		$StaticMotionGrid.configure(map_instance, $Buildings, Rect2(-map_size * 0.5, map_size))
 	$IncomeTimer.timeout.connect(_on_income)
 	
 	$IncomeTimer.start()
@@ -714,6 +719,7 @@ func find_recruit_position(kind: String, building: BattleBuilding = null) -> Vec
 func spawn_unit(kind: String, faction: int, at: Vector3, id: int = 0) -> Node3D:
 	var unit: Node3D = UNIT_SCENE.instantiate()
 	unit.unit_type = kind
+	unit.model_scene_override = unit_model_overrides.get(kind)
 	unit.entity_id = id
 	unit.owner_id = faction
 	unit.alliance_id = get_player(faction).alliance_id
@@ -759,6 +765,8 @@ func on_entity_died(entity: Node3D) -> void:
 			get_player(killer).kills += 1
 	else:
 		$ConstructionNavigation.refresh()
+		$StaticMotionGrid.invalidate()
+		$StaticMotionGrid.schedule_rebuild.call_deferred()
 		if entity.alliance_id != get_player(local_owner_id).alliance_id:
 			buildings_destroyed += 1
 	entities_by_id.erase(entity.entity_id)
@@ -1059,6 +1067,8 @@ func create_site(owner: int, kind: String, at: Vector3, workers: Array, queued: 
 	return {"ok": true, "entity_id": site.entity_id}
 
 func spawn_building(kind: String, owner: int, at: Vector3, construction: bool = false, id: int = 0) -> BattleBuilding:
+	if _match_ready and is_authority:
+		$StaticMotionGrid.invalidate()
 	var site: BattleBuilding = BUILDING_SCENE.instantiate()
 	site.building_type = kind
 	site.entity_id = id
@@ -1069,6 +1079,8 @@ func spawn_building(kind: String, owner: int, at: Vector3, construction: bool = 
 	site.sound_requested.connect(play_world_sound)
 	site.construction_completed.connect(_on_construction_completed)
 	$Buildings.add_child(site)
+	if _match_ready and is_authority:
+		$StaticMotionGrid.schedule_rebuild.call_deferred()
 	if owner == local_owner_id and kind == "headquarters":
 		headquarters = site
 	return site
@@ -1078,21 +1090,26 @@ func move_formation(army: Array, at: Vector3, assault: bool, queued: bool) -> vo
 		return
 	var columns := ceili(sqrt(float(army.size())))
 	var spacing := 1.7
+	var largest_radius: float = 0.0
 	var center := Vector3.ZERO
 	for unit: BattleUnit in army:
 		spacing = maxf(spacing, unit.radius * 2.3)
+		largest_radius = maxf(largest_radius, unit.radius)
 		center += unit.global_position
 	center /= army.size()
 	var forward := (at - center).normalized()
 	if forward.length_squared() < 0.01:
 		forward = Vector3.FORWARD
 	var right := Vector3(-forward.z, 0, forward.x)
+	# Small selections retain native paths. A group shares its macro route but
+	# each member still receives the same independent formation slot as before.
+	var plan: MovementPlan = MovementPlan.new(at, largest_radius) if army.size() >= 8 and $PathBudget.shared_paths_enabled else null
 	for index in range(army.size()):
 		var target := clamp_to_map(at + right * (float(index % columns) - float(columns - 1) * 0.5) * spacing - forward * float(index / columns) * spacing)
 		if queued:
-			army[index].queue_move(target, assault)
+			army[index].queue_move(target, assault, plan)
 		else:
-			army[index].issue_move(target, assault)
+			army[index].issue_move(target, assault, plan)
 
 func notify_owner(owner: int, message: String) -> void:
 	if owner == local_owner_id:

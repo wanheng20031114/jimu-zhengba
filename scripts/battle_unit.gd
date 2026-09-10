@@ -27,6 +27,7 @@ const RECOVERY_DELAY: float = 10.0
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
+@export var model_scene_override: PackedScene
 @export var owner_id: int = -1
 @export var alliance_id: int = 0
 # Saved 0.5 scenes encode two alliances as team. New matches set owner_id explicitly.
@@ -63,6 +64,7 @@ var order: Order = Order.IDLE
 var target: Node3D
 var destination: Vector3
 var waypoint_queue: Array[Dictionary] = []
+var _movement_plan: MovementPlan
 var work_target: Node3D
 var work_progress: float = 0.0
 
@@ -75,6 +77,11 @@ var _fog: FogOfWar
 var _recovery_quiet_seconds: float = 0.0
 var _recovery_progress: float = 0.0
 var _path_budget: PathBudget
+var _motion_grid: StaticMotionGrid
+var _motion_clearance: float = 0.0
+var _motion_region := Rect2()
+var _motion_region_revision: int = -1
+var _motion_region_clear: bool = false
 var _attack_cooldown: float = 0.0
 var _scan_time: float = 0.0
 var _repath_time: float = 0.0
@@ -128,6 +135,7 @@ func _ready() -> void:
 	_owner_state = _game.get_player(owner_id)
 	_fog = _game.get_node("FogOfWar")
 	_path_budget = _game.get_node("PathBudget")
+	_motion_grid = _game.get_node("StaticMotionGrid")
 	_home_position = global_position
 	destination = global_position
 	_scan_time = randf_range(0.05, 0.35)
@@ -135,7 +143,8 @@ func _ready() -> void:
 	add_to_group("entities")
 	add_to_group("units")
 	add_to_group("friendly_units" if team == 0 else "enemy_units")
-	_model = MODELS[unit_type].instantiate()
+	var model_scene: PackedScene = model_scene_override if model_scene_override != null else MODELS[unit_type]
+	_model = model_scene.instantiate()
 	var relation: int = FactionPalette.relation(owner_id, alliance_id, _game)
 	_model.set_team(relation)
 	model_pivot.add_child(_model)
@@ -150,6 +159,7 @@ func _ready() -> void:
 	var capsule: CapsuleShape3D = $CollisionShape3D.shape
 	capsule.radius = radius * 0.85
 	capsule.height = maxf(radius * 1.7, 1.8)
+	_motion_clearance = capsule.radius + capsule.margin + safe_margin
 	$CollisionShape3D.position.y = capsule.height * 0.5
 	selection_ring.scale = Vector3.ONE * radius * 1.65
 	selection_ring.set_instance_shader_parameter("ring_color", FactionPalette.ui_color(relation))
@@ -312,15 +322,33 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 		_observed_velocity = Vector3.ZERO
 		return
 	var previous_position: Vector3 = global_position
-	move_and_slide()
-	# In floating motion mode velocity can retain the requested speed while
-	# pressing against a wall. Native displacement reports the actual motion.
-	_observed_velocity = get_real_velocity()
-	_observed_velocity.y = 0.0
-	if absf(global_position.y) > 0.001:
-		global_position.y = 0.0
+	var delta: float = get_physics_process_delta_time()
+	var proposed: Vector3 = previous_position + velocity * delta
+	var certified: bool = false
+	if _motion_grid.fast_path_enabled and _motion_grid.is_current and previous_position.is_finite() and proposed.is_finite() and absf(previous_position.y - _motion_grid.movement_plane_y) <= StaticMotionGrid.PLANE_EPSILON and absf(proposed.y - _motion_grid.movement_plane_y) <= StaticMotionGrid.PLANE_EPSILON:
+		if _motion_region_revision != _motion_grid.revision or not _motion_region.has_point(Vector2(previous_position.x, previous_position.z)) or not _motion_region.has_point(Vector2(proposed.x, proposed.z)):
+			_motion_region = _motion_grid.center_region_for_sweep(previous_position, proposed)
+			_motion_region_clear = _motion_grid.certify_center_region(_motion_region, _motion_clearance)
+			_motion_region_revision = _motion_grid.revision
+		# Both positive and negative certificates are reused until the unit leaves
+		# the region. A teleport must pass the starting-point check as well.
+		certified = _motion_region_clear
+	if certified:
+		global_position = proposed
+		_motion_grid.fast_steps += 1
+	else:
+		move_and_slide()
+		_motion_grid.native_steps += 1
+	var current_position: Vector3 = global_position
+	if absf(current_position.y) > 0.001:
+		current_position.y = 0.0
+		global_position = current_position
+	# Actual displacement preserves wall contact and pursuit on both paths.
+	var displacement: Vector3 = current_position - previous_position
+	displacement.y = 0.0
+	_observed_velocity = displacement / delta
 	# Footsteps follow actual displacement, including RVO and walls.
-	var travelled: float = global_position.distance_to(previous_position)
+	var travelled: float = displacement.length()
 	_foley_distance += travelled
 	var stride: float = 1.65 if unit_type == "knight" else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
 	if _foley_distance >= stride:
@@ -330,7 +358,10 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 
 func _set_navigation_target(at: Vector3) -> void:
 	at.y = 0.0
-	_path_budget.request(self, at)
+	if _movement_plan != null and target == null and order in [Order.MOVE, Order.ATTACK_MOVE] and at.distance_squared_to(destination) < 0.0025:
+		_path_budget.request_shared(self, at, _movement_plan)
+	else:
+		_path_budget.request(self, at)
 
 func _face_direction(direction: Vector3, delta: float) -> void:
 	if direction.length_squared() > 0.001:
@@ -522,6 +553,7 @@ func _issue_work(entity: Node3D, work_order: Order, queued: bool) -> bool:
 	return true
 
 func _begin_work(entity: Node3D, work_order: Order) -> void:
+	_movement_plan = null
 	_interrupt_work()
 	order = work_order
 	work_target = entity
@@ -659,13 +691,13 @@ func _exit_tree() -> void:
 	if _claimed_site and is_instance_valid(work_target):
 		work_target.release_builder(self)
 
-func issue_move(at: Vector3, attack_move: bool = false) -> void:
+func issue_move(at: Vector3, attack_move: bool = false, plan: MovementPlan = null) -> void:
 	if not alive:
 		return
 	waypoint_queue.clear()
-	_begin_move(at, attack_move)
+	_begin_move(at, attack_move, plan)
 
-func queue_move(at: Vector3, attack_move: bool = false) -> void:
+func queue_move(at: Vector3, attack_move: bool = false, plan: MovementPlan = null) -> void:
 	if not alive:
 		return
 	if order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
@@ -675,12 +707,15 @@ func queue_move(at: Vector3, attack_move: bool = false) -> void:
 			var last: Dictionary = waypoint_queue.back()
 			if last.kind == "move" and last.attack_move == attack_move and last.position.distance_squared_to(at) < 0.01:
 				return
-		waypoint_queue.append({"kind": "move", "position": at, "attack_move": attack_move})
+		var step: Dictionary = {"kind": "move", "position": at, "attack_move": attack_move}
+		if plan != null: step["plan"] = plan
+		waypoint_queue.append(step)
 	else:
-		_begin_move(at, attack_move)
+		_begin_move(at, attack_move, plan)
 
-func _begin_move(at: Vector3, attack_move: bool) -> void:
+func _begin_move(at: Vector3, attack_move: bool, plan: MovementPlan = null) -> void:
 	_interrupt_work()
+	_movement_plan = plan
 	order = Order.ATTACK_MOVE if attack_move else Order.MOVE
 	order_name = "攻击前进" if attack_move else "移动中"
 	destination = _game.clamp_to_map(at)
@@ -705,6 +740,8 @@ func issue_attack(entity: Node3D, queued: bool = false) -> void:
 	_begin_attack(entity)
 
 func _begin_attack(entity: Node3D) -> void:
+	_movement_plan = null
+	_path_budget.release_shared_plan(self)
 	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
 	_interrupt_work()
 	order = Order.ATTACK
@@ -743,7 +780,7 @@ func _complete_waypoint() -> void:
 			hold()
 			return
 		if next_waypoint.kind == "move":
-			_begin_move(next_waypoint.position, next_waypoint.attack_move)
+			_begin_move(next_waypoint.position, next_waypoint.attack_move, next_waypoint.get("plan"))
 			return
 		var next_entity: Variant = next_waypoint.entity
 		if not is_instance_valid(next_entity) or not next_entity.alive:
@@ -761,6 +798,7 @@ func _complete_waypoint() -> void:
 
 func _finish_order() -> void:
 	_interrupt_work()
+	_movement_plan = null
 	order = Order.IDLE
 	order_name = "待命"
 	target = null
@@ -839,6 +877,7 @@ func _update_health_bar() -> void:
 	health_bar.set_instance_shader_parameter("health", hp / max_hp)
 
 func _die() -> void:
+	_movement_plan = null
 	_interrupt_work()
 	_path_budget.cancel(self)
 	waypoint_queue.clear()

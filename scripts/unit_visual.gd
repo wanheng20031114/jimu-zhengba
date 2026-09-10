@@ -3,6 +3,10 @@ extends Node3D
 ## Saved rigid-part sculptures driven by native AnimationPlayers.
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var kind: String = "swordsman"
 @export var projectile_socket: NodePath
+## Optional authored rigid-skin representation. The original editable rigs
+## continue to use their Marker3D socket and need neither field.
+@export_node_path("Skeleton3D") var rigid_skin_skeleton: NodePath
+@export var rigid_skin_socket_bone: StringName
 
 @onready var locomotion: AnimationPlayer = $Locomotion
 @onready var attack: AnimationPlayer = $Attack
@@ -19,8 +23,14 @@ var _attack_advanced: float = 0.0
 var _paused_frames: int = 0
 var _pause_started_frame: int = -1
 var _dead: bool = false
+var _rigid_skeleton: Skeleton3D
+var _rigid_socket_index: int = -1
 
 func _ready() -> void:
+	if not rigid_skin_skeleton.is_empty():
+		_rigid_skeleton = get_node(rigid_skin_skeleton)
+		_rigid_socket_index = _rigid_skeleton.find_bone(rigid_skin_socket_bone)
+		assert(_rigid_socket_index >= 0, "Rigid skin asset must provide its projectile bone")
 	for mesh_node: Node in $Rig.find_children("*", "MeshInstance3D", true, false):
 		_team_surfaces.append(mesh_node as MeshInstance3D)
 	set_team(_team)
@@ -157,6 +167,10 @@ func die() -> void:
 
 func get_projectile_origin() -> Vector3:
 	_synchronize_locomotion()
+	if _rigid_skeleton != null:
+		# BoneAttachment3D publishes after the Skeleton's deferred update. Read
+		# the freshly sampled native pose directly at the authoritative release.
+		return _rigid_skeleton.global_transform * _rigid_skeleton.get_bone_global_pose(_rigid_socket_index).origin
 	return get_node(projectile_socket).global_position
 
 func set_team(team: int) -> void:

@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://tests/balance_combat_host.gd" id="1_host"]
 [ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="2_budget"]
 [ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="3_fog"]
+[ext_resource type="PackedScene" path="res://scenes/static_motion_grid.tscn" id="4_motion"]
 
 [sub_resource type="NavigationMesh" id="Navigation_test"]
 vertices = PackedVector3Array(-40, 0, -40, -40, 0, 40, 40, 0, 40, 40, 0, -40)
@@ -23,3 +24,5 @@ navigation_mesh = SubResource("Navigation_test")
 [node name="PathBudget" parent="." instance=ExtResource("2_budget")]
 
 [node name="FogOfWar" parent="." instance=ExtResource("3_fog")]
+
+[node name="StaticMotionGrid" parent="." instance=ExtResource("4_motion")]

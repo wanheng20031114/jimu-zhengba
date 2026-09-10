@@ -10,6 +10,9 @@ config_version=5
 
 [application]
 
+config/use_custom_user_dir=true
+config/custom_user_dir_name="JimuZhengbaCpuExperiment"
+
 config/name="积木争霸"
 run/main_scene="res://scenes/lobby.tscn"
 run/flush_stdout_on_print=true

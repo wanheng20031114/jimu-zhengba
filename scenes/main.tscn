@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
@@ -31,6 +31,7 @@
 [ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="fog"]
 [ext_resource type="PackedScene" path="res://scenes/match_replication.tscn" id="replication"]
 [ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="path_budget"]
+[ext_resource type="PackedScene" path="res://scenes/static_motion_grid.tscn" id="static_motion"]
 [ext_resource type="PackedScene" path="res://scenes/effect_pool.tscn" id="effect_pool"]
 [ext_resource type="PackedScene" path="res://scenes/projectile_pool.tscn" id="projectile_pool"]
 
@@ -116,6 +117,8 @@ rotation_degrees = Vector3(0,-45,0)
 [node name="MapContainer" type="Node3D" parent="."]
 
 [node name="PathBudget" parent="." instance=ExtResource("path_budget")]
+
+[node name="StaticMotionGrid" parent="." instance=ExtResource("static_motion")]
 
 [node name="MatchReplication" parent="." instance=ExtResource("replication")]
 

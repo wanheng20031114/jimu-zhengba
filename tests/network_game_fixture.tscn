@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://tests/network_game_fixture.gd" id="1_game"]
 [ext_resource type="Script" path="res://tests/network_game_fog_fixture.gd" id="2_fog"]
@@ -6,11 +6,14 @@
 [ext_resource type="PackedScene" path="res://scenes/match_replication.tscn" id="4_replication"]
 [ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="5_path_budget"]
 [ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="6_fog_scene"]
+[ext_resource type="PackedScene" path="res://scenes/static_motion_grid.tscn" id="7_motion"]
 
 [node name="NetworkGameFixture" type="Node3D"]
 script = ExtResource("1_game")
 
 [node name="PathBudget" parent="." instance=ExtResource("5_path_budget")]
+
+[node name="StaticMotionGrid" parent="." instance=ExtResource("7_motion")]
 
 [node name="FogOfWar" parent="." instance=ExtResource("6_fog_scene")]
 script = ExtResource("2_fog")
