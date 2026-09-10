@@ -37,8 +37,8 @@ func set_animated(kind: String) -> void:
 	assert(kind.is_empty() or kind in KINDS, "Unknown portrait: " + kind)
 	if _animated_kind == kind:
 		return
-	if not _animated_kind.is_empty():
-		_viewports[_animated_kind].render_target_update_mode = SubViewport.UPDATE_DISABLED
+	# Keep any pending UPDATE_ONCE from set_team(): production buttons share the
+	# old portrait texture. One-shot rendering stops itself after that repaint.
 	_animated_kind = kind
 	if kind.is_empty():
 		_tick.stop()

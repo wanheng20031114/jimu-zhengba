@@ -69,6 +69,7 @@ func _run() -> void:
 	for kind: String in KINDS:
 		_check(_previews.portrait(kind).get_image().get_data() == snapshots[kind], kind + " stays frozen with no active preview")
 	_check(_previews.get_node("PreviewTick").is_stopped(), "empty selection stops timer")
+	await _check_recolor_switches()
 	var file := FileAccess.open("res://artifacts/model_previews_test.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks": _checks, "failures": _failures}, "\t"))
 	file.close()
@@ -79,3 +80,39 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	quit(0 if _failures.is_empty() else 1)
+
+func _check_recolor_switches() -> void:
+	# These textures are shared by the selected portrait and the production buttons.
+	for relation: int in [FactionPalette.ENEMY, FactionPalette.ALLY]:
+		for pair: Array in [["swordsman", "barracks"], ["archer", "barracks"], ["knight", "barracks"],
+			["farmer", "headquarters"], ["catapult", "factory"], ["cannon", "factory"],
+			["headquarters", "farmer"], ["swordsman", ""]]:
+			var kind: String = pair[0]
+			_previews.set_team(relation)
+			_previews.set_animated(kind)
+			_previews.get_node("PreviewTick").stop()
+			await RenderingServer.frame_post_draw
+			await RenderingServer.frame_post_draw
+			var previous: Image = _previews.portrait(kind).get_image()
+			# Match HUD.refresh() followed by HUD._process() before the next draw.
+			_previews.set_team(FactionPalette.SELF)
+			_previews.set_animated(pair[1])
+			_previews.get_node("PreviewTick").stop()
+			await RenderingServer.frame_post_draw
+			await RenderingServer.frame_post_draw
+			var current: Image = _previews.portrait(kind).get_image()
+			var label: String = "%s relation %d to own %s" % [kind, relation, pair[1]]
+			_check(_blue_pixels(current) > _blue_pixels(previous), label + " redraws own blue production texture without hover")
+			var settled: PackedByteArray = current.get_data()
+			await create_timer(0.12).timeout
+			await RenderingServer.frame_post_draw
+			_check(_previews.portrait(kind).get_image().get_data() == settled, label + " stays cached after the pending redraw")
+
+func _blue_pixels(picture: Image) -> int:
+	var count: int = 0
+	for y in range(0, picture.get_height(), 2):
+		for x in range(0, picture.get_width(), 2):
+			var pixel: Color = picture.get_pixel(x, y)
+			if pixel.a > 0.5 and pixel.b > pixel.r * 1.2 and pixel.b > pixel.g * 1.05:
+				count += 1
+	return count
