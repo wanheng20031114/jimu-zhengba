@@ -39,6 +39,7 @@ var _cosmetic_times: Dictionary = {}
 var _last_visual_tick: Dictionary = {}
 var _visual_queue: Array[Dictionary] = []
 var _pending_snapshot_json: Dictionary[int, String] = {}
+var _deferred_visual: Dictionary[int, bool] = {}
 var _recipient_cursor: int = 0
 var _last_drain_frame: int = -1
 
@@ -73,6 +74,7 @@ func reset() -> void:
 	_last_visual_tick.clear()
 	_visual_queue.clear()
 	_pending_snapshot_json.clear()
+	_deferred_visual.clear()
 	_recipient_cursor = 0
 	_last_drain_frame = -1
 	game = null
@@ -110,6 +112,7 @@ func publish_latest() -> void:
 
 func _discard_outbound() -> void:
 	_pending_snapshot_json.clear()
+	_deferred_visual.clear()
 	_outbound_visual.clear()
 	_cosmetic_times.clear()
 	_last_visual_tick.clear()
@@ -120,37 +123,48 @@ func _discard_outbound() -> void:
 
 func _drain_pending() -> void:
 	var frame: int = Engine.get_process_frames()
-	if frame == _last_drain_frame or _pending_snapshot_json.is_empty():
+	if frame == _last_drain_frame:
 		return
 	_last_drain_frame = frame
 	var attempted := 0
 	for _index in range(game.players.size()):
 		var recipient: int = _recipient_cursor % game.players.size()
 		_recipient_cursor = (_recipient_cursor + 1) % game.players.size()
-		if not _pending_snapshot_json.has(recipient):
+		if not _pending_snapshot_json.has(recipient) and _outbound_visual.get(recipient, []).is_empty():
 			continue
 		if game.get_player(recipient).controller != "human":
 			_pending_snapshot_json.erase(recipient)
 			_outbound_visual.erase(recipient)
+			_deferred_visual.erase(recipient)
 			continue
 		attempted += 1
-		var error := relay.snapshot_json_to(recipient, _pending_snapshot_json[recipient])
-		if error == OK:
-			_pending_snapshot_json.erase(recipient)
-			_send_errors.erase(recipient)
-			# This owner's effects share its real encoded-byte budget. A BUSY
-			# visual batch remains in its existing bounded, expiring queue.
-			_flush_visual(recipient)
-			# Keep equal native sequence numbers on adjacent owner channels out
-			# of one outgoing command list; do not wait to flush all recipients.
-			relay.flush_outbound()
-		elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(recipient) != error:
-			_send_errors[recipient] = error
-			replication_error.emit(recipient, error)
-		elif error == ERR_BUSY and relay.presentation_budget_blocked:
-			# A larger packet must get the first empty opportunity next frame.
-			# Advancing past it could permanently starve a high-numbered owner
-			# when each newer batch refills the lower-numbered owners first.
+		var blocked := false
+		var visual_first: bool = _deferred_visual.has(recipient)
+		if visual_first:
+			var visual_error: Error = _flush_visual(recipient)
+			blocked = visual_error == ERR_BUSY and relay.presentation_budget_blocked
+			if visual_error == OK:
+				_deferred_visual.erase(recipient)
+		if not blocked and _pending_snapshot_json.has(recipient):
+			var error := relay.snapshot_json_to(recipient, _pending_snapshot_json[recipient])
+			if error == OK:
+				_pending_snapshot_json.erase(recipient)
+				_send_errors.erase(recipient)
+			elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(recipient) != error:
+				_send_errors[recipient] = error
+				replication_error.emit(recipient, error)
+			blocked = error == ERR_BUSY and relay.presentation_budget_blocked
+		if not blocked and not visual_first:
+			var visual_error: Error = _flush_visual(recipient)
+			blocked = visual_error == ERR_BUSY and relay.presentation_budget_blocked
+			if blocked:
+				_deferred_visual[recipient] = true
+		# Effects are scheduled independently after their snapshot leaves the
+		# pending map. A budget-blocked effect gets the next empty opportunity
+		# before a newer snapshot; wall-time throttling still lets others proceed.
+		# Flush each owner separately, including a visual-only retry.
+		relay.flush_outbound()
+		if blocked:
 			_recipient_cursor = recipient
 			break
 		if attempted >= RelayClient.PRESENTATION_OWNERS_PER_FRAME:
@@ -410,7 +424,7 @@ func flush_visual() -> void:
 		_flush_visual(recipient)
 		relay.flush_outbound()
 
-func _flush_visual(recipient: int) -> void:
+func _flush_visual(recipient: int) -> Error:
 	var times: Dictionary = _cosmetic_times.get(recipient, {})
 	for key: Vector3i in times.keys():
 		if game.elapsed - float(times[key]) >= COSMETIC_INTERVAL:
@@ -419,9 +433,9 @@ func _flush_visual(recipient: int) -> void:
 		_cosmetic_times.erase(recipient)
 	var pending: Array = _outbound_visual.get(recipient, [])
 	if pending.is_empty():
-		return
+		return OK
 	if game.simulation_tick - int(_last_visual_tick.get(recipient, -SNAPSHOT_TICKS)) < SNAPSHOT_TICKS:
-		return
+		return ERR_SKIP
 	var battle: Array = []
 	var cosmetic: Array = []
 	for item: Dictionary in pending:
@@ -435,7 +449,7 @@ func _flush_visual(recipient: int) -> void:
 	pending.append_array(cosmetic)
 	_outbound_visual[recipient] = pending
 	if pending.is_empty():
-		return
+		return OK
 	var batch: Array = pending.slice(0, mini(pending.size(), MAX_BATCH_EVENTS))
 	# Reserve room for the transport envelope. Binary size is enforced again by
 	# RelayClient; a large effect burst stays one reliable packet per 15 Hz phase.
@@ -443,7 +457,7 @@ func _flush_visual(recipient: int) -> void:
 		if batch.size() == 1:
 			pending.pop_front()
 			replication_error.emit(recipient, ERR_INVALID_DATA)
-			return
+			return ERR_INVALID_DATA
 		batch = batch.slice(0, maxi(1, batch.size() / 2))
 	var error := relay.send_event(recipient, {"kind": "visual_batch", "events": batch})
 	if error == OK:
@@ -452,6 +466,7 @@ func _flush_visual(recipient: int) -> void:
 	elif error in [ERR_INVALID_DATA, ERR_OUT_OF_MEMORY]:
 		_outbound_visual[recipient] = pending.slice(batch.size())
 		replication_error.emit(recipient, error)
+	return error
 
 static func _is_cosmetic(event: Dictionary) -> bool:
 	return (event.get("kind") == "sound" and event.get("sound") in ["footstep_dirt", "horse_hoof", "cart_wheel"]) or (event.get("kind") == "effect" and event.get("effect") == "dust")

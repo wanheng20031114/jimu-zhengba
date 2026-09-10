@@ -1,0 +1,28 @@
+{
+  "scope": "Actual RelayClient encoding and MatchReplication scheduling, native connected peer, final packet capture sink; not UDP delivery or FPS",
+  "utc": "2026-09-10T16:40:38.916671+00:00",
+  "checks": 172,
+  "failed": 0,
+  "encoded_snapshot_bytes": 12127,
+  "encoded_visual_bytes": 5138,
+  "first_frame_bytes": 46667,
+  "maximum_observed_frame_bytes": 46675,
+  "continuous_visuals_delivered_once": 48,
+  "recipient_count": 6,
+  "publication_generations": 8,
+  "all_frames_at_most_3_owners": true,
+  "all_frames_at_most_49152_bytes": true,
+  "helper_exit_code": 0,
+  "helper_exit_verified_by_cim": true,
+  "stderr_bytes": 0,
+  "engine_sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424",
+  "source_sha256": {
+    "scripts/network/match_replication.gd": "8eaf0c90e6937b63ca8e79ee7aee28aa358a2b4cdc931cfd28f11629cb7d2ee5",
+    "scripts/network/relay_client.gd": "5867fc9819c3d3d478c206277242960254a80e4dfea707868123ed1d41b4187b",
+    "scripts/network/network_protocol.gd": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b"
+  },
+  "raw_result_sha256": "bce86bb56f497d779d19681b329ef03785c48a2bff3bafd1451599fbf55404d0",
+  "metadata_sha256": "c0fe1722762c85ae3b0a059a7719b829fa78bc2aeb37dc1e88e88a2574b5f109",
+  "temporary_directory": ".local/release-0.12-visual-fairness-tests",
+  "temporary_files_retained": true
+}

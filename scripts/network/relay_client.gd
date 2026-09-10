@@ -154,6 +154,7 @@ func _snapshot_to(owner: int, snapshot: Dictionary, snapshot_json: String) -> Er
 	return result
 
 func send_event(owner: int, event: Dictionary) -> Error:
+	presentation_budget_blocked = false
 	if not is_host or _match.is_empty():
 		return ERR_UNAUTHORIZED
 	if owner != -1 and not has_player_connection(owner):
