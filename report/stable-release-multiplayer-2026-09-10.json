@@ -1,0 +1,97 @@
+{
+  "source_commit": "dc32f9ca3d7a50117e9f435bb47cc5eb895fbea8",
+  "package": {
+    "path": "builds/积木争霸-Windows-x64.zip",
+    "size": 69117902,
+    "sha256": "dc0d12c32fa671ebdf9d54ed9fa4b4a722b56c665e35ec539747f335eb8988b6",
+    "build": "0.11.0",
+    "protocol": 10,
+    "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+  },
+  "probe": {
+    "actual_exported_template": true,
+    "checks": 191,
+    "handshake_msec": 546,
+    "mode": "4v4",
+    "empty_slots": [
+      5,
+      6
+    ],
+    "failures": [],
+    "stderr_empty": true
+  },
+  "relay": {
+    "before": {
+      "service": {
+        "MainPID": "284254",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "InvocationID": "e3dbaee5505d4666a191940fdb619bf9"
+      },
+      "release": "05350c9edc56bb64",
+      "protocol": 9,
+      "build": "0.11.0",
+      "manifest_sha256": "46515ad0304939e2eef382c62d04382be2f300605834d39e0aba082c2d9d6377",
+      "ready_lines": [
+        "JIMU_RELAY_READY protocol=9 rooms=1 humans=8"
+      ],
+      "script_errors": 0,
+      "unrelated_service": "MainPID=270544\nActiveState=active"
+    },
+    "after": {
+      "service": {
+        "MainPID": "284742",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "InvocationID": "6d5612b12c7342c5aea0a7a38d7b9821"
+      },
+      "release": "cf99f96528ccb274",
+      "protocol": 10,
+      "build": "0.11.0",
+      "manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+      "ready_lines": [
+        "JIMU_RELAY_READY protocol=10 rooms=1 humans=8"
+      ],
+      "script_errors": 0,
+      "unrelated_service": "MainPID=270544\nActiveState=active"
+    }
+  },
+  "occupancy_note": "rooms=1 is capacity; no administrative live-room endpoint; test room released after probe.",
+  "github_release": {
+    "release_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/tag/v0.11.0-protocol10",
+    "tag": "v0.11.0-protocol10",
+    "target_commitish": "dc32f9ca3d7a50117e9f435bb47cc5eb895fbea8",
+    "download_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0-protocol10/jimu-zhengba-0.11.0-protocol10-Windows-x64.zip",
+    "asset_id": 554695713,
+    "size": 69117902,
+    "zip_sha256": "dc0d12c32fa671ebdf9d54ed9fa4b4a722b56c665e35ec539747f335eb8988b6",
+    "asset_digest": "sha256:dc0d12c32fa671ebdf9d54ed9fa4b4a722b56c665e35ec539747f335eb8988b6",
+    "build": "0.11.0",
+    "protocol": 10,
+    "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+  },
+  "subsequent_disconnect_observation": {
+    "timestamp_utc": "2026-09-10T09:34:05.802967+00:00",
+    "service": {
+      "MainPID": "284742",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "MemoryCurrent": "37842944",
+      "TasksCurrent": "6",
+      "ActiveState": "active",
+      "SubState": "running",
+      "ActiveEnterTimestamp": "Thu 2026-09-10 17:26:40 CST",
+      "InvocationID": "6d5612b12c7342c5aea0a7a38d7b9821"
+    },
+    "relevant_invocation_log": [
+      "JIMU_RELAY_READY protocol=10 rooms=1 humans=8"
+    ],
+    "kernel_oom_last20min": [],
+    "unrelated_service": "MainPID=270544\nActiveState=active",
+    "peer_or_room_count_available": false,
+    "no_restart_or_probe_performed": true
+  }
+}
