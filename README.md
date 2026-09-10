@@ -10,9 +10,9 @@ Godot 4.6 原创 3D RTS，采用暖色低多边形模型与 45° 正交视角。
 
 安装同版本导出模板后运行 `powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1`。输出 `builds/积木争霸-Windows-x64.zip`；构建产物不纳入 Git。完整操作见 [玩家说明](docs/windows-readme.txt)，联机部署见 [中继文档](server/README.md)。
 
-当前热修发行版 **0.11.0.2**，协议 **10**：修复非房主结算击杀数为0，按最后一击归属统计每位玩家，并通过可靠结算消息发送最终分数。房主与客户端均更新至此版本即可获得正确的个人统计。详见 [击杀统计修复报告](report/kill-statistics-0.11.0.2.md)。保留0.11.0.1的Bot通知误踢修复；Relay支持8房、每房最多8名真人，本次无需更新中继。网络兼容标识及内容清单保持0.11.0协议10不变，原协议10发行包仍可连接。详见 [联机热修报告](report/network-hotfix-0.11.0.1.md)。
+当前正式发行版 **0.11.0.3**，协议 **10**：修复密集交战中站稳的单位被后排推挤，以及自动攻击持续追逐无法接近的旧目标。保留多人个人击杀统计与 Bot 通知误踢修复。建议房主和客户端都更新，交战修复由新版房主执行。公网 Relay 支持 8 房、每房最多 8 名真人，协议、内容指纹及证书与新包一致，本次无需重启；持续联机和实际发行 EXE 检查均通过。详见 [正式发行与联机验收](report/release-0.11.0.3.md)。CPU 模型及共享寻路实验单独开发，未加入此正式版。
 
-[下载0.11.0.2 Windows x64完整包](https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.2/jimu-zhengba-0.11.0.2-Windows-x64.zip)。解压后运行 `积木争霸.exe`，不要只复制EXE。
+[下载0.11.0.3 Windows x64完整包](https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.3/jimu-zhengba-0.11.0.3-Windows-x64.zip)。解压后运行 `积木争霸.exe`，不要只复制EXE。
 
 数值沿用0.11.0：剑士、投石车、加农炮视野统一为14，弓手7秒训练、骑士8秒训练；炮基础攻击40，仅对建筑增加100伤害。详见 [完整数值审查](report/balance-0.11.0.md)，报告以0.10.0为基线列出单位对位、攻防科技组合及训练与视野变化。电脑难度随席位配置同步，旧协议9中继或客户端不能混用。
 
