@@ -1,0 +1,201 @@
+{
+  "scope": "production RelayClient/MatchReplication scheduling, synthetic primitive builder, native localhost DTLS two endpoints; no game FPS/WAN acceptance",
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "checks": [
+    {
+      "label": "native listener",
+      "ok": true
+    },
+    {
+      "label": "native DTLS server",
+      "ok": true
+    },
+    {
+      "label": "native client",
+      "ok": true
+    },
+    {
+      "label": "native DTLS client",
+      "ok": true
+    },
+    {
+      "label": "real connected native peer",
+      "ok": true
+    },
+    {
+      "label": "same process opportunity neither rebuilds nor resends",
+      "ok": true
+    },
+    {
+      "label": "first frame at most three snapshot owners",
+      "ok": true
+    },
+    {
+      "label": "first frame real encoded presentation within48KiB",
+      "ok": true
+    },
+    {
+      "label": "one pending latest per unsent owner",
+      "ok": true
+    },
+    {
+      "label": "replacement snapshot contains latest tick and own private owner",
+      "ok": true
+    },
+    {
+      "label": "replacement snapshot contains latest tick and own private owner",
+      "ok": true
+    },
+    {
+      "label": "replacement snapshot contains latest tick and own private owner",
+      "ok": true
+    },
+    {
+      "label": "round robin continues rather than restarting low owners",
+      "ok": true
+    },
+    {
+      "label": "last player actual native snapshot arrives",
+      "ok": true
+    },
+    {
+      "label": "all admitted snapshots arrive through native DTLS",
+      "ok": true
+    },
+    {
+      "label": "priority control admitted independent of bulk budget",
+      "ok": true
+    },
+    {
+      "label": "existing control bytes leave insufficient bulk room",
+      "ok": true
+    },
+    {
+      "label": "finish bypasses exhausted bulk quota",
+      "ok": true
+    },
+    {
+      "label": "finish clears pending latest and effects",
+      "ok": true
+    },
+    {
+      "label": "BUSY returned at native boundary",
+      "ok": true
+    },
+    {
+      "label": "BUSY does not consume native sequence or frame budget",
+      "ok": true
+    },
+    {
+      "label": "BUSY retains unexpired visual event",
+      "ok": true
+    },
+    {
+      "label": "large protocol-legal snapshot not newly rejected",
+      "ok": true
+    },
+    {
+      "label": "large exception recorded real compressed bytes",
+      "ok": true
+    },
+    {
+      "label": "large exception monopolizes bulk opportunity",
+      "ok": true
+    },
+    {
+      "label": "priority still available after large exception",
+      "ok": true
+    },
+    {
+      "label": "budget-blocked owner retains first next-frame turn",
+      "ok": true
+    },
+    {
+      "label": "large late owner eventually sends instead of permanent starvation",
+      "ok": true
+    },
+    {
+      "label": "local pause clears unsent state and visuals",
+      "ok": true
+    },
+    {
+      "label": "host disconnect pause clears unsent state",
+      "ok": true
+    },
+    {
+      "label": "transport closure clears unsent state",
+      "ok": true
+    }
+  ],
+  "phase_results": {
+    "large_packet": {
+      "delivery_tested": false,
+      "encoded_bytes": 61708
+    },
+    "native": {
+      "frame_encoded_bytes": {
+        "0": 38511,
+        "1": 38515,
+        "2": 37523
+      },
+      "offered_snapshot_packets": 9,
+      "received_snapshot_packets": 9,
+      "second_frame_owners": [
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  "metadata": {
+    "utc": "2026-09-10T16:27:02.808328+00:00",
+    "engine_sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424",
+    "source_sha256": {
+      "scripts/network/match_replication.gd": "fd49e151ab570709015e64a5464c15d20a5ced2147cf819d0ddc00e7347c0146",
+      "scripts/network/relay_client.gd": "f93a26913f2639a68433aae97f1df8cbedbeb2b593d89ec580e3b393e1595323",
+      "scripts/network/network_protocol.gd": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b"
+    },
+    "fixture_sha256": {
+      "entry.gd": "c669a2ea1c2dd54d375377d55520e060e11f65e4b545b5c27ebbede4c65a491c",
+      "fake_game.gd": "1f52eb5594364ee7805fcb2d3251bbc3026703d1d79afe64f1d2a6b05124efad",
+      "pacing_replication.gd": "72624f447d80550c6581e25d43097cdf39756824defbdcc114239fe31aad6d74",
+      "probe.gd": "d3a0710adbe1c4a39b8a6b9de34b97b6abfad87160307896e744ba026e46dd05",
+      "recording_relay.gd": "a5f377cea97f15a6fbf773d99897be053aedc612f9889d6493cb30cfa311c669"
+    },
+    "exit_code": 0,
+    "helper_exited": true,
+    "stderr_bytes": 0
+  },
+  "artifact_sha256": {
+    "result.json": "46bb40aaa153387dea17ecd7a0c87dfca09ff8a96676e20a89c3c6d72a6d117d",
+    "metadata.json": "f2611f9f0865aae712898cd4dbce62ee61e78f75e79a83f84dcee819236c8ee3",
+    "attempt-1/result.json": "32db5ec4e72e81a5920ecc5186b5e04ada1b29ebd1bcbd3968cb4429d273ee90",
+    "attempt-1/metadata.json": "3af2a21e140e81e571988fcc72c8820d51e0081e0e9057f8186cb85bfdc531b6"
+  },
+  "first_attempt_notes": [
+    "4.6.3 client/server in same process reaches known DTLS server destructor mutex errors, so final native contract uses4.7.2.",
+    "First fixture assumed await process_frame already increments Engine.get_process_frames; it now waits actual frame counter advancement. No product behavior was weakened to pass this fixture."
+  ],
+  "limitations": [
+    "Small native two-endpoint contract with synthetic typed snapshot builder, not seven actual Games or15Hz sustained WAN throughput.",
+    "Large protocol-legal packet is captured and admitted exclusively, not demonstrated delivered through a64KiB ring.",
+    "Real4.6.3release client and4.7.2server pacing acceptance remains pending."
+  ],
+  "production_files": [
+    "scripts/network/match_replication.gd",
+    "scripts/network/relay_client.gd"
+  ],
+  "wire_or_relay_changed": false,
+  "temporary_helpers_exited_and_verified": true,
+  "temporary_files_retained": true
+}

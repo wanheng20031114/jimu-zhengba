@@ -38,6 +38,9 @@ var _outbound_visual: Dictionary = {}
 var _cosmetic_times: Dictionary = {}
 var _last_visual_tick: Dictionary = {}
 var _visual_queue: Array[Dictionary] = []
+var _pending_snapshot_json: Dictionary[int, String] = {}
+var _recipient_cursor: int = 0
+var _last_drain_frame: int = -1
 
 func configure(match_game: Node3D, transport: RelayClient) -> void:
 	reset()
@@ -46,12 +49,15 @@ func configure(match_game: Node3D, transport: RelayClient) -> void:
 	_fog = game.get_node("FogOfWar")
 	relay.snapshot_received.connect(receive_snapshot)
 	relay.event_received.connect(_relay_event)
+	relay.outbound_invalidated.connect(_discard_outbound)
 
 func reset() -> void:
 	if is_instance_valid(relay) and relay.snapshot_received.is_connected(receive_snapshot):
 		relay.snapshot_received.disconnect(receive_snapshot)
 	if is_instance_valid(relay) and relay.event_received.is_connected(_relay_event):
 		relay.event_received.disconnect(_relay_event)
+	if is_instance_valid(relay) and relay.outbound_invalidated.is_connected(_discard_outbound):
+		relay.outbound_invalidated.disconnect(_discard_outbound)
 	_frames.clear()
 	for id: int in _replicas.keys():
 		_remove_replica(id)
@@ -66,6 +72,9 @@ func reset() -> void:
 	_cosmetic_times.clear()
 	_last_visual_tick.clear()
 	_visual_queue.clear()
+	_pending_snapshot_json.clear()
+	_recipient_cursor = 0
+	_last_drain_frame = -1
 	game = null
 	relay = null
 	_fog = null
@@ -75,42 +84,77 @@ func publish_latest() -> void:
 	# render hitch may execute several authority steps, but intermediate states
 	# are already obsolete: build/encode only the latest complete state once.
 	if game == null or not game.is_authority or game.finished or get_tree().paused or relay.connection_state != "match":
+		_discard_outbound()
 		return
 	var current_tick: int = game.simulation_tick
-	if current_tick <= _last_sent_tick:
-		return
 	var now: int = Time.get_ticks_usec()
-	if now < _next_publish_usec:
+	if current_tick > _last_sent_tick and now >= _next_publish_usec:
+		if _next_publish_usec == 0:
+			_next_publish_usec = now + SNAPSHOT_INTERVAL_USEC
+		else:
+			# Skip expired deadlines arithmetically, never by sending catch-up packets.
+			_next_publish_usec += (int((now - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
+		_next_publish_usec = maxi(_next_publish_usec, now + 50000)
+		_last_sent_tick = current_tick
+		var recipients: Array[int] = []
+		for player: PlayerState in game.players:
+			if player.owner_id != game.local_owner_id and player.controller == "human":
+				recipients.append(player.owner_id)
+		# Batch-local public JSON reuse stays intact. Only one immutable latest
+		# payload per recipient survives: a newer publication replaces unsent state.
+		_pending_snapshot_json = snapshot_batch_json(build_snapshots(recipients))
+		var completed: int = Time.get_ticks_usec()
+		if _next_publish_usec <= completed:
+			_next_publish_usec += (int((completed - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
+	_drain_pending()
+
+func _discard_outbound() -> void:
+	_pending_snapshot_json.clear()
+	_outbound_visual.clear()
+	_cosmetic_times.clear()
+	_last_visual_tick.clear()
+	_last_sent_tick = -1
+	_next_publish_usec = 0
+	# Do not reset the display-frame gate: pause/reconnect in this same frame
+	# must not mint another native burst. The next process opportunity can drain.
+
+func _drain_pending() -> void:
+	var frame: int = Engine.get_process_frames()
+	if frame == _last_drain_frame or _pending_snapshot_json.is_empty():
 		return
-	if _next_publish_usec == 0:
-		_next_publish_usec = now + SNAPSHOT_INTERVAL_USEC
-	else:
-		# Skip expired deadlines arithmetically, never by sending catch-up packets.
-		_next_publish_usec += (int((now - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
-	# A late frame may land immediately before the following deadline. Respect
-	# the transport's existing 50 ms minimum before doing another expensive build.
-	_next_publish_usec = maxi(_next_publish_usec, now + 50000)
-	_last_sent_tick = current_tick
-	var recipients: Array[int] = []
-	for player: PlayerState in game.players:
-		if player.owner_id != game.local_owner_id and player.controller == "human":
-			recipients.append(player.owner_id)
-	var snapshots: Dictionary[int, Dictionary] = build_snapshots(recipients)
-	var encoded: Dictionary[int, String] = snapshot_batch_json(snapshots)
-	for recipient: int in recipients:
-		_flush_visual(recipient)
-		var error := relay.snapshot_json_to(recipient, encoded[recipient])
+	_last_drain_frame = frame
+	var attempted := 0
+	for _index in range(game.players.size()):
+		var recipient: int = _recipient_cursor % game.players.size()
+		_recipient_cursor = (_recipient_cursor + 1) % game.players.size()
+		if not _pending_snapshot_json.has(recipient):
+			continue
+		if game.get_player(recipient).controller != "human":
+			_pending_snapshot_json.erase(recipient)
+			_outbound_visual.erase(recipient)
+			continue
+		attempted += 1
+		var error := relay.snapshot_json_to(recipient, _pending_snapshot_json[recipient])
 		if error == OK:
+			_pending_snapshot_json.erase(recipient)
 			_send_errors.erase(recipient)
+			# This owner's effects share its real encoded-byte budget. A BUSY
+			# visual batch remains in its existing bounded, expiring queue.
+			_flush_visual(recipient)
+			# Keep equal native sequence numbers on adjacent owner channels out
+			# of one outgoing command list; do not wait to flush all recipients.
+			relay.flush_outbound()
 		elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(recipient) != error:
 			_send_errors[recipient] = error
 			replication_error.emit(recipient, error)
-	# Session's transport process can precede Game._process. Flush this bounded
-	# latest-state batch now instead of letting it accumulate until another frame.
-	relay.flush_outbound()
-	var completed: int = Time.get_ticks_usec()
-	if _next_publish_usec <= completed:
-		_next_publish_usec += (int((completed - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
+		elif error == ERR_BUSY and relay.presentation_budget_blocked:
+			# A larger packet must get the first empty opportunity next frame.
+			# Advancing past it could permanently starve a high-numbered owner
+			# when each newer batch refills the lower-numbered owners first.
+			_recipient_cursor = recipient
+			break
+		if attempted >= RelayClient.PRESENTATION_OWNERS_PER_FRAME:
+			break
 
 func build_snapshot(recipient: int) -> Dictionary:
 	# Standalone reads are fresh even if callers change orders or destroy an
@@ -360,8 +404,11 @@ func queue_host_visual(recipient: int, event: Dictionary) -> void:
 	pending.append(stamped)
 
 func flush_visual() -> void:
+	# Final presentation is best-effort; the common transport quota still caps
+	# it, and finish_match clears all remaining bulk before queuing the result.
 	for recipient: int in _outbound_visual.keys():
 		_flush_visual(recipient)
+		relay.flush_outbound()
 
 func _flush_visual(recipient: int) -> void:
 	var times: Dictionary = _cosmetic_times.get(recipient, {})

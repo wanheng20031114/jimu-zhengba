@@ -9,10 +9,13 @@ signal snapshot_received(snapshot: Dictionary)
 signal event_received(event: Dictionary)
 signal connection_state_changed(state: String)
 signal error_received(code: String, message: String)
+signal outbound_invalidated
 
 const Protocol = preload("res://scripts/network/network_protocol.gd")
 const CERTIFICATE_PATH: String = "res://scripts/network/relay_trust.crt"
 const INITIAL_CONNECT_MS: int = 20000
+const PRESENTATION_BURST_BYTES: int = 48 * 1024
+const PRESENTATION_OWNERS_PER_FRAME: int = 3
 
 var owner_id: int = -1
 var is_host: bool = false
@@ -42,6 +45,12 @@ var _last_snapshot_sequence: int = -1
 var _snapshot_sequences: Dictionary = {}
 var _snapshot_sent_at: Dictionary = {}
 var _visual_sent_at: Dictionary = {}
+var _outbound_frame: int = -1
+var _outbound_bytes: int = 0
+var _outbound_bulk_packets: int = 0
+var _outbound_owners: Dictionary = {}
+var _oversized_reported: Dictionary = {}
+var presentation_budget_blocked: bool = false
 
 func _ready() -> void:
 	# Connections and grace periods continue while a gameplay SceneTree is paused.
@@ -112,7 +121,7 @@ func send_command(command: Dictionary) -> Error:
 		return ERR_INVALID_DATA
 	if Protocol.decoded_size(packet) > Protocol.MAX_COMMAND_BYTES:
 		return ERR_OUT_OF_MEMORY
-	return _send_packet(packet, Protocol.CONTROL_CHANNEL)
+	return _send_priority_packet(packet, Protocol.CONTROL_CHANNEL)
 
 func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 	return _snapshot_to(owner, snapshot, "")
@@ -123,6 +132,7 @@ func snapshot_json_to(owner: int, snapshot_json: String) -> Error:
 	return _snapshot_to(owner, {}, snapshot_json)
 
 func _snapshot_to(owner: int, snapshot: Dictionary, snapshot_json: String) -> Error:
+	presentation_budget_blocked = false
 	if not is_host or _match.is_empty() or connection_state != "match":
 		return ERR_UNAUTHORIZED
 	if not has_player_connection(owner):
@@ -137,7 +147,7 @@ func _snapshot_to(owner: int, snapshot: Dictionary, snapshot_json: String) -> Er
 	var packet: PackedByteArray = Protocol.encode_snapshot(snapshot, owner, sequence, _match.match_id) if snapshot_json.is_empty() else Protocol.encode_snapshot_json(snapshot_json, owner, sequence, _match.match_id)
 	if packet.is_empty():
 		return ERR_INVALID_DATA
-	var result := _send_packet(packet, Protocol.SNAPSHOT_CHANNEL + owner)
+	var result := _send_presentation_packet(owner, packet, Protocol.SNAPSHOT_CHANNEL + owner)
 	if result == OK:
 		_snapshot_sequences[owner] = sequence
 		_snapshot_sent_at[owner] = now
@@ -148,6 +158,8 @@ func send_event(owner: int, event: Dictionary) -> Error:
 		return ERR_UNAUTHORIZED
 	if owner != -1 and not has_player_connection(owner):
 		return ERR_INVALID_PARAMETER
+	if event.get("kind") == "pause":
+		outbound_invalidated.emit()
 	var visual: bool = event.get("kind") == "visual_batch"
 	var now := Time.get_ticks_msec()
 	# Physics catch-up must not turn queued presentation into a wall-clock burst.
@@ -160,7 +172,7 @@ func send_event(owner: int, event: Dictionary) -> Error:
 		return ERR_INVALID_DATA
 	if Protocol.decoded_size(packet) > Protocol.MAX_EVENT_BYTES:
 		return ERR_OUT_OF_MEMORY
-	var result := _send_packet(packet, Protocol.EVENT_CHANNEL)
+	var result := _send_presentation_packet(owner, packet, Protocol.EVENT_CHANNEL) if visual else _send_priority_packet(packet, Protocol.EVENT_CHANNEL)
 	if visual and result == OK:
 		_visual_sent_at[owner] = now
 	return result
@@ -172,7 +184,9 @@ func has_player_connection(owner: int) -> bool:
 
 func finish_match(result: Dictionary) -> void:
 	if is_host and not _match.is_empty():
+		outbound_invalidated.emit()
 		_send({"op": "finish", "match": _match.match_id, "result": result})
+		flush_outbound()
 
 func leave_room() -> void:
 	if connection_state != "finished":
@@ -191,6 +205,7 @@ func disconnect_relay() -> void:
 	_set_state("disconnected")
 
 func _clear_membership() -> void:
+	outbound_invalidated.emit()
 	_token = ""
 	owner_id = -1
 	is_host = false
@@ -201,8 +216,10 @@ func _clear_membership() -> void:
 	_snapshot_sequences.clear()
 	_snapshot_sent_at.clear()
 	_visual_sent_at.clear()
+	_oversized_reported.clear()
 
 func _close_transport() -> void:
+	outbound_invalidated.emit()
 	_peer = null
 	if _connection != null:
 		_connection.destroy()
@@ -274,6 +291,7 @@ func _receive(message: Dictionary) -> void:
 				_fail("invalid_roster", "积木争霸对局席位配置无效")
 				return
 			var resuming := not _match.is_empty()
+			outbound_invalidated.emit()
 			_match = message.config
 			_last_snapshot_sequence = -1
 			_set_state("match")
@@ -326,7 +344,51 @@ func _send(message: Dictionary, channel: int = Protocol.CONTROL_CHANNEL) -> Erro
 	var packet := Protocol.encode(message)
 	if packet.is_empty():
 		return ERR_INVALID_DATA
-	return _send_packet(packet, channel)
+	return _send_priority_packet(packet, channel)
+
+func _refresh_outbound_window() -> void:
+	var frame: int = Engine.get_process_frames()
+	if frame != _outbound_frame:
+		_outbound_frame = frame
+		_outbound_bytes = 0
+		_outbound_bulk_packets = 0
+		_outbound_owners.clear()
+
+func _send_priority_packet(packet: PackedByteArray, channel: int) -> Error:
+	# Commands, heartbeat, pause and finish are never delayed behind a bulk quota.
+	# Their encoded bytes still reduce this frame's remaining presentation room.
+	_refresh_outbound_window()
+	var result := _send_packet(packet, channel)
+	if result == OK:
+		_outbound_bytes += packet.size()
+	return result
+
+func _send_presentation_packet(owner: int, packet: PackedByteArray, channel: int) -> Error:
+	presentation_budget_blocked = false
+	_refresh_outbound_window()
+	if not _outbound_owners.has(owner) and _outbound_owners.size() >= PRESENTATION_OWNERS_PER_FRAME:
+		presentation_budget_blocked = true
+		return ERR_BUSY
+	var oversized: bool = packet.size() > PRESENTATION_BURST_BYTES
+	if oversized:
+		# Preserve protocol-legal large packets without truncating private state.
+		# Native fragmentation alone cannot guarantee delivery beyond the internal
+		# 64KiB peer ring; give this exceptional packet an otherwise empty bulk turn.
+		if _outbound_bulk_packets > 0:
+			presentation_budget_blocked = true
+			return ERR_BUSY
+	elif _outbound_bytes + packet.size() > PRESENTATION_BURST_BYTES:
+		presentation_budget_blocked = true
+		return ERR_BUSY
+	var result := _send_packet(packet, channel)
+	if result == OK:
+		_outbound_bytes += packet.size()
+		_outbound_bulk_packets += 1
+		_outbound_owners[owner] = true
+		if oversized and not _oversized_reported.has(owner):
+			_oversized_reported[owner] = true
+			_diagnostic("large_presentation_packet", {"recipient": owner, "encoded_bytes": packet.size(), "burst_budget": PRESENTATION_BURST_BYTES})
+	return result
 
 func _send_packet(packet: PackedByteArray, channel: int) -> Error:
 	if _peer == null or not _peer.is_active() or _peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
@@ -373,6 +435,8 @@ func _diagnostic(event: String, details: Dictionary) -> void:
 
 func _set_state(state: String) -> void:
 	if connection_state != state:
+		if state != "match":
+			outbound_invalidated.emit()
 		connection_state = state
 		_diagnostic("state", {})
 		connection_state_changed.emit(state)
