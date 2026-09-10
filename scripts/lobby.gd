@@ -524,12 +524,17 @@ func _on_quit_game() -> void:
 	relay.disconnect_relay()
 	get_tree().quit()
 
+func _input(event: InputEvent) -> void:
+	# The codex is modal. Handle its return key before GUI tooltips can consume it.
+	if not %UnitCodex.visible or session.settings.is_open(): return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+		%UnitCodex.close_codex()
+		get_viewport().set_input_as_handled()
+
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo or session.settings.is_open(): return
 	if event.keycode == KEY_ESCAPE:
-		if %UnitCodex.visible:
-			%UnitCodex.close_codex()
-		elif %OnlinePanel.visible:
+		if %OnlinePanel.visible:
 			_on_close_multiplayer()
 		elif %SoloPanel.visible:
 			_on_close_solo()
