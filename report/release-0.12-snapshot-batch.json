@@ -1,0 +1,113 @@
+{
+  "date": "2026-09-10",
+  "scope": "release 0.12 authoritative snapshot batch assembly; wire unchanged",
+  "source_sha256_before": "fb8efc76bae1a39f7bc00a7e9c93240f0d3debee4e68194b75c40f0c327d63e8",
+  "source_sha256_after": "fb8efc76bae1a39f7bc00a7e9c93240f0d3debee4e68194b75c40f0c327d63e8",
+  "source_stable_during_run": true,
+  "legacy_sha256": "80d638f6f728f082f8abddf9f8162379e896cc2bfaee494e35b266d0a8a1d851",
+  "checks": 912,
+  "functional_checks": 800,
+  "errors": [],
+  "measurement_raw": {
+    "batch_build_ms": [
+      12.273,
+      10.385,
+      10.093,
+      8.681,
+      12.102,
+      10.269,
+      10.258,
+      8.738,
+      11.953,
+      10.087,
+      10.054,
+      8.682
+    ],
+    "batch_encode_ms": [
+      18.267,
+      13.652,
+      18.162,
+      13.6,
+      18.169,
+      13.75,
+      18.239,
+      13.696,
+      18.161,
+      13.745,
+      18.218,
+      13.552
+    ],
+    "buildings": 8,
+    "encoded_bytes_total": 289896,
+    "legacy_build_ms": [
+      21.449,
+      16.364,
+      21.948,
+      16.64,
+      21.439,
+      16.44,
+      22.122,
+      16.875,
+      21.159,
+      16.238,
+      21.875,
+      16.615
+    ],
+    "legacy_encode_ms": [
+      18.186,
+      13.572,
+      18.173,
+      15.292,
+      17.932,
+      13.871,
+      18.251,
+      13.488,
+      17.89,
+      13.515,
+      18.067,
+      13.395
+    ],
+    "mines": 2,
+    "recipients_per_step": [
+      4,
+      3
+    ],
+    "scope": "single-thread headless assembly + actual JSON/ZSTD codec on identical authored entities, alternating AB/BA; no frame-rate or network-throughput claim",
+    "units": 500
+  },
+  "measurement_summary": {
+    "legacy_build_ms": {
+      "mean_ms": 19.097,
+      "median_ms": 19.017,
+      "four_recipients_mean_ms": 21.665333333333333,
+      "three_recipients_mean_ms": 16.528666666666666
+    },
+    "batch_build_ms": {
+      "mean_ms": 10.297916666666666,
+      "median_ms": 10.1755,
+      "four_recipients_mean_ms": 11.122166666666667,
+      "three_recipients_mean_ms": 9.473666666666666
+    },
+    "legacy_encode_ms": {
+      "mean_ms": 15.969333333333333,
+      "median_ms": 16.591,
+      "four_recipients_mean_ms": 18.083166666666667,
+      "three_recipients_mean_ms": 13.8555
+    },
+    "batch_encode_ms": {
+      "mean_ms": 15.93425,
+      "median_ms": 15.9555,
+      "four_recipients_mean_ms": 18.202666666666666,
+      "three_recipients_mean_ms": 13.665833333333333
+    }
+  },
+  "limitations": [
+    "Official Godot 4.6.3 headless single-thread CPU diagnostic, not full game FPS, UDP delivery or GPU measurement",
+    "500 actual authored units: 484 swordsmen, 8 archers, 8 cannons; 8 buildings; 2 mines; all visible",
+    "AnimationPlayer MANUAL and static poses isolate assembly; most extra units colocated at origin, so compression timing/ratio is not representative of a moving battlefield",
+    "Real cadence: alternating 4/3 remote recipients, warm-up four pairs then 12 samples per variant; alternating AB/BA order",
+    "JSON serialization and ZSTD compression are measured together through the existing actual encoder; no separate attribution",
+    "User editor and formal game remained open; no other validation process at final window check",
+    "Initial attempts parse1/measure1 exited at parse stage due to missing new-worktree class cache; not measurements; imported resources/class cache reused for successful run"
+  ]
+}

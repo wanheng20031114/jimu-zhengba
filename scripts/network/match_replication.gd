@@ -74,52 +74,85 @@ func tick(_delta: float) -> void:
 	if current_tick <= _last_sent_tick:
 		return
 	_last_sent_tick = current_tick
+	var recipients: Array[int] = []
 	for player: PlayerState in game.players:
 		if player.owner_id != game.local_owner_id and player.controller == "human":
-			# Every recipient still gets 15 Hz; offset the two phases so a full
-			# eight-human match sends at most four large snapshots in one tick.
-			if current_tick % SNAPSHOT_TICKS != (player.owner_id - 1) % SNAPSHOT_TICKS:
-				continue
-			_flush_visual(player.owner_id)
-			var error := relay.snapshot_to(player.owner_id, build_snapshot(player.owner_id))
-			if error == OK:
-				_send_errors.erase(player.owner_id)
-			elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(player.owner_id) != error:
-				_send_errors[player.owner_id] = error
-				replication_error.emit(player.owner_id, error)
+			# Every recipient still gets 15 Hz; phase the native simulation's two
+			# ticks so an eight-human match sends at most four snapshots at once.
+			if current_tick % SNAPSHOT_TICKS == (player.owner_id - 1) % SNAPSHOT_TICKS:
+				recipients.append(player.owner_id)
+	var snapshots: Dictionary[int, Dictionary] = build_snapshots(recipients)
+	for recipient: int in recipients:
+		_flush_visual(recipient)
+		var error := relay.snapshot_to(recipient, snapshots[recipient])
+		if error == OK:
+			_send_errors.erase(recipient)
+		elif error not in [ERR_BUSY, ERR_UNAVAILABLE] and _send_errors.get(recipient) != error:
+			_send_errors[recipient] = error
+			replication_error.emit(recipient, error)
 
 func build_snapshot(recipient: int) -> Dictionary:
-	var states: Array = []
-	var mines: Array = []
-	var observer: PlayerState = game.get_player(recipient)
+	# Standalone reads are fresh even if callers change orders or destroy an
+	# entity inside the same tick. Only one synchronous send batch shares data.
+	return build_snapshots([recipient])[recipient]
+
+func build_snapshots(recipients: Array[int]) -> Dictionary[int, Dictionary]:
+	var snapshots: Dictionary[int, Dictionary] = {}
+	if recipients.is_empty():
+		return snapshots
+	# Public dictionaries are shared only inside this short-lived batch; callers
+	# must treat the snapshot trees as immutable until synchronous encoding ends.
+	# Each owner's private state uses a separate dictionary. No Node or snapshot
+	# cache survives this call, so death, visibility and reconnect need no cache
+	# invalidation hooks and later ticks cannot mutate earlier wire snapshots.
+	var public_players: Array = []
+	for player: PlayerState in game.players:
+		public_players.append(player.public_state())
+	var alliances: PackedInt32Array = PackedInt32Array()
+	for recipient: int in recipients:
+		var observer: PlayerState = game.get_player(recipient)
+		alliances.append(observer.alliance_id)
+		var player_states: Array = public_players.duplicate()
+		var own_state: Dictionary = public_players[recipient].duplicate()
+		own_state["private"] = observer.private_state()
+		var active: Dictionary = {}
+		for track: StringName in observer.active_research:
+			active[String(track)] = observer.active_research[track]
+		own_state["private"]["active_research"] = active
+		player_states[recipient] = own_state
+		snapshots[recipient] = {"tick": game.simulation_tick, "time": game.elapsed,
+			"entities": [], "mines": [], "players": player_states,
+			"fog": _fog.snapshot_for(recipient)}
+	# Traverse the authoritative registry once. Visibility stays recipient-
+	# specific, including mines. Sample a common pose only if someone can see it;
+	# an off-screen attack animation is never repeatedly advanced for teammates.
 	for entity: Node3D in game.entities_by_id.values():
 		if not is_instance_valid(entity) or not entity.alive:
 			continue
+		var common: Dictionary = {}
 		if entity is ResourceVein:
-			if game.can_see_position(recipient, entity.global_position):
-				mines.append({"id": entity.entity_id, "workers": entity.occupied_slots()})
+			for recipient: int in recipients:
+				if game.can_see_position(recipient, entity.global_position):
+					if common.is_empty():
+						common = {"id": entity.entity_id, "workers": entity.occupied_slots()}
+					snapshots[recipient].mines.append(common)
 			continue
-		if entity.alliance_id != observer.alliance_id and not game.can_see_entity(recipient, entity):
-			continue
-		states.append(_entity_state(entity, recipient))
-	var player_states: Array = []
-	for player: PlayerState in game.players:
-		var state := player.public_state()
-		if player.owner_id == recipient:
-			state["private"] = player.private_state()
-			var active: Dictionary = {}
-			for track: StringName in player.active_research:
-				active[String(track)] = player.active_research[track]
-			state["private"]["active_research"] = active
-		player_states.append(state)
-	return {"tick": game.simulation_tick, "time": game.elapsed, "entities": states, "mines": mines,
-		"players": player_states, "fog": _fog.snapshot_for(recipient)}
+		for index in range(recipients.size()):
+			var recipient: int = recipients[index]
+			if entity.alliance_id != alliances[index] and not game.can_see_entity(recipient, entity):
+				continue
+			if common.is_empty():
+				common = _entity_public_state(entity)
+			var state: Dictionary = common
+			if entity.owner_id == recipient:
+				state = common.duplicate()
+				_append_entity_private_state(state, entity)
+			snapshots[recipient].entities.append(state)
+	return snapshots
 
-func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
+func _entity_public_state(entity: Node3D) -> Dictionary:
 	var state := {"id": entity.entity_id, "owner": entity.owner_id,
-		# Quantize only presentation transforms, directly into GDScript float64
-		# arrays. Passing the rounded values through Vector3 would restore float32
-		# tails and inflate native JSON/ENet fragmentation without visual benefit.
+		# Quantize directly into float64 arrays, without float32 Vector3 tails.
 		"p": presentation_position(entity.global_position), "yaw": roundf(float(entity.model_pivot.rotation.y) * 1000.0) / 1000.0,
 		"hp": entity.hp, "max_hp": entity.max_hp}
 	if entity is BattleUnit:
@@ -130,23 +163,34 @@ func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
 			"working": unit._working, "work": unit.work_progress,
 			"anim": String(animation.current_animation) if animation.is_playing() else "",
 			"phase": animation.current_animation_position if animation.is_playing() else 0.0})
-		if unit.owner_id == recipient:
-			state["order"] = int(unit.order)
-			state["order_name"] = unit.order_name
-			state["queued_count"] = unit.waypoint_queue.size()
-			state["plan"] = UnitOrderPlan.build(unit, game)
 	else:
 		var building := entity as BattleBuilding
 		state.merge({"category": "building", "kind": building.building_type,
 			"construction": building.under_construction, "progress": building.construction_progress,
 			"rotation": vector_data(building.rotation)})
-		if building.owner_id == recipient:
-			state["actual_paid_gold"] = building.actual_paid_gold
-			state["production"] = building.production.snapshot()
-			state["rally"] = vector_data(building.rally_point)
-			state["rally_mine"] = building.production.rally_mine.entity_id if is_instance_valid(building.production.rally_mine) else 0
-			state["order_name"] = building.order_name
 	return state
+
+func _entity_state(entity: Node3D, recipient: int) -> Dictionary:
+	var state: Dictionary = _entity_public_state(entity)
+	if entity.owner_id == recipient:
+		_append_entity_private_state(state, entity)
+	return state
+
+func _append_entity_private_state(state: Dictionary, entity: Node3D) -> void:
+	if entity is BattleUnit:
+		var unit := entity as BattleUnit
+		state["order"] = int(unit.order)
+		state["order_name"] = unit.order_name
+		state["queued_count"] = unit.waypoint_queue.size()
+		state["plan"] = UnitOrderPlan.build(unit, game)
+	else:
+		var building := entity as BattleBuilding
+		state["actual_paid_gold"] = building.actual_paid_gold
+		state["production"] = building.production.snapshot()
+		state["rally"] = vector_data(building.rally_point)
+		state["rally_mine"] = building.production.rally_mine.entity_id if is_instance_valid(building.production.rally_mine) else 0
+		state["order_name"] = building.order_name
+
 
 static func presentation_position(at: Vector3) -> Array:
 	return [roundf(float(at.x) * 100.0) / 100.0, roundf(float(at.y) * 100.0) / 100.0, roundf(float(at.z) * 100.0) / 100.0]
