@@ -7,6 +7,7 @@ SSH credentials stay in Python memory; the existing UDP 24570 service is untouch
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable
 import datetime as dt
 import hashlib
 import json
@@ -207,7 +208,7 @@ def load_release_package(folder: Path) -> dict[str, bytes]:
     return payload
 
 
-def deploy(max_rooms: int = 8, max_humans: int = 8, release_package: Path | None = None) -> None:
+def deploy(max_rooms: int = 8, max_humans: int = 8, release_package: Path | None = None, before_activate: Callable[[], None] | None = None) -> None:
     import paramiko
 
     if not 1 <= max_rooms <= 16 or not 1 <= max_humans <= 8:
@@ -318,6 +319,10 @@ def deploy(max_rooms: int = 8, max_humans: int = 8, release_package: Path | None
                         if not verified.startswith(expected + " "):
                             raise RuntimeError("Uploaded relay file checksum mismatch")
                         run("mv -T -- " + shlex.quote(staged) + " " + shlex.quote(target))
+                # Large runtime uploads can outlive the caller's initial idle
+                # check. Recheck immediately before touching live configuration.
+                if before_activate is not None:
+                    before_activate()
                 shared_modified = True
                 upload(sftp, BASE + "/config/relay-private.key", KEY.read_bytes(), 0o600)
                 upload(sftp, BASE + "/config/relay.crt", CERT.read_bytes())
