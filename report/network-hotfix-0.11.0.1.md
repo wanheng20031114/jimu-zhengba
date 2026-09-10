@@ -55,6 +55,7 @@
 | 原正式PCK＋上海修复Relay，公网2v2/60秒 | 24项通过，901个有效快照，最大间隔100ms；11条真人命令，0错误 |
 | 原生ENet/DTLS八房容量与隔离 | 127项通过；同时65个peer、8房、64真人，额外第9房/单房第9人合理拒绝 |
 | 新Windows实际发行EXE目录验收 | 177项通过，其中95资源及75项数值；PE版本和启动诊断均为0.11.0.1 |
+| 通用发行目录真实渲染启动/退出 | Forward+ Vulkan、RTX3080、WASAPI，运行180帧后正常session_exit，无错误或警告，验证PID37108已退出 |
 
 各持续对局结束后，房间及会话均归零。公网测试仅按自己房间内部流水号1关联生命周期和两条peer退出事件；退出事件确认`rooms=0/sessions=0/strikes=0`，不将结束事件发生前的计数误当清理结果。公网RTT均值房主22.57ms/客端33ms，P95为29/33ms。
 
@@ -71,8 +72,18 @@
 ## 交付文件
 
 - 版本目录：`builds/windows-0.11.0.1/积木争霸.exe`。
-- 完整ZIP：`builds/积木争霸-0.11.0.1-Windows-x64.zip`，67,319,374字节。
-- ZIP SHA256：`d3e9f08f86df2627f9bc835b2f84bb07f5418149a9c728226b4a227d37107e57`。
+- 完整ZIP：`builds/积木争霸-0.11.0.1-Windows-x64.zip`，67,240,582字节。
+- ZIP SHA256：`842013484171bddba2dd100540695d585a7f5d3453a38bd1e7c3a84e34cc4316`。
 - PCK SHA256：`ef73459a8de35557836884a68ed0036dba4ab44bf274426bf830f3b87d130ae6`。
 
-汇总数据见 [同名JSON](network-hotfix-0.11.0.1.json)。测试代码及原始中间产物按用户要求在归档后清理，保留报告、发行包和回退快照。
+公开下载：[0.11.0.1 Windows x64 ZIP](https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.1/jimu-zhengba-0.11.0.1-Windows-x64.zip)。GitHub附件已上传，服务端大小和SHA256与上述最终文件完全一致；tag`v0.11.0.1`指向`63ef863a`，旧协议10发布附件保持原样。详见[公开发布收据](release-0.11.0.1-github.json)。
+
+本地通用入口`builds/windows/积木争霸.exe`及`builds/积木争霸-Windows-x64.zip`已同步为这一版，并逐文件核对一致。包内说明已纠正为0.11.0.1/协议10，更新说明后仅重新打ZIP，EXE/PCK与通过持续对战测试的文件哈希完全相同。
+
+汇总数据见 [同名JSON](network-hotfix-0.11.0.1.json)。公开代码修复提交`63ef863a`；性能原型另存于`codex/rts-navigation-prototype-20260910`分支、提交`9621f438`，默认关闭，没有进入此次发行。
+
+## 清理状态
+
+所有验证用Godot进程均已退出并命令核实，正常编辑器保留。自动审批拒绝了清理七个临时`relay-soak*`/`relay-capacity*`目录的PowerShell命令，返回`blocked by policy`且没有更具体原因；命令未执行，没有换工具或父目录绕过。
+
+因此临时文件仍保留，其余中间目录也未继续删除。只读目录清单见 [中间文件清单](hotfix-intermediates-2026-09-10.json)，包含本轮与先前导航实验约1.4GiB的资料；上传收尾可能使文件数略有变化。`builds/`发行包、`.local/recovery/`回退快照及`.local/network/relay-private.key`不在临时清理目标内。

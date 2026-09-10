@@ -1,0 +1,25 @@
+{
+  "tag": "v0.11.0.1",
+  "target_commit": "63ef863a4eb45c6cf98ff7c6e60cfc264bf4592a",
+  "release_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/tag/v0.11.0.1",
+  "download_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.1/jimu-zhengba-0.11.0.1-Windows-x64.zip",
+  "asset_id": 554748312,
+  "state": "uploaded",
+  "size": 67240582,
+  "sha256": "842013484171bddba2dd100540695d585a7f5d3453a38bd1e7c3a84e34cc4316",
+  "github_digest": "sha256:842013484171bddba2dd100540695d585a7f5d3453a38bd1e7c3a84e34cc4316",
+  "compatibility_build": "0.11.0",
+  "protocol": 10,
+  "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+  "previous_protocol10_release_unchanged": true,
+  "support_document": {
+    "source_path": "docs/windows-readme.txt",
+    "archive_path": "windows/START_HERE.txt",
+    "sha256": "f860a545257cb572b3f47a5afa7b078e14b4f378dcbee0e4cecd3d90bd6969d3",
+    "note": "Support document only; verified EXE/PCK unchanged, no Godot re-export"
+  },
+  "binary_sha256": {
+    "积木争霸.exe": "f456086e65dc5d84edb19571cd99f7f1e9ce53a857d61b54bdebbfcfd8ebd016",
+    "积木争霸.pck": "ef73459a8de35557836884a68ed0036dba4ab44bf274426bf830f3b87d130ae6"
+  }
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "Directory": ".local/client-hotfix-20260910",
+    "Files": 1864,
+    "Bytes": 326060929.0
+  },
+  {
+    "Directory": ".local/flow-kernel-20260910",
+    "Files": 19,
+    "Bytes": 13572923.0
+  },
+  {
+    "Directory": ".local/relay-capacity-20260910",
+    "Files": 16,
+    "Bytes": 196986.0
+  },
+  {
+    "Directory": ".local/relay-hotfix-deployment-20260910",
+    "Files": 5,
+    "Bytes": 12515.0
+  },
+  {
+    "Directory": ".local/relay-soak-20260910",
+    "Files": 31,
+    "Bytes": 172172.0
+  },
+  {
+    "Directory": ".local/relay-soak-fixed-20260910",
+    "Files": 31,
+    "Bytes": 202012.0
+  },
+  {
+    "Directory": ".local/relay-soak-fixed-final-20260910",
+    "Files": 29,
+    "Bytes": 200434.0
+  },
+  {
+    "Directory": ".local/relay-soak-hotfix-20260910",
+    "Files": 33,
+    "Bytes": 281523.0
+  },
+  {
+    "Directory": ".local/relay-soak-hotfix-bot-20260910",
+    "Files": 25,
+    "Bytes": 131285.0
+  },
+  {
+    "Directory": ".local/relay-soak-public-20260910",
+    "Files": 19,
+    "Bytes": 51572943.0
+  },
+  {
+    "Directory": ".local/rts-implementation-perf-20260910",
+    "Files": 2757,
+    "Bytes": 1120803332.0
+  },
+  {
+    "Directory": ".local/stable-multiplayer-20260910",
+    "Files": 21,
+    "Bytes": 149773.0
+  },
+  {
+    "Directory": ".local/static-motion-20260910",
+    "Files": 21,
+    "Bytes": 101159.0
+  },
+  {
+    "Directory": ".local/release-startup-0.11.0.1-20260910",
+    "Files": 2,
+    "Bytes": 552.0
+  }
+]

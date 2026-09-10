@@ -14,10 +14,20 @@
     "release": "0.11.0.1",
     "build": "0.11.0",
     "protocol": 10,
-    "zip_size": 67319374,
-    "zip_sha256": "d3e9f08f86df2627f9bc835b2f84bb07f5418149a9c728226b4a227d37107e57",
+    "zip_size": 67240582,
+    "zip_sha256": "842013484171bddba2dd100540695d585a7f5d3453a38bd1e7c3a84e34cc4316",
     "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
-    "pck_size": 49672036
+    "pck_size": 49672036,
+    "binary_sha256": {
+      "积木争霸.exe": "f456086e65dc5d84edb19571cd99f7f1e9ce53a857d61b54bdebbfcfd8ebd016",
+      "积木争霸.pck": "ef73459a8de35557836884a68ed0036dba4ab44bf274426bf830f3b87d130ae6"
+    },
+    "support_document": {
+      "source_path": "docs/windows-readme.txt",
+      "archive_path": "windows/START_HERE.txt",
+      "sha256": "f860a545257cb572b3f47a5afa7b078e14b4f378dcbee0e4cecd3d90bd6969d3",
+      "note": "Support document only; verified EXE/PCK unchanged, no Godot re-export"
+    }
   },
   "export_sources": {
     "source_commit": "dc32f9ca3d7a50117e9f435bb47cc5eb895fbea8",
@@ -46,6 +56,12 @@
         "before": "467bc5449a5fba3e51fa2e48626aee6e3032e429257b3ac3a54a7b714a4b489c",
         "after": "5f111dfb46f806580de19a295dfb2125fd39b130979184eb411bd162fde682b2"
       }
+    },
+    "support_document": {
+      "source_path": "docs/windows-readme.txt",
+      "archive_path": "windows/START_HERE.txt",
+      "sha256": "f860a545257cb572b3f47a5afa7b078e14b4f378dcbee0e4cecd3d90bd6969d3",
+      "note": "Support document only; verified EXE/PCK unchanged, no Godot re-export"
     }
   },
   "old_package_fixed_relay": {
@@ -190,7 +206,7 @@
     "scope": "loopback real ENet/DTLS, 65 clients; no world simulation or network impairment; not throughput or FPS benchmark"
   },
   "deployment": {
-    "utc": "2026-09-10T09:51:48.032595+00:00",
+    "utc": "2026-09-10T17:51:48.032595+08:00",
     "before": {
       "MainPID": "284742",
       "NRestarts": "0",
@@ -393,5 +409,27 @@
         "window_packets": 1
       }
     ]
+  },
+  "public_release_receipt": "report/release-0.11.0.1-github.json",
+  "cleanup": {
+    "preserved_user_processes": [
+      33896,
+      29480
+    ],
+    "helper_processes_remaining": 0,
+    "reason": "Automatic approval rejected the scoped PowerShell Remove-Item command: blocked by policy. No workaround attempted.",
+    "inventory": "report/hotfix-intermediates-2026-09-10.json",
+    "temporary_files_deleted": false
+  },
+  "rendered_release_startup": {
+    "release": "0.11.0.1",
+    "gpu": "RTX 3080",
+    "warnings": 0,
+    "frames": 180,
+    "process_exited": true,
+    "pid": 37108,
+    "session_exit": true,
+    "errors": 0,
+    "renderer": "Forward+ Vulkan"
   }
 }
