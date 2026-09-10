@@ -23,6 +23,7 @@ const UNIT_FRAMING: Dictionary = {
 	"swordsman": Vector2(1.0, 3.2), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5),
 	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2),
 }
+enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
 var category: int = 0
 var selected_id: String = ""
 var _entries: Array[String] = []
@@ -30,6 +31,13 @@ var _model: Node3D
 var _dragging: bool = false
 var _reveal: Tween
 var _base_camera_size: float = 3.2
+var _preview_unit: UnitVisual
+var _preview_action: PreviewAction = PreviewAction.IDLE
+var _preview_paused: bool = false
+var _preview_complete: bool = false
+var _preview_loop: bool = true
+var _cycle_elapsed: float = 0.0
+var _cycle_seconds: float = 1.0
 
 @onready var _viewport: SubViewport = %CodexViewport
 @onready var _anchor: Node3D = %ModelAnchor
@@ -45,14 +53,19 @@ func _ready() -> void:
 	%Portrait.gui_input.connect(_on_preview_input)
 	%CloseCodex.pressed.connect(close_codex)
 	%ResetView.pressed.connect(_reset_view)
+	%PreviewIdle.pressed.connect(_select_preview_action.bind(PreviewAction.IDLE))
+	%PreviewWalk.pressed.connect(_select_preview_action.bind(PreviewAction.WALK))
+	%PreviewAttack.pressed.connect(_select_preview_action.bind(PreviewAction.ATTACK))
+	%PreviewGather.pressed.connect(_select_preview_action.bind(PreviewAction.GATHER))
+	%PausePreview.pressed.connect(_toggle_preview_pause)
+	%LoopPreview.toggled.connect(_set_preview_loop)
+	visibility_changed.connect(_on_codex_visibility_changed)
 	_on_category_changed(0)
-	set_process(false)
+	_refresh_preview_activity()
 
 func open_codex() -> void:
 	show()
-	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	_model.process_mode = Node.PROCESS_MODE_INHERIT
-	set_process(true)
+	_refresh_preview_activity()
 	if _reveal != null:
 		_reveal.kill()
 	modulate.a = 0.0
@@ -63,14 +76,115 @@ func open_codex() -> void:
 func close_codex() -> void:
 	hide()
 	_dragging = false
-	set_process(false)
-	_model.process_mode = Node.PROCESS_MODE_DISABLED
-	_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	if _reveal != null:
+		_reveal.kill()
+	_refresh_preview_activity()
 	closed.emit()
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _dragging and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_dragging = false
+		_refresh_preview_activity()
+	if category == 0 and _preview_unit != null and not _preview_paused:
+		_advance_preview(delta)
+
+func _on_codex_visibility_changed() -> void:
+	if not is_node_ready():
+		return
+	if not is_visible_in_tree():
+		_dragging = false
+	_refresh_preview_activity()
+
+func _refresh_preview_activity() -> void:
+	var showing: bool = is_visible_in_tree()
+	var playing: bool = showing and category == 0 and _preview_unit != null and not _preview_paused
+	set_process(showing and (playing or _dragging))
+	if is_instance_valid(_model):
+		_model.process_mode = Node.PROCESS_MODE_INHERIT if showing else Node.PROCESS_MODE_DISABLED
+	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if playing else (SubViewport.UPDATE_ONCE if showing else SubViewport.UPDATE_DISABLED)
+
+func _request_preview_redraw() -> void:
+	if is_visible_in_tree() and _viewport.render_target_update_mode != SubViewport.UPDATE_ALWAYS:
+		_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+
+func _select_preview_action(action: PreviewAction) -> void:
+	_preview_action = action
+	_preview_paused = false
+	_preview_complete = false
+	_cycle_elapsed = 0.0
+	# Restore tracks owned by both players before switching away from a partial
+	# strike, including weapon visibility and the locomotion resting pose.
+	_preview_unit.set_working(false)
+	_preview_unit.set_motion(false)
+	_preview_unit.attack.play("strike", 0.0)
+	_preview_unit.attack.seek(0.0, true, true)
+	_preview_unit.attack.stop(true)
+	_preview_unit.locomotion.play("walk", 0.0)
+	_preview_unit.locomotion.seek(0.0, true, true)
+	_preview_unit.locomotion.play("idle", 0.0)
+	_preview_unit.locomotion.seek(0.0, true, true)
+	match action:
+		PreviewAction.IDLE:
+			_cycle_seconds = _preview_unit.locomotion.get_animation("idle").length
+		PreviewAction.WALK:
+			_preview_unit.set_motion(true)
+			_preview_unit.locomotion.seek(0.0, true, true)
+			_cycle_seconds = _preview_unit.locomotion.get_animation("walk").length
+		PreviewAction.ATTACK:
+			_preview_unit.strike()
+			_preview_unit.attack.seek(0.0, true, true)
+			# Preserve the whole authored motion and the unit's real attack cadence.
+			_cycle_seconds = maxf(BalanceCatalog.unit(_preview_unit.kind).cooldown, _preview_unit.attack.get_animation("strike").length)
+		PreviewAction.GATHER:
+			_preview_unit.set_working(true, "gather")
+			_preview_unit.attack.seek(0.0, true, true)
+			_cycle_seconds = _preview_unit.attack.get_animation("gather").length
+	_update_preview_controls()
+	_refresh_preview_activity()
+
+func _advance_preview(delta: float) -> void:
+	# Both native players use MANUAL mode here. This single presentation clock
+	# neither advances combat timers nor shares the offscreen simulation clock.
+	var remaining: float = delta
+	while remaining > 0.0:
+		var step: float = minf(remaining, _cycle_seconds - _cycle_elapsed)
+		if _preview_unit.locomotion.is_playing():
+			_preview_unit.locomotion.advance(step)
+		if _preview_unit.attack.is_playing():
+			_preview_unit.attack.advance(step)
+		_cycle_elapsed += step
+		remaining -= step
+		if _cycle_elapsed + 0.000001 < _cycle_seconds:
+			break
+		if not _preview_loop:
+			_preview_complete = true
+			_preview_paused = true
+			_update_preview_controls()
+			_refresh_preview_activity()
+			break
+		_cycle_elapsed = 0.0
+		if _preview_action == PreviewAction.ATTACK:
+			_preview_unit.strike()
+			_preview_unit.attack.seek(0.0, true, true)
+
+func _toggle_preview_pause() -> void:
+	if _preview_complete:
+		_select_preview_action(_preview_action)
+		return
+	_preview_paused = not _preview_paused
+	_update_preview_controls()
+	_refresh_preview_activity()
+
+func _set_preview_loop(value: bool) -> void:
+	_preview_loop = value
+
+func _update_preview_controls() -> void:
+	%PreviewIdle.set_pressed_no_signal(_preview_action == PreviewAction.IDLE)
+	%PreviewWalk.set_pressed_no_signal(_preview_action == PreviewAction.WALK)
+	%PreviewAttack.set_pressed_no_signal(_preview_action == PreviewAction.ATTACK)
+	%PreviewGather.set_pressed_no_signal(_preview_action == PreviewAction.GATHER)
+	%PausePreview.text = "重播" if _preview_complete else ("继续" if _preview_paused else "暂停")
+	%PausePreview.tooltip_text = "从头播放当前动作" if _preview_complete else ("从当前姿势继续播放" if _preview_paused else "停在当前姿势，可继续旋转和缩放")
 
 func _on_category_changed(value: int) -> void:
 	category = value
@@ -216,6 +330,7 @@ func _number(value: float) -> String:
 	return str(int(value)) if is_equal_approx(value, roundf(value)) else "%.1f" % value
 
 func _set_preview(kind: String) -> void:
+	_preview_unit = null
 	if is_instance_valid(_model):
 		_anchor.remove_child(_model)
 		_model.queue_free()
@@ -225,8 +340,13 @@ func _set_preview(kind: String) -> void:
 	_anchor.add_child(_model)
 	var center: float = 3.0
 	if unit:
-		_model.set_team(0)
-		_model.set_motion(false)
+		_preview_unit = _model as UnitVisual
+		_preview_unit.locomotion.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+		_preview_unit.attack.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+		_preview_unit.set_team(0)
+		_preview_loop = true
+		%LoopPreview.set_pressed_no_signal(true)
+		_select_preview_action(PreviewAction.IDLE)
 		center = UNIT_FRAMING[kind].x
 		_base_camera_size = UNIT_FRAMING[kind].y
 	else:
@@ -236,21 +356,27 @@ func _set_preview(kind: String) -> void:
 	_camera.position = Vector3(5, 4, -7) if unit else Vector3(15, 12, 21 if kind == "headquarters" else -21)
 	_camera.look_at(Vector3(0, center, 0), Vector3.UP)
 	_pedestal.scale = Vector3(1.4, 1.0, 1.4) if unit else Vector3(4.7, 1.0, 4.7)
+	%PreviewAnimationControls.visible = category == 0 and unit
+	%PreviewGather.visible = kind == "farmer"
+	%PreviewAttack.text = "开炮" if kind == "cannon" else ("投射" if kind == "catapult" else "攻击")
 	_reset_view()
-	_model.process_mode = Node.PROCESS_MODE_INHERIT if visible else Node.PROCESS_MODE_DISABLED
-	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if visible else SubViewport.UPDATE_ONCE
+	_refresh_preview_activity()
 
 func _reset_view() -> void:
 	_anchor.rotation.y = 0.0
 	_camera.size = _base_camera_size
+	_request_preview_redraw()
 
 func _on_preview_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_dragging = event.pressed
+			_refresh_preview_activity()
 		elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 			_camera.size = clampf(_camera.size * (0.92 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.08), _base_camera_size * 0.65, _base_camera_size * 1.5)
+			_request_preview_redraw()
 		accept_event()
 	elif event is InputEventMouseMotion and _dragging:
 		_anchor.rotation.y += event.relative.x * 0.008
+		_request_preview_redraw()
 		accept_event()

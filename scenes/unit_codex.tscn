@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/unit_codex.gd" id="script"]
 [ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="theme"]
@@ -49,6 +49,43 @@ radial_segments = 16
 
 [sub_resource type="StyleBoxFlat" id="Panel"]
 bg_color = Color(0.057, 0.051, 0.04, 1)
+
+[sub_resource type="ButtonGroup" id="PreviewActionGroup"]
+resource_local_to_scene = true
+
+[sub_resource type="StyleBoxFlat" id="PreviewButton"]
+bg_color = Color(0.09, 0.08, 0.063, 0.96)
+border_width_bottom = 1
+border_color = Color(0.52, 0.43, 0.26, 0.7)
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="PreviewHover"]
+bg_color = Color(0.20, 0.164, 0.104, 1)
+border_width_bottom = 2
+border_color = Color(0.87, 0.69, 0.37, 1)
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="PreviewPressed"]
+bg_color = Color(0.29, 0.22, 0.12, 1)
+border_width_bottom = 2
+border_color = Color(0.92, 0.75, 0.43, 1)
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="Theme" id="PreviewControlsTheme"]
+Button/font_sizes/font_size = 15
+Button/styles/normal = SubResource("PreviewButton")
+Button/styles/hover = SubResource("PreviewHover")
+Button/styles/pressed = SubResource("PreviewPressed")
+CheckButton/font_sizes/font_size = 15
 
 [node name="UnitCodex" type="Control"]
 layout_mode = 3
@@ -164,6 +201,71 @@ mouse_default_cursor_shape = 6
 expand_mode = 1
 stretch_mode = 5
 
+[node name="PreviewAnimationControls" type="HBoxContainer" parent="Margin/Content/Body/Preview/Portrait"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -46.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = SubResource("PreviewControlsTheme")
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="PreviewIdle" type="Button" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("PreviewActionGroup")
+text = "待机"
+tooltip_text = "观看待机动作"
+
+[node name="PreviewWalk" type="Button" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("PreviewActionGroup")
+text = "行进"
+tooltip_text = "原地演示游戏中的行进动作"
+
+[node name="PreviewAttack" type="Button" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("PreviewActionGroup")
+text = "攻击"
+tooltip_text = "观看完整攻击动作，循环时保留攻击间隔"
+
+[node name="PreviewGather" type="Button" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("PreviewActionGroup")
+text = "采集"
+tooltip_text = "观看农民挥镐采矿"
+
+[node name="PlaybackDivider" type="VSeparator" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+layout_mode = 2
+
+[node name="PausePreview" type="Button" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "暂停"
+tooltip_text = "停在当前姿势，可继续旋转和缩放"
+
+[node name="LoopPreview" type="CheckButton" parent="Margin/Content/Body/Preview/Portrait/PreviewAnimationControls"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "循环"
+tooltip_text = "关闭后播放完当前一轮即停止"
+
 [node name="PreviewActions" type="HBoxContainer" parent="Margin/Content/Body/Preview"]
 layout_mode = 2
 alignment = 1
@@ -250,6 +352,7 @@ size = Vector2i(900, 900)
 render_target_update_mode = 0
 
 [node name="World" type="Node3D" parent="CodexViewport"]
+physics_interpolation_mode = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="CodexViewport/World"]
 environment = SubResource("Environment")
