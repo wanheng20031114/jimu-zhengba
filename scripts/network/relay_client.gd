@@ -381,7 +381,10 @@ func _send_presentation_packet(owner: int, packet: PackedByteArray, channel: int
 	elif _outbound_bytes + packet.size() > PRESENTATION_BURST_BYTES:
 		presentation_budget_blocked = true
 		return ERR_BUSY
-	var result := _send_packet(packet, channel)
+	# Both snapshots and short-lived effects are replaceable presentation.
+	# Retransmitting old effects can fill the reliable window and hold up
+	# actual commands/lifecycle even after those effects have expired locally.
+	var result := _send_packet(packet, channel, true)
 	if result == OK:
 		_outbound_bytes += packet.size()
 		_outbound_bulk_packets += 1
@@ -391,10 +394,10 @@ func _send_presentation_packet(owner: int, packet: PackedByteArray, channel: int
 			_diagnostic("large_presentation_packet", {"recipient": owner, "encoded_bytes": packet.size(), "burst_budget": PRESENTATION_BURST_BYTES})
 	return result
 
-func _send_packet(packet: PackedByteArray, channel: int) -> Error:
+func _send_packet(packet: PackedByteArray, channel: int, unreliable: bool = false) -> Error:
 	if _peer == null or not _peer.is_active() or _peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
 		return ERR_UNAVAILABLE
-	return _peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if channel >= Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE)
+	return _peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if unreliable or channel >= Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE)
 
 func flush_outbound() -> void:
 	if _connection != null:

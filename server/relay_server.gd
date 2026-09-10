@@ -503,9 +503,9 @@ func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, m
 			return
 		if recipient == -1:
 			for slot: Dictionary in room.slots:
-				_send_encoded_owner(room, int(slot.owner_id), packet, Protocol.EVENT_CHANNEL)
+				_send_encoded_owner(room, int(slot.owner_id), packet, Protocol.EVENT_CHANNEL, visual)
 		else:
-			_send_encoded_owner(room, recipient, packet, Protocol.EVENT_CHANNEL)
+			_send_encoded_owner(room, recipient, packet, Protocol.EVENT_CHANNEL, visual)
 		if visual: relayed_visual_batches += 1
 		else: relayed_critical_events += 1
 
@@ -677,14 +677,16 @@ func _send_owner(room: Dictionary, owner: int, message: Dictionary, channel: int
 	if sessions.has(token) and sessions[token].peer != null:
 		_send(sessions[token].peer, message, channel)
 
-func _send_encoded_owner(room: Dictionary, owner: int, packet: PackedByteArray, channel: int) -> bool:
+func _send_encoded_owner(room: Dictionary, owner: int, packet: PackedByteArray, channel: int, unreliable: bool = false) -> bool:
 	var token: String = room.slots[owner].token
 	if not sessions.has(token) or sessions[token].peer == null:
 		return false
 	var peer: ENetPacketPeer = sessions[token].peer
 	if not peer.is_active() or peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
 		return false
-	return peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if channel == Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE) == OK
+	# Cosmetic batches expire within half a second on clients. They must not
+	# occupy reliable retransmission windows used by authority/lifecycle traffic.
+	return peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if unreliable or channel == Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE) == OK
 
 func _send(peer: ENetPacketPeer, message: Dictionary, channel: int = Protocol.CONTROL_CHANNEL) -> void:
 	if not peer.is_active() or peer.get_state() != ENetPacketPeer.STATE_CONNECTED: return
