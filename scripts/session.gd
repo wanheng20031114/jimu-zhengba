@@ -69,7 +69,7 @@ func back_to_lobby() -> void:
 func record_diagnostic(event: String, details: Dictionary = {}) -> void:
 	# Only bounded lifecycle/health facts reach this local log. Never dump the
 	# room config, endpoint, invitation or reconnect credentials.
-	print("JIMU_DIAGNOSTIC ", JSON.stringify({"event": event, "build": NetworkProtocol.BUILD_ID,
+	print("JIMU_DIAGNOSTIC ", JSON.stringify({"event": event, "build": NetworkProtocol.BUILD_ID, "release": NetworkProtocol.RELEASE_ID,
 		"pid": OS.get_process_id(), "seconds": snappedf(Time.get_ticks_msec() / 1000.0, 0.001), "details": details}))
 
 func _record_health() -> void:

@@ -25,6 +25,8 @@ var build_id: String = Protocol.BUILD_ID
 var content_hash: String = Protocol.content_hash()
 var certificate_path: String = CERTIFICATE_PATH
 var auto_reconnect: bool = true
+var last_error_code: String = ""
+var last_error_message: String = ""
 var _connection: ENetConnection
 var _peer: ENetPacketPeer
 var _token: String = ""
@@ -46,6 +48,8 @@ func _ready() -> void:
 
 func connect_relay(endpoint: String, endpoint_port: int = Protocol.PORT) -> Error:
 	disconnect_relay()
+	last_error_code = ""
+	last_error_message = ""
 	address = endpoint.strip_edges()
 	port = endpoint_port
 	if address.is_empty() or port < 1 or port > 65535:
@@ -112,7 +116,7 @@ func send_command(command: Dictionary) -> Error:
 func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 	if not is_host or _match.is_empty() or connection_state != "match":
 		return ERR_UNAUTHORIZED
-	if owner < 0 or owner >= _match.players.size() or _match.players[owner].controller == "open":
+	if not has_player_connection(owner):
 		return ERR_INVALID_PARAMETER
 	if _peer == null or not _peer.is_active() or _peer.get_state() != ENetPacketPeer.STATE_CONNECTED:
 		return ERR_UNAVAILABLE
@@ -133,6 +137,8 @@ func snapshot_to(owner: int, snapshot: Dictionary) -> Error:
 func send_event(owner: int, event: Dictionary) -> Error:
 	if not is_host or _match.is_empty():
 		return ERR_UNAUTHORIZED
+	if owner != -1 and not has_player_connection(owner):
+		return ERR_INVALID_PARAMETER
 	var message := {"op": "event", "match": _match.match_id, "to": owner, "payload": event}
 	var packet := Protocol.encode(message)
 	if packet.is_empty():
@@ -140,6 +146,11 @@ func send_event(owner: int, event: Dictionary) -> Error:
 	if Protocol.decoded_size(packet) > Protocol.MAX_EVENT_BYTES:
 		return ERR_OUT_OF_MEMORY
 	return _send_packet(packet, Protocol.EVENT_CHANNEL)
+
+func has_player_connection(owner: int) -> bool:
+	# Room membership is distinct from simulation control. A disconnected human
+	# may appear as a Bot in a resumed match config but keeps a human room seat.
+	return not _match.is_empty() and owner >= 0 and owner < room.slots.size() and room.slots[owner].kind == "human"
 
 func finish_match(result: Dictionary) -> void:
 	if is_host and not _match.is_empty():
@@ -198,11 +209,11 @@ func _process(_delta: float) -> void:
 				if _connection == null:
 					break
 			elif type in [ENetConnection.EVENT_DISCONNECT, ENetConnection.EVENT_ERROR]:
-				_lost(now)
+				_lost(now, "native_disconnect" if type == ENetConnection.EVENT_DISCONNECT else "native_error")
 				break
 		if _connection != null:
 			if now - _last_received > 8000:
-				_lost(now)
+				_lost(now, "receive_timeout")
 			elif now >= _heartbeat_at and _peer != null and _peer.get_state() == ENetPacketPeer.STATE_CONNECTED:
 				_send({"op": "ping"})
 				_heartbeat_at = now + 1000
@@ -268,9 +279,9 @@ func _receive(message: Dictionary) -> void:
 				_set_state("finished")
 			event_received.emit(payload)
 		"error":
-			error_received.emit(message.get("code", "unknown"), message.get("message", "连接失败"))
+			_report_error(message.get("code", "unknown"), message.get("message", "连接失败"), bool(message.get("fatal", false)))
 			if message.get("code") == "resume_pending" and not _token.is_empty():
-				_lost(Time.get_ticks_msec())
+				_lost(Time.get_ticks_msec(), "resume_pending")
 				return
 			if bool(message.get("fatal", false)):
 				_close_transport()
@@ -296,7 +307,8 @@ func _send_packet(packet: PackedByteArray, channel: int) -> Error:
 		return ERR_UNAVAILABLE
 	return _peer.send(channel, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT if channel >= Protocol.SNAPSHOT_CHANNEL else ENetPacketPeer.FLAG_RELIABLE)
 
-func _lost(now: int) -> void:
+func _lost(now: int, reason: String = "transport_lost") -> void:
+	_diagnostic("connection_lost", {"reason": reason, "receive_age_ms": maxi(0, now - _last_received)})
 	_close_transport()
 	if auto_reconnect and (not _token.is_empty() or _reconnect_deadline > 0):
 		if _reconnect_deadline == 0:
@@ -309,12 +321,30 @@ func _lost(now: int) -> void:
 func _fail(code: String, message: String) -> void:
 	_close_transport()
 	_retry_at = 0
-	error_received.emit(code, message)
+	_report_error(code, message, true)
 	_set_state("error")
+
+func _report_error(code: String, message: String, fatal: bool) -> void:
+	last_error_code = code.left(64)
+	last_error_message = message.left(240)
+	_diagnostic("error", {"code": last_error_code, "fatal": fatal})
+	error_received.emit(last_error_code, last_error_message)
+
+func failure_description() -> String:
+	if last_error_code == "reconnect_expired":
+		return "未能在重连时限内恢复连接，请返回大厅重新加入对局。"
+	return "%s（%s）。请返回大厅重新加入对局。" % [last_error_message, last_error_code]
+
+func _diagnostic(event: String, details: Dictionary) -> void:
+	# Deliberately omit endpoint, invite, token, player names and packet payloads.
+	print("JIMU_NETWORK ", JSON.stringify({"event": event, "release": Protocol.RELEASE_ID,
+		"pid": OS.get_process_id(), "msec": Time.get_ticks_msec(), "owner": owner_id,
+		"host": is_host, "state": connection_state, "details": details}))
 
 func _set_state(state: String) -> void:
 	if connection_state != state:
 		connection_state = state
+		_diagnostic("state", {})
 		connection_state_changed.emit(state)
 
 func _exit_tree() -> void:

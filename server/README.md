@@ -2,7 +2,7 @@
 
 中继只管理房间、连接身份和转发，不运行战斗。房主按 30 TPS 模拟，以每客户端 15 Hz 发送按视野筛选的快照；丢包时实收频率会降低，画面插值由游戏层负责。
 
-当前稳定客户端为 `0.11.0`、网络协议为 `10`，公开发布标识为 `v0.11.0-protocol10`。协议 10 包含电脑难度配置，继续支持八玩家、空位、多阵营及公开淘汰状态。版本、协议和内容清单 SHA256 必须全部一致；旧协议 9 的同名 `0.11.0` 包不能混用，客户端与服务端须同时更新。当前发行包与上海中继的实际验证见 [稳定联机发布记录](../report/stable-release-multiplayer-2026-09-10.md)。
+客户端热修发行号为 `0.11.0.1`，网络兼容标识 `BUILD_ID=0.11.0`、协议 `10` 和内容清单保持不变。更新后的 Relay 同时服务原协议10发行包和热修包；旧协议9包不能混用。协议10包含电脑难度、八玩家、空位和多阵营。断线原因、持续对局复现及多房验证见 [联机热修报告](../report/network-hotfix-0.11.0.1.md)，此前版本对齐记录见 [稳定联机发布记录](../report/stable-release-multiplayer-2026-09-10.md)。
 
 ## 接口约定
 
@@ -50,7 +50,9 @@
 
 `python tools/deploy_relay.py --certificate` 初始化私钥及公开信任证书。私钥仅在忽略的 `.local/network/`；仓库只包含 `scripts/network/relay_trust.crt`。客户端使用受信证书及固定 TLS 身份 `jimu-zhengba-relay`，不关闭证书验证，也不要求公网域名。更换信任证书必须配合客户端更新，默认有效期三年。
 
-`python tools/deploy_relay.py --deploy` 通过 Python 内存读取明确授权的 `shanghai` 凭据块，上传到独立 `/opt/jimu-zhengba-relay` 并启动 `jimu-zhengba-relay.service`。专用用户、只读系统目录和 384 MiB 内存上限；默认同时 1 个房间、最多 8 个真人，可在服务端配置中调整。首次更名部署只停用本游戏之前的中继服务，失败时恢复它；其他应用的 UDP 24570 服务保持原 PID。新服务只监听 UDP 24571。云安全组需开放此端口，客户端网络须允许 UDP。
+`python tools/deploy_relay.py --deploy --max-rooms 8 --max-humans 8` 通过 Python 内存读取明确授权的 `shanghai` 凭据块，上传到独立 `/opt/jimu-zhengba-relay` 并启动 `jimu-zhengba-relay.service`。专用用户、只读系统目录和 384 MiB 内存上限；默认同时8房，每房最多8名真人，共64个真人席位。`max_humans`是每房上限。原生连接池为房数×每房人数+16，默认80；额外16个名额供握手、无房大厅连接和重连使用，无房连接仍占名额。房数支持1～16，更改后需要重启才能重建连接池，现有对局不会迁移。首次更名部署只停用本游戏之前的中继服务，失败时恢复它；其他应用的 UDP24570 服务保持原 PID。新服务仍只监听 UDP24571，无需为每间房开放新端口。云安全组需开放此端口，客户端网络须允许 UDP。
+
+Bot没有UI接收连接。新客户端的通知入口只向真人发通知；发送API按房间席位身份校验接收者，不把临时Bot接管误判为永久电脑席位。为让已发行的协议10包继续使用，Relay对合法房主发向Bot的严格`{kind:"notice",text:非空且最多512字}`提示作无投递处理，不累计违规，也不广播；身份、频道、大小、频率校验保留，其他非法状态仍拒绝。服务端结构化诊断记录连接/房间生命周期、拒绝码和无投递计数，有全局日志速率上限；不记录邀请码、凭据、IP或消息正文。
 
 服务端使用隔离、校验 SHA256 的官方 Godot 4.7.2 稳定运行时。客户端仍兼容项目当前 4.6.3；不修改用户安装。4.6.3 的 DTLS Cookie 析构具有上游已确认的重复释放诊断，服务端需使用包含 [Godot #120371](https://github.com/godotengine/godot/pull/120371) 的版本。原生 [ENetConnection](https://docs.godotengine.org/en/4.6/classes/class_enetconnection.html) 提供 DTLS 和独立通道传输。
 

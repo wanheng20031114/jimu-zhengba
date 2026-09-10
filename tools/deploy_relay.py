@@ -164,9 +164,11 @@ def credentials() -> dict[str, str]:
     return matches[0]
 
 
-def deploy() -> None:
+def deploy(max_rooms: int = 8, max_humans: int = 8) -> None:
     import paramiko
 
+    if not 1 <= max_rooms <= 16 or not 1 <= max_humans <= 8:
+        raise ValueError("Relay capacity must be 1..16 rooms and 1..8 humans per room")
     certificate()
     config = credentials()
     executable = runtime()
@@ -224,7 +226,7 @@ def deploy() -> None:
                 upload(sftp, release + "/" + path, content)
             upload(sftp, BASE + "/config/relay-private.key", KEY.read_bytes(), 0o600)
             upload(sftp, BASE + "/config/relay.crt", CERT.read_bytes())
-            relay_config = '[relay]\nbind="*"\nport=24571\nmax_rooms=1\nmax_humans=8\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
+            relay_config = f'[relay]\nbind="*"\nport=24571\nmax_rooms={max_rooms}\nmax_humans={max_humans}\n\n[tls]\nprivate_key="' + BASE + '/config/relay-private.key"\ncertificate="' + BASE + '/config/relay.crt"\n'
             upload(sftp, BASE + "/config/relay.cfg", relay_config.encode(), 0o600)
             unit = f"""[Unit]
 Description=积木争霸 encrypted match relay
@@ -292,7 +294,7 @@ WantedBy=multi-user.target
         # Connection endpoint is local-only; never commit or echo the credential source.
         LOCAL.mkdir(parents=True, exist_ok=True)
         (LOCAL / "endpoint.json").write_text(json.dumps({"server_name": "shanghai", "address": config["ip"], "port": 24571}), encoding="utf-8")
-        print(json.dumps({"server_name": "shanghai", "service": SERVICE, "state": "active", "release": digest, "existing_relay_preserved": True}))
+        print(json.dumps({"server_name": "shanghai", "service": SERVICE, "state": "active", "release": digest, "existing_relay_preserved": True, "max_rooms": max_rooms, "humans_per_room": max_humans, "peer_capacity": max_rooms * max_humans + 16}))
     finally:
         ssh.close()
 
@@ -304,6 +306,8 @@ def main() -> int:
     action.add_argument("--renew-certificate", action="store_true", help="Reissue the public certificate for a renamed relay using the existing private key")
     action.add_argument("--deploy", action="store_true")
     action.add_argument("--runtimes", action="store_true")
+    parser.add_argument("--max-rooms", type=int, choices=range(1, 17), default=8, help="Maximum simultaneous relay rooms (default: 8)")
+    parser.add_argument("--max-humans", type=int, choices=range(1, 9), default=8, help="Maximum humans in each room, not across the server (default: 8)")
     args = parser.parse_args()
     try:
         if args.certificate or args.renew_certificate:
@@ -314,7 +318,7 @@ def main() -> int:
             runtime("linux.x86_64")
             print("RELAY_RUNTIMES_VERIFIED version=" + RUNTIME_VERSION)
         else:
-            deploy()
+            deploy(max_rooms=args.max_rooms, max_humans=args.max_humans)
         return 0
     except Exception as error:
         # In particular, Paramiko exception strings can contain host addresses.

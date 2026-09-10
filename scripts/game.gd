@@ -1094,7 +1094,7 @@ func move_formation(army: Array, at: Vector3, assault: bool, queued: bool) -> vo
 func notify_owner(owner: int, message: String) -> void:
 	if owner == local_owner_id:
 		hud.toast(message, 2.5)
-	elif online and is_authority:
+	elif online and is_authority and get_player(owner).controller == "human":
 		var now := Time.get_ticks_msec()
 		if now >= int(_notice_after.get(owner, 0)):
 			_notice_after[owner] = now + 200
@@ -1289,7 +1289,7 @@ func _on_connection_state(state: String) -> void:
 		set_match_paused(false)
 		end_battle(false)
 		hud.get_node("%ResultHeading").text = "对局连接已中断"
-		hud.get_node("%ResultBody").text = "未能在重连时限内恢复连接，请返回大厅重新加入对局。"
+		hud.get_node("%ResultBody").text = Session.relay.failure_description()
 
 func request_match_pause() -> void:
 	if not is_authority:

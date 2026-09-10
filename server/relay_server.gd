@@ -7,7 +7,12 @@ const HOST_GRACE_MS: int = 30000
 const BOT_GRACE_MS: int = 10000
 const REJOIN_GRACE_MS: int = 120000
 const IDLE_ROOM_MS: int = 900000
-const MAX_PEERS: int = 16
+const MAX_ROOMS: int = 16
+const CONNECTION_RESERVE: int = 16
+const DIAGNOSTIC_EVENTS_PER_SECOND: int = 64
+const DIAGNOSTIC_URGENT_PER_SECOND: int = 32
+const MAX_UI_NOTICE_CHARS: int = 512
+const DIAGNOSTIC_OPERATIONS: Array[String] = ["hello", "ping", "create", "join", "slot", "ready", "start", "command", "snapshot", "event", "finish", "leave"]
 const VISUAL_EVENT_RATE: float = 100.0
 const VISUAL_EVENT_BURST: float = 150.0
 const CRITICAL_EVENT_RATE: float = 30.0
@@ -19,37 +24,55 @@ const THROTTLE_DECELERATION: int = 1
 # rate limits still bound repeated requests; malformed/forged messages accrue strikes.
 const ROOM_FEEDBACK_CODES: Array[String] = ["not_ready", "opponents_required", "team_capacity", "human_host_required", "ffa_independent", "occupied_slot", "room_full", "room_missing", "match_started", "capacity", "already_joined", "resume_pending"]
 
-var max_rooms: int = 1
+var max_rooms: int = 8
 var max_humans: int = Protocol.MAX_PLAYERS
+var peer_capacity: int = 0
 var content_hash: String = Protocol.content_hash()
 var running: bool = false
 var rejected_packets: int = 0
 var relayed_commands: int = 0
 var relayed_snapshots: int = 0
 var dropped_visual_batches: int = 0
+var dropped_notices: int = 0
 var connection: ENetConnection
 var rooms: Dictionary = {}
 var sessions: Dictionary = {}
 var _connections: Dictionary = {}
 var _crypto := Crypto.new()
 var _maintenance_at: int = 0
+var _room_serial: int = 0
+var diagnostic_emitted: int = 0
+var diagnostic_suppressed: int = 0
+var _diagnostic_window: int = 0
+var _diagnostic_events: int = 0
+var _diagnostic_urgent: int = 0
+var _diagnostic_summary_at: int = 0
+var _diagnostic_reported_suppressed: int = 0
+var _diagnostic_reported_notices: int = 0
 
 func start(bind_address: String, port: int, key_path: String, cert_path: String) -> Error:
 	var key := CryptoKey.new()
 	var certificate := X509Certificate.new()
 	if key.load(key_path) != OK or certificate.load(cert_path) != OK:
 		return ERR_CANT_OPEN
+	max_rooms = clampi(max_rooms, 1, MAX_ROOMS)
+	max_humans = clampi(max_humans, 1, Protocol.MAX_PLAYERS)
+	# Room-local owner IDs stay 0..7. Extra peers are for handshakes/reconnects
+	# and connected lobby clients; they do not increase any room's human limit.
+	peer_capacity = max_rooms * max_humans + CONNECTION_RESERVE
 	connection = ENetConnection.new()
-	var result := connection.create_host_bound(bind_address, port, MAX_PEERS, Protocol.CHANNEL_COUNT)
+	var result := connection.create_host_bound(bind_address, port, peer_capacity, Protocol.CHANNEL_COUNT)
 	if result == OK:
 		result = connection.dtls_server_setup(TLSOptions.server(key, certificate))
 	if result != OK:
 		stop()
 		return result
 	running = true
+	_diagnostic("started", {"protocol": Protocol.VERSION, "room_limit": max_rooms, "humans_per_room": max_humans, "human_seats": max_rooms * max_humans, "peer_capacity": peer_capacity})
 	return OK
 
 func stop() -> void:
+	if running: _diagnostic("stopped")
 	running = false
 	_connections.clear()
 	sessions.clear()
@@ -76,7 +99,8 @@ func _process(_delta: float) -> void:
 				# a second. Refresh the baseline while retaining congestion response.
 				# Configure only after CONNECT; ENet reliably applies it to both ends.
 				peer.throttle_configure(THROTTLE_INTERVAL_MS, THROTTLE_ACCELERATION, THROTTLE_DECELERATION)
-				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "event_buckets": {}, "control": 0, "strikes": 0}
+				_connections[peer.get_instance_id()] = {"peer": peer, "token": "", "hello": false, "match_ended": false, "at": now, "window": now, "bytes": 0, "packets": 0, "commands": 0, "events": 0, "event_buckets": {}, "control": 0, "strikes": 0, "last_op": "unparsed", "last_channel": -1, "packet_bytes": 0, "decoded_bytes": 0}
+				_peer_diagnostic("connected", peer)
 			ENetConnection.EVENT_RECEIVE:
 				var peer: ENetPacketPeer = event[1]
 				_receive(peer, peer.get_packet(), int(event[3]), now)
@@ -96,6 +120,10 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 	if not _connections.has(id):
 		return
 	var state: Dictionary = _connections[id]
+	state.last_op = "unparsed"
+	state.last_channel = channel
+	state.packet_bytes = packet.size()
+	state.decoded_bytes = Protocol.decoded_size(packet)
 	if now - int(state.window) >= 1000:
 		state.window = now
 		state.bytes = 0
@@ -124,6 +152,7 @@ func _receive(peer: ENetPacketPeer, packet: PackedByteArray, channel: int, now: 
 		_reject(peer, "invalid_packet", "无效的网络消息")
 		return
 	var op: String = message.op
+	state.last_op = op if op in DIAGNOSTIC_OPERATIONS else "unknown"
 	if not state.hello:
 		if op != "hello" or channel != Protocol.CONTROL_CHANNEL:
 			_reject(peer, "handshake_required", "请先完成版本握手", true)
@@ -207,6 +236,7 @@ func _hello(peer: ENetPacketPeer, message: Dictionary, now: int) -> void:
 		return
 	if resume.is_empty():
 		_send(peer, {"op": "hello", "version": Protocol.VERSION, "build": Protocol.BUILD_ID})
+		_peer_diagnostic("handshake_accepted", peer)
 		return
 	if not sessions.has(resume):
 		_reject(peer, "resume_expired", "席位已失效，请重新创建房间", true)
@@ -224,6 +254,7 @@ func _hello(peer: ENetPacketPeer, message: Dictionary, now: int) -> void:
 	session.expires = 0
 	session.bot = false
 	state.token = resume
+	_peer_diagnostic("resumed", peer)
 	_joined(peer, session, resume)
 	_broadcast_room(room)
 	if room.status in ["match", "paused"]:
@@ -251,8 +282,10 @@ func _create(peer: ENetPacketPeer, message: Dictionary, now: int) -> void:
 	for owner in range(count):
 		slots.append({"owner_id": owner, "team_id": Protocol.default_alliance(message.mode, owner), "kind": "open", "token": "", "bot_difficulty": "normal"})
 	var code := _code()
-	var room := {"code": code, "match_id": _crypto.generate_random_bytes(16).hex_encode(), "mode": message.mode, "slots": slots, "status": "lobby", "touched": now, "seed": _crypto.generate_random_bytes(4).decode_u32(0) & 0x7fffffff}
+	_room_serial += 1
+	var room := {"code": code, "diagnostic_id": _room_serial, "match_id": _crypto.generate_random_bytes(16).hex_encode(), "mode": message.mode, "slots": slots, "status": "lobby", "touched": now, "seed": _crypto.generate_random_bytes(4).decode_u32(0) & 0x7fffffff}
 	rooms[code] = room
+	_diagnostic("room_created", {"room": _room_serial, "mode": message.mode})
 	_assign(peer, room, 0, Protocol.nickname(message.get("name")))
 	_broadcast_room(room)
 
@@ -288,6 +321,7 @@ func _assign(peer: ENetPacketPeer, room: Dictionary, owner: int, name: String) -
 	room.slots[owner].kind = "human"
 	room.slots[owner].bot_difficulty = "normal"
 	room.slots[owner].token = token
+	_peer_diagnostic("joined", peer)
 	_joined(peer, session, token)
 
 func _joined(peer: ENetPacketPeer, session: Dictionary, token: String) -> void:
@@ -329,6 +363,7 @@ func _start_match(peer: ENetPacketPeer, session: Dictionary, room: Dictionary) -
 		_reject(peer, roster_error, explanation)
 		return
 	room.status = "match"
+	_diagnostic("match_started", {"room": room.diagnostic_id, "mode": room.mode})
 	_broadcast_room(room)
 	_broadcast(room, {"op": "start", "config": _match_config(room)})
 
@@ -360,6 +395,14 @@ func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, m
 		return
 	var recipient := int(message.to)
 	if recipient >= 0 and room.slots[recipient].kind != "human":
+		# UI notices have no receiver for a Bot. Older released hosts also emit
+		# these on Bot construction/training completion. Authenticated, bounded
+		# notices are undeliverable, not a host ownership violation. This narrow
+		# case follows all transport/epoch/host checks and never forwards data;
+		# snapshots, other events, open slots, and malformed notices still reject.
+		if message.op == "event" and room.slots[recipient].kind == "bot" and _undeliverable_notice(message.payload):
+			dropped_notices += 1
+			return
 		_reject(peer, "inactive_recipient", "仅能向已加入的真人发送状态")
 		return
 	if message.op == "snapshot":
@@ -392,6 +435,9 @@ func _host_packet(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, m
 			_broadcast_event(room, message.payload)
 		else:
 			_send_owner(room, recipient, {"op": "event", "match": room.match_id, "payload": message.payload}, Protocol.EVENT_CHANNEL)
+
+static func _undeliverable_notice(payload: Dictionary) -> bool:
+	return payload.size() == 2 and payload.get("kind") == "notice" and payload.get("text") is String and not payload.text.is_empty() and payload.text.length() <= MAX_UI_NOTICE_CHARS
 
 static func _visual_batch_structure(payload: Dictionary) -> bool:
 	var items: Variant = payload.get("events")
@@ -434,9 +480,10 @@ func _event_allowed(state: Dictionary, visual: bool, now: int) -> bool:
 	bucket.credits -= 1.0
 	return true
 
-func _drop_connection(peer: ENetPacketPeer, now: int) -> void:
+func _drop_connection(peer: ENetPacketPeer, now: int, reason: String = "transport_disconnect") -> void:
 	var id := peer.get_instance_id()
 	if not _connections.has(id): return
+	_peer_diagnostic("disconnected", peer, {"reason": reason})
 	var token: String = _connections[id].token
 	_connections.erase(id)
 	if not sessions.has(token): return
@@ -459,7 +506,7 @@ func _maintenance(now: int) -> void:
 		var state: Dictionary = _connections[id]
 		if now - int(state.at) > (8000 if state.hello else 5000):
 			var peer: ENetPacketPeer = state.peer
-			_drop_connection(peer, now)
+			_drop_connection(peer, now, "application_timeout" if state.hello else "handshake_timeout")
 			peer.peer_disconnect()
 	for token: String in sessions.keys():
 		# Expiring a host removes the whole room, including later entries in this copy.
@@ -484,8 +531,17 @@ func _maintenance(now: int) -> void:
 		var room: Dictionary = rooms[code]
 		if room.status == "lobby" and now - int(room.touched) > IDLE_ROOM_MS:
 			_end_room(room, {"kind": "match_aborted", "reason": "room_idle", "message": "房间长时间未开始，已关闭"})
+	if now >= _diagnostic_summary_at:
+		_diagnostic_summary_at = now + 5000
+		if dropped_notices != _diagnostic_reported_notices:
+			_diagnostic("notices_undeliverable", {"count": dropped_notices - _diagnostic_reported_notices, "total": dropped_notices})
+			_diagnostic_reported_notices = dropped_notices
+		if diagnostic_suppressed != _diagnostic_reported_suppressed:
+			_diagnostic("logs_suppressed", {"count": diagnostic_suppressed - _diagnostic_reported_suppressed, "total": diagnostic_suppressed}, true)
+			_diagnostic_reported_suppressed = diagnostic_suppressed
 
 func _leave(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, now: int) -> void:
+	_peer_diagnostic("left", peer)
 	if int(session.owner) == 0:
 		_end_room(room, {"kind": "match_aborted", "reason": "host_left", "message": "房主已离开"})
 	else:
@@ -500,6 +556,7 @@ func _leave(peer: ENetPacketPeer, session: Dictionary, room: Dictionary, now: in
 		_broadcast_room(room)
 
 func _end_room(room: Dictionary, payload: Dictionary) -> void:
+	_diagnostic("room_ended", {"room": room.get("diagnostic_id", 0), "kind": payload.get("kind", ""), "reason": payload.get("reason", "")})
 	_broadcast_event(room, payload)
 	for token: String in sessions.keys():
 		if sessions[token].code != room.code: continue
@@ -551,10 +608,38 @@ func _reject(peer: ENetPacketPeer, code: String, message: String, fatal: bool = 
 	if _connections.has(id) and code not in ROOM_FEEDBACK_CODES:
 		_connections[id].strikes += 1
 		fatal = fatal or int(_connections[id].strikes) >= 12
+	_peer_diagnostic("rejected", peer, {"code": code.left(48), "fatal": fatal}, fatal)
 	_send(peer, {"op": "error", "code": code, "message": message, "fatal": fatal})
 	if fatal:
-		_drop_connection(peer, Time.get_ticks_msec())
+		_drop_connection(peer, Time.get_ticks_msec(), "rejected")
 		peer.peer_disconnect_later()
+
+func _peer_diagnostic(event: String, peer: ENetPacketPeer, details: Dictionary = {}, urgent: bool = false) -> void:
+	var id: int = peer.get_instance_id()
+	var state: Dictionary = _connections.get(id, {})
+	var session: Dictionary = sessions.get(state.get("token", ""), {})
+	var room: Dictionary = rooms.get(session.get("code", ""), {})
+	# Never emit credentials, addresses, invite codes, nicknames, or payloads.
+	# Operation labels are reduced to a fixed whitelist at the receive boundary.
+	var fields := {"peer": id, "owner": int(session.get("owner", -1)), "room": int(room.get("diagnostic_id", 0)), "op": state.get("last_op", "unparsed"), "channel": int(state.get("last_channel", -1)), "packet_bytes": int(state.get("packet_bytes", 0)), "decoded_bytes": int(state.get("decoded_bytes", 0)), "window_bytes": int(state.get("bytes", 0)), "window_packets": int(state.get("packets", 0)), "strikes": int(state.get("strikes", 0))}
+	fields.merge(details)
+	_diagnostic(event, fields, urgent)
+
+func _diagnostic(event: String, fields: Dictionary = {}, urgent: bool = false) -> void:
+	var now: int = Time.get_ticks_msec()
+	if now - _diagnostic_window >= 1000:
+		_diagnostic_window = now
+		_diagnostic_events = 0
+		_diagnostic_urgent = 0
+	if (urgent and _diagnostic_urgent >= DIAGNOSTIC_URGENT_PER_SECOND) or (not urgent and _diagnostic_events >= DIAGNOSTIC_EVENTS_PER_SECOND):
+		diagnostic_suppressed += 1
+		return
+	if urgent: _diagnostic_urgent += 1
+	else: _diagnostic_events += 1
+	var record := {"event": event, "milliseconds": now, "rooms": rooms.size(), "sessions": sessions.size(), "connections": _connections.size()}
+	record.merge(fields)
+	diagnostic_emitted += 1
+	print("JIMU_RELAY_DIAGNOSTIC ", JSON.stringify(record))
 
 func _code() -> String:
 	const ALPHABET := "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

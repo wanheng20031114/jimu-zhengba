@@ -18,7 +18,7 @@ func _start() -> void:
 		push_error("RELAY_CONFIG_UNAVAILABLE")
 		quit(1)
 		return
-	relay.max_rooms = clampi(int(settings.get_value("relay", "max_rooms", 1)), 1, 16)
+	relay.max_rooms = clampi(int(settings.get_value("relay", "max_rooms", 8)), 1, relay.MAX_ROOMS)
 	relay.max_humans = clampi(int(settings.get_value("relay", "max_humans", PROTOCOL.MAX_PLAYERS)), 1, PROTOCOL.MAX_PLAYERS)
 	var result: Error = relay.start(str(settings.get_value("relay", "bind", "*")), int(settings.get_value("relay", "port", 24571)), str(settings.get_value("tls", "private_key", "")), str(settings.get_value("tls", "certificate", "")))
 	if result != OK:

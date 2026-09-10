@@ -35,7 +35,7 @@ var _last_request: String = ""
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = true
-	%Version.text = "v%s   /   即时战略" % NetworkProtocol.BUILD_ID
+	%Version.text = "v%s   /   即时战略" % NetworkProtocol.RELEASE_ID
 	var arguments: PackedStringArray = OS.get_cmdline_user_args()
 	if "--lobby-capture" not in arguments:
 		for flag: String in ["--capture", "--smoke-test", "--ui-smoke", "--2v2", "--3v3", "--4v4", "--2v2v2", "--ffa"]:

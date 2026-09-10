@@ -1,0 +1,397 @@
+{
+  "release": "0.11.0.1",
+  "date": "2026-09-10",
+  "root_cause": {
+    "code": "inactive_recipient",
+    "fatal_after_strikes": 12,
+    "host_error_ms": 35385,
+    "host_last_tick": 1021,
+    "relay_receive_age_at_disconnect_ms": 3,
+    "original_pck_sha256": "4f8e86d3cb8fce75c0d1f596ba7db5eac1405166c84175bab8989d000ca8c82b",
+    "original_server_sha256": "73a8844f4d1e701128617a71ca4d5bdfe9831a6a2fa0dcd22a3e5eb3fa6e334d"
+  },
+  "package": {
+    "release": "0.11.0.1",
+    "build": "0.11.0",
+    "protocol": 10,
+    "zip_size": 67319374,
+    "zip_sha256": "d3e9f08f86df2627f9bc835b2f84bb07f5418149a9c728226b4a227d37107e57",
+    "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+    "pck_size": 49672036
+  },
+  "export_sources": {
+    "source_commit": "dc32f9ca3d7a50117e9f435bb47cc5eb895fbea8",
+    "changes": {
+      "export_presets.cfg": {
+        "before": "382fea08bafa3e36770c48ec1eb0a225c8bb8d21d5b158e7275fc7894de31a0f",
+        "after": "2f6e4b72e6f4f0d0434ccac548c7718965e91ec068cd527a33124ccfb6e3c8f0"
+      },
+      "scripts/game.gd": {
+        "before": "27f53baf5905c4aea9472cb867f03ca8c03df5b1889ced083acf87f47438d6b6",
+        "after": "3181951e82ce473090ba7ea036379c4ac171a513915b115572b7cf86b4c03b71"
+      },
+      "scripts/lobby.gd": {
+        "before": "2eebd28ec7f56bfe3a6b95805573310c89bac61aad99f693901e4dc94b5b84a0",
+        "after": "c581871a9b461888e9e3d20e51241111b0a23161956ae10df6b7cb3738a5e479"
+      },
+      "scripts/network/network_protocol.gd": {
+        "before": "1397c92b76471f5d9a18489ba67d1be5ff240e6a6e387e2b0a39faaccbb7fb55",
+        "after": "508f618ba8b2c32a4c47020a90a23b5523538299c85e66247ecf0ede94bec1d3"
+      },
+      "scripts/network/relay_client.gd": {
+        "before": "351b5b1281615d41657601b6c110c62cb8f250f5c69a06f04b2b9a8f91dc8aae",
+        "after": "62b867c6db74633e1e0ef22bd33bc205d401be657e516dfd242ac15b7e9a08a8"
+      },
+      "scripts/session.gd": {
+        "before": "467bc5449a5fba3e51fa2e48626aee6e3032e429257b3ac3a54a7b714a4b489c",
+        "after": "5f111dfb46f806580de19a295dfb2125fd39b130979184eb411bd162fde682b2"
+      }
+    }
+  },
+  "old_package_fixed_relay": {
+    "source_summary_sha256": "994bec315d1477476c9bd6b3fe988d9195c45358b1b98977be2940db278153e6",
+    "pck_sha256": "4f8e86d3cb8fce75c0d1f596ba7db5eac1405166c84175bab8989d000ca8c82b",
+    "server_sha256": "a550058c33b8b1f712b7e7c9fdc568be57dac37379995cc62e830fefda90ea38",
+    "peers": [
+      {
+        "peer": 0,
+        "checks": 12,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 60069,
+        "snapshots": 0,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 0,
+        "errors": [],
+        "source_editor_feature": true
+      },
+      {
+        "peer": 1,
+        "checks": 12,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 60063,
+        "snapshots": 901,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 84,
+        "errors": [],
+        "source_editor_feature": true
+      }
+    ],
+    "server_release": {
+      "commands": 11,
+      "dropped_notices": 20,
+      "rejected": 0,
+      "rooms": 0,
+      "sessions": 0,
+      "snapshots": 901
+    },
+    "conditions": "Unmodified formal PCK with external diagnostic SceneTree, native 4.6.3 headless clients; isolated loopback DTLS 4.7.2; 2v2 host+guest+2 original Bots; wall-clock 60s; production main/Game/RelayClient unchanged."
+  },
+  "hotfix_package_2v2": {
+    "source_summary_sha256": "56ad4cf5bdc5ed27aca7ad3a285889c4cd0ddea406c0551cf2f28f5ecb9897b2",
+    "pck_sha256": "ef73459a8de35557836884a68ed0036dba4ab44bf274426bf830f3b87d130ae6",
+    "server_sha256": "a550058c33b8b1f712b7e7c9fdc568be57dac37379995cc62e830fefda90ea38",
+    "peers": [
+      {
+        "peer": 0,
+        "checks": 15,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 90069,
+        "snapshots": 0,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 0,
+        "errors": [
+          {
+            "code": "diagnostic_rejection",
+            "message": "诊断触发的协议拒绝",
+            "ms": 91655
+          }
+        ],
+        "source_editor_feature": true
+      },
+      {
+        "peer": 1,
+        "checks": 12,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 90063,
+        "snapshots": 1350,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 100,
+        "errors": [],
+        "source_editor_feature": true
+      }
+    ],
+    "server_release": {
+      "commands": 17,
+      "dropped_notices": 0,
+      "rejected": 0,
+      "rooms": 0,
+      "sessions": 0,
+      "snapshots": 1350
+    },
+    "conditions": "Unmodified formal 0.11.0.1 PCK with external diagnostic SceneTree, native 4.6.3 headless clients; isolated loopback DTLS 4.7.2; production main/Game/RelayClient unchanged. Expected synthetic error UI probe runs only after steady validation."
+  },
+  "hotfix_package_1vbot": {
+    "source_summary_sha256": "ef2d92df5425e8fa5cd88d57957417de8b0d58c290f05c34e1010928818536bf",
+    "pck_sha256": "ef73459a8de35557836884a68ed0036dba4ab44bf274426bf830f3b87d130ae6",
+    "server_sha256": "a550058c33b8b1f712b7e7c9fdc568be57dac37379995cc62e830fefda90ea38",
+    "peers": [
+      {
+        "peer": 0,
+        "checks": 13,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 60059,
+        "snapshots": 0,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 0,
+        "errors": [
+          {
+            "code": "diagnostic_rejection",
+            "message": "诊断触发的协议拒绝",
+            "ms": 61235
+          }
+        ],
+        "source_editor_feature": true
+      }
+    ],
+    "server_release": {
+      "commands": 0,
+      "dropped_notices": 0,
+      "rejected": 0,
+      "rooms": 0,
+      "sessions": 0,
+      "snapshots": 0
+    },
+    "conditions": "Unmodified formal 0.11.0.1 PCK with external diagnostic SceneTree, native 4.6.3 headless clients; isolated loopback DTLS 4.7.2; production main/Game/RelayClient unchanged. Expected synthetic error UI probe runs only after steady validation."
+  },
+  "relay_capacity": {
+    "passed": true,
+    "checks": 127,
+    "failures": [],
+    "peak": {
+      "connections": 65,
+      "native_peers": 65,
+      "peer_capacity": 80,
+      "rooms": 8,
+      "sessions": 64
+    },
+    "elapsed_ms": 6025,
+    "expected_rejections": 11,
+    "dropped_notices": 20,
+    "end_before_transport_close": {
+      "connections": 65,
+      "rooms": 0,
+      "sessions": 0
+    },
+    "scope": "loopback real ENet/DTLS, 65 clients; no world simulation or network impairment; not throughput or FPS benchmark"
+  },
+  "deployment": {
+    "utc": "2026-09-10T09:51:48.032595+00:00",
+    "before": {
+      "MainPID": "284742",
+      "NRestarts": "0",
+      "MemoryCurrent": "43343872",
+      "ActiveState": "active",
+      "SubState": "running",
+      "InvocationID": "6d5612b12c7342c5aea0a7a38d7b9821"
+    },
+    "after": {
+      "MainPID": "285128",
+      "NRestarts": "0",
+      "MemoryCurrent": "41222144",
+      "ActiveState": "active",
+      "SubState": "running",
+      "InvocationID": "edd012f0effe484f87a997ad7b2ae737"
+    },
+    "previous_release": "cf99f96528ccb274",
+    "release": "d403f9736d5bf600",
+    "readiness": [
+      "JIMU_RELAY_READY protocol=10 rooms=8 humans=8"
+    ],
+    "diagnostics": [
+      {
+        "connections": 0,
+        "event": "started",
+        "human_seats": 64,
+        "humans_per_room": 8,
+        "milliseconds": 291,
+        "peer_capacity": 80,
+        "protocol": 10,
+        "room_limit": 8,
+        "rooms": 0,
+        "sessions": 0
+      }
+    ],
+    "unrelated_pid": 270544,
+    "protocol": 10,
+    "max_rooms": 8,
+    "humans_per_room": 8,
+    "peer_capacity": 80,
+    "source_hashes": {
+      "server/relay_server.gd": "a550058c33b8b1f712b7e7c9fdc568be57dac37379995cc62e830fefda90ea38",
+      "server/relay_main.gd": "e72d11da4b2564a8cb161a6c644adea9a31a14c383659342a69371e108ce9f82",
+      "scripts/network/network_protocol.gd": "508f618ba8b2c32a4c47020a90a23b5523538299c85e66247ecf0ede94bec1d3",
+      "data/content_manifest.json": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+    }
+  },
+  "limits": [
+    "No 896-unit performance claim",
+    "65 protocol peers are not 64 full-game load clients",
+    "PCK sustained tests use native editor engine only for external diagnostic script injection; production scripts unchanged",
+    "Intentional diagnostic_rejection injected only after successful steady-state to exercise actual HUD"
+  ],
+  "public_old_package_soak": {
+    "source_summary_sha256": "7ab3be5fd28a7da1c36b651f6717b5d116c25b77d98c51ed20dcc2e98e26dd81",
+    "pck_sha256": "4f8e86d3cb8fce75c0d1f596ba7db5eac1405166c84175bab8989d000ca8c82b",
+    "server_sha256": null,
+    "peers": [
+      {
+        "peer": 0,
+        "checks": 12,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 60088,
+        "snapshots": 0,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 0,
+        "errors": []
+      },
+      {
+        "peer": 1,
+        "checks": 12,
+        "failures": [],
+        "exit_code": 0,
+        "steady_wall_ms": 60081,
+        "snapshots": 901,
+        "snapshot_rejections": 0,
+        "max_snapshot_gap_ms": 100,
+        "errors": []
+      }
+    ],
+    "server_release": {},
+    "conditions": "Original formal 0.11.0 PCK, official 4.6.3 engine external diagnostic SceneTree, actual Shanghai DTLS relay, 2 humans+2 Bots, 60 wall-clock seconds; production gameplay scripts unmodified; no local server.",
+    "passed": true,
+    "server_before": {
+      "MainPID": "285128",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "InvocationID": "edd012f0effe484f87a997ad7b2ae737"
+    },
+    "server_after": {
+      "MainPID": "285128",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "InvocationID": "edd012f0effe484f87a997ad7b2ae737"
+    },
+    "test_room_diagnostic_id": 1,
+    "room_correlation": "Unique new 2v2 room with canonical finish matching the test interval; no invite/name/token recorded.",
+    "test_room_events": [
+      {
+        "connections": 1,
+        "event": "room_created",
+        "milliseconds": 152403,
+        "mode": "2v2",
+        "room": 1,
+        "rooms": 1,
+        "sessions": 0
+      },
+      {
+        "channel": 0,
+        "connections": 1,
+        "decoded_bytes": 61,
+        "event": "joined",
+        "milliseconds": 152403,
+        "op": "create",
+        "owner": 0,
+        "packet_bytes": 70,
+        "peer": -9223372007763081762,
+        "room": 1,
+        "rooms": 1,
+        "sessions": 1,
+        "strikes": 0,
+        "window_bytes": 234,
+        "window_packets": 3
+      },
+      {
+        "channel": 0,
+        "connections": 2,
+        "decoded_bytes": 64,
+        "event": "joined",
+        "milliseconds": 152719,
+        "op": "join",
+        "owner": 1,
+        "packet_bytes": 73,
+        "peer": -9223372007662418465,
+        "room": 1,
+        "rooms": 1,
+        "sessions": 2,
+        "strikes": 0,
+        "window_bytes": 237,
+        "window_packets": 3
+      },
+      {
+        "connections": 2,
+        "event": "match_started",
+        "milliseconds": 152786,
+        "mode": "2v2",
+        "room": 1,
+        "rooms": 1,
+        "sessions": 2
+      },
+      {
+        "connections": 2,
+        "event": "room_ended",
+        "kind": "match_finished",
+        "milliseconds": 213500,
+        "reason": "",
+        "room": 1,
+        "rooms": 1,
+        "sessions": 2
+      }
+    ],
+    "own_peer_disconnect_events": [
+      {
+        "channel": 0,
+        "connections": 2,
+        "decoded_bytes": 13,
+        "event": "disconnected",
+        "milliseconds": 214117,
+        "op": "ping",
+        "owner": -1,
+        "packet_bytes": 22,
+        "peer": -9223372007763081762,
+        "reason": "transport_disconnect",
+        "room": 0,
+        "rooms": 0,
+        "sessions": 0,
+        "strikes": 0,
+        "window_bytes": 15645,
+        "window_packets": 20
+      },
+      {
+        "channel": 0,
+        "connections": 1,
+        "decoded_bytes": 13,
+        "event": "disconnected",
+        "milliseconds": 214117,
+        "op": "ping",
+        "owner": -1,
+        "packet_bytes": 22,
+        "peer": -9223372007662418465,
+        "reason": "transport_disconnect",
+        "room": 0,
+        "rooms": 0,
+        "sessions": 0,
+        "strikes": 0,
+        "window_bytes": 22,
+        "window_packets": 1
+      }
+    ]
+  }
+}
