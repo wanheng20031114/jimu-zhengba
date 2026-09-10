@@ -290,18 +290,27 @@ def infantry(name, archer=False):
         s.e(part,(.235,.18,.24),(sign*.04,.018,0),"leather" if archer else "steel")
         if not archer:
             s.b(part,(.32,.032,.31),(sign*.04,.024,-.042),"edge",rot=(0,0,sign*.13),bevel=.020)
-        s.r(part,(sign*.045,-.08,0),(sign*.10,-.33,-.04),.106,"blue",8)
-        s.e(part,(.115,.10,.11),(sign*.10,-.30,-.055),"darksteel" if not archer else "leather")
+        # A shield is carried on a bent forearm ahead of the breastplate. The
+        # shoulder remains at its authored joint; moving the entire ArmLeft
+        # instead would detach the pauldron from the torso during a strike.
+        shield_arm = not archer and sign < 0
+        elbow = (-.13,-.30,-.035) if shield_arm else (sign*.10,-.30,-.04)
+        wrist = (-.21,-.42,-.25) if shield_arm else (sign*.11,-.49,-.11)
+        hand = (-.22,-.43,-.28) if shield_arm else (sign*.12,-.54,-.115)
+        s.r(part,(sign*.045,-.08,0),elbow if shield_arm else (sign*.10,-.33,-.04),.106,"blue",8)
+        s.e(part,(.115,.10,.11),elbow if shield_arm else (sign*.10,-.30,-.055),"darksteel" if not archer else "leather")
         fore=part
         origin=np.zeros(3)
         if archer and sign==1:
             origin=np.array((.10,-.30,-.04))
             fore=s.joint("ForearmRight",tuple(origin),parent=right)
         local=lambda p: tuple(np.array(p)-origin)
-        s.r(fore,local((sign*.10,-.30,-.04)),local((sign*.11,-.49,-.11)),.100,"steel" if not archer else "leatherlight",8)
-        s.b(fore,(.17,.085,.15),local((sign*.11,-.475,-.10)),"gold" if not archer else "leather",bevel=.025)
-        s.e(fore,(.097,.093,.1),local((sign*.12,-.54,-.115)),"skin" if archer else "darksteel")
-        rivets(s,fore,[local((sign*.10,-.37,-.144)),local((sign*.10,-.44,-.15))],.015)
+        s.r(fore,local(elbow),local(wrist),.100,"steel" if not archer else "leatherlight",8)
+        cuff = (-.21,-.410,-.235) if shield_arm else (sign*.11,-.475,-.10)
+        s.b(fore,(.17,.085,.15),local(cuff),"gold" if not archer else "leather",bevel=.025)
+        s.e(fore,(.097,.093,.1),local(hand),"skin" if archer else "darksteel")
+        studs = [(-.17,-.35,-.14),(-.195,-.39,-.21)] if shield_arm else [(sign*.10,-.37,-.144),(sign*.10,-.44,-.15)]
+        rivets(s,fore,[local(v) for v in studs],.015)
     for part in (ll,lr):
         s.r(part,(0,.01,0),(0,-.29,.02),.116,"leather" if archer else "darksteel",8)
         s.e(part,(.12,.11,.11),(0,-.28,-.033),"leatherlight" if archer else "steel")
@@ -325,7 +334,9 @@ def infantry(name, archer=False):
         s.add(arrow,polygon([(-.046,0),(.046,0),(0,.12)],.020,(0,0,-.975),(math.pi/2,0,0)),"edge")
         s.b(arrow,(.10,.015,.13),(0,0,-.08),"ivory",bevel=.004)
     else:
-        shield(s,left,(-.12,-.35,-.225))
+        shield(s,left,(-.24,-.37,-.425))
+        # Back grip meets the gauntlet while the board clears the breastplate.
+        s.r(left,(-.28,-.43,-.37),(-.16,-.43,-.37),.025,"leather",8)
         sword(s,right,(.12,-.52,-.17))
         # Sheath and a small hip pouch complete the back and side silhouette.
         s.b(body,(.082,.58,.084),(-.27,-.25,.1),"leather",rot=(0,0,-.16))
@@ -411,10 +422,14 @@ def horse_knight():
         s.e(p,(.235,.18,.24),(sign*.025,.01,0),"steel")
         for yy in (0,-.075):
             s.b(p,(.32,.035,.31),(sign*.04,yy,-.042),"edge",rot=(0,0,sign*.15),bevel=.014)
-        s.r(p,(0,-.1,0),(sign*.085,-.29,-.05),.105,"blue",8)
-        s.r(p,(sign*.085,-.29,-.05),(sign*.08,-.43,-.16),.101,"steel",8)
-        s.e(p,(.10,.095,.10),(sign*.08,-.47,-.19),"darksteel")
-    shield(s,"ArmLeft",(-.12,-.34,-.255),True)
+        elbow = (-.14,-.27,-.04) if sign < 0 else (sign*.085,-.29,-.05)
+        wrist = (-.28,-.39,-.30) if sign < 0 else (sign*.08,-.43,-.16)
+        hand = (-.29,-.41,-.32) if sign < 0 else (sign*.08,-.47,-.19)
+        s.r(p,(0,-.1,0),elbow,.105,"blue",8)
+        s.r(p,elbow,wrist,.101,"steel",8)
+        s.e(p,(.10,.095,.10),hand,"darksteel")
+    shield(s,"ArmLeft",(-.30,-.35,-.465),True)
+    s.r("ArmLeft",(-.35,-.41,-.41),(-.23,-.41,-.41),.025,"leather",8)
     sword(s,"ArmRight",(.09,-.43,-.22),1.0)
     # Preserve all horse geometry while separating the neck/head for a recoil nod.
     horse_head=s.joint("HorseHead",(0,.27,-.50),parent=b)
@@ -818,7 +833,9 @@ def attack_tracks(s):
         t=[0,.06,.13,.178,.20,.235,.33,.49,.71,.94]
         rot("Waist",[(0,0,0),(.015,.18,-.035),(.025,.42,-.08),(.02,.37,-.07),(-.11,-.42,.055),(-.12,-.59,.075),(-.045,-.34,.04),(.02,-.1,0),(0,.02,0),(0,0,0)],t)
         rot("ArmRight",[(0,0,0),(.48,-.18,-.38),(1.18,-.48,-.90),(1.12,-.45,-.87),(-1.32,.25,.43),(-1.49,.45,.63),(-.75,.25,.36),(-.14,.04,.08),(.035,0,0),(0,0,0)],t)
-        rot("ArmLeft",[(0,0,0),(.16,-.13,.06),(.30,-.19,.13),(.32,-.20,.13),(.45,-.08,.15),(.41,-.08,.13),(.24,-.06,.07),(.08,0,.02),(0,0,0),(0,0,0)],t)
+        # Brace the shield outside the horse's neck while the waist follows the
+        # sword through. Only its off-hand pose changes, never the hit timing.
+        rot("ArmLeft",[(0,0,0),(.16,-.13,.06),(.30,-.19,.13),(.32,-.20,.13),(.45,.55,.15),(.41,.81,.13),(.24,.45,.07),(.08,.15,.02),(0,0,0),(0,0,0)],t)
         rot("Head",[(0,0,0),(0,-.10,0),(-.025,-.27,.025),(-.02,-.25,.015),(.035,.24,-.02),(.04,.34,-.04),(.025,.2,-.02),(0,.05,0),(0,0,0),(0,0,0)],t)
         pos("Action",[(0,0,0),(0,-.018,.015),(0,-.027,.045),(0,-.005,.015),(.025,.02,-.23),(.03,-.015,-.29),(.015,-.035,-.22),(0,-.012,-.085),(0,.005,-.01),(0,0,0)],t)
         rot("Body",[(0,0,0),(.018,0,0),(.045,0,-.012),(.03,0,-.012),(-.065,0,.015),(-.05,0,.014),(.035,0,.008),(-.012,0,0),(0,0,0),(0,0,0)],t)
