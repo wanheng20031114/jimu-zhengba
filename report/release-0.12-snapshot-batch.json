@@ -420,5 +420,152 @@
       "https://docs.godotengine.org/en/4.6/classes/class_animationplayer.html",
       "https://github.com/godotengine/godot/blob/4.6.3-stable/scene/animation/animation_player.cpp"
     ]
+  },
+  "codec_split_diagnostic": {
+    "raw": {
+      "failures": [],
+      "samples": [
+        {
+          "build_ms": 10.974,
+          "envelope_us": 9,
+          "header_us": 27,
+          "iteration": 0,
+          "json_us": 21675,
+          "official_encoder_us": 21907,
+          "raw_bytes": 433652,
+          "recipients": 4,
+          "utf8_us": 365,
+          "wire_bytes": 33566,
+          "zstd_us": 669
+        },
+        {
+          "build_ms": 9.674,
+          "envelope_us": 5,
+          "header_us": 19,
+          "iteration": 1,
+          "json_us": 15904,
+          "official_encoder_us": 16540,
+          "raw_bytes": 325209,
+          "recipients": 3,
+          "utf8_us": 240,
+          "wire_bytes": 25107,
+          "zstd_us": 482
+        },
+        {
+          "build_ms": 11.236,
+          "envelope_us": 9,
+          "header_us": 27,
+          "iteration": 2,
+          "json_us": 21345,
+          "official_encoder_us": 22610,
+          "raw_bytes": 433652,
+          "recipients": 4,
+          "utf8_us": 318,
+          "wire_bytes": 33568,
+          "zstd_us": 597
+        },
+        {
+          "build_ms": 9.741,
+          "envelope_us": 9,
+          "header_us": 21,
+          "iteration": 3,
+          "json_us": 16182,
+          "official_encoder_us": 16877,
+          "raw_bytes": 325209,
+          "recipients": 3,
+          "utf8_us": 272,
+          "wire_bytes": 25106,
+          "zstd_us": 385
+        },
+        {
+          "build_ms": 10.991,
+          "envelope_us": 10,
+          "header_us": 23,
+          "iteration": 4,
+          "json_us": 21291,
+          "official_encoder_us": 22380,
+          "raw_bytes": 433652,
+          "recipients": 4,
+          "utf8_us": 317,
+          "wire_bytes": 33567,
+          "zstd_us": 494
+        },
+        {
+          "build_ms": 9.402,
+          "envelope_us": 5,
+          "header_us": 18,
+          "iteration": 5,
+          "json_us": 15736,
+          "official_encoder_us": 16400,
+          "raw_bytes": 325209,
+          "recipients": 3,
+          "utf8_us": 238,
+          "wire_bytes": 25104,
+          "zstd_us": 347
+        },
+        {
+          "build_ms": 10.639,
+          "envelope_us": 11,
+          "header_us": 22,
+          "iteration": 6,
+          "json_us": 21123,
+          "official_encoder_us": 22169,
+          "raw_bytes": 433652,
+          "recipients": 4,
+          "utf8_us": 321,
+          "wire_bytes": 33567,
+          "zstd_us": 465
+        },
+        {
+          "build_ms": 9.643,
+          "envelope_us": 6,
+          "header_us": 17,
+          "iteration": 7,
+          "json_us": 15858,
+          "official_encoder_us": 16496,
+          "raw_bytes": 325209,
+          "recipients": 3,
+          "utf8_us": 235,
+          "wire_bytes": 25105,
+          "zstd_us": 349
+        }
+      ],
+      "scope": "500 six-type authored units with distributed positions/yaw/attack phase; static MANUAL animation, all visible. Actual native JSON/UTF8/ZSTD/header sequence, every split packet byte-equal to official encode_snapshot. Headless CPU diagnostic; no game TPS/FPS/network throughput claim."
+    },
+    "receipt": {
+      "source_hashes_before": {
+        "scripts/network/network_protocol.gd": "76d3a2b4cb0d7b1d3a40c10a3955432bbaddd5b8af1695d8f260c5fb04929347",
+        "scripts/network/match_replication.gd": "fb8efc76bae1a39f7bc00a7e9c93240f0d3debee4e68194b75c40f0c327d63e8"
+      },
+      "started_utc": "2026-09-10T15:16:23.826557+00:00",
+      "pid": 30556,
+      "exit_code": 0,
+      "exited": true
+    },
+    "source_hashes_after": {
+      "scripts/network/network_protocol.gd": "76d3a2b4cb0d7b1d3a40c10a3955432bbaddd5b8af1695d8f260c5fb04929347",
+      "scripts/network/match_replication.gd": "fb8efc76bae1a39f7bc00a7e9c93240f0d3debee4e68194b75c40f0c327d63e8"
+    },
+    "source_stable_during_run": true,
+    "summary_excluding_first_two": {
+      "build_ms": 10.275333333333332,
+      "envelope_ms": 0.008333333333333333,
+      "header_ms": 0.021333333333333333,
+      "json_ms": 18.589166666666667,
+      "official_encoder_ms": 19.488666666666667,
+      "raw_bytes": 379430.5,
+      "utf8_ms": 0.2835,
+      "wire_bytes": 29336.166666666668,
+      "zstd_ms": 0.4395
+    },
+    "checks": "28 split packets byte-identical to native encode_snapshot; no failures",
+    "stderr_bytes": 0,
+    "fixture_sha256_recorded_after_run": "80daa1ac0523502968b9953763b05f7928e2ade4146e80d518d4199d124c8119",
+    "limits": [
+      "Local CPU diagnostic, not seven live Game processes or transport throughput.",
+      "Eight phases total, first two discarded. Phases alternate four/three remote recipients.",
+      "Manual authored animations isolate codec, distributed positions/yaw/attack phase improve payload representativeness.",
+      "JSON stringify, UTF8, ZSTD, header timers sequential and disjoint. Official whole encoder is a separate duplicate measurement, not additive."
+    ]
   }
 }
