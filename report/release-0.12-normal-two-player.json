@@ -1,0 +1,169 @@
+{
+  "created_utc": "2026-09-10T18:02:29.333765+00:00",
+  "started_utc": "2026-09-10T17:59:08.420596+00:00",
+  "scope": "One public-room run; 2 actual native Windows release Game processes and 6 native Bots, 4v4 with two allied humans. Initial 500 units, formal HP, normal AI, economy and fog; no rendering benchmark or fixed 500-live-unit guarantee. No additional seven-human testing.",
+  "product_commit": "c4026265302b135d8997844226dc35cb3069ba09",
+  "pck_sha256": "6a606b0ce45d9569581d88c6131f87c89e4aedfbb6a420f75aad850330f55c6a",
+  "exe_sha256": "91724f15024a3a545e28ccd83134403d31ce2323a38e51c95e4dfa282f732ab6",
+  "runtime": {
+    "version": "4.6.3-stable",
+    "editor": false,
+    "debug": false,
+    "release": true
+  },
+  "passed": true,
+  "checks": 116,
+  "failures": [],
+  "fixture": {
+    "humans": 2,
+    "bots": 6,
+    "observe_ms": 42000,
+    "initial_units": 500,
+    "military": 452,
+    "farmers": 48,
+    "hp_multiplier": 1,
+    "population_upgrades": "Fixture gives both existing military capacity upgrades to each owner; resulting limit100, actual supply72 or73, six farmers each; no balance resource changes.",
+    "bot_pause": "Only initialization and two-client readiness barrier; original six Bot objects restored synchronously in begin_combat before observation.",
+    "finish": "Explicit host end_battle fixture invokes canonical reliable finish after observation; not natural-victory acceptance."
+  },
+  "peers": [
+    {
+      "peer": 0,
+      "checks": 63,
+      "failures": [],
+      "error_codes": [],
+      "wall_ms": 42018,
+      "commands_sent": 20,
+      "remote_commands": 20,
+      "notices": 0,
+      "finished": true,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "observation_snapshots": 0,
+      "snapshot_rejections": 0,
+      "stress_metrics": {
+        "combat": {
+          "alive": 490,
+          "damage_events": 198,
+          "damage_total": 1955.0,
+          "deaths": 10,
+          "gathers": 532,
+          "with_target": 378
+        },
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 0,
+        "near_30_tps_target_met": true,
+        "scope": "Two headless Game processes and six native Bots share one CPU. Formal HP; initial 500 units may die or be replaced by normal production. Native ENet counters include transport traffic; not separate machines or rendering FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshots_per_wall_second": 0.0,
+        "tick_delta": 1247,
+        "ticks_per_wall_second": 29.6777571516969,
+        "traffic": {
+          "available": true,
+          "received_bytes": 6481.0,
+          "received_udp_packets": 208.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 4614912.0,
+          "sent_udp_packets": 4021.0
+        },
+        "window_max_snapshot_gap_ms": 0
+      },
+      "sampled_scene_unit_nodes": {
+        "first": 500,
+        "last": 530,
+        "min": 500,
+        "max": 530,
+        "scope": "Unit container children at 1Hz; includes fading corpses; guest counts only permitted visible/allied entities."
+      }
+    },
+    {
+      "peer": 1,
+      "checks": 53,
+      "failures": [],
+      "error_codes": [],
+      "wall_ms": 42011,
+      "commands_sent": 20,
+      "remote_commands": 0,
+      "notices": 20,
+      "finished": true,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "observation_snapshots": 608,
+      "snapshot_rejections": 0,
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 448,
+        "near_30_tps_target_met": true,
+        "no_one_second_stall_target_met": true,
+        "scope": "Two headless Game processes and six native Bots share one CPU. Formal HP; initial 500 units may die or be replaced by normal production. Native ENet counters include transport traffic; not separate machines or rendering FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": true,
+        "snapshots_per_wall_second": 14.4724000856918,
+        "tick_delta": 1245,
+        "ticks_per_wall_second": 29.6350955702078,
+        "traffic": {
+          "available": true,
+          "received_bytes": 4599726.0,
+          "received_udp_packets": 4036.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 6426.0,
+          "sent_udp_packets": 208.0
+        },
+        "window_max_snapshot_gap_ms": 467
+      },
+      "sampled_scene_unit_nodes": {
+        "first": 250,
+        "last": 397,
+        "min": 250,
+        "max": 397,
+        "scope": "Unit container children at 1Hz; includes fading corpses; guest counts only permitted visible/allied entities."
+      }
+    }
+  ],
+  "bot_decision": {
+    "scope": "Inclusive monotonic wall time of native SkirmishBot._decide, six Bots share one authority thread. First straddling observation window excluded. Not CPU time or sum with parent game.physics.",
+    "complete_windows": 40,
+    "decision_calls": 246,
+    "sum_usec": 377606,
+    "mean_call_usec": 1534.9837398373984,
+    "window_mean_min_usec": 1357.8333333333333,
+    "window_mean_max_usec": 2607.3333333333335,
+    "max_single_call_usec": 2892
+  },
+  "process_cleanup": {
+    "own_helpers_absent_cim_verified": true,
+    "exit_codes": [
+      0,
+      0
+    ],
+    "export_exit": 0,
+    "offline_smoke_exit": 0,
+    "stderr_bytes": [
+      0,
+      0
+    ],
+    "package_unchanged": true,
+    "public_room_left": true
+  },
+  "input_sha256": {
+    "normal1\\summary.json": "9cea0ca89725cf020fad656568aa6849991e22ba1b153fe37c7b284d092a41e2",
+    "normal1\\result-0.json": "a7edf0ab0e4f0a47cdf2782790703f85157bac820b4d505a11208d49a2dc568a",
+    "normal1\\result-1.json": "dc882f0d0a20e96792e5aaa2ada62d3f6fbc6a0f11b269f7133d5e2eb69f1740",
+    "source-receipt.json": "9f70420e2f20082060bcca3d53da0d6481a2513bab9aaaa59322de067c581a52",
+    "pack-receipt.json": "b75002a62b737887b1be8a5f9c0109c5fa3f9c98b964121875f2063c6130faa5",
+    "source\\scripts\\diagnostics\\peer_driver.gd": "5eef06c14c533fb577d05ff80e66f79f64585a83821997f2591e9aee010177c2",
+    "source\\scripts\\diagnostics\\stress.gd": "e113fe3875e473c1228aa1716e01439800349d3fb4edc129f7d3e4c3425f2a2f"
+  }
+}
