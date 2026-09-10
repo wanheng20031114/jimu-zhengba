@@ -1,0 +1,243 @@
+{
+  "created_utc": "2026-09-10T16:11:47.972212+00:00",
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "scope": "native localhost APIs, one process; no game, no production code, no WAN",
+  "mixed_4_6_client_4_7_server_tested": false,
+  "checks": {
+    "total": 58,
+    "failed": [],
+    "meaning": "API and raw UDP ring assertions; measured ENet outcomes below are not repeated stress statistics"
+  },
+  "results": {
+    "enet_dtls_burst": {
+      "dtls": true,
+      "offered_bytes": 72000,
+      "offered_packets": 6,
+      "paced": false,
+      "throttle_after": 32.0,
+      "throttle_before": 32.0,
+      "received_count": 5,
+      "received_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "received_channels": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "enet_dtls_paced": {
+      "dtls": true,
+      "offered_bytes": 72000,
+      "offered_packets": 6,
+      "paced": true,
+      "throttle_after": 32.0,
+      "throttle_before": 32.0,
+      "received_count": 6,
+      "received_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "received_channels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "enet_udp_burst": {
+      "dtls": false,
+      "offered_bytes": 72000,
+      "offered_packets": 6,
+      "paced": false,
+      "throttle_after": 32.0,
+      "throttle_before": 32.0,
+      "received_count": 5,
+      "received_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "received_channels": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "enet_udp_paced": {
+      "dtls": false,
+      "offered_bytes": 72000,
+      "offered_packets": 6,
+      "paced": true,
+      "throttle_after": 32.0,
+      "throttle_before": 32.0,
+      "received_count": 6,
+      "received_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "received_channels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "raw_accumulate": {
+      "drain_after_each": false,
+      "offered_bytes": 72000,
+      "offered_packets": 6,
+      "queue_counts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        5
+      ],
+      "received_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "server_poll_after_each_datagram": true
+    },
+    "raw_drain": {
+      "drain_after_each": true,
+      "offered_bytes": 72000,
+      "offered_packets": 6,
+      "queue_counts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "received_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "server_poll_after_each_datagram": true
+    },
+    "throttle": {
+      "dtls": false,
+      "induced_zero_throttle_via_delayed_ack": false,
+      "native_throttle_after": 32.0,
+      "native_throttle_before": 32.0,
+      "offered_bytes": 36864,
+      "offered_packets_per_channel": 96,
+      "received_per_channel": [
+        96,
+        96,
+        96,
+        96,
+        96,
+        96
+      ],
+      "rounds": 96,
+      "scope": "64B native packets, 384B per serviced round; does not fill a 64KiB ring",
+      "received_count": 576
+    }
+  },
+  "confirmed_conclusions": [
+    "Each raw UDP datagram is followed by server.poll before next send, so kernel is drained; withholding consumer reads keeps exactly first5 of6 datagrams at12000B each.",
+    "Reading between identical six12000B sends returns all6.",
+    "Same-process native ENet DTLS burst returns5/6; paced20ms returns6/6; native throttle remains32 in both."
+  ],
+  "limitations": [
+    "One deterministic local mechanism sample per buffering variant, not gameplay FPS or WAN throughput.",
+    "Plain ENet burst also returns5/6 on Windows; cannot attribute its loss to the DTLS-specific ring.",
+    "Attempted delayed-ACK throttle induction remained32; cross-channel throttle deletion is source inference only, not reproduced.",
+    "Actual4.6.3host+4.7.2server public pacing acceptance remains separate."
+  ],
+  "candidate_remediation_not_yet_implemented_here": {
+    "latest_state_per_recipient": true,
+    "round_robin_fairness": true,
+    "max_recipients_per_display_frame": 2,
+    "application_burst_strictly_below_bytes": 49152,
+    "control_channel_priority": true,
+    "limitations": [
+      "48KiB is an application budget with headroom, not a proof covering arbitrary queued reliable retransmissions or extreme MTU.",
+      "An individual packet above the buffer budget needs data reduction or separately validated bounded chunking; do not silently truncate private state."
+    ]
+  },
+  "metadata": {
+    "utc": "2026-09-10T16:08:02.739901+00:00",
+    "engine_sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424",
+    "fixture_sha256": {
+      "probe.gd": "10898fdf618cf63be813d9dfc202129be85b53689008298a2cecefab239f1dc0",
+      "probe.tscn": "bf97c82516c38945d9a98bb477965fd4f6fc6e72fb1776f422021feaed97c512",
+      "project.godot": "5192e64aa00b66c815e3a835f73d34eb109688935e25097e545f6f66801b5813",
+      "run.py": "a8354f785dedec87f7dbb76644da34278a78f1ea810cd33a0d4d4cca95bb40de"
+    },
+    "exit_code": 0,
+    "helper_exited": true,
+    "stderr_bytes": 0
+  },
+  "artifact_sha256": {
+    "result.json": "767bd3d0e63a1c65434c96ba4ab5f85fcc235f0928209660ae1cea8634095e77",
+    "raw-result.json": "4815fe8478921167231d5162427b9a9673ac2d9c4c2277f2c80f3fa471c76bc6",
+    "metadata.json": "6abe7feca7e12ff82a88363f1c3a7faf3b5a4d39f6133d9bd932bafb9ab4482a",
+    "attempt-1/metadata.json": "8ad322a01836673de396ca4683bcc629bedc257b0c342c3135cb37fd5818fc1c"
+  },
+  "first_attempt": {
+    "cause": "test-only120msDTLS handshake wait insufficient, then null server peer used",
+    "production_changed": false,
+    "fixed_by": "bounded actualCONNECTED wait before packet stage",
+    "retained": true
+  },
+  "official_sources": [
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/core/io/udp_server.cpp#L44",
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/core/io/packet_peer_udp.cpp#L305",
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/core/io/packet_peer_udp.cpp#L354",
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/core/templates/ring_buffer.h#L186",
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/thirdparty/enet/enet_godot.cpp#L129",
+    "https://docs.godotengine.org/en/4.6/classes/class_enetconnection.html",
+    "https://docs.godotengine.org/en/4.6/classes/class_udpserver.html",
+    "https://docs.godotengine.org/en/4.6/classes/class_packetpeerudp.html"
+  ],
+  "production_changes": [],
+  "public_network_used": false,
+  "kernel_parameters_changed": false,
+  "helpers_exited_and_verified": true,
+  "temporary_artifacts_retained": true
+}
