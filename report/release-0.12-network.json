@@ -1,0 +1,308 @@
+{
+  "record_kind": "validated_network_stage_with_unresolved_large_game_stress",
+  "created_utc": "2026-09-10T15:46:12.071260+00:00",
+  "network_commits": [
+    "77525c7",
+    "fffe90a"
+  ],
+  "compatibility": {
+    "protocol": 10,
+    "build": "0.11.0",
+    "release": "0.12.0",
+    "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+    "formal_0_11_0_3_client_sha256": "e8800e9dbff218b77f2672af09cbd47aec04b4110cd0b51f702afe5d843fd29c",
+    "tested_legacy_client_matches_formal": true
+  },
+  "old_seven_human_fatal": {
+    "at_utc": "2026-09-10T13:24:50.479077+00:00",
+    "is_host": true,
+    "code": "rate_limit",
+    "fatal": true,
+    "channel": 7,
+    "op": "unparsed",
+    "packet_bytes": 8055,
+    "decoded_bytes": 70319,
+    "window_bytes": 1375417,
+    "window_packets": 401,
+    "strikes": 1
+  },
+  "old_failure_limitations": [
+    "The 401st packet proves the old fatal packet-window trigger; accepted operation mix was not logged.",
+    "It does not prove the historical 401 packets were all necessary normal traffic or explain CPU lag."
+  ],
+  "policy": {
+    "host_packets_per_second": "170 + 70 * other_human_seats",
+    "seven_human": {
+      "per_second": 590,
+      "burst": 1770
+    },
+    "eight_human": {
+      "per_second": 660,
+      "burst": 1980
+    },
+    "ordinary": {
+      "per_second": 200,
+      "burst": 600
+    },
+    "burst_seconds": 3,
+    "host_wire_bytes_per_second": 12582912,
+    "host_declared_decoded_bytes_per_second": 100663296,
+    "ordinary_wire_bytes_per_second": 2097152,
+    "ordinary_declared_decoded_bytes_per_second": 4194304,
+    "per_recipient_visual": {
+      "per_second": 20,
+      "burst": 60
+    },
+    "per_recipient_critical": {
+      "per_second": 30,
+      "burst": 90
+    },
+    "membership_changes_preserve_consumed_credit": true,
+    "validated_raw_packet_forwarding": true
+  },
+  "fresh_native": {
+    "checks": 2371,
+    "failed": [],
+    "unique_assertion_labels": 58,
+    "metrics": {
+      "7_human": {
+        "burst": {
+          "elapsed_ms": 53,
+          "packets": 450,
+          "peak_receive_window_packets": 558
+        },
+        "packet_burst": 1770.0,
+        "packet_rate": 590.0,
+        "steady": {
+          "active_elapsed_ms": 3200,
+          "elapsed_ms": 3450,
+          "large_compressed_snapshot_bytes": 4101,
+          "large_decoded_snapshot_bytes": 46027,
+          "large_entity_count": 896,
+          "rounds": 48,
+          "snapshot_packets_enqueued": 288,
+          "snapshots_forwarded": 288,
+          "steady_entity_count": 12,
+          "visual_batches_forwarded": 288
+        }
+      },
+      "8_human": {
+        "burst": {
+          "elapsed_ms": 72,
+          "packets": 525,
+          "peak_receive_window_packets": 559
+        },
+        "packet_burst": 1980.0,
+        "packet_rate": 660.0,
+        "steady": {
+          "active_elapsed_ms": 3205,
+          "elapsed_ms": 3455,
+          "large_compressed_snapshot_bytes": 3382,
+          "large_decoded_snapshot_bytes": 46027,
+          "large_entity_count": 896,
+          "rounds": 48,
+          "snapshot_packets_enqueued": 336,
+          "snapshots_forwarded": 336,
+          "steady_entity_count": 12,
+          "visual_batches_forwarded": 336
+        }
+      }
+    },
+    "limits": [
+      "Steady packet-rate test uses 12 entities; 896-entity snapshots are separate single native-route checks, not sustained bandwidth or game FPS evidence",
+      "3s backlog uses valid reliable native ENet packets emitted together, not WAN packet-loss emulation",
+      "Pure token boundary checks use explicit monotonic timestamps; native steady/burst portions use wall clock",
+      "Native receive capture adds a read-only packet copy before unchanged client decode; owner1 uses formal pre-0.12 client source"
+    ],
+    "rejections": {
+      "control_limit": 2,
+      "host_only": 2,
+      "invalid_channel": 2,
+      "invalid_snapshot": 2,
+      "rate_limit": 1,
+      "reserved_event": 2
+    },
+    "metadata": {
+      "started_utc": "2026-09-10T15:16:49.941562+00:00",
+      "source_hashes": {
+        "server/relay_server.gd": "284aa692327847a4a6a553bb6adc41b496d1119a6e8edaa4793d16b82875af84",
+        "scripts/network/relay_client.gd": "015335cf8b45046f07d09eabe498b27f47bbaa16c3ad645ad8989de1881e7c74",
+        "scripts/network/network_protocol.gd": "76d3a2b4cb0d7b1d3a40c10a3955432bbaddd5b8af1695d8f260c5fb04929347",
+        "data/content_manifest.json": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+      },
+      "legacy_client_ref": "2ba4579",
+      "legacy_client_sha256": "e8800e9dbff218b77f2672af09cbd47aec04b4110cd0b51f702afe5d843fd29c",
+      "fixture_hashes": {
+        "suite.gd": "128de892f47c6c4d83914716cdbd669a307e091db06c1e6f54dc5c94c7791500",
+        "probe_server.gd": "4e9a38409ac532740229faf48993dc361cf3db0b87f5867c3d5552c5bb81f878",
+        "fixture.tscn": "c982d66e6584e2e338497fff8e4b724bec51b1ede06856abaf4a1caa7b80e92d",
+        "run.py": "e002788e4281f66d8d1ad4863d630e5e64651e6666fa65ef9b30c19f3f2c813b"
+      },
+      "engine_sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424",
+      "scope": "one process, 9 native ENet/DTLS endpoints, synthetic 896-entity wire payload; not a game FPS benchmark",
+      "exit_code": 0,
+      "elapsed_s": 12.349079,
+      "stderr_bytes": 0,
+      "helper_exited": true
+    }
+  },
+  "existing_entry": {
+    "source_hashes": {
+      "server/relay_server.gd": "284aa692327847a4a6a553bb6adc41b496d1119a6e8edaa4793d16b82875af84",
+      "scripts/network/network_protocol.gd": "76d3a2b4cb0d7b1d3a40c10a3955432bbaddd5b8af1695d8f260c5fb04929347",
+      "scripts/network/relay_client.gd": "015335cf8b45046f07d09eabe498b27f47bbaa16c3ad645ad8989de1881e7c74",
+      "tests/network_relay_test.gd": "726ad163f582311bc002fecace656dc86935ef06265d8ea0ae09810198947384",
+      "data/content_manifest.json": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+    },
+    "equivalent_entry": "tests/network_runner.py local, same protocol-only isolation and original test script, existing verified runtime reused without download",
+    "exit_code": 0,
+    "helper_exited": true,
+    "elapsed_s": 11.73499999998603,
+    "stderr_bytes": 0,
+    "failed_checks": [],
+    "result": {
+      "checks": 98,
+      "failed": 0
+    }
+  },
+  "verification_notes": [
+    "The initial test-only packet capture failed type inference; an explicit PackedByteArray fixed it before native assertions ran.",
+    "Earlier nine-endpoint 896-entity steady run passed routing but only about7Hz; later steady rate uses12 entities and large payload is tested separately.",
+    "An intermediate source scheduler used now+67ms and averaged about13.5Hz; final absolute cadence produces48 rounds in3.2s for both rosters.",
+    "Existing fixture formerly assumed one-room default and produced four cascading capacity failures; explicitly setting its tested capacity to1 restored98/98 without changing production8 rooms."
+  ],
+  "deployment": {
+    "utc": "2026-09-10T15:22:35.822899+00:00",
+    "payload_digest": "4ba372693f941241",
+    "payload_hashes": {
+      "project.godot": "62500f49f7ee2cacdd6c9ad2300b3ac2a88b59fb56feed54c7ad4d93be98db1b",
+      "scripts/network/network_protocol.gd": "76d3a2b4cb0d7b1d3a40c10a3955432bbaddd5b8af1695d8f260c5fb04929347",
+      "server/relay_server.gd": "284aa692327847a4a6a553bb6adc41b496d1119a6e8edaa4793d16b82875af84",
+      "server/relay_main.gd": "b949805853c37bb5af6a17c040b7c62b957c477cd00c2128548c129a1994f43c",
+      "server/relay.tscn": "750d1ef13175327027d4dd58e6c2d527ada5c8c6865c9b5d640475694e387ba1",
+      "data/content_manifest.json": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+    },
+    "tool_sha256": "defb50e3cc5df4c64fdbbd940d36567a44d294f69a91ba8d71ab116ef63bd163",
+    "rooms_before": 0,
+    "connections_before": 0,
+    "predeployment_lifecycle_complete": true,
+    "active": "active",
+    "restarts": 0,
+    "invocation_sha256": "add698b9f97a6b9abfd8e68279df4bc705c549beae9b8412e6d07780d6a311d3",
+    "started": {
+      "protocol": 10,
+      "room_limit": 8,
+      "humans_per_room": 8,
+      "peer_capacity": 80
+    },
+    "ready": true,
+    "script_errors": 0,
+    "transport_errors": 0,
+    "all_payload_hashes_match": true,
+    "certificate_sha256": "04434bf90c411f087d37eb48564dc3c481b20b553502458bceaac03e20cb3174",
+    "certificate_matches_previous_formal": true,
+    "private_key_unchanged": true,
+    "unrelated_service_identity_unchanged": true,
+    "udp_24570_unchanged": true,
+    "udp_24571_updated": true
+  },
+  "subsequent_real_game_stress": {
+    "passed": false,
+    "scenario": "seven actual Game processes, shared 500-unit world, WAN relay, not 3500 world units",
+    "source_read_utc": "2026-09-10T15:35:45.841120+00:00",
+    "service_identity_unchanged": true,
+    "server_rejections": 0,
+    "stress_traffic_interval_totals": {
+      "snapshots": 435,
+      "visual_batches": 1036,
+      "critical_events": 30,
+      "commands": 66,
+      "snapshot_drops": 0,
+      "visual_drops": 0,
+      "notice_rate_drops": 0,
+      "rejected": 0
+    },
+    "first_two_server_disconnects_utc": [
+      "2026-09-10T15:33:36.210361+00:00",
+      "2026-09-10T15:33:40.592647+00:00"
+    ],
+    "disconnect_cause": "transport_disconnect",
+    "application_rate_limit_cause": false,
+    "root_reported_host_tps": 15.87,
+    "root_reported_guest_received_snapshot_hz_range": [
+      0.8,
+      2.18
+    ],
+    "root_reported_guest_snapshot_gap_seconds_range": [
+      3.9,
+      9.9
+    ],
+    "reported_metrics_are_not_new_measurements": true
+  },
+  "passive_system_followup": {
+    "read_utc": "2026-09-10T15:44:13.950913+00:00",
+    "vendor": "Alibaba Cloud",
+    "mtu": 1500,
+    "udp_listener": [
+      {
+        "family": "udp6",
+        "tx_queue_bytes": 0,
+        "rx_queue_bytes": 0,
+        "drops": 5145
+      }
+    ],
+    "udp_cumulative": {
+      "InDatagrams": 24830116,
+      "NoPorts": 27342,
+      "InErrors": 6891,
+      "OutDatagrams": 36837703,
+      "RcvbufErrors": 6891,
+      "SndbufErrors": 0,
+      "InCsumErrors": 0,
+      "IgnoredMulti": 0,
+      "MemErrors": 0
+    },
+    "qdisc": [
+      {
+        "kind": "fq_codel",
+        "bytes": 11038971655,
+        "packets": 43386895,
+        "drops": 0,
+        "overlimits": 0,
+        "requeues": 0,
+        "backlog": 0,
+        "qlen": 0,
+        "rate_options": {
+          "limit": 10240
+        }
+      }
+    ],
+    "linux_shaping_classes": [],
+    "nic_cumulative_errors_drops": {
+      "rx_errors": 0,
+      "tx_errors": 0,
+      "rx_dropped": 0,
+      "tx_dropped": 0
+    },
+    "historical_sysstat_files": 0,
+    "cloud_public_bandwidth_cap_mbps": null,
+    "limitations": [
+      "Passive sample is current, not historic stress1; cumulative counters have no pre-stress baseline.",
+      "Guest bandwidth caps outside Linux cannot be inferred from virtual interface or idle sample."
+    ]
+  },
+  "artifact_sha256": {
+    "network-stage-summary.json": "9ff8d15234ff2567ee9e36f0d3b74d99cafee8931fd4489525073fd0720e9399",
+    "metadata.json": "1c8288ace51c050baf36473dcbb2bd6bcf73296492ca136fce39fe968c48d690",
+    "result.json": "0ba0b7f3989b06ceb051e6ada9f608b1c7e509afe658594aee69069718173574",
+    "deployment-receipt.json": "d86701325cd83821e10c95c6e0400e49ec1c16295cd42fbef9915924d96da541",
+    "stress1-relay-readonly.json": "92f185f83d39b84d50d1d0afedd6d398de801c7e21bff64a779e40a169ad07ff",
+    "network-system-readonly.json": "cd97462fd41857000c05dcf7887b6d455ddb86f1720f78dc6d1c3dcdb99855e1"
+  },
+  "temporary_files_retained": true,
+  "own_native_helpers_exited": true,
+  "exclusions": [
+    "No IPs, credentials, invitation codes, player names, private payloads, command lines or private key hashes are archived.",
+    "This stage does not claim seven-player 500-unit WAN acceptance or a solved 896-unit CPU bottleneck."
+  ]
+}
