@@ -50,3 +50,14 @@
 计时 scope 有嵌套：公共实体状态计时包含动画计时，不能相加；旧实现的实体计时还包含 owner 私有字段，新实现私有字段在另一个函数，因此二者实体子项不能直接当作同一 exclusive-time 指标。JSON 与压缩仍未单拆。
 
 有效补充运行 anim2 正常退出、stderr 为空；前一条 anim1 仅因临时夹具的 typed Array 三目赋值错误而中止，修复夹具后重跑，产品源未改。所有失败尝试均使用独立标签保留原始日志。本组最终辅助进程已退出，CIM 核实只保留用户编辑器与正式游戏。
+
+
+## 限时尝试：只读取屏外动画 phase
+
+本轮尚未找到简洁、原生且完全等价的替代方案，**0.12 保留当前同步行为，UnitVisual 没有因此修改**。官方接口说明，seek 的 update=false 延迟属性更新，而且 seek 到末尾不触发正常结束；advance 才处理完整播放推进。[AnimationPlayer 官方文档](https://docs.godotengine.org/en/4.6/classes/class_animationplayer.html)
+
+六种实际原模型的短 oracle 观察一致：seek 到末尾后 is_playing 仍为 true，advance 后才变为 false；seek 不更新节点时武器 socket 原地不动，补上实际 pose 采样后，测得误差从农民的 0.021 到投石车的 1.890 世界单位。直接把原生时钟 seek 当作当前同步替代会保留旧出手位置。
+
+必须纠正一条未复现推断：初读引擎源码曾怀疑首次 advance 会吞掉 delta；实际 UnitVisual.strike 后补进 0.1 秒，六种模型均得到 0.1 秒，所以该推断没有作为否决结论。完整 seek／pause／循环／复见／攻击关键帧等价性仍需独立验证；只读推算进度与实际待更新 pose 时间也需明确分离。本轮没有完成这样的新时钟设计，不提交未经验证的替换。
+
+另补充真实 RelayClient.send_event 与 MatchReplication 队列协作回归 8 项通过：墙钟限流返回 ERR_BUSY 时保留非装饰事件，不推进 visual tick，重复尝试不重复发包；实际等待 65 ms 后成功移除一次，过期事件仍按原规则丢弃。只替换最底层包接收器记录调用，没有把它称作 DTLS 实测。第一版夹具将 SceneTree timer 误当墙钟等待，独立失败日志保留；改为 Time.get_ticks_msec 后重跑通过。

@@ -323,5 +323,102 @@
       "Native state timer includes synchronize_animation; legacy state timer also includes owner private assembly, batch timer excludes it, so scopes are not identical",
       "One failed profile attempt due to temporary typed-array ternary assignment; own PID stopped; corrected fixture ran to exit0, original failed logs retained"
     ]
+  },
+  "phase_only_bounded_investigation": {
+    "decision": "No UnitVisual or shipping animation change. No simple native equivalent found within this bounded attempt; retain current synchronization in 0.12.",
+    "oracle_observations": {
+      "engine": "4.6.3-stable (official)",
+      "models": [
+        {
+          "advance_end_is_playing": false,
+          "kind": "swordsman",
+          "missing_pose_socket_error": 0.165538102388382,
+          "naive_equals_native": true,
+          "naive_readonly_phase": 0.1,
+          "native_first_advance_phase": 0.1,
+          "pending_seconds": 0.1,
+          "seek_end_is_playing": true,
+          "seek_without_update_socket_motion": 0.0,
+          "suspended": true
+        },
+        {
+          "advance_end_is_playing": false,
+          "kind": "archer",
+          "missing_pose_socket_error": 0.597311496734619,
+          "naive_equals_native": true,
+          "naive_readonly_phase": 0.1,
+          "native_first_advance_phase": 0.1,
+          "pending_seconds": 0.1,
+          "seek_end_is_playing": true,
+          "seek_without_update_socket_motion": 0.0,
+          "suspended": true
+        },
+        {
+          "advance_end_is_playing": false,
+          "kind": "knight",
+          "missing_pose_socket_error": 0.167546287178993,
+          "naive_equals_native": true,
+          "naive_readonly_phase": 0.1,
+          "native_first_advance_phase": 0.1,
+          "pending_seconds": 0.1,
+          "seek_end_is_playing": true,
+          "seek_without_update_socket_motion": 0.0,
+          "suspended": true
+        },
+        {
+          "advance_end_is_playing": false,
+          "kind": "catapult",
+          "missing_pose_socket_error": 1.8899302482605,
+          "naive_equals_native": true,
+          "naive_readonly_phase": 0.1,
+          "native_first_advance_phase": 0.1,
+          "pending_seconds": 0.1,
+          "seek_end_is_playing": true,
+          "seek_without_update_socket_motion": 0.0,
+          "suspended": true
+        },
+        {
+          "advance_end_is_playing": false,
+          "kind": "cannon",
+          "missing_pose_socket_error": 0.226040482521057,
+          "naive_equals_native": true,
+          "naive_readonly_phase": 0.1,
+          "native_first_advance_phase": 0.1,
+          "pending_seconds": 0.1,
+          "seek_end_is_playing": true,
+          "seek_without_update_socket_motion": 0.0,
+          "suspended": true
+        },
+        {
+          "advance_end_is_playing": false,
+          "kind": "farmer",
+          "missing_pose_socket_error": 0.0210908651351929,
+          "naive_equals_native": true,
+          "naive_readonly_phase": 0.1,
+          "native_first_advance_phase": 0.1,
+          "pending_seconds": 0.1,
+          "seek_end_is_playing": true,
+          "seek_without_update_socket_motion": 0.0,
+          "suspended": true
+        }
+      ],
+      "scope": "Counterexamples for a stateless phase-only substitution; no production changes and no optimization benefit claim."
+    },
+    "busy_queue_regression": {
+      "checks": 8,
+      "errors": [],
+      "scope": "Actual RelayClient.send_event wall-clock limiter + actual MatchReplication queue; only packet sink overridden; movement agent separately tests real DTLS."
+    },
+    "limits": [
+      "The initial source-based hypothesis that first advance ignores elapsed time was NOT reproduced: all six actual UnitVisual cases advanced to 0.1s. It is not used as a finding.",
+      "Observed: seek(end,false) leaves is_playing true; subsequent native advance stops it. seek without update leaves socket transforms stale.",
+      "A further native-seek/stateless-formula comparison was written but not executed when root ended the bounded investigation; not counted as evidence.",
+      "No candidate passed full loop/seek/pause/work/reentry/release equivalence, so none is included. Virtual phase and outstanding pose-update time need separate design before any later change.",
+      "Busy queue test only overrides packet sink; actual client wall-clock limiter and replication queue run unchanged, no DTLS claim. First busy attempt incorrectly used SceneTree timer as wall-clock duration; corrected Time.get_ticks_msec loop passed and failed logs were kept."
+    ],
+    "sources": [
+      "https://docs.godotengine.org/en/4.6/classes/class_animationplayer.html",
+      "https://github.com/godotengine/godot/blob/4.6.3-stable/scene/animation/animation_player.cpp"
+    ]
   }
 }
