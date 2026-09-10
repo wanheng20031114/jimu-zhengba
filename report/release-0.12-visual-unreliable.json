@@ -1,0 +1,240 @@
+{
+  "schema": 1,
+  "title": "0.12 短时表现不可靠分片与可靠权威消息验证",
+  "source_commit": "6c3635558cf237f753f15fba8302457f0511e514",
+  "product_change_commit": "c402626",
+  "source_hashes": {
+    "server/relay_server.gd": "242379654fde2474e66f8f7b573fd9524d6cb7669d6a2c0233fc481ceb6c7286",
+    "scripts/network/relay_client.gd": "f2b70ed6d0e57ae9bcbc309ec830b10c6d2a6e07b115f3bbfefc0e9c9078312a",
+    "scripts/network/network_protocol.gd": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b",
+    "data/content_manifest.json": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b"
+  },
+  "protocol": 10,
+  "build_id": "0.11.0",
+  "legacy_client_ref": "79d7961bb20e0691d7887dfa48a9ad2cf433e0b2",
+  "legacy_client_sha256": "e8800e9dbff218b77f2672af09cbd47aec04b4110cd0b51f702afe5d843fd29c",
+  "runtime": {
+    "version": "4.7.2.stable",
+    "editor_binary": true,
+    "sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424"
+  },
+  "scope": "本地真实 ENet/DTLS：1 个中继、8 个客户端、8 个双向 UDP 代理；7/8 真人房间及旧版房主小房间。不是公网、完整 Game 对局或 FPS 测量。",
+  "instrumentation": "read next native packet flags before pop; append op/kind/flags after unchanged decode; no send, validation or dispatch modification",
+  "run": {
+    "checks": 479,
+    "failed": 0,
+    "script_errors": 0,
+    "client_errors": [],
+    "exit_code": 0,
+    "stderr_bytes": 0,
+    "elapsed_s": 9.516928,
+    "helper_exited": true,
+    "helper_absence_verified_with_process_command": true,
+    "normal_editor_and_game_preserved": true
+  },
+  "loss_policy": {
+    "phase_blackout_ms": 170,
+    "thereafter_drop_every_nth_datagram": 7,
+    "directions": [
+      "client_to_server",
+      "server_to_client"
+    ],
+    "second_blackout_at_finish_ms": 170,
+    "wire_inspection": false
+  },
+  "udp": {
+    "c2s": {
+      "received": 1803,
+      "forwarded": 1437,
+      "dropped": 366
+    },
+    "s2c": {
+      "received": 851,
+      "forwarded": 806,
+      "dropped": 45
+    },
+    "udp_icmp_after_peer_close": 8
+  },
+  "native_flags": {
+    "visual_host_to_relay_reliable_bit": 0,
+    "visual_relay_to_client_reliable_bit": 0,
+    "snapshot_reliable_bit": 0,
+    "commands_notices_pause_finish_reliable_bit": 1,
+    "legacy_host_visual_input_reliable_bit": 1,
+    "legacy_visual_forwarded_reliable_bit": 0,
+    "receive_unreliable_fragment_bit_not_required": true
+  },
+  "metrics": {
+    "7_final_result": [
+      {
+        "kind": "match_finished",
+        "result": {
+          "kills": [
+            0.0,
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0
+          ],
+          "time": 300.0,
+          "winner": 1.0
+        }
+      }
+    ],
+    "7_fragment": {
+      "decoded_bytes": 20015,
+      "wire_bytes": 10498
+    },
+    "7_loss": {
+      "missing_visual_batches": 67,
+      "owners": [
+        {
+          "owner": 1,
+          "received": 9,
+          "sent": 19
+        },
+        {
+          "owner": 2,
+          "received": 6,
+          "sent": 19
+        },
+        {
+          "owner": 3,
+          "received": 8,
+          "sent": 19
+        },
+        {
+          "owner": 4,
+          "received": 7,
+          "sent": 19
+        },
+        {
+          "owner": 5,
+          "received": 8,
+          "sent": 19
+        },
+        {
+          "owner": 6,
+          "received": 9,
+          "sent": 19
+        }
+      ]
+    },
+    "8_final_result": [
+      {
+        "kind": "match_finished",
+        "result": {
+          "kills": [
+            0.0,
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0
+          ],
+          "time": 300.0,
+          "winner": 1.0
+        }
+      }
+    ],
+    "8_fragment": {
+      "decoded_bytes": 20015,
+      "wire_bytes": 10497
+    },
+    "8_loss": {
+      "missing_visual_batches": 78,
+      "owners": [
+        {
+          "owner": 1,
+          "received": 8,
+          "sent": 18
+        },
+        {
+          "owner": 2,
+          "received": 6,
+          "sent": 18
+        },
+        {
+          "owner": 3,
+          "received": 6,
+          "sent": 18
+        },
+        {
+          "owner": 4,
+          "received": 8,
+          "sent": 18
+        },
+        {
+          "owner": 5,
+          "received": 6,
+          "sent": 18
+        },
+        {
+          "owner": 6,
+          "received": 8,
+          "sent": 18
+        },
+        {
+          "owner": 7,
+          "received": 6,
+          "sent": 18
+        }
+      ]
+    }
+  },
+  "authority_static_audit": [
+    {
+      "path": "scripts/game.gd",
+      "line": 1345,
+      "finding": "网络表现仅分派特效、空间声音和视觉弹道。"
+    },
+    {
+      "path": "scripts/projectile_flight.gd",
+      "line": 24,
+      "finding": "initialize_visual 标记 _visual_only；impact 第77行在伤害逻辑前返回。"
+    },
+    {
+      "path": "scripts/projectile_flight.gd",
+      "line": 86,
+      "finding": "真实弹道独立记录；只有权威实例调用 receive_hit，攻击者死亡不移除载荷。"
+    },
+    {
+      "path": "scripts/network/match_replication.gd",
+      "line": 315,
+      "finding": "实体移除来自最新快照完整集合；不依赖视觉命中事件。"
+    },
+    {
+      "path": "scripts/network/match_replication.gd",
+      "line": 554,
+      "finding": "实体血量来自 _apply_entity；金币和击杀来自 _apply_players（614行）。"
+    },
+    {
+      "path": "scripts/game.gd",
+      "line": 1275,
+      "finding": "暂停/接管/重连/最终胜方与击杀由独立关键事件处理，visual_batch 不进入这些分支。"
+    }
+  ],
+  "limits": [
+    "未测公网吞吐或帧率收益",
+    "测试中的 hp/gold 是隔离协议载荷，实际伤害/金币逻辑独立性是源码审查证据，不冒充完整 Game 动态回归",
+    "不可靠大分片任一分片丢失可使整批消失；过期表现允许缺失，可靠关键事件不能依赖该通道保证"
+  ],
+  "fixture_corrections_before_final": [
+    "Windows 空 selector 不能调用 select，需在监听端点建立前等待",
+    "旧版客户端无新 flush_outbound 方法，夹具改为共同的原生 ENetConnection.flush",
+    "Windows 正常 UDP 关闭后的 ICMP port unreachable 单独计数，不能让代理退出回收中断",
+    "JSON 解码数组数字为 float，最终击杀比较按产品逻辑逐项转 int"
+  ],
+  "evidence_hashes": {
+    "suite.gd": "ae6d389c941a1f034d880ba333057003615d8e6b0cd10c58131a27abcfac1fcc",
+    "run.py": "016655c681d67d75b04def3dbfaeb7a31b5c642cb1c40b594202990ab53e48ab",
+    "attempt5/metadata.json": "e249e2d13d3b5c5a2ee85a04864bafbce511e82d638766ec92b5a02c4dbeaa79",
+    "attempt5/result.json": "f8a2aafe33c1c91b50cd1ea7a521d1afbdae4fef6a710de8f85a216cd00835eb"
+  },
+  "official_api": "https://docs.godotengine.org/en/4.6/classes/class_enetpacketpeer.html"
+}
