@@ -1,0 +1,169 @@
+{
+  "date": "2026-09-10",
+  "recorded_utc": "2026-09-10T10:39:56.454773+00:00",
+  "package": {
+    "release": "0.11.0.2",
+    "build": "0.11.0",
+    "protocol": 10,
+    "base_commit": "3fdee76296256f2b6c9098992cced16a016fe332",
+    "exe_path": "builds/windows-0.11.0.2/积木争霸.exe",
+    "zip_path": "builds/积木争霸-0.11.0.2-Windows-x64.zip",
+    "zip_size": 67318155,
+    "zip_sha256": "2f52677cda08ab486f9d70e7c9defbfc341dceb55a9d5daf8fe9f141adf71f0f",
+    "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+    "binary_sha256": {
+      "积木争霸.exe": "d4bb285d1ce32596526b57e202954c1980b7b4f2535f3d43d52fa9f6c314fe81",
+      "积木争霸.pck": "dac631b9a8b2fbdb594b4c07ab603b611c246eed75bdadd42e3ff08bb326a37c"
+    },
+    "support_document_sha256": "4248a8eadc258a69c1e30e89bcedaa7d067a6a7117df327bd1fff25f6af7f144",
+    "final_relay_client_sha256": "e34cd1b7617c95207811c7c99b0e2ec7263daa714039a16bcad21ecc500d5f69"
+  },
+  "scope": "Personal final-hit kills, owner-private live replication, reliable final totals and finished-state snapshot guard; no navigation experiments or relay deployment.",
+  "source_changes": {
+    "source_commit": "3fdee76296256f2b6c9098992cced16a016fe332",
+    "changes": {
+      "docs/windows-readme.txt": {
+        "before": "f860a545257cb572b3f47a5afa7b078e14b4f378dcbee0e4cecd3d90bd6969d3",
+        "after": "4248a8eadc258a69c1e30e89bcedaa7d067a6a7117df327bd1fff25f6af7f144"
+      },
+      "export_presets.cfg": {
+        "before": "15b9f8772ed926197e621cc4e764dbea5d9f1d4a3330f8f7634f485d32eef717",
+        "after": "964cab1b2a5bf568c7fd28e493403423a781a8a56c6ad76760f4ef12accca34a"
+      },
+      "scripts/battle_unit.gd": {
+        "before": "3bf0d117091a9f5a8b98efc1ef11de3ed057df73841b19d768f853814ce15e2b",
+        "after": "235e7dd764efa862ffdfa5310480d29c892210cc0d336f3cdff55c8abeaad46d"
+      },
+      "scripts/game.gd": {
+        "before": "3181951e82ce473090ba7ea036379c4ac171a513915b115572b7cf86b4c03b71",
+        "after": "ccda46b53495b9c66093e83b09ec3f586345fc41649bf7873d06d37b4657c939"
+      },
+      "scripts/network/match_replication.gd": {
+        "before": "0a907bd00f65e8bcbc01c3e6987477bcfea756463b11223d21775ffe9b51b4ef",
+        "after": "fde0f5953733077f05efa96d51f665096e84b7ce7caddc108830eb2d2c0a69b6"
+      },
+      "scripts/network/network_protocol.gd": {
+        "before": "b5a6aee7c471b760fe09e303c127e6d1d87478c3c87685fa98195f80adf278d6",
+        "after": "8a40ad9389966762ba94f47db44b5476f588162106cb5d05be752716c166a0f3"
+      },
+      "scripts/network/relay_client.gd": {
+        "before": "d746eeb9b7da6f39450dcfdd8eb30d172cc50337e6a563c5435209a99d428f18",
+        "after": "e34cd1b7617c95207811c7c99b0e2ec7263daa714039a16bcad21ecc500d5f69"
+      },
+      "scripts/player_state.gd": {
+        "before": "ed03bf81e2625a24f07447e85464b8c64a3df3e3b6579bd879009f0506cd15f1",
+        "after": "c274a349c281e121f230f372ce9d3cc836fd32f1aeb1109b29dc83f533e7447a"
+      }
+    }
+  },
+  "staged_scripts_equal_export_source": true,
+  "real_pck_two_clients": {
+    "pck_sha256": "dac631b9a8b2fbdb594b4c07ab603b611c246eed75bdadd42e3ff08bb326a37c",
+    "package": {
+      "build": "0.11.0",
+      "manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+      "protocol": 10,
+      "release": "0.11.0.2"
+    },
+    "server_sha256": "f1e82be0bfdb686d608a37c2f41d45829a87977ec280fdcbbee219cb0acf2499",
+    "peers": [
+      {
+        "checks": 61,
+        "elapsed_ms": 2523,
+        "errors": [],
+        "failures": [],
+        "final_kills": [
+          1,
+          4,
+          0,
+          0
+        ],
+        "finish_result": {
+          "kills": [
+            1.0,
+            4.0,
+            0.0,
+            0.0
+          ],
+          "time": 0.633333333333333,
+          "winner": 0.0
+        },
+        "highest_private_kills": 0,
+        "peer": 0,
+        "pid": 36160,
+        "result_body": "敌队全部军事建筑已被摧毁。\n\n用时 00:00      击败敌军 1",
+        "scores_before_finish_signal": 1,
+        "snapshots": 0,
+        "exit_code": 0
+      },
+      {
+        "checks": 54,
+        "elapsed_ms": 2189,
+        "errors": [],
+        "failures": [],
+        "final_kills": [
+          1,
+          4,
+          0,
+          0
+        ],
+        "finish_result": {
+          "kills": [
+            1.0,
+            4.0,
+            0.0,
+            0.0
+          ],
+          "time": 0.633333333333333,
+          "winner": 0.0
+        },
+        "highest_private_kills": 3,
+        "peer": 1,
+        "pid": 22068,
+        "result_body": "敌队全部军事建筑已被摧毁。\n\n用时 00:00      击败敌军 4",
+        "scores_before_finish_signal": 3,
+        "snapshots": 6,
+        "exit_code": 0
+      }
+    ],
+    "server_release": {
+      "commands": 0,
+      "rejected": 0,
+      "result": {
+        "kills": [
+          1.0,
+          4.0,
+          0.0,
+          0.0
+        ],
+        "time": 0.633333333333333,
+        "winner": 0.0
+      },
+      "rooms": 0,
+      "sessions": 0,
+      "snapshots": 6
+    },
+    "pids": [
+      41272,
+      48420,
+      36160,
+      22068
+    ],
+    "conditions": "Unmodified formal PCK, external deterministic combat SceneTree; real production main/Session/RelayClient/MatchReplication/HUD; native 4.6.3 headless clients with localhost DTLS 4.7.2 stable 3fdee76 server. Bot decisions paused only for deterministic kill fixture."
+  },
+  "windows_catalogue_checks_passed": 177,
+  "windows_rendered_startup": {
+    "release": "0.11.0.2",
+    "errors": [],
+    "has_exited": true,
+    "startup_lines": [
+      "Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 3080",
+      "JIMU_DIAGNOSTIC {\"build\":\"0.11.0\",\"details\":{\"audio\":\"WASAPI\",\"display\":\"Windows\",\"engine\":\"4.6.3-stable (official)\",\"gpu\":\"NVIDIA GeForce RTX 3080\",\"renderer\":\"forward_plus\",\"shader_uniform_slots\":262144},\"event\":\"startup\",\"pid\":42116,\"release\":\"0.11.0.2\",\"seconds\":1.691}",
+      "JIMU_DIAGNOSTIC {\"build\":\"0.11.0\",\"details\":{},\"event\":\"session_exit\",\"pid\":42116,\"release\":\"0.11.0.2\",\"seconds\":3.125}"
+    ],
+    "exit_code": 0,
+    "target_frames": 180,
+    "actual_vulkan": true,
+    "pid": 42116
+  }
+}

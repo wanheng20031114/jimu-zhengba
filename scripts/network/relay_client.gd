@@ -271,6 +271,13 @@ func _receive(message: Dictionary) -> void:
 				snapshot_received.emit(message.payload)
 		"event":
 			var payload: Dictionary = message.payload
+			if payload.get("kind") == "match_finished":
+				var result: Variant = payload.get("result")
+				# The room roster already exists if this event overtakes start on
+				# its independent ENet channel; _match may not be populated yet.
+				if not result is Dictionary or (result.has("kills") and not Protocol.valid_kill_totals(result.kills, room.slots.size())):
+					_fail("invalid_result", "对局击杀统计无效")
+					return
 			if payload.get("kind") == "host_paused":
 				_set_state("host_paused")
 			elif payload.get("kind") == "host_resumed":

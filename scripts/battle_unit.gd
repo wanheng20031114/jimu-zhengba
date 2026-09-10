@@ -43,6 +43,7 @@ var entity_id: int = 0
 var hp: float = 1.0
 var max_hp: float = 1.0
 var alive: bool = true
+var defeated_by_owner: int = -1
 var selected: bool = false
 var display_name: String = ""
 var radius: float = 0.5
@@ -783,15 +784,15 @@ func receive_hit(payload: DamagePayload, source: Node3D = null) -> void:
 	if not alive or payload.alliance_id == alliance_id:
 		return
 	var defense_bonus: float = _game.get_player(owner_id).get_defense_bonus() if _stats.military else 0.0
-	_apply_damage(DamageResolver.resolve(payload, _stats, defense_bonus), source)
+	_apply_damage(DamageResolver.resolve(payload, _stats, defense_bonus), source, payload.owner_id)
 
 func receive_damage(amount: float, source: Node3D = null) -> void:
 	# Explicit direct damage for scenario scripts and debugging. Combat uses receive_hit.
 	if not alive or (is_instance_valid(source) and not _game.are_hostile(self, source)):
 		return
-	_apply_damage(maxf(0.0, amount), source)
+	_apply_damage(maxf(0.0, amount), source, source.owner_id if is_instance_valid(source) else -1)
 
-func _apply_damage(actual_damage: float, source: Node3D) -> void:
+func _apply_damage(actual_damage: float, source: Node3D, attacker_owner: int = -1) -> void:
 	if actual_damage > 0.0:
 		_recovery_quiet_seconds = 0.0
 		_recovery_progress = 0.0
@@ -800,6 +801,9 @@ func _apply_damage(actual_damage: float, source: Node3D) -> void:
 	_update_health_bar()
 	damaged.emit(self, actual_damage)
 	if hp <= 0.0:
+		# Keep the lethal hit's identity, not a source-node reference or a prior
+		# attacker. A projectile can outlive its shooter; self-destruction has -1.
+		defeated_by_owner = attacker_owner
 		_die()
 		return
 	if unit_type != "farmer" and _valid_target(source):

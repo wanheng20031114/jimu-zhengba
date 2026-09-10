@@ -5,7 +5,7 @@ extends RefCounted
 const VERSION: int = 10
 const BUILD_ID: String = "0.11.0"
 # Transport/content compatibility stays stable across this client-only hotfix.
-const RELEASE_ID: String = "0.11.0.1"
+const RELEASE_ID: String = "0.11.0.2"
 const TLS_NAME: String = "jimu-zhengba-relay"
 const PORT: int = 24571
 const CONTROL_CHANNEL: int = 0
@@ -202,6 +202,14 @@ static func _primitive(value: Variant, depth: int, budget: Array[int]) -> bool:
 
 static func integer(value: Variant, minimum: int, maximum: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floorf(float(value)) and value >= minimum and value <= maximum
+
+static func valid_kill_totals(value: Variant, player_count: int) -> bool:
+	if not value is Array or value.size() != player_count:
+		return false
+	for total: Variant in value:
+		if not integer(total, 0, 2147483647):
+			return false
+	return true
 
 static func nickname(value: Variant) -> String:
 	if not value is String:

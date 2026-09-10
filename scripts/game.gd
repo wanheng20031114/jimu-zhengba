@@ -29,7 +29,8 @@ var gold: int:
 	set(value): get_player(local_owner_id).gold = value
 var elapsed: float = 0.0
 var simulation_tick: int = 0
-var kills: int = 0
+var kills: int:
+	get: return get_player(local_owner_id).kills
 var buildings_destroyed: int = 0
 var selection: Array[Node3D] = []
 var control_groups: Dictionary = {}
@@ -753,8 +754,9 @@ func on_entity_died(entity: Node3D) -> void:
 			player.farmers -= 1
 		else:
 			player.military_supply -= BalanceCatalog.unit(entity.unit_type).supply
-		if entity.alliance_id != get_player(local_owner_id).alliance_id:
-			kills += 1
+		var killer: int = entity.defeated_by_owner
+		if killer >= 0 and killer < players.size() and get_player(killer).alliance_id != entity.alliance_id:
+			get_player(killer).kills += 1
 	else:
 		$ConstructionNavigation.refresh()
 		if entity.alliance_id != get_player(local_owner_id).alliance_id:
@@ -871,7 +873,8 @@ func end_battle(victory: bool, winner: int = -2) -> void:
 		winner = get_player(local_owner_id).alliance_id
 	if online and is_authority and not finished and winner >= -1:
 		replication.flush_visual()
-		Session.relay.finish_match({"winner": winner, "time": elapsed})
+		Session.relay.finish_match({"winner": winner, "time": elapsed,
+			"kills": players.map(func(player: PlayerState): return player.kills)})
 	if finished:
 		return
 	Session.record_diagnostic("match_finished", {"victory": victory, "online": online, "tick": simulation_tick})
@@ -1269,6 +1272,11 @@ func _on_network_event(event: Dictionary) -> void:
 		"match_finished":
 			var result: Dictionary = event.result
 			elapsed = float(result.get("time", elapsed))
+			# Final scores travel reliably with the result, independently of the
+			# last unreliable world snapshot. Apply before showing the result HUD.
+			if result.has("kills"):
+				for owner: int in players.size():
+					get_player(owner).kills = int(result.kills[owner])
 			end_battle(int(result.get("winner", -1)) == get_player(local_owner_id).alliance_id, int(result.get("winner", -1)))
 		"match_aborted":
 			set_match_paused(false)

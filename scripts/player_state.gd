@@ -11,6 +11,7 @@ var display_name: String
 var controller: String = "human"
 var bot_difficulty: String = "normal"
 var eliminated: bool = false
+var kills: int = 0
 var gold: int = 320
 var military_supply: int = 0
 var reserved_military_supply: int = 0
@@ -123,7 +124,7 @@ func public_state() -> Dictionary:
 	return {"owner_id": owner_id, "alliance_id": alliance_id, "name": display_name, "controller": controller, "eliminated": eliminated}
 
 func private_state() -> Dictionary:
-	return {"gold": gold, "supply": military_supply, "reserved_supply": reserved_military_supply, "farmers": farmers, "reserved_farmers": reserved_farmers,
+	return {"gold": gold, "kills": kills, "supply": military_supply, "reserved_supply": reserved_military_supply, "farmers": farmers, "reserved_farmers": reserved_farmers,
 		"queued_research": queued_research.duplicate(), "paid_tower_count": paid_tower_count,
 		"attack_level": attack_level, "defense_level": defense_level, "workforce_level": workforce_level,
 		"army_capacity_level": army_capacity_level, "mining_level": mining_level,

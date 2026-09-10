@@ -152,7 +152,7 @@ static func presentation_position(at: Vector3) -> Array:
 	return [roundf(float(at.x) * 100.0) / 100.0, roundf(float(at.y) * 100.0) / 100.0, roundf(float(at.z) * 100.0) / 100.0]
 
 func receive_snapshot(snapshot: Dictionary) -> void:
-	if game == null or game.is_authority:
+	if game == null or game.is_authority or game.finished:
 		return
 	if not _valid_snapshot(snapshot):
 		snapshot_rejected.emit("invalid_schema")
@@ -190,7 +190,7 @@ func receive_snapshot(snapshot: Dictionary) -> void:
 		_frames.pop_front()
 
 func render(delta: float) -> void:
-	if game == null or game.is_authority or _frames.is_empty():
+	if game == null or game.is_authority or game.finished or _frames.is_empty():
 		return
 	var newest_time: float = _frames.back().time
 	var since_arrival: float = (Time.get_ticks_msec() - _last_arrival_msec) / 1000.0
@@ -457,6 +457,9 @@ func _apply_players(states: Array) -> void:
 			continue
 		var own: Dictionary = state.private
 		player.gold = int(own.gold)
+		# Protocol 10's earlier hosts did not include this additive statistic.
+		if own.has("kills"):
+			player.kills = int(own.kills)
 		player.military_supply = int(own.supply)
 		player.reserved_military_supply = int(own.reserved_supply)
 		player.farmers = int(own.farmers)
@@ -574,6 +577,8 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 
 func _valid_private(value: Variant) -> bool:
 	if not value is Dictionary:
+		return false
+	if value.has("kills") and not NetworkProtocol.integer(value.kills, 0, 2147483647):
 		return false
 	for key: String in ["gold", "supply", "reserved_supply", "farmers", "reserved_farmers", "paid_tower_count"]:
 		if not NetworkProtocol.integer(value.get(key), 0, 2147483647):
