@@ -1,0 +1,6119 @@
+{
+  "title": "0.12 最终发行前七人500单位公网复测：未通过",
+  "case": "release_relayfixed1",
+  "started_utc": "2026-09-10T17:25:02.044476+00:00",
+  "client_product_commit": "eca8ff93002657511919e926461726e384f1ad9e",
+  "pck_sha256": "77f85735cda3dec898bc10958569d4519ba6f71d88d692c258436130bd247bdd",
+  "executable_sha256": "91724f15024a3a545e28ccd83134403d31ce2323a38e51c95e4dfa282f732ab6",
+  "fixture_sha256": "c60a8b7d0b69d18e969fe93995dd03a34faa81c4e035096b3a87ee3786208ecd",
+  "scope": "Native release template with diagnostic autoload PCK and seven actual headless Games; not editor runtime or an uninstrumented FPS acceptance run",
+  "outcome": {
+    "passed": false,
+    "checks_recorded": 289,
+    "target_observation_ms": 42000,
+    "all_seven_completed_observation": false,
+    "public_500_playability_accepted": false,
+    "runner_failures": [
+      "helper_failed",
+      "helper_unfinished",
+      "helper_unfinished",
+      "helper_unfinished",
+      "helper_unfinished",
+      "peer_0_validation",
+      "peer_0_engine_errors",
+      "peer_1_validation",
+      "peer_2_validation",
+      "peer_3_validation",
+      "peer_4_validation",
+      "peer_5_validation",
+      "peer_5_engine_errors",
+      "peer_6_validation"
+    ],
+    "notes": "Each Game stopped its observation at first connection state interruption, then fixture barriers/reconnect/cleanup continued. Short per-owner observation windows differ and must not be compared as a complete 42-second sample."
+  },
+  "clock_and_gap_limits": [
+    "Client msec is process-relative and differs by launch order; first-disconnect ordering is corroborated by server UTC.",
+    "Snapshot max counts only successive received snapshots. Initial and terminal silence are missing; constant-count health rows establish lower bounds and prevent false pass.",
+    "Top-level max gap can keep changing during cleanup; use frozen stress_metrics.window_max_snapshot_gap_ms for observation.",
+    "No per-packet arrival history; no manufactured gap P95/P99.",
+    "12-32 second wall aggregate crosses disconnect/reconnect and cleanup, hence rejected as steady FPS evidence."
+  ],
+  "process_cleanup": {
+    "helpers_absent": true,
+    "package_unchanged": true,
+    "exit_codes": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "remaining_processes": [
+      {
+        "pid": 36624,
+        "name": "Godot.exe"
+      }
+    ]
+  },
+  "process_cpu": [
+    {
+      "available": true,
+      "kernel_seconds": 0.234375,
+      "user_seconds": 14.34375
+    },
+    {
+      "available": true,
+      "kernel_seconds": 0.234375,
+      "user_seconds": 7.84375
+    },
+    {
+      "available": true,
+      "kernel_seconds": 0.203125,
+      "user_seconds": 6.59375
+    },
+    {
+      "available": true,
+      "kernel_seconds": 0.234375,
+      "user_seconds": 5.515625
+    },
+    {
+      "available": true,
+      "kernel_seconds": 0.171875,
+      "user_seconds": 6.515625
+    },
+    {
+      "available": true,
+      "kernel_seconds": 0.109375,
+      "user_seconds": 5.96875
+    },
+    {
+      "available": true,
+      "kernel_seconds": 0.296875,
+      "user_seconds": 5.3125
+    }
+  ],
+  "cpu_wall_seconds": 32.17200000002049,
+  "cpu_scope": "Full helper lifetime including startup/cleanup; not the exact 42-second battle window. Process CPU is summed across its threads, machine CPU across logical CPUs.",
+  "peers": [
+    {
+      "peer": 0,
+      "checks": 49,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "commands_from_six_remote_players",
+        "host_accepted_owner_1_sequences",
+        "host_accepted_owner_2_sequences",
+        "host_accepted_owner_3_sequences",
+        "host_accepted_owner_4_sequences",
+        "host_accepted_owner_5_sequences",
+        "host_accepted_owner_6_sequences",
+        "canonical_finish_received"
+      ],
+      "error_codes": [],
+      "finished": true,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 13606,
+      "observation_snapshots": 0,
+      "snapshots": 0,
+      "snapshot_rejections": 0,
+      "commands_sent": 6,
+      "remote_commands": 25,
+      "notices": 0,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "combat": {
+          "alive": 500,
+          "damage_events": 2131,
+          "damage_total": 24521.0,
+          "deaths": 0,
+          "gathers": 160,
+          "with_target": 429
+        },
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 0,
+        "near_30_tps_target_met": true,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshots_per_wall_second": 0.0,
+        "tick_delta": 399,
+        "ticks_per_wall_second": 29.3252976627958,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 20051.0,
+          "received_udp_packets": 293.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 6609480.0,
+          "sent_udp_packets": 5248.0
+        },
+        "window_max_snapshot_gap_ms": 0
+      },
+      "observations": [
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 0,
+            "damage_total": 0.0,
+            "deaths": 0,
+            "gathers": 0,
+            "with_target": 0
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 11.0,
+              "loss": 0.0,
+              "loss_epoch": 462.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 31.0,
+              "rtt_variance": 6.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 2.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 4064.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 27.0,
+          "ms": 0,
+          "sent_snapshot_sequences": {
+            "1": 13,
+            "2": 13,
+            "3": 13,
+            "4": 13,
+            "5": 13,
+            "6": 13
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 39,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 0,
+            "damage_total": 0.0,
+            "deaths": 0,
+            "gathers": 0,
+            "with_target": 0
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 54.0,
+              "last_rtt_variance": 126.0,
+              "loss": 0.0,
+              "loss_epoch": 462.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 225.0,
+              "rtt_variance": 161.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 22.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5280.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 27.0,
+          "ms": 1168,
+          "sent_snapshot_sequences": {
+            "1": 15,
+            "2": 15,
+            "3": 15,
+            "4": 15,
+            "5": 15,
+            "6": 15
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 60,
+          "traffic": {
+            "available": true,
+            "received_bytes": 222.0,
+            "received_udp_packets": 10.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 55883.0,
+            "sent_udp_packets": 48.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 0,
+            "damage_total": 0.0,
+            "deaths": 0,
+            "gathers": 0,
+            "with_target": 13
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 44.0,
+              "last_rtt_variance": 137.0,
+              "loss": 0.0,
+              "loss_epoch": 462.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 42.0,
+              "rtt_variance": 9.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 4.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6305.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 6.0,
+          "ms": 2194,
+          "sent_snapshot_sequences": {
+            "1": 27,
+            "2": 27,
+            "3": 27,
+            "4": 25,
+            "5": 25,
+            "6": 25
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 97,
+          "traffic": {
+            "available": true,
+            "received_bytes": 1954.0,
+            "received_udp_packets": 39.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 500259.0,
+            "sent_udp_packets": 389.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 0,
+            "damage_total": 0.0,
+            "deaths": 0,
+            "gathers": 14,
+            "with_target": 211
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 27.0,
+              "loss": 0.0,
+              "loss_epoch": 462.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 61.0,
+              "rtt_variance": 28.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 5.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 7319.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 36.0,
+          "ms": 3245,
+          "sent_snapshot_sequences": {
+            "1": 41,
+            "2": 41,
+            "3": 41,
+            "4": 40,
+            "5": 40,
+            "6": 40
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 128,
+          "traffic": {
+            "available": true,
+            "received_bytes": 2734.0,
+            "received_udp_packets": 63.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1147976.0,
+            "sent_udp_packets": 905.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 24,
+            "damage_total": 212.0,
+            "deaths": 0,
+            "gathers": 35,
+            "with_target": 351
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 53.0,
+              "last_rtt_variance": 20.0,
+              "loss": 0.0,
+              "loss_epoch": 462.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 77.0,
+              "rtt_variance": 8.0,
+              "throttle": 26.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 22.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8425.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.8125
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 26.0,
+          "ms": 4246,
+          "sent_snapshot_sequences": {
+            "1": 48,
+            "2": 48,
+            "3": 48,
+            "4": 46,
+            "5": 46,
+            "6": 46
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 157,
+          "traffic": {
+            "available": true,
+            "received_bytes": 4365.0,
+            "received_udp_packets": 86.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1524122.0,
+            "sent_udp_packets": 1207.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 158,
+            "damage_total": 1336.0,
+            "deaths": 0,
+            "gathers": 37,
+            "with_target": 377
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 67.0,
+              "last_rtt_variance": 12.0,
+              "loss": 0.0,
+              "loss_epoch": 462.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 60.0,
+              "rtt_variance": 6.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 18.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9481.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 12.0,
+          "ms": 5308,
+          "sent_snapshot_sequences": {
+            "1": 54,
+            "2": 54,
+            "3": 54,
+            "4": 52,
+            "5": 52,
+            "6": 52
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 190,
+          "traffic": {
+            "available": true,
+            "received_bytes": 5119.0,
+            "received_udp_packets": 105.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1903835.0,
+            "sent_udp_packets": 1507.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 319,
+            "damage_total": 2706.0,
+            "deaths": 0,
+            "gathers": 59,
+            "with_target": 385
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 53.0,
+              "last_rtt_variance": 14.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 64.0,
+              "rtt_variance": 15.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 14.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 10503.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 11.0,
+          "ms": 6344,
+          "sent_snapshot_sequences": {
+            "1": 60,
+            "2": 60,
+            "3": 60,
+            "4": 58,
+            "5": 58,
+            "6": 58
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 221,
+          "traffic": {
+            "available": true,
+            "received_bytes": 7034.0,
+            "received_udp_packets": 129.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2414508.0,
+            "sent_udp_packets": 1911.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 511,
+            "damage_total": 4386.0,
+            "deaths": 0,
+            "gathers": 77,
+            "with_target": 399
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 51.0,
+              "last_rtt_variance": 11.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 48.0,
+              "rtt_variance": 7.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 20.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 11519.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 12.0,
+          "ms": 7387,
+          "sent_snapshot_sequences": {
+            "1": 67,
+            "2": 67,
+            "3": 67,
+            "4": 65,
+            "5": 65,
+            "6": 65
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 252,
+          "traffic": {
+            "available": true,
+            "received_bytes": 8550.0,
+            "received_udp_packets": 151.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2989210.0,
+            "sent_udp_packets": 2377.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 732,
+            "damage_total": 6845.0,
+            "deaths": 0,
+            "gathers": 79,
+            "with_target": 418
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 48.0,
+              "last_rtt_variance": 34.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 67.0,
+              "rtt_variance": 7.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 26.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12611.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 13.0,
+          "ms": 8438,
+          "sent_snapshot_sequences": {
+            "1": 74,
+            "2": 74,
+            "3": 74,
+            "4": 72,
+            "5": 72,
+            "6": 72
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 284,
+          "traffic": {
+            "available": true,
+            "received_bytes": 11785.0,
+            "received_udp_packets": 180.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3635111.0,
+            "sent_udp_packets": 2898.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 1087,
+            "damage_total": 11961.0,
+            "deaths": 0,
+            "gathers": 102,
+            "with_target": 424
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 50.0,
+              "last_rtt_variance": 15.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 52.0,
+              "rtt_variance": 4.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 11.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 13715.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 14.0,
+          "ms": 9443,
+          "sent_snapshot_sequences": {
+            "1": 80,
+            "2": 80,
+            "3": 80,
+            "4": 79,
+            "5": 79,
+            "6": 79
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 314,
+          "traffic": {
+            "available": true,
+            "received_bytes": 13248.0,
+            "received_udp_packets": 204.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 4218928.0,
+            "sent_udp_packets": 3370.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 1300,
+            "damage_total": 14026.0,
+            "deaths": 0,
+            "gathers": 119,
+            "with_target": 425
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 52.0,
+              "last_rtt_variance": 31.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 68.0,
+              "rtt_variance": 13.0,
+              "throttle": 29.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 7.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 14824.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.90625
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 13.0,
+          "ms": 10477,
+          "sent_snapshot_sequences": {
+            "1": 86,
+            "2": 86,
+            "3": 86,
+            "4": 85,
+            "5": 85,
+            "6": 85
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 345,
+          "traffic": {
+            "available": true,
+            "received_bytes": 14746.0,
+            "received_udp_packets": 226.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 4749748.0,
+            "sent_udp_packets": 3797.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 1550,
+            "damage_total": 16894.0,
+            "deaths": 0,
+            "gathers": 120,
+            "with_target": 427
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 48.0,
+              "last_rtt_variance": 12.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 50.0,
+              "rtt_variance": 4.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 13.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 15863.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 11.0,
+          "ms": 11507,
+          "sent_snapshot_sequences": {
+            "1": 93,
+            "2": 93,
+            "3": 93,
+            "4": 92,
+            "5": 92,
+            "6": 92
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 376,
+          "traffic": {
+            "available": true,
+            "received_bytes": 15728.0,
+            "received_udp_packets": 245.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 5394051.0,
+            "sent_udp_packets": 4301.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 1920,
+            "damage_total": 22382.0,
+            "deaths": 0,
+            "gathers": 148,
+            "with_target": 427
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 47.0,
+              "last_rtt_variance": 18.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 63.0,
+              "rtt_variance": 14.0,
+              "throttle": 30.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 19.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 16910.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.9375
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 14.0,
+          "ms": 12561,
+          "sent_snapshot_sequences": {
+            "1": 100,
+            "2": 100,
+            "3": 100,
+            "4": 99,
+            "5": 99,
+            "6": 99
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 408,
+          "traffic": {
+            "available": true,
+            "received_bytes": 17664.0,
+            "received_udp_packets": 269.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 6023246.0,
+            "sent_udp_packets": 4792.0
+          },
+          "units": 500
+        },
+        {
+          "combat": {
+            "alive": 500,
+            "damage_events": 2131,
+            "damage_total": 24521.0,
+            "deaths": 0,
+            "gathers": 160,
+            "with_target": 429
+          },
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0008697509765625,
+            "raw": {
+              "last_rtt_ms": 49.0,
+              "last_rtt_variance": 47.0,
+              "loss": 57.0,
+              "loss_epoch": 10503.0,
+              "loss_variance": 115.0,
+              "rtt_ms": 52.0,
+              "rtt_variance": 11.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 11.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 17938.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 13.0,
+          "ms": 13581,
+          "sent_snapshot_sequences": {
+            "1": 107,
+            "2": 107,
+            "3": 107,
+            "4": 106,
+            "5": 106,
+            "6": 106
+          },
+          "snapshot_tick": -1,
+          "snapshots": 0,
+          "tick": 438,
+          "traffic": {
+            "available": true,
+            "received_bytes": 20051.0,
+            "received_udp_packets": 293.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 6609480.0,
+            "sent_udp_packets": 5248.0
+          },
+          "units": 500
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 18079,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 72
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [],
+      "constant_snapshot_health_max_lower_bound_ms": 0,
+      "stderr": {
+        "bytes": 352,
+        "sha256": "d40f955e5d2c0313bd3fb47e3d005710c7a16a7b6cd055221951d49a0bcbbc46",
+        "native_send_failed_count": 4
+      }
+    },
+    {
+      "peer": 1,
+      "checks": 40,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "recipient_reliable_notices",
+        "canonical_finish_received"
+      ],
+      "error_codes": [],
+      "finished": true,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 13494,
+      "observation_snapshots": 47,
+      "snapshots": 79,
+      "snapshot_rejections": 0,
+      "commands_sent": 6,
+      "remote_commands": 0,
+      "notices": 4,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "host_paused",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 469,
+        "near_30_tps_target_met": false,
+        "no_one_second_stall_target_met": true,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": false,
+        "snapshots_per_wall_second": 3.48302949459019,
+        "tick_delta": 387,
+        "ticks_per_wall_second": 28.6794130724767,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 814601.0,
+          "received_udp_packets": 699.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 3679.0,
+          "sent_udp_packets": 140.0
+        },
+        "window_max_snapshot_gap_ms": 818
+      },
+      "observations": [
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 52.0,
+              "last_rtt_variance": 57.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 49.0,
+              "rtt_variance": 37.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3754.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 50.0,
+          "ms": 0,
+          "snapshot_tick": 36,
+          "snapshots": 13,
+          "tick": 33,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 48.0,
+              "last_rtt_variance": 40.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 47.0,
+              "rtt_variance": 27.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 4771.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 1000,
+          "snapshot_tick": 41,
+          "snapshots": 15,
+          "tick": 41,
+          "traffic": {
+            "available": true,
+            "received_bytes": 9794.0,
+            "received_udp_packets": 13.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 80.0,
+            "sent_udp_packets": 6.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 46.0,
+              "last_rtt_variance": 31.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 45.0,
+              "rtt_variance": 21.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5771.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 2000,
+          "snapshot_tick": 84,
+          "snapshots": 18,
+          "tick": 84,
+          "traffic": {
+            "available": true,
+            "received_bytes": 53085.0,
+            "received_udp_packets": 53.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 210.0,
+            "sent_udp_packets": 17.0
+          },
+          "units": 251
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 44.0,
+              "last_rtt_variance": 19.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 44.0,
+              "rtt_variance": 16.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6837.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 3000,
+          "snapshot_tick": 108,
+          "snapshots": 20,
+          "tick": 94,
+          "traffic": {
+            "available": true,
+            "received_bytes": 117566.0,
+            "received_udp_packets": 108.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 525.0,
+            "sent_udp_packets": 30.0
+          },
+          "units": 253
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 44.0,
+              "last_rtt_variance": 23.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 49.0,
+              "rtt_variance": 18.0,
+              "throttle": 31.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 7851.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.96875
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 4014,
+          "snapshot_tick": 138,
+          "snapshots": 23,
+          "tick": 138,
+          "traffic": {
+            "available": true,
+            "received_bytes": 178387.0,
+            "received_udp_packets": 161.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 689.0,
+            "sent_udp_packets": 42.0
+          },
+          "units": 373
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 43.0,
+              "last_rtt_variance": 19.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 41.0,
+              "rtt_variance": 18.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9184.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 5014,
+          "snapshot_tick": 175,
+          "snapshots": 27,
+          "tick": 157,
+          "traffic": {
+            "available": true,
+            "received_bytes": 232593.0,
+            "received_udp_packets": 209.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1089.0,
+            "sent_udp_packets": 54.0
+          },
+          "units": 420
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 18.0,
+              "loss": 0.0,
+              "loss_epoch": 458.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 39.0,
+              "rtt_variance": 18.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9778.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 6014,
+          "snapshot_tick": 205,
+          "snapshots": 33,
+          "tick": 195,
+          "traffic": {
+            "available": true,
+            "received_bytes": 314839.0,
+            "received_udp_packets": 275.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1287.0,
+            "sent_udp_packets": 63.0
+          },
+          "units": 437
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 36.0,
+              "last_rtt_variance": 21.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 40.0,
+              "rtt_variance": 21.0,
+              "throttle": 31.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 10868.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.96875
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 7021,
+          "snapshot_tick": 235,
+          "snapshots": 37,
+          "tick": 226,
+          "traffic": {
+            "available": true,
+            "received_bytes": 383194.0,
+            "received_udp_packets": 335.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1639.0,
+            "sent_udp_packets": 73.0
+          },
+          "units": 446
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 40.0,
+              "last_rtt_variance": 22.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 38.0,
+              "rtt_variance": 22.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 11831.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 8036,
+          "snapshot_tick": 262,
+          "snapshots": 41,
+          "tick": 257,
+          "traffic": {
+            "available": true,
+            "received_bytes": 462681.0,
+            "received_udp_packets": 404.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2077.0,
+            "sent_udp_packets": 86.0
+          },
+          "units": 448
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 20.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 39.0,
+              "rtt_variance": 15.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12999.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 9040,
+          "snapshot_tick": 289,
+          "snapshots": 44,
+          "tick": 279,
+          "traffic": {
+            "available": true,
+            "received_bytes": 515718.0,
+            "received_udp_packets": 450.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2419.0,
+            "sent_udp_packets": 95.0
+          },
+          "units": 451
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 15.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 39.0,
+              "rtt_variance": 11.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 13929.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 10045,
+          "snapshot_tick": 316,
+          "snapshots": 47,
+          "tick": 316,
+          "traffic": {
+            "available": true,
+            "received_bytes": 595210.0,
+            "received_udp_packets": 520.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2801.0,
+            "sent_udp_packets": 109.0
+          },
+          "units": 456
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 12.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 38.0,
+              "rtt_variance": 9.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 15132.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 11054,
+          "snapshot_tick": 357,
+          "snapshots": 50,
+          "tick": 343,
+          "traffic": {
+            "available": true,
+            "received_bytes": 660708.0,
+            "received_udp_packets": 575.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3167.0,
+            "sent_udp_packets": 120.0
+          },
+          "units": 458
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 38.0,
+              "last_rtt_variance": 14.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 41.0,
+              "rtt_variance": 14.0,
+              "throttle": 31.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 15868.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.96875
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 58.0,
+          "ms": 12054,
+          "snapshot_tick": 387,
+          "snapshots": 55,
+          "tick": 378,
+          "traffic": {
+            "available": true,
+            "received_bytes": 746706.0,
+            "received_udp_packets": 642.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3315.0,
+            "sent_udp_packets": 128.0
+          },
+          "units": 459
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0161285400390625,
+            "raw": {
+              "last_rtt_ms": 37.0,
+              "last_rtt_variance": 17.0,
+              "loss": 1057.0,
+              "loss_epoch": 10511.0,
+              "loss_variance": 2114.0,
+              "rtt_ms": 37.0,
+              "rtt_variance": 13.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 16858.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 61.0,
+          "ms": 13054,
+          "snapshot_tick": 414,
+          "snapshots": 58,
+          "tick": 401,
+          "traffic": {
+            "available": true,
+            "received_bytes": 814601.0,
+            "received_udp_packets": 699.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3679.0,
+            "sent_udp_packets": 140.0
+          },
+          "units": 459
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 17731,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 250
+          }
+        },
+        {
+          "msec": 27420,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_disconnect",
+            "receive_age_ms": 3281
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [],
+      "constant_snapshot_health_max_lower_bound_ms": 0,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "native_send_failed_count": 0
+      }
+    },
+    {
+      "peer": 2,
+      "checks": 40,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "recipient_reliable_notices",
+        "canonical_finish_received"
+      ],
+      "error_codes": [],
+      "finished": true,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 11443,
+      "observation_snapshots": 21,
+      "snapshots": 50,
+      "snapshot_rejections": 0,
+      "commands_sent": 5,
+      "remote_commands": 0,
+      "notices": 0,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "host_paused",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 457,
+        "near_30_tps_target_met": false,
+        "no_one_second_stall_target_met": false,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": false,
+        "snapshots_per_wall_second": 1.83518308135978,
+        "tick_delta": 226,
+        "ticks_per_wall_second": 19.7500655422529,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 386639.0,
+          "received_udp_packets": 338.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 2809.0,
+          "sent_udp_packets": 88.0
+        },
+        "window_max_snapshot_gap_ms": 1061
+      },
+      "observations": [
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 34.0,
+              "last_rtt_variance": 53.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 34.0,
+              "rtt_variance": 34.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3520.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 22.0,
+          "ms": 0,
+          "snapshot_tick": 36,
+          "snapshots": 12,
+          "tick": 29,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 26.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 32.0,
+              "rtt_variance": 24.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 4536.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 1016,
+          "snapshot_tick": 41,
+          "snapshots": 14,
+          "tick": 41,
+          "traffic": {
+            "available": true,
+            "received_bytes": 9642.0,
+            "received_udp_packets": 13.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 80.0,
+            "sent_udp_packets": 6.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 30.0,
+              "last_rtt_variance": 24.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 30.0,
+              "rtt_variance": 19.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5536.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 2016,
+          "snapshot_tick": 84,
+          "snapshots": 18,
+          "tick": 82,
+          "traffic": {
+            "available": true,
+            "received_bytes": 58129.0,
+            "received_udp_packets": 58.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 210.0,
+            "sent_udp_packets": 17.0
+          },
+          "units": 251
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 30.0,
+              "last_rtt_variance": 15.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 30.0,
+              "rtt_variance": 9.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6569.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 3016,
+          "snapshot_tick": 112,
+          "snapshots": 23,
+          "tick": 110,
+          "traffic": {
+            "available": true,
+            "received_bytes": 128928.0,
+            "received_udp_packets": 118.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 514.0,
+            "sent_udp_packets": 29.0
+          },
+          "units": 288
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 35.0,
+              "last_rtt_variance": 21.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 36.0,
+              "rtt_variance": 19.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 7786.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 4037,
+          "snapshot_tick": 146,
+          "snapshots": 25,
+          "tick": 146,
+          "traffic": {
+            "available": true,
+            "received_bytes": 179786.0,
+            "received_udp_packets": 161.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 662.0,
+            "sent_udp_packets": 39.0
+          },
+          "units": 392
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 19.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 33.0,
+              "rtt_variance": 14.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8700.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 5046,
+          "snapshot_tick": 163,
+          "snapshots": 26,
+          "tick": 163,
+          "traffic": {
+            "available": true,
+            "received_bytes": 207634.0,
+            "received_udp_packets": 186.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 951.0,
+            "sent_udp_packets": 47.0
+          },
+          "units": 425
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 14.0,
+              "loss": 0.0,
+              "loss_epoch": 453.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 33.0,
+              "rtt_variance": 10.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9706.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 6055,
+          "snapshot_tick": 205,
+          "snapshots": 28,
+          "tick": 195,
+          "traffic": {
+            "available": true,
+            "received_bytes": 259615.0,
+            "received_udp_packets": 227.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1252.0,
+            "sent_udp_packets": 53.0
+          },
+          "units": 437
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.033782958984375,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 10.0,
+              "loss": 2214.0,
+              "loss_epoch": 10492.0,
+              "loss_variance": 4428.0,
+              "rtt_ms": 31.0,
+              "rtt_variance": 10.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 10292.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 7061,
+          "snapshot_tick": 235,
+          "snapshots": 29,
+          "tick": 235,
+          "traffic": {
+            "available": true,
+            "received_bytes": 307954.0,
+            "received_udp_packets": 268.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1834.0,
+            "sent_udp_packets": 65.0
+          },
+          "units": 446
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.033782958984375,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 9.0,
+              "loss": 2214.0,
+              "loss_epoch": 10492.0,
+              "loss_variance": 4428.0,
+              "rtt_ms": 32.0,
+              "rtt_variance": 9.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 11630.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 61.0,
+          "ms": 8076,
+          "snapshot_tick": 262,
+          "snapshots": 33,
+          "tick": 257,
+          "traffic": {
+            "available": true,
+            "received_bytes": 379784.0,
+            "received_udp_packets": 330.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2209.0,
+            "sent_udp_packets": 75.0
+          },
+          "units": 448
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.033782958984375,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 15.0,
+              "loss": 2214.0,
+              "loss_epoch": 10492.0,
+              "loss_variance": 4428.0,
+              "rtt_ms": 36.0,
+              "rtt_variance": 13.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12130.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 9076,
+          "snapshot_tick": 262,
+          "snapshots": 33,
+          "tick": 262,
+          "traffic": {
+            "available": true,
+            "received_bytes": 386639.0,
+            "received_udp_packets": 338.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2488.0,
+            "sent_udp_packets": 83.0
+          },
+          "units": 449
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.033782958984375,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 15.0,
+              "loss": 2214.0,
+              "loss_epoch": 10492.0,
+              "loss_variance": 4428.0,
+              "rtt_ms": 36.0,
+              "rtt_variance": 13.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12130.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 10077,
+          "snapshot_tick": 262,
+          "snapshots": 33,
+          "tick": 262,
+          "traffic": {
+            "available": true,
+            "received_bytes": 386639.0,
+            "received_udp_packets": 338.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2777.0,
+            "sent_udp_packets": 87.0
+          },
+          "units": 449
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.033782958984375,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 15.0,
+              "loss": 2214.0,
+              "loss_epoch": 10492.0,
+              "loss_variance": 4428.0,
+              "rtt_ms": 36.0,
+              "rtt_variance": 13.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12130.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 11093,
+          "snapshot_tick": 262,
+          "snapshots": 33,
+          "tick": 262,
+          "traffic": {
+            "available": true,
+            "received_bytes": 386639.0,
+            "received_udp_packets": 338.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2809.0,
+            "sent_udp_packets": 88.0
+          },
+          "units": 449
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 15414,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_disconnect",
+            "receive_age_ms": 3584
+          }
+        },
+        {
+          "msec": 24601,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 688
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [
+        {
+          "from_ms": 8076,
+          "to_ms": 11093,
+          "duration_lower_bound_ms": 3017,
+          "snapshot_count": 33
+        }
+      ],
+      "constant_snapshot_health_max_lower_bound_ms": 3017,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "native_send_failed_count": 0
+      }
+    },
+    {
+      "peer": 3,
+      "checks": 42,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "recipient_reliable_notices",
+        "canonical_finish_received"
+      ],
+      "error_codes": [],
+      "finished": true,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 14312,
+      "observation_snapshots": 17,
+      "snapshots": 38,
+      "snapshot_rejections": 0,
+      "commands_sent": 7,
+      "remote_commands": 0,
+      "notices": 3,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 468,
+        "near_30_tps_target_met": false,
+        "no_one_second_stall_target_met": false,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": false,
+        "snapshots_per_wall_second": 1.18781442146451,
+        "tick_delta": 342,
+        "ticks_per_wall_second": 23.8960313024036,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 627362.0,
+          "received_udp_packets": 536.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 4350.0,
+          "sent_udp_packets": 135.0
+        },
+        "window_max_snapshot_gap_ms": 5187
+      },
+      "observations": [
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 47.0,
+              "last_rtt_variance": 53.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 46.0,
+              "rtt_variance": 28.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3192.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 24.0,
+          "ms": 1,
+          "snapshot_tick": 36,
+          "snapshots": 12,
+          "tick": 29,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 43.0,
+              "last_rtt_variance": 34.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 40.0,
+              "rtt_variance": 27.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 4209.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 1017,
+          "snapshot_tick": 41,
+          "snapshots": 14,
+          "tick": 41,
+          "traffic": {
+            "available": true,
+            "received_bytes": 9620.0,
+            "received_udp_packets": 12.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 70.0,
+            "sent_udp_packets": 5.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 40.0,
+              "last_rtt_variance": 28.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 40.0,
+              "rtt_variance": 18.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5342.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 2017,
+          "snapshot_tick": 82,
+          "snapshots": 15,
+          "tick": 82,
+          "traffic": {
+            "available": true,
+            "received_bytes": 51221.0,
+            "received_udp_packets": 49.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 368.0,
+            "sent_udp_packets": 15.0
+          },
+          "units": 251
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 38.0,
+              "last_rtt_variance": 26.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 42.0,
+              "rtt_variance": 22.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6325.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 3017,
+          "snapshot_tick": 96,
+          "snapshots": 16,
+          "tick": 96,
+          "traffic": {
+            "available": true,
+            "received_bytes": 114375.0,
+            "received_udp_packets": 105.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 534.0,
+            "sent_udp_packets": 28.0
+          },
+          "units": 268
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 26.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 39.0,
+              "rtt_variance": 23.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 7201.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 4026,
+          "snapshot_tick": 120,
+          "snapshots": 18,
+          "tick": 120,
+          "traffic": {
+            "available": true,
+            "received_bytes": 166239.0,
+            "received_udp_packets": 148.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 827.0,
+            "sent_udp_packets": 37.0
+          },
+          "units": 326
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 23.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 33.0,
+              "rtt_variance": 17.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8451.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 5043,
+          "snapshot_tick": 120,
+          "snapshots": 18,
+          "tick": 120,
+          "traffic": {
+            "available": true,
+            "received_bytes": 192023.0,
+            "received_udp_packets": 173.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 971.0,
+            "sent_udp_packets": 45.0
+          },
+          "units": 326
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 22.0,
+              "loss": 0.0,
+              "loss_epoch": 454.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 17.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9684.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 6043,
+          "snapshot_tick": 120,
+          "snapshots": 18,
+          "tick": 120,
+          "traffic": {
+            "available": true,
+            "received_bytes": 239383.0,
+            "received_udp_packets": 213.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1380.0,
+            "sent_udp_packets": 58.0
+          },
+          "units": 326
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 22.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 17.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9684.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 7059,
+          "snapshot_tick": 120,
+          "snapshots": 18,
+          "tick": 120,
+          "traffic": {
+            "available": true,
+            "received_bytes": 305536.0,
+            "received_udp_packets": 266.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1648.0,
+            "sent_udp_packets": 68.0
+          },
+          "units": 326
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 28.0,
+              "last_rtt_variance": 14.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 32.0,
+              "rtt_variance": 14.0,
+              "throttle": 31.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 11318.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.96875
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 8060,
+          "snapshot_tick": 120,
+          "snapshots": 18,
+          "tick": 120,
+          "traffic": {
+            "available": true,
+            "received_bytes": 368008.0,
+            "received_udp_packets": 322.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2119.0,
+            "sent_udp_packets": 82.0
+          },
+          "units": 326
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 28.0,
+              "last_rtt_variance": 18.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 30.0,
+              "rtt_variance": 12.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12377.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 9060,
+          "snapshot_tick": 279,
+          "snapshots": 20,
+          "tick": 279,
+          "traffic": {
+            "available": true,
+            "received_bytes": 434590.0,
+            "received_udp_packets": 380.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2407.0,
+            "sent_udp_packets": 97.0
+          },
+          "units": 452
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 17.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 32.0,
+              "rtt_variance": 13.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 13781.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 57.0,
+          "ms": 10083,
+          "snapshot_tick": 320,
+          "snapshots": 23,
+          "tick": 320,
+          "traffic": {
+            "available": true,
+            "received_bytes": 504607.0,
+            "received_udp_packets": 439.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2766.0,
+            "sent_udp_packets": 107.0
+          },
+          "units": 456
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 13.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 14.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 14308.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 58.0,
+          "ms": 11092,
+          "snapshot_tick": 357,
+          "snapshots": 25,
+          "tick": 352,
+          "traffic": {
+            "available": true,
+            "received_bytes": 561887.0,
+            "received_udp_packets": 486.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2908.0,
+            "sent_udp_packets": 116.0
+          },
+          "units": 458
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 29.0,
+              "last_rtt_variance": 14.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 11.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 15337.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 12096,
+          "snapshot_tick": 378,
+          "snapshots": 29,
+          "tick": 378,
+          "traffic": {
+            "available": true,
+            "received_bytes": 627362.0,
+            "received_udp_packets": 536.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3237.0,
+            "sent_udp_packets": 125.0
+          },
+          "units": 460
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 29.0,
+              "last_rtt_variance": 14.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 11.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 15337.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 58.0,
+          "ms": 13113,
+          "snapshot_tick": 378,
+          "snapshots": 29,
+          "tick": 378,
+          "traffic": {
+            "available": true,
+            "received_bytes": 627362.0,
+            "received_udp_packets": 536.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3888.0,
+            "sent_udp_packets": 131.0
+          },
+          "units": 460
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0294036865234375,
+            "raw": {
+              "last_rtt_ms": 29.0,
+              "last_rtt_variance": 14.0,
+              "loss": 1927.0,
+              "loss_epoch": 10484.0,
+              "loss_variance": 3855.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 11.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 15337.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 14113,
+          "snapshot_tick": 378,
+          "snapshots": 29,
+          "tick": 378,
+          "traffic": {
+            "available": true,
+            "received_bytes": 627362.0,
+            "received_udp_packets": 536.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 4350.0,
+            "sent_udp_packets": 135.0
+          },
+          "units": 460
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 18020,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_disconnect",
+            "receive_age_ms": 2531
+          }
+        },
+        {
+          "msec": 27424,
+          "event": "connection_lost",
+          "state": "reconnecting",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 816
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [
+        {
+          "from_ms": 4026,
+          "to_ms": 8060,
+          "duration_lower_bound_ms": 4034,
+          "snapshot_count": 18
+        },
+        {
+          "from_ms": 12096,
+          "to_ms": 14113,
+          "duration_lower_bound_ms": 2017,
+          "snapshot_count": 29
+        }
+      ],
+      "constant_snapshot_health_max_lower_bound_ms": 4034,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "native_send_failed_count": 0
+      }
+    },
+    {
+      "peer": 4,
+      "checks": 38,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "recipient_reliable_notices",
+        "canonical_finish_received"
+      ],
+      "error_codes": [
+        "room_required"
+      ],
+      "finished": false,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 7355,
+      "observation_snapshots": 23,
+      "snapshots": 65,
+      "snapshot_rejections": 0,
+      "commands_sent": 3,
+      "remote_commands": 0,
+      "notices": 2,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "host_paused",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 460,
+        "near_30_tps_target_met": false,
+        "no_one_second_stall_target_met": false,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": false,
+        "snapshots_per_wall_second": 3.12712440516655,
+        "tick_delta": 213,
+        "ticks_per_wall_second": 28.9598912304555,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 356568.0,
+          "received_udp_packets": 312.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 1802.0,
+          "sent_udp_packets": 77.0
+        },
+        "window_max_snapshot_gap_ms": 1235
+      },
+      "observations": [
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 36.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 34.0,
+              "rtt_variance": 29.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3414.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 40.0,
+          "ms": 0,
+          "snapshot_tick": 33,
+          "snapshots": 12,
+          "tick": 33,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 204
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 32.0,
+              "last_rtt_variance": 29.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 31.0,
+              "rtt_variance": 23.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3939.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 1016,
+          "snapshot_tick": 45,
+          "snapshots": 15,
+          "tick": 45,
+          "traffic": {
+            "available": true,
+            "received_bytes": 12367.0,
+            "received_udp_packets": 16.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 90.0,
+            "sent_udp_packets": 7.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 30.0,
+              "last_rtt_variance": 26.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 30.0,
+              "rtt_variance": 16.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5055.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 2016,
+          "snapshot_tick": 84,
+          "snapshots": 19,
+          "tick": 60,
+          "traffic": {
+            "available": true,
+            "received_bytes": 57818.0,
+            "received_udp_packets": 57.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 198.0,
+            "sent_udp_packets": 16.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 30.0,
+              "last_rtt_variance": 21.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 30.0,
+              "rtt_variance": 7.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6055.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 3016,
+          "snapshot_tick": 94,
+          "snapshots": 20,
+          "tick": 94,
+          "traffic": {
+            "available": true,
+            "received_bytes": 117150.0,
+            "received_udp_packets": 111.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 542.0,
+            "sent_udp_packets": 31.0
+          },
+          "units": 252
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 29.0,
+              "last_rtt_variance": 9.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 29.0,
+              "rtt_variance": 8.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6950.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 58.0,
+          "ms": 4028,
+          "snapshot_tick": 136,
+          "snapshots": 22,
+          "tick": 136,
+          "traffic": {
+            "available": true,
+            "received_bytes": 163934.0,
+            "received_udp_packets": 153.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 670.0,
+            "sent_udp_packets": 41.0
+          },
+          "units": 390
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 28.0,
+              "last_rtt_variance": 9.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 27.0,
+              "rtt_variance": 10.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8050.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 5028,
+          "snapshot_tick": 166,
+          "snapshots": 25,
+          "tick": 166,
+          "traffic": {
+            "available": true,
+            "received_bytes": 207432.0,
+            "received_udp_packets": 192.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1014.0,
+            "sent_udp_packets": 52.0
+          },
+          "units": 439
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 26.0,
+              "last_rtt_variance": 10.0,
+              "loss": 0.0,
+              "loss_epoch": 455.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 26.0,
+              "rtt_variance": 10.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9421.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 6032,
+          "snapshot_tick": 198,
+          "snapshots": 30,
+          "tick": 198,
+          "traffic": {
+            "available": true,
+            "received_bytes": 286413.0,
+            "received_udp_packets": 253.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1204.0,
+            "sent_udp_packets": 64.0
+          },
+          "units": 442
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.03125,
+            "raw": {
+              "last_rtt_ms": 26.0,
+              "last_rtt_variance": 10.0,
+              "loss": 2048.0,
+              "loss_epoch": 10476.0,
+              "loss_variance": 4096.0,
+              "rtt_ms": 27.0,
+              "rtt_variance": 9.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 10005.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 7062,
+          "snapshot_tick": 237,
+          "snapshots": 33,
+          "tick": 233,
+          "traffic": {
+            "available": true,
+            "received_bytes": 356568.0,
+            "received_udp_packets": 312.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1802.0,
+            "sent_udp_packets": 77.0
+          },
+          "units": 446
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 10814,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 34
+          }
+        },
+        {
+          "msec": 26423,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_disconnect",
+            "receive_age_ms": 2722
+          }
+        },
+        {
+          "msec": 30268,
+          "event": "error",
+          "state": "connected",
+          "details": {
+            "code": "room_required",
+            "fatal": false
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [],
+      "constant_snapshot_health_max_lower_bound_ms": 0,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "native_send_failed_count": 0
+      }
+    },
+    {
+      "peer": 5,
+      "checks": 42,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "recipient_reliable_notices",
+        "canonical_finish_received"
+      ],
+      "error_codes": [],
+      "finished": true,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 14083,
+      "observation_snapshots": 21,
+      "snapshots": 50,
+      "snapshot_rejections": 0,
+      "commands_sent": 7,
+      "remote_commands": 0,
+      "notices": 3,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "finished",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 469,
+        "near_30_tps_target_met": false,
+        "no_one_second_stall_target_met": false,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": false,
+        "snapshots_per_wall_second": 1.49115955407229,
+        "tick_delta": 277,
+        "ticks_per_wall_second": 19.6691045941916,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 597796.0,
+          "received_udp_packets": 513.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 3730.0,
+          "sent_udp_packets": 111.0
+        },
+        "window_max_snapshot_gap_ms": 2255
+      },
+      "observations": [
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 48.0,
+              "last_rtt_variance": 55.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 47.0,
+              "rtt_variance": 27.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 2719.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 53.0,
+          "ms": 0,
+          "snapshot_tick": 33,
+          "snapshots": 11,
+          "tick": 33,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 204
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 46.0,
+              "last_rtt_variance": 31.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 45.0,
+              "rtt_variance": 21.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3736.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 1016,
+          "snapshot_tick": 45,
+          "snapshots": 14,
+          "tick": 45,
+          "traffic": {
+            "available": true,
+            "received_bytes": 12594.0,
+            "received_udp_packets": 17.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 90.0,
+            "sent_udp_packets": 7.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 43.0,
+              "last_rtt_variance": 24.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 40.0,
+              "rtt_variance": 21.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 4730.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 2016,
+          "snapshot_tick": 84,
+          "snapshots": 18,
+          "tick": 60,
+          "traffic": {
+            "available": true,
+            "received_bytes": 57813.0,
+            "received_udp_packets": 59.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 210.0,
+            "sent_udp_packets": 17.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 38.0,
+              "last_rtt_variance": 21.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 39.0,
+              "rtt_variance": 19.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5936.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 3016,
+          "snapshot_tick": 94,
+          "snapshots": 19,
+          "tick": 94,
+          "traffic": {
+            "available": true,
+            "received_bytes": 126070.0,
+            "received_udp_packets": 118.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 560.0,
+            "sent_udp_packets": 32.0
+          },
+          "units": 252
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 26.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 44.0,
+              "rtt_variance": 21.0,
+              "throttle": 31.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6811.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.96875
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 58.0,
+          "ms": 4028,
+          "snapshot_tick": 140,
+          "snapshots": 21,
+          "tick": 140,
+          "traffic": {
+            "available": true,
+            "received_bytes": 184954.0,
+            "received_udp_packets": 167.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 660.0,
+            "sent_udp_packets": 40.0
+          },
+          "units": 403
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 36.0,
+              "last_rtt_variance": 24.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 35.0,
+              "rtt_variance": 20.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8120.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 5033,
+          "snapshot_tick": 172,
+          "snapshots": 24,
+          "tick": 160,
+          "traffic": {
+            "available": true,
+            "received_bytes": 236925.0,
+            "received_udp_packets": 215.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1138.0,
+            "sent_udp_packets": 52.0
+          },
+          "units": 437
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 22.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 33.0,
+              "rtt_variance": 19.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8842.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 6037,
+          "snapshot_tick": 182,
+          "snapshots": 25,
+          "tick": 182,
+          "traffic": {
+            "available": true,
+            "received_bytes": 292012.0,
+            "received_udp_packets": 258.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1278.0,
+            "sent_udp_packets": 61.0
+          },
+          "units": 442
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 13.0,
+              "loss": 0.0,
+              "loss_epoch": 471.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 33.0,
+              "rtt_variance": 14.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 9957.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 7037,
+          "snapshot_tick": 182,
+          "snapshots": 25,
+          "tick": 182,
+          "traffic": {
+            "available": true,
+            "received_bytes": 336035.0,
+            "received_udp_packets": 297.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1792.0,
+            "sent_udp_packets": 71.0
+          },
+          "units": 442
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.028564453125,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 16.0,
+              "loss": 1872.0,
+              "loss_epoch": 10541.0,
+              "loss_variance": 3744.0,
+              "rtt_ms": 30.0,
+              "rtt_variance": 15.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 10732.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 8050,
+          "snapshot_tick": 260,
+          "snapshots": 27,
+          "tick": 250,
+          "traffic": {
+            "available": true,
+            "received_bytes": 408396.0,
+            "received_udp_packets": 356.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1982.0,
+            "sent_udp_packets": 80.0
+          },
+          "units": 456
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.028564453125,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 14.0,
+              "loss": 1872.0,
+              "loss_epoch": 10541.0,
+              "loss_variance": 3744.0,
+              "rtt_ms": 31.0,
+              "rtt_variance": 11.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 11845.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 9061,
+          "snapshot_tick": 292,
+          "snapshots": 31,
+          "tick": 286,
+          "traffic": {
+            "available": true,
+            "received_bytes": 484666.0,
+            "received_udp_packets": 420.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2346.0,
+            "sent_udp_packets": 89.0
+          },
+          "units": 461
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.028564453125,
+            "raw": {
+              "last_rtt_ms": 30.0,
+              "last_rtt_variance": 18.0,
+              "loss": 1872.0,
+              "loss_epoch": 10541.0,
+              "loss_variance": 3744.0,
+              "rtt_ms": 34.0,
+              "rtt_variance": 14.0,
+              "throttle": 31.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 12886.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 0.96875
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 59.0,
+          "ms": 10067,
+          "snapshot_tick": 310,
+          "snapshots": 32,
+          "tick": 310,
+          "traffic": {
+            "available": true,
+            "received_bytes": 529755.0,
+            "received_udp_packets": 457.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2642.0,
+            "sent_udp_packets": 97.0
+          },
+          "units": 461
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.028564453125,
+            "raw": {
+              "last_rtt_ms": 34.0,
+              "last_rtt_variance": 18.0,
+              "loss": 1872.0,
+              "loss_epoch": 10541.0,
+              "loss_variance": 3744.0,
+              "rtt_ms": 34.0,
+              "rtt_variance": 7.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 13837.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 11083,
+          "snapshot_tick": 310,
+          "snapshots": 32,
+          "tick": 310,
+          "traffic": {
+            "available": true,
+            "received_bytes": 567196.0,
+            "received_udp_packets": 489.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2738.0,
+            "sent_udp_packets": 103.0
+          },
+          "units": 461
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.028564453125,
+            "raw": {
+              "last_rtt_ms": 34.0,
+              "last_rtt_variance": 9.0,
+              "loss": 1872.0,
+              "loss_epoch": 10541.0,
+              "loss_variance": 3744.0,
+              "rtt_ms": 35.0,
+              "rtt_variance": 7.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 14819.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 12083,
+          "snapshot_tick": 310,
+          "snapshots": 32,
+          "tick": 310,
+          "traffic": {
+            "available": true,
+            "received_bytes": 593626.0,
+            "received_udp_packets": 510.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 2962.0,
+            "sent_udp_packets": 106.0
+          },
+          "units": 461
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.028564453125,
+            "raw": {
+              "last_rtt_ms": 34.0,
+              "last_rtt_variance": 9.0,
+              "loss": 1872.0,
+              "loss_epoch": 10541.0,
+              "loss_variance": 3744.0,
+              "rtt_ms": 35.0,
+              "rtt_variance": 7.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 14819.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 13084,
+          "snapshot_tick": 310,
+          "snapshots": 32,
+          "tick": 310,
+          "traffic": {
+            "available": true,
+            "received_bytes": 597796.0,
+            "received_udp_packets": 513.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 3730.0,
+            "sent_udp_packets": 111.0
+          },
+          "units": 461
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 17286,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_disconnect",
+            "receive_age_ms": 4622
+          }
+        },
+        {
+          "msec": 25394,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 0
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [
+        {
+          "from_ms": 6037,
+          "to_ms": 7037,
+          "duration_lower_bound_ms": 1000,
+          "snapshot_count": 25
+        },
+        {
+          "from_ms": 10067,
+          "to_ms": 13084,
+          "duration_lower_bound_ms": 3017,
+          "snapshot_count": 32
+        }
+      ],
+      "constant_snapshot_health_max_lower_bound_ms": 3017,
+      "stderr": {
+        "bytes": 88,
+        "sha256": "3f25117d05451747a2a47dd3af2b0645b62b878b8f68afcd01ddfde62d0bade4",
+        "native_send_failed_count": 1
+      }
+    },
+    {
+      "peer": 6,
+      "checks": 38,
+      "failures": [
+        "connection_remains_in_match",
+        "over_forty_seconds_real_time",
+        "repeated_native_commands",
+        "recipient_reliable_notices",
+        "canonical_finish_received"
+      ],
+      "error_codes": [
+        "room_required"
+      ],
+      "finished": false,
+      "runtime_editor": false,
+      "runtime_debug": false,
+      "runtime_release": true,
+      "wall_ms": 6287,
+      "observation_snapshots": 8,
+      "snapshots": 35,
+      "snapshot_rejections": 0,
+      "commands_sent": 3,
+      "remote_commands": 0,
+      "notices": 0,
+      "states": [
+        "connecting",
+        "connected",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "host_paused",
+        "match",
+        "reconnecting",
+        "lobby",
+        "match",
+        "connected",
+        "disconnected"
+      ],
+      "stress_metrics": {
+        "engine_max_fps": 60,
+        "max_snapshot_entities": 316,
+        "near_30_tps_target_met": false,
+        "no_one_second_stall_target_met": true,
+        "scope": "Seven headless Game processes share one CPU. Native ENet counters include transport traffic; not seven separate machines or FPS. Normal fog means every observer may see fewer than 500 units.",
+        "snapshot_15hz_target_met": false,
+        "snapshots_per_wall_second": 1.27246699538731,
+        "tick_delta": 83,
+        "ticks_per_wall_second": 13.2018450771433,
+        "traffic": {
+          "available": false,
+          "reason": "connection_closed_before_final_sample",
+          "received_bytes": 239075.0,
+          "received_udp_packets": 217.0,
+          "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+          "sent_bytes": 1122.0,
+          "sent_udp_packets": 56.0
+        },
+        "window_max_snapshot_gap_ms": 834
+      },
+      "observations": [
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 48.0,
+              "last_rtt_variance": 62.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 48.0,
+              "rtt_variance": 49.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 2541.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 18.0,
+          "ms": 0,
+          "snapshot_tick": 33,
+          "snapshots": 12,
+          "tick": 33,
+          "traffic": {
+            "available": true,
+            "received_bytes": 0.0,
+            "received_udp_packets": 0.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 0.0,
+            "sent_udp_packets": 0.0
+          },
+          "units": 204
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 42.0,
+              "last_rtt_variance": 49.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 42.0,
+              "rtt_variance": 40.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 3540.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 1016,
+          "snapshot_tick": 45,
+          "snapshots": 15,
+          "tick": 39,
+          "traffic": {
+            "available": true,
+            "received_bytes": 12120.0,
+            "received_udp_packets": 16.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 90.0,
+            "sent_udp_packets": 7.0
+          },
+          "units": 250
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 39.0,
+              "last_rtt_variance": 40.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 40.0,
+              "rtt_variance": 29.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 4574.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 2016,
+          "snapshot_tick": 84,
+          "snapshots": 18,
+          "tick": 84,
+          "traffic": {
+            "available": true,
+            "received_bytes": 49778.0,
+            "received_udp_packets": 51.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 190.0,
+            "sent_udp_packets": 15.0
+          },
+          "units": 252
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 36.0,
+              "last_rtt_variance": 29.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 36.0,
+              "rtt_variance": 22.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 5557.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 3021,
+          "snapshot_tick": 116,
+          "snapshots": 20,
+          "tick": 116,
+          "traffic": {
+            "available": true,
+            "received_bytes": 120862.0,
+            "received_udp_packets": 115.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 543.0,
+            "sent_udp_packets": 30.0
+          },
+          "units": 308
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 37.0,
+              "last_rtt_variance": 20.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 37.0,
+              "rtt_variance": 16.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 6712.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 4021,
+          "snapshot_tick": 116,
+          "snapshots": 20,
+          "tick": 116,
+          "traffic": {
+            "available": true,
+            "received_bytes": 165359.0,
+            "received_udp_packets": 154.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 679.0,
+            "sent_udp_packets": 41.0
+          },
+          "units": 308
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 33.0,
+              "last_rtt_variance": 16.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 33.0,
+              "rtt_variance": 16.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 7645.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 5021,
+          "snapshot_tick": 116,
+          "snapshots": 20,
+          "tick": 116,
+          "traffic": {
+            "available": true,
+            "received_bytes": 191757.0,
+            "received_udp_packets": 180.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1042.0,
+            "sent_udp_packets": 50.0
+          },
+          "units": 308
+        },
+        {
+          "enet_peer": {
+            "available": true,
+            "loss_fraction": 0.0,
+            "raw": {
+              "last_rtt_ms": 31.0,
+              "last_rtt_variance": 16.0,
+              "loss": 0.0,
+              "loss_epoch": 463.0,
+              "loss_variance": 0.0,
+              "rtt_ms": 31.0,
+              "rtt_variance": 13.0,
+              "throttle": 32.0,
+              "throttle_acceleration": 4.0,
+              "throttle_counter": 0.0,
+              "throttle_deceleration": 1.0,
+              "throttle_epoch": 8562.0,
+              "throttle_interval": 500.0,
+              "throttle_limit": 32.0
+            },
+            "state": 5,
+            "throttle_fraction": 1.0
+          },
+          "engine_max_fps": 60,
+          "engine_reported_fps": 60.0,
+          "ms": 6021,
+          "snapshot_tick": 116,
+          "snapshots": 20,
+          "tick": 116,
+          "traffic": {
+            "available": true,
+            "received_bytes": 239075.0,
+            "received_udp_packets": 217.0,
+            "scope": "Accumulated native counters since observation start, sampled once per health row. Values remain partial if transport closes.",
+            "sent_bytes": 1122.0,
+            "sent_udp_packets": 56.0
+          },
+          "units": 308
+        }
+      ],
+      "connection_events": [
+        {
+          "msec": 9228,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 166
+          }
+        },
+        {
+          "msec": 15685,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 146
+          }
+        },
+        {
+          "msec": 25136,
+          "event": "connection_lost",
+          "state": "match",
+          "details": {
+            "reason": "native_error",
+            "receive_age_ms": 567
+          }
+        },
+        {
+          "msec": 29751,
+          "event": "error",
+          "state": "connected",
+          "details": {
+            "code": "room_required",
+            "fatal": false
+          }
+        }
+      ],
+      "constant_snapshot_health_segments": [
+        {
+          "from_ms": 3021,
+          "to_ms": 6021,
+          "duration_lower_bound_ms": 3000,
+          "snapshot_count": 20
+        }
+      ],
+      "constant_snapshot_health_max_lower_bound_ms": 3000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "native_send_failed_count": 0
+      }
+    }
+  ],
+  "relay": {
+    "service": {
+      "active": "active",
+      "pid": 288002,
+      "restarts": 0,
+      "invocation_sha256": "e91136aa12a30aa92ec9558007fcd43790b878fc0549bf373f5c722b47501585"
+    },
+    "diagnostic_counts": {
+      "started": 1,
+      "connected": 21,
+      "handshake_accepted": 7,
+      "room_created": 1,
+      "joined": 7,
+      "traffic": 7,
+      "match_started": 1,
+      "disconnected": 21,
+      "resumed": 14,
+      "room_ended": 1,
+      "rejected": 2
+    },
+    "lifecycle": [
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:04.149514+00:00",
+        "connection": "connection-1"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.150832+00:00",
+        "connection": "connection-1"
+      },
+      {
+        "event": "joined",
+        "owner": 0,
+        "channel": 0,
+        "op": "create",
+        "packet_bytes": 61,
+        "decoded_bytes": 52,
+        "window_packets": 3,
+        "window_bytes": 225,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.199987+00:00",
+        "connection": "connection-1"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:04.399478+00:00",
+        "connection": "connection-2"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.400132+00:00",
+        "connection": "connection-2"
+      },
+      {
+        "event": "joined",
+        "owner": 1,
+        "channel": 0,
+        "op": "join",
+        "packet_bytes": 64,
+        "decoded_bytes": 55,
+        "window_packets": 3,
+        "window_bytes": 228,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.449671+00:00",
+        "connection": "connection-2"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:04.633132+00:00",
+        "connection": "connection-3"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.633744+00:00",
+        "connection": "connection-3"
+      },
+      {
+        "event": "joined",
+        "owner": 2,
+        "channel": 0,
+        "op": "join",
+        "packet_bytes": 64,
+        "decoded_bytes": 55,
+        "window_packets": 3,
+        "window_bytes": 228,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.667074+00:00",
+        "connection": "connection-3"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:04.916789+00:00",
+        "connection": "connection-4"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.917511+00:00",
+        "connection": "connection-4"
+      },
+      {
+        "event": "joined",
+        "owner": 3,
+        "channel": 0,
+        "op": "join",
+        "packet_bytes": 64,
+        "decoded_bytes": 55,
+        "window_packets": 3,
+        "window_bytes": 228,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:04.953441+00:00",
+        "connection": "connection-4"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:05.149557+00:00",
+        "connection": "connection-5"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:05.150599+00:00",
+        "connection": "connection-5"
+      },
+      {
+        "event": "joined",
+        "owner": 4,
+        "channel": 0,
+        "op": "join",
+        "packet_bytes": 64,
+        "decoded_bytes": 55,
+        "window_packets": 3,
+        "window_bytes": 228,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:05.183137+00:00",
+        "connection": "connection-5"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:05.449551+00:00",
+        "connection": "connection-6"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:05.449892+00:00",
+        "connection": "connection-6"
+      },
+      {
+        "event": "joined",
+        "owner": 5,
+        "channel": 0,
+        "op": "join",
+        "packet_bytes": 64,
+        "decoded_bytes": 55,
+        "window_packets": 3,
+        "window_bytes": 228,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:05.499736+00:00",
+        "connection": "connection-6"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:05.699697+00:00",
+        "connection": "connection-7"
+      },
+      {
+        "event": "handshake_accepted",
+        "owner": -1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 142,
+        "decoded_bytes": 133,
+        "window_packets": 1,
+        "window_bytes": 142,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:05.700266+00:00",
+        "connection": "connection-7"
+      },
+      {
+        "event": "joined",
+        "owner": 6,
+        "channel": 0,
+        "op": "join",
+        "packet_bytes": 64,
+        "decoded_bytes": 55,
+        "window_packets": 3,
+        "window_bytes": 228,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:05.749742+00:00",
+        "connection": "connection-7"
+      },
+      {
+        "event": "match_started",
+        "utc": "2026-09-10T17:25:05.849828+00:00"
+      },
+      {
+        "event": "disconnected",
+        "owner": 6,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 3,
+        "window_bytes": 219,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:13.895639+00:00",
+        "connection": "connection-7"
+      },
+      {
+        "event": "disconnected",
+        "owner": 4,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:14.976414+00:00",
+        "connection": "connection-5"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:15.500335+00:00",
+        "connection": "connection-8"
+      },
+      {
+        "event": "resumed",
+        "owner": 6,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:15.518671+00:00",
+        "connection": "connection-8"
+      },
+      {
+        "event": "disconnected",
+        "owner": 2,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:15.874629+00:00",
+        "connection": "connection-3"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:16.535756+00:00",
+        "connection": "connection-9"
+      },
+      {
+        "event": "resumed",
+        "owner": 4,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:16.554217+00:00",
+        "connection": "connection-9"
+      },
+      {
+        "event": "disconnected",
+        "owner": 3,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:19.458124+00:00",
+        "connection": "connection-4"
+      },
+      {
+        "event": "disconnected",
+        "owner": 5,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 2,
+        "window_bytes": 44,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:19.767349+00:00",
+        "connection": "connection-6"
+      },
+      {
+        "event": "disconnected",
+        "owner": 6,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:20.364439+00:00",
+        "connection": "connection-8"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:20.610023+00:00",
+        "connection": "connection-10"
+      },
+      {
+        "event": "resumed",
+        "owner": 2,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:20.628543+00:00",
+        "connection": "connection-10"
+      },
+      {
+        "event": "disconnected",
+        "owner": 1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:21.102624+00:00",
+        "connection": "connection-2"
+      },
+      {
+        "event": "disconnected",
+        "owner": 0,
+        "reason": "transport_disconnect",
+        "channel": 1,
+        "op": "event",
+        "packet_bytes": 2156,
+        "decoded_bytes": 10034,
+        "window_packets": 25,
+        "window_bytes": 175581,
+        "budget_kind": "",
+        "packet_rate": 590.0,
+        "packet_burst": 1770.0,
+        "utc": "2026-09-10T17:25:21.160521+00:00",
+        "connection": "connection-1"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:21.929779+00:00",
+        "connection": "connection-11"
+      },
+      {
+        "event": "resumed",
+        "owner": 6,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:21.930860+00:00",
+        "connection": "connection-11"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:22.663025+00:00",
+        "connection": "connection-12"
+      },
+      {
+        "event": "resumed",
+        "owner": 1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:22.663354+00:00",
+        "connection": "connection-12"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:22.763082+00:00",
+        "connection": "connection-13"
+      },
+      {
+        "event": "resumed",
+        "owner": 0,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:22.763674+00:00",
+        "connection": "connection-13"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:23.270920+00:00",
+        "connection": "connection-14"
+      },
+      {
+        "event": "resumed",
+        "owner": 5,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:23.271619+00:00",
+        "connection": "connection-14"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:23.488462+00:00",
+        "connection": "connection-15"
+      },
+      {
+        "event": "resumed",
+        "owner": 3,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:23.506964+00:00",
+        "connection": "connection-15"
+      },
+      {
+        "event": "disconnected",
+        "owner": 4,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:27.902890+00:00",
+        "connection": "connection-9"
+      },
+      {
+        "event": "disconnected",
+        "owner": 1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:28.210185+00:00",
+        "connection": "connection-12"
+      },
+      {
+        "event": "disconnected",
+        "owner": 2,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:28.245461+00:00",
+        "connection": "connection-10"
+      },
+      {
+        "event": "disconnected",
+        "owner": 6,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:29.812982+00:00",
+        "connection": "connection-11"
+      },
+      {
+        "event": "disconnected",
+        "owner": 5,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 2,
+        "window_bytes": 44,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:29.814271+00:00",
+        "connection": "connection-14"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:29.872081+00:00",
+        "connection": "connection-16"
+      },
+      {
+        "event": "resumed",
+        "owner": 2,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:29.890798+00:00",
+        "connection": "connection-16"
+      },
+      {
+        "event": "disconnected",
+        "owner": 3,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:31.327319+00:00",
+        "connection": "connection-15"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:31.346058+00:00",
+        "connection": "connection-17"
+      },
+      {
+        "event": "resumed",
+        "owner": 5,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:31.364566+00:00",
+        "connection": "connection-17"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:31.470965+00:00",
+        "connection": "connection-18"
+      },
+      {
+        "event": "resumed",
+        "owner": 6,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:31.489311+00:00",
+        "connection": "connection-18"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:32.378607+00:00",
+        "connection": "connection-19"
+      },
+      {
+        "event": "resumed",
+        "owner": 1,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:32.397818+00:00",
+        "connection": "connection-19"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:33.234017+00:00",
+        "connection": "connection-20"
+      },
+      {
+        "event": "resumed",
+        "owner": 4,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:33.252962+00:00",
+        "connection": "connection-20"
+      },
+      {
+        "event": "connected",
+        "owner": -1,
+        "channel": -1,
+        "op": "unparsed",
+        "packet_bytes": 0,
+        "decoded_bytes": 0,
+        "window_packets": 0,
+        "window_bytes": 0,
+        "budget_kind": "",
+        "packet_rate": 0,
+        "packet_burst": 0,
+        "utc": "2026-09-10T17:25:33.390681+00:00",
+        "connection": "connection-21"
+      },
+      {
+        "event": "resumed",
+        "owner": 3,
+        "channel": 0,
+        "op": "hello",
+        "packet_bytes": 206,
+        "decoded_bytes": 197,
+        "window_packets": 1,
+        "window_bytes": 206,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:33.413327+00:00",
+        "connection": "connection-21"
+      },
+      {
+        "event": "room_ended",
+        "reason": "",
+        "utc": "2026-09-10T17:25:34.058718+00:00"
+      },
+      {
+        "event": "rejected",
+        "owner": -1,
+        "code": "room_required",
+        "fatal": false,
+        "channel": 0,
+        "op": "leave",
+        "packet_bytes": 23,
+        "decoded_bytes": 14,
+        "window_packets": 2,
+        "window_bytes": 45,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.418566+00:00",
+        "connection": "connection-18"
+      },
+      {
+        "event": "rejected",
+        "owner": -1,
+        "code": "room_required",
+        "fatal": false,
+        "channel": 0,
+        "op": "leave",
+        "packet_bytes": 23,
+        "decoded_bytes": 14,
+        "window_packets": 1,
+        "window_bytes": 23,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.419645+00:00",
+        "connection": "connection-20"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "leave",
+        "packet_bytes": 23,
+        "decoded_bytes": 14,
+        "window_packets": 1,
+        "window_bytes": 23,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.601876+00:00",
+        "connection": "connection-20"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 18,
+        "window_bytes": 100291,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.618529+00:00",
+        "connection": "connection-13"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.618852+00:00",
+        "connection": "connection-17"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.618852+00:00",
+        "connection": "connection-18"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.619017+00:00",
+        "connection": "connection-19"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.668414+00:00",
+        "connection": "connection-21"
+      },
+      {
+        "event": "disconnected",
+        "owner": -1,
+        "reason": "transport_disconnect",
+        "channel": 0,
+        "op": "ping",
+        "packet_bytes": 22,
+        "decoded_bytes": 13,
+        "window_packets": 1,
+        "window_bytes": 22,
+        "budget_kind": "",
+        "packet_rate": 200.0,
+        "packet_burst": 600.0,
+        "utc": "2026-09-10T17:25:34.718369+00:00",
+        "connection": "connection-16"
+      }
+    ],
+    "engine_errors": [
+      {
+        "utc": "2026-09-10T17:25:13.928923+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:14.978684+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:15.037439+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:16.312883+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:16.383762+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:16.597927+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:16.732954+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:16.942665+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:17.658642+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:17.715840+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:17.737148+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:18.736470+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.102313+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.629634+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.688327+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.705949+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.769039+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.769541+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.790340+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.863096+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.922701+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:19.923243+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.154293+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.212966+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.213376+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.385744+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.672018+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.672018+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.713021+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.733711+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.750986+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:20.811952+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.161744+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.162286+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.179607+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.629626+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.679622+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.697092+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.729629+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:21.946347+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:27.904885+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.189094+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.247371+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.309157+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.309604+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.370162+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.464423+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.525568+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.662985+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.723991+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.744434+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:28.861994+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.402609+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.534462+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.678455+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.753005+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.815459+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.832991+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:29.833578+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:30.597206+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:30.718781+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:30.852624+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      },
+      {
+        "utc": "2026-09-10T17:25:31.345396+00:00",
+        "category": "dtls_handshake",
+        "numeric_code": -30464
+      }
+    ],
+    "traffic_windows": [
+      {
+        "interval_ms": 5099,
+        "channel_packets": [
+          21,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "channel_wire_bytes": [
+          1383,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "channel_decoded_bytes": [
+          1194,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "snapshots": 0,
+        "visual_batches": 0,
+        "critical_events": 0,
+        "commands": 0,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 0,
+        "utc": "2026-09-10T17:25:05.299523+00:00"
+      },
+      {
+        "interval_ms": 5664,
+        "channel_packets": [
+          52,
+          219,
+          0,
+          42,
+          41,
+          42,
+          40,
+          40,
+          39,
+          0
+        ],
+        "channel_wire_bytes": [
+          2381,
+          111789,
+          0,
+          225254,
+          213231,
+          220736,
+          196621,
+          197102,
+          184990,
+          0
+        ],
+        "channel_decoded_bytes": [
+          1913,
+          341619,
+          0,
+          3030752,
+          2927509,
+          3005105,
+          2565799,
+          2556158,
+          2451355,
+          0
+        ],
+        "snapshots": 244,
+        "visual_batches": 213,
+        "critical_events": 6,
+        "commands": 6,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 0,
+        "utc": "2026-09-10T17:25:10.963392+00:00"
+      },
+      {
+        "interval_ms": 5043,
+        "channel_packets": [
+          49,
+          207,
+          0,
+          29,
+          29,
+          30,
+          28,
+          30,
+          30,
+          0
+        ],
+        "channel_wire_bytes": [
+          3708,
+          457298,
+          0,
+          308927,
+          304505,
+          314423,
+          302636,
+          322871,
+          319585,
+          0
+        ],
+        "channel_decoded_bytes": [
+          3267,
+          2149107,
+          0,
+          3243732,
+          3232109,
+          3342287,
+          3178484,
+          3393068,
+          3393774,
+          0
+        ],
+        "snapshots": 158,
+        "visual_batches": 189,
+        "critical_events": 18,
+        "commands": 16,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 0,
+        "utc": "2026-09-10T17:25:16.007235+00:00"
+      },
+      {
+        "interval_ms": 5019,
+        "channel_packets": [
+          33,
+          207,
+          0,
+          33,
+          33,
+          32,
+          32,
+          32,
+          32,
+          0
+        ],
+        "channel_wire_bytes": [
+          1707,
+          543356,
+          0,
+          391687,
+          388135,
+          376277,
+          377597,
+          378357,
+          374173,
+          0
+        ],
+        "channel_decoded_bytes": [
+          1410,
+          2618559,
+          0,
+          3916947,
+          3912844,
+          3796714,
+          3817689,
+          3817689,
+          3816217,
+          0
+        ],
+        "snapshots": 138,
+        "visual_batches": 195,
+        "critical_events": 12,
+        "commands": 4,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 0,
+        "utc": "2026-09-10T17:25:21.026200+00:00"
+      },
+      {
+        "interval_ms": 5057,
+        "channel_packets": [
+          34,
+          150,
+          0,
+          24,
+          25,
+          25,
+          24,
+          24,
+          22,
+          0
+        ],
+        "channel_wire_bytes": [
+          1668,
+          366997,
+          0,
+          289282,
+          298315,
+          298253,
+          285341,
+          286006,
+          259513,
+          0
+        ],
+        "channel_decoded_bytes": [
+          1362,
+          1733853,
+          0,
+          2870751,
+          2987114,
+          2988414,
+          2868211,
+          2868211,
+          2628788,
+          0
+        ],
+        "snapshots": 131,
+        "visual_batches": 150,
+        "critical_events": 0,
+        "commands": 0,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 0,
+        "utc": "2026-09-10T17:25:26.084048+00:00"
+      },
+      {
+        "interval_ms": 5168,
+        "channel_packets": [
+          26,
+          213,
+          0,
+          34,
+          34,
+          35,
+          35,
+          36,
+          36,
+          0
+        ],
+        "channel_wire_bytes": [
+          756,
+          565325,
+          0,
+          414486,
+          410338,
+          421914,
+          421877,
+          434792,
+          429974,
+          0
+        ],
+        "channel_decoded_bytes": [
+          522,
+          2778582,
+          0,
+          4085039,
+          4080884,
+          4202914,
+          4186812,
+          4306501,
+          4304845,
+          0
+        ],
+        "snapshots": 133,
+        "visual_batches": 213,
+        "critical_events": 0,
+        "commands": 0,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 0,
+        "utc": "2026-09-10T17:25:31.252714+00:00"
+      },
+      {
+        "interval_ms": 5082,
+        "channel_packets": [
+          29,
+          117,
+          0,
+          19,
+          19,
+          19,
+          19,
+          19,
+          19,
+          0
+        ],
+        "channel_wire_bytes": [
+          1677,
+          311214,
+          0,
+          233010,
+          230859,
+          230767,
+          227997,
+          228400,
+          226055,
+          0
+        ],
+        "channel_decoded_bytes": [
+          1416,
+          1532076,
+          0,
+          2289914,
+          2287577,
+          2288565,
+          2273420,
+          2273420,
+          2272546,
+          0
+        ],
+        "snapshots": 77,
+        "visual_batches": 117,
+        "critical_events": 0,
+        "commands": 0,
+        "snapshot_drops": 0,
+        "visual_drops": 0,
+        "notice_rate_drops": 0,
+        "rejected": 2,
+        "utc": "2026-09-10T17:25:36.335082+00:00"
+      }
+    ],
+    "watch_summary": {
+      "same_service": true,
+      "restarts_before": 0,
+      "restarts_after": 0,
+      "sample_wall_seconds": 60.00075147673488,
+      "service_cpu_seconds": 19.42,
+      "cpu_scope": "Full 60-second watch includes setup, failed match, reconnect, cleanup and idle; not stable battle CPU utilization.",
+      "udp_deltas": {
+        "InDatagrams": 12484,
+        "OutDatagrams": 11228,
+        "InErrors": 0,
+        "RcvbufErrors": 0,
+        "SndbufErrors": 0,
+        "InCsumErrors": 0
+      },
+      "socket_drop_before": 0,
+      "socket_drop_after": 0,
+      "nic_delta": {
+        "rx_bytes": 15184235,
+        "tx_bytes": 24868351,
+        "rx_packets": 16944,
+        "tx_packets": 16870,
+        "rx_dropped": 0,
+        "tx_dropped": 0
+      },
+      "nic_scope": "Host-wide NIC, includes unrelated traffic; not sole match bandwidth."
+    }
+  },
+  "source_evidence_sha256": {
+    "client_summary": "9f78e7181b1678e72407f2998d35c970ac1f6849f686a63801b51a7e8f785c4e",
+    "relay_readonly": "acbd682b33d53d89d99dc29289f347b7422a1a2de10f31c8c99ed91a6a84fc4c",
+    "socket_watch": "a2dc5922175feab156467daa0c473be3d16783b278b187fab478a923e24eec82"
+  },
+  "remaining_work": "Native transport error cause remains under investigation. Full decoder/flush and release runtime local proof does not establish end-to-end public delivery. No successful final 0.12 client package release is asserted here."
+}
