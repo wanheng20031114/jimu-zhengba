@@ -2,8 +2,10 @@ config_version=5
 
 [application]
 config/name="积木争霸中继"
+run/main_scene="res://server/relay_bootstrap.tscn"
 config/features=PackedStringArray("4.6")
 run/max_fps=60
+run/flush_stdout_on_print=true
 
 [application/run]
 disable_stdout=false

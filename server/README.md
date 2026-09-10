@@ -66,6 +66,16 @@ Bot没有UI接收连接。新客户端的通知入口只向真人发通知；发
 
 服务端使用隔离、校验 SHA256 的官方 Godot 4.7.2 稳定运行时。客户端仍兼容项目当前 4.6.3；不修改用户安装。4.6.3 的 DTLS Cookie 析构具有上游已确认的重复释放诊断，服务端需使用包含 [Godot #120371](https://github.com/godotengine/godot/pull/120371) 的版本。原生 [ENetConnection](https://docs.godotengine.org/en/4.6/classes/class_enetconnection.html) 提供 DTLS 和独立通道传输。
 
+### 正式中继导出包
+
+正式运行使用官方 **4.7.2 release export template**。编辑器即使加 `--headless` 仍编入调试功能；Godot [专用服务器文档](https://docs.godotengine.org/en/4.6/tutorials/export/exporting_for_dedicated_servers.html) 推荐服务器使用导出模板。`server/relay_bootstrap.tscn` 是独立服务器主场景，Node 脚本负责唯一的配置与启动路径；旧 `--script server/relay_main.gd` 开发入口复用它，不维护第二套房间或配置逻辑。
+
+`tools/build_relay_release.py` 只复制八份服务器必需源码/配置，使用官方编辑器导出 PCK，再原样复制校验过的 Linux/Windows release 模板。参数为 `--editor`、`--templates` 和 `--output`；首次可加 `--fetch-templates` 下载完整官方模板归档并按固定 SHA256 校验，再仅提取两个目标模板。模板缓存内的 `receipt.json` 与两份二进制是后续构建依赖；完整 `.tpz` 归档验证完成后可清理。
+
+输出 `linux/jimu-relay`、`linux/jimu-relay.pck`、`linux/build-receipt.json`，Windows 对应 `jimu-relay.exe`。原生 release 模板禁用路径/脚本覆盖，所以可执行文件与 PCK 必须同目录同名，仅以 `jimu-relay --headless` 启动；配置继续从 `JIMU_RELAY_CONFIG` 读取，私钥不进入 PCK。部署应把二者上传至同一个不可变版本目录，保留旧版本和原 systemd 单元以便回退，不将新 PCK 覆盖到共享运行时旁边。
+
+启动日志 `JIMU_RELAY_RUNTIME` 显示版本、editor/debug/dedicated_server 标志；正式模板应为 `false/false/true`。本地原生模板与 DTLS 验证范围见 [发行模板核查报告](../report/release-0.12-relay-release-runtime.md)。模板切换本身不改变协议或放宽 `Protocol.decode`，不能代替真实多人吞吐验证。
+
 ## 验证
 
 0.12使用全新临时原生ENet/DTLS夹具验证7/8真人、合法积压、旧客户端原包兼容与伪造边界，另以实际`RelayClient`和复制层验证`ERR_BUSY`保留队列。下列通用本地运行入口继续保留，其限流断言同步更新为按收件人预算；本轮多人压力证据来自独立新夹具。

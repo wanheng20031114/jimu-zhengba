@@ -1,0 +1,45 @@
+{
+  "scope": "Read-only live editor identity and local Windows release PCK bootstrap/DTLS validation; no remote deployment or performance claim",
+  "live_runtime_audit_utc": "2026-09-10T16:58:32.784078+00:00",
+  "live_version": "4.7.2.stable.official.ed1daf0bf",
+  "live_editor_sha256": "8d106cbe6144c2dc7e881d61d2429c1a8a76e6b22ef48bd5e48dcf934953f71e",
+  "live_matches_verified_editor": true,
+  "live_service_unchanged": true,
+  "live_service_restarts": 0,
+  "official_template_archive_sha256": "f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011",
+  "official_template_archive_bytes": 1281349702,
+  "linux_release": {
+    "sha256": "d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63",
+    "bytes": 73519416
+  },
+  "windows_release": {
+    "sha256": "d34d36f3be1a6c49c56525ae86469b92e4f417ddf0b43cf00dd80c385c4b0562",
+    "bytes": 109268480
+  },
+  "pck_sha256": "f4e86bc90b5b202593c5951c116a7b0a98bc7d077ec3f116f87cc6e57c77406d",
+  "pck_bytes": 51020,
+  "pck_same_for_both_platforms": true,
+  "local_probe": {
+    "utc": "2026-09-10T17:11:53.173770+00:00",
+    "runtime_version": "4.7.2-stable (official)",
+    "editor": false,
+    "debug": false,
+    "dedicated_server": true,
+    "room_capacity": 8,
+    "humans_per_room": 8,
+    "protocol": 10,
+    "transport_connected": true,
+    "hello_accepted": true,
+    "room_created": true,
+    "left_sent": true,
+    "errors": 0,
+    "server_exit_code": 0,
+    "client_exit_code": 0,
+    "stderr_bytes": 0
+  },
+  "all_build_and_probe_helpers_exited_and_cim_verified": true,
+  "linux_runtime_executed": false,
+  "public_service_modified": false,
+  "temporary_evidence_directory": ".local/release-0.12-relay-runtime-tests",
+  "template_dependency_directory": ".local/network/runtime/templates-4.7.2"
+}

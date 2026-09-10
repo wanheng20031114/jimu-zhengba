@@ -59,7 +59,7 @@ def local_server(directory: Path, children: list, handles: list) -> dict:
     key_path.write_bytes(key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.TraditionalOpenSSL, serialization.NoEncryption()))
     cert_path.write_bytes(cert.public_bytes(serialization.Encoding.PEM))
     stage = directory / "relay-project"
-    for relative in ("server/relay_main.gd", "server/relay_server.gd", "server/relay.tscn", "scripts/network/network_protocol.gd", "tests/network_relay_diagnostic.gd"):
+    for relative in ("server/relay_main.gd", "server/relay_bootstrap.gd", "server/relay_bootstrap.tscn", "server/relay_server.gd", "server/relay.tscn", "scripts/network/network_protocol.gd", "tests/network_relay_diagnostic.gd"):
         destination = stage / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / relative, destination)
