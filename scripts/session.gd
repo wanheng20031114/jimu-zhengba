@@ -16,20 +16,24 @@ func _ready() -> void:
 	elif "--match-smoke" in OS.get_cmdline_user_args():
 		add_child.call_deferred(preload("res://scripts/qa/release_match_probe.tscn").instantiate())
 
-func start_offline(mode: String) -> Error:
+func start_offline(mode: String, bot_difficulty: String = "normal") -> Error:
 	if mode not in NetworkProtocol.MODES:
 		load_failed.emit("所选对局模式无效，请重新选择")
 		return ERR_INVALID_PARAMETER
+	if bot_difficulty not in NetworkProtocol.BOT_DIFFICULTIES:
+		load_failed.emit("所选电脑难度无效，请重新选择")
+		return ERR_INVALID_PARAMETER
 	record_diagnostic("load_match", {"online": false, "mode": mode})
 	online = false
-	config = offline_config(mode)
+	config = offline_config(mode, bot_difficulty)
 	return _load_match_scene()
 
-static func offline_config(mode: String) -> Dictionary:
+static func offline_config(mode: String, bot_difficulty: String = "normal") -> Dictionary:
 	var match_data: Dictionary = {"mode": mode, "players": []}
 	for owner: int in int(NetworkProtocol.MODES[mode].slots):
 		match_data.players.append({"owner_id": owner, "team_id": NetworkProtocol.default_alliance(mode, owner),
-			"controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner})
+			"controller": "human" if owner == 0 else "bot", "name": "指挥官" if owner == 0 else "王国将领 %d" % owner,
+			"bot_difficulty": "normal" if owner == 0 else bot_difficulty})
 	return match_data
 
 func start_online(match_data: Dictionary) -> Error:

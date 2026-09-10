@@ -4,20 +4,20 @@ extends SceneTree
 const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult", &"cannon", &"farmer"]
 const EXPECTED_DAMAGE: Array = [
 	[6, 8, 20, 8, 8, 8],
-	[12, 9, 6, 10, 10, 12],
+	[10, 6, 4, 9, 9, 11],
 	[7, 12, 7, 20, 20, 9],
-	[24, 15, 12, 16, 16, 18],
-	[40, 37, 34, 38, 38, 40],
+	[23, 13, 11, 16, 16, 18],
+	[39, 35, 33, 38, 38, 40],
 	[3, 5, 3, 5, 5, 5],
 ]
 const EXPECTED_HITS: Array = [
-	[17, 8, 6, 18, 23, 19], [9, 7, 20, 14, 18, 13],
-	[15, 5, 18, 7, 9, 17], [5, 4, 10, 9, 12, 9],
+	[17, 8, 6, 18, 23, 19], [10, 10, 30, 16, 20, 14],
+	[15, 5, 18, 7, 9, 17], [5, 5, 11, 9, 12, 9],
 	[3, 2, 4, 4, 5, 4], [34, 12, 40, 28, 36, 30],
 ]
 const EXPECTED_HP: Array[int] = [100, 60, 120, 140, 180, 150]
 # Keep negative pre-floor damage: upgrades apply before the minimum-one clamp.
-const BUILDING_RAW_DAMAGE: Array[int] = [-2, 2, -1, 58, 130, -5]
+const BUILDING_RAW_DAMAGE: Array[int] = [-2, 1, -1, 58, 130, -5]
 const ATTACK_BONUS: Array[int] = [0, 1, 2, 4]
 const DEFENSE_BONUS: Array[int] = [0, 1, 2, 3]
 var checks: int = 0
@@ -56,7 +56,10 @@ func _run() -> void:
 					var upgraded_damage: float = DamageResolver.resolve(packet, defender, defense_bonus)
 					_check(is_equal_approx(upgraded_damage, expected), label + " upgrade %d/%d" % [attack_level, defense_level])
 					if attacker.military and defender.military:
-						_check(ceili(defender.hp / upgraded_damage) <= 40, label + " military upgrade %d/%d finishes within forty hits" % [attack_level, defense_level])
+						# The requested archer/armor rebalance deliberately strengthens
+						# cavalry against archers behind in attack research.
+						var hit_limit: int = 120 if attacker.id == &"archer" and defender.id == &"knight" else 40
+						_check(ceili(defender.hp / upgraded_damage) <= hit_limit, label + " military upgrade %d/%d stays within its approved hit limit" % [attack_level, defense_level])
 		for key: String in BalanceCatalog.BUILDINGS:
 			var structure: BuildingDefinition = BalanceCatalog.building(key)
 			_check(structure.hp >= 1000 and structure.melee_armor == 10 and structure.ranged_armor == 10, key + " durable ten-armor structure")
@@ -68,12 +71,22 @@ func _run() -> void:
 	_test_snapshot()
 	_test_siege()
 	_test_production_data()
+	_test_defensive_buildings()
 	var report := {"checks": checks, "failures": failures}
 	var file := FileAccess.open("res://artifacts/balance_matrix_results.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "  "))
 	file.close()
 	print("BALANCE_MATRIX ", checks, " checks; ", failures.size(), " failures")
 	quit(0 if failures.is_empty() else 1)
+
+func _test_defensive_buildings() -> void:
+	var expected: Dictionary = {"headquarters": [39, 35, 33], "enemy_keep": [39, 35, 33], "defense_tower": [18, 11, 18], "tower": [16, 12, 10]}
+	for kind: String in expected:
+		var definition := BalanceCatalog.building(kind)
+		for index: int in 3:
+			var target := BalanceCatalog.unit(KINDS[index])
+			var damage := DamageResolver.resolve(DamageResolver.snapshot(definition, 0, 0, 0), target)
+			_check(damage == expected[kind][index], kind + " approved defensive strike against " + str(target.id))
 
 func _test_upgrade_catalog() -> void:
 	var costs: Dictionary = {&"attack": [100, 250, 500], &"defense": [150, 300, 600]}
@@ -103,7 +116,7 @@ func _test_siege() -> void:
 	for kind: StringName in [&"swordsman", &"archer"]:
 		var defender := BalanceCatalog.unit(kind)
 		var raw_damage: float = 24.0 if kind == &"swordsman" else 18.0
-		var base_armor: float = 0.0 if kind == &"swordsman" else 3.0
+		var base_armor: float = 1.0 if kind == &"swordsman" else 5.0
 		for attack_bonus: int in ATTACK_BONUS:
 			for defense_bonus: int in DEFENSE_BONUS:
 				var packet := DamageResolver.snapshot(BalanceCatalog.unit(&"catapult"), attack_bonus, 0, 0)
@@ -158,10 +171,10 @@ func _test_production_data() -> void:
 		_check(BalanceCatalog.unit(kind).sight == 14.0, str(kind) + " uses fourteen-unit vision")
 	var tower := BalanceCatalog.building(&"defense_tower")
 	_check(tower.cost == 150 and tower.hp == 1000 and tower.build_seconds == 20, "tower costs one-hundred-fifty gold, has one thousand health and takes twenty seconds")
-	_check(tower.damage == 13 and tower.bonuses == {&"infantry": 3, &"cavalry": 9} and BalanceCatalog.building(&"headquarters").damage == 10, "tower uses class bonuses while headquarters retains its defensive attack")
+	_check(tower.damage == 16 and tower.bonuses == {&"infantry": 3, &"cavalry": 9} and BalanceCatalog.building(&"headquarters").damage == 40, "tower and headquarters use strengthened defensive attacks")
 	for kind: StringName in [&"swordsman", &"archer", &"knight"]:
 		var defender: UnitDefinition = BalanceCatalog.unit(kind)
 		var payload: DamagePayload = DamageResolver.snapshot(tower, 0, 0, 0)
 		for defense: int in DEFENSE_BONUS:
 			var hits: int = ceili(defender.hp / DamageResolver.resolve(payload, defender, defense))
-			_check(hits >= 6 and hits <= 10, "tower defeats %s with defense %d in six to ten hits" % [kind, defense])
+			_check(hits >= 6 and hits <= 8, "tower defeats %s with defense %d in six to eight hits" % [kind, defense])

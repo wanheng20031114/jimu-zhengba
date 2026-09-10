@@ -88,8 +88,8 @@ func join_room(code: String, nickname: String = "指挥官") -> void:
 	_intent = {"op": "join", "code": code.strip_edges().to_upper(), "name": Protocol.nickname(nickname)}
 	_flush_intent()
 
-func configure_slot(owner: int, kind: String, team: int) -> void:
-	_send({"op": "slot", "owner": owner, "kind": kind, "team": team})
+func configure_slot(owner: int, kind: String, team: int, bot_difficulty: String = "normal") -> void:
+	_send({"op": "slot", "owner": owner, "kind": kind, "team": team, "bot_difficulty": bot_difficulty})
 
 func set_ready(value: bool) -> void:
 	_send({"op": "ready", "ready": value})

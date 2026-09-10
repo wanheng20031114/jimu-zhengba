@@ -25,6 +25,7 @@ var _preview_alliance: int = -1
 @onready var timer_label: Label = %TimeValue
 @onready var objective_label: Label = %Objective
 @onready var selected_name: Label = %SelectedName
+@onready var selection_caption: Label = %SelectionCaption
 @onready var selected_role: Label = %SelectedRole
 @onready var selected_stats: Label = %SelectedStats
 @onready var selected_portrait: TextureRect = %SelectedPortrait
@@ -196,6 +197,7 @@ func refresh() -> void:
 	objective_label.text = "摧毁敌队全部军事建筑"
 	%EnemyCount.text = "已发现敌军 %d    击败 %d" % [game.enemy_count(), game.kills]
 	_refresh_actions()
+	var selected_owner_id: int = -1
 	if game.selection.is_empty():
 		selected_name.text = "等待指令"
 		selected_role.text = "你的军团"
@@ -225,6 +227,7 @@ func refresh() -> void:
 			hp_bar.value = entity.hp
 			hp_label.text = "%d / %d" % [int(entity.hp), int(entity.max_hp)]
 		if entity.is_in_group("units"):
+			selected_owner_id = entity.owner_id
 			selected_portrait.texture = portraits[entity.unit_type]
 			_selected_preview = entity.unit_type
 			var definition := BalanceCatalog.unit(entity.unit_type)
@@ -238,8 +241,11 @@ func refresh() -> void:
 			if entity.unit_type == "farmer":
 				var queued_orders: int = int(entity.get_meta("replica_queue_count", 0)) if game.online and not game.is_authority else entity.waypoint_queue.size()
 				var mining_rate: float = player.get_mining_rate_multiplier() if own_unit else 1.0
-				selected_stats.text = "%s采矿 +%d / %.2f秒 · 建筑面板\n%s%s" % ["" if own_unit else "基础 ", BalanceCatalog.ECONOMY.mining_gold, BalanceCatalog.ECONOMY.mining_seconds / mining_rate, entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
+				var mining_gold: int = BalanceCatalog.ECONOMY.mining_gold * game.get_player(entity.owner_id).get_gather_yield_multiplier()
+				selected_stats.text = "%s采矿 +%d / %.2f秒 · 建筑面板\n%s%s" % ["" if own_unit else "基础 ", mining_gold, BalanceCatalog.ECONOMY.mining_seconds / mining_rate, entity.order_name, " · 队列 %d" % queued_orders if queued_orders > 0 else ""]
 		elif entity.is_in_group("buildings"):
+			selected_owner_id = entity.owner_id
+			selected_role.text = "你的建筑" if entity.owner_id == game.local_owner_id else ("盟友建筑" if entity.alliance_id == player.alliance_id else "敌方建筑")
 			var portrait_kind: String = entity.building_type if entity.building_type in portraits else "headquarters"
 			selected_portrait.texture = portraits[portrait_kind]
 			_selected_preview = portrait_kind
@@ -272,6 +278,7 @@ func refresh() -> void:
 		selected_stats.text = " · ".join(descriptions)
 		var production_focus: BattleBuilding = game.selected_production()
 		var first = production_focus if production_focus != null else game.selection[0]
+		selected_owner_id = first.owner_id
 		if production_focus != null:
 			selected_role.text = "生产：%s · %s 切换类别" % [production_focus.display_name, game.settings.hotkey_text("rts_cycle_buildings")]
 		_selected_preview = first.building_type if first is BattleBuilding else first.unit_type
@@ -281,6 +288,7 @@ func refresh() -> void:
 		hp_bar.max_value = maximum
 		hp_bar.value = total_hp
 		hp_label.text = "%d / %d" % [int(total_hp), int(maximum)]
+	_refresh_selection_owner(selected_owner_id)
 	%AttackButton.button_pressed = game.attack_mode
 	var has_units: bool = not game.own_selected_units().is_empty()
 	%AttackButton.disabled = not has_units
@@ -297,6 +305,19 @@ func refresh() -> void:
 		button.text = group_key + ("  ·  " + str(count) if count > 0 else "")
 		button.modulate.a = 1.0 if count > 0 else 0.48
 		button.tooltip_text = "编队 %d · %d 个单位或建筑\nCtrl + %s 覆盖 · Shift + %s 追加\n按 %s 召回 · 双按定位" % [index, count, group_key, group_key, group_key]
+
+func _refresh_selection_owner(owner_id: int) -> void:
+	if owner_id < 0:
+		selection_caption.text = "所选部队"
+		selection_caption.tooltip_text = ""
+		selection_caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		return
+	# Names/controllers are already public match state; alliance IDs are not owners.
+	var owner: PlayerState = game.get_player(owner_id)
+	var controller_label: String = "电脑" if owner.controller == "bot" else "玩家"
+	selection_caption.text = "所属：%s（%s）" % [owner.display_name, controller_label]
+	selection_caption.tooltip_text = "所属%s：%s" % [controller_label, owner.display_name]
+	selection_caption.mouse_filter = Control.MOUSE_FILTER_STOP
 
 func trigger_action_slot(index: int) -> void:
 	if index < 0 or index >= _actions.size() or buttons[index].disabled or not buttons[index].visible:

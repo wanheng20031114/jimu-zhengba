@@ -9,7 +9,7 @@
 `RelayClient` 是常驻 `Node`，允许暂停时继续收发。`owner_id` 由中继分配，房主恒为 0；玩家所有权与 `team_id` 分开。模式由 `NetworkProtocol.MODES` 统一定义：1v1 为两人；2v2 为四人；3v3、2v2v2 为六席；4v4 与乱战为八席。真人和 Bot 均计入参战人数，允许保留空位（例如 4v2）。团队人数不能超过模式上限，但无需相等；至少两个实际阵营、真人房主和全部真人准备才可开始。乱战每个 owner 独立阵营，服务端拒绝组队。房间 UI 与中继共同使用 `NetworkProtocol.room_start_error()`。
 
 - `connect_relay(address, port=24571)` 后调用 `create_room(mode, nickname)` 或 `join_room(code, nickname)`；握手未完成时创建/加入意图保留。
-- 房主 `configure_slot(owner, kind, team)` 设置空位/电脑及队伍，不能覆盖真人。真人 `set_ready(true)`，房主 `start_match()`；人数、准备状态、协议版本、游戏版本和内容清单 SHA256 均需一致。
+- 房主 `configure_slot(owner, kind, team, bot_difficulty)` 设置空位/电脑、队伍及电脑难度，不能覆盖真人。难度为 `normal/hard/very_hard/nightmare`，采集收益为1/2/3/4倍；非电脑席位只能使用 `normal`。变更清除其他真人准备状态，房间视图及开局配置均保留难度。真人 `set_ready(true)`，房主 `start_match()`；人数、准备状态、协议版本、游戏版本和内容清单 SHA256 均需一致。此配置使用协议10，需同步更新中继与客户端。
 - `match_started(config)` 仅首次进入对局触发。配置包含 `mode/map_id/match_id/seed/host_owner/players`，地图 ID 分别为 `duel`、`teams`、`trios`、`triad`、`quad_teams`、`free_for_all`。
 - `send_command(Dictionary)` → 房主 `command_received(owner, command)`。`owner` 来自已验证连接，游戏层仍须验证单位归属、资源、射程和可见目标，不能使用载荷自报的 owner。
 - 房主 `snapshot_to(owner, snapshot)` → 指定玩家 `snapshot_received(snapshot)`；禁止快照广播。`send_event(owner, event)` 为可靠事件，`owner=-1` 仅适用于可公开的信息。

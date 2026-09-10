@@ -90,7 +90,7 @@ label('MapTitle','MapFrame','琥珀十字路',12,6,170,24,12,'Color(0.8,0.77,0.6
 s.node('Minimap','Control','MapFrame',**rect(11,32,174,160),script='ExtResource("minimap")',unique_name_in_owner='true',clip_contents='true',mouse_default_cursor_shape='2')
 
 s.node('Selection','Control','CommandBar',**rect(16,13,300,136),mouse_filter='2')
-label('SelectionCaption','CommandBar','所选部队',16,-28,180,24,12,'Color(0.91,0.85,0.69,1)')
+label('SelectionCaption','CommandBar','所选部队',16,-28,300,24,12,'Color(0.91,0.85,0.69,1)',unique=True,text_overrun_behavior='3',clip_text='true')
 s.node('SelectedPortrait','TextureRect','CommandBar/Selection',**rect(0,5,94,112),expand_mode='1',stretch_mode='5',mouse_filter='2',unique_name_in_owner='true')
 label('SelectedRole','CommandBar/Selection','蓝旗军团',107,0,190,20,10,'Color(0.53,0.72,0.84,1)',unique=True)
 label('SelectedName','CommandBar/Selection','大本营',106,21,190,26,20,bold=True,unique=True)

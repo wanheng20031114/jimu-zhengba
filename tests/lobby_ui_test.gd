@@ -18,8 +18,8 @@ class FakeRelay extends RelayClient:
 		calls.append({"op": "create", "mode": value, "nickname": nickname})
 	func join_room(code: String, nickname: String = "指挥官") -> void:
 		calls.append({"op": "join", "code": code, "nickname": nickname})
-	func configure_slot(owner: int, kind: String, team: int) -> void:
-		calls.append({"op": "slot", "owner": owner, "kind": kind, "team": team})
+	func configure_slot(owner: int, kind: String, team: int, bot_difficulty: String = "normal") -> void:
+		calls.append({"op": "slot", "owner": owner, "kind": kind, "team": team, "bot_difficulty": bot_difficulty})
 	func set_ready(value: bool) -> void:
 		calls.append({"op": "ready", "value": value})
 	func start_match() -> void:
@@ -39,12 +39,14 @@ class FakeSession extends Node:
 	var fail_load: bool = false
 	var relay: FakeRelay
 	var offline_modes: Array[String] = []
+	var offline_difficulties: Array[String] = []
 	var online_matches: Array[Dictionary] = []
-	func start_offline(mode: String) -> Error:
+	func start_offline(mode: String, bot_difficulty: String = "normal") -> Error:
 		if fail_load:
 			load_failed.emit("无法载入战场，请重试")
 			return ERR_CANT_OPEN
 		offline_modes.append(mode)
+		offline_difficulties.append(bot_difficulty)
 		return OK
 	func start_online(config: Dictionary) -> Error:
 		online_matches.append(config)
@@ -91,7 +93,7 @@ func room_state(mode: String) -> Dictionary:
 	for owner in int(NetworkProtocol.MODES[mode].slots):
 		slots.append({"owner_id": owner, "team_id": NetworkProtocol.default_alliance(mode, owner),
 			"kind": "human" if owner == 0 else "bot", "name": "本地主将" if owner == 0 else "电脑将领",
-			"ready": true, "connected": owner == 0, "bot_takeover": false})
+			"ready": true, "connected": owner == 0, "bot_takeover": false, "bot_difficulty": "normal"})
 	return {"code": "ABCD2345", "mode": mode, "status": "lobby", "host_owner": 0, "slots": slots}
 
 func publish_room(state: Dictionary, owner: int = 0) -> void:
@@ -137,6 +139,10 @@ func _run() -> void:
 	await capture("lobby-090-home")
 	await click(control("SoloMenu"))
 	check(control("SoloPanel").visible, "native solo entry opens mode selection")
+	var solo_difficulty: OptionButton = control("SoloDifficulty")
+	check(solo_difficulty.item_count == 4, "solo offers four declared AI difficulties")
+	solo_difficulty.select(3)
+	solo_difficulty.item_selected.emit(3)
 	for mode: String in NetworkProtocol.MODES:
 		var suffix: String = "FFA" if mode == "ffa" else mode
 		await click(control("Mode" + suffix))
@@ -185,10 +191,20 @@ func _run() -> void:
 			check(not control("StartMatch").disabled and last.get_node("State").text == "不参战", mode + " retained empty seat does not block legitimate opponents")
 			check(control("TeamSummary").text.contains("1 个空位"), mode + " summary counts actual retained empties")
 			await click(last.get_node("Kind"))
-			check(fake.relay.calls[-1] == {"op": "slot", "owner": count - 1, "kind": "bot", "team": NetworkProtocol.default_alliance(mode, count - 1)}, mode + " scrolled final row remains operable")
+			check(fake.relay.calls[-1] == {"op": "slot", "owner": count - 1, "kind": "bot", "team": NetworkProtocol.default_alliance(mode, count - 1), "bot_difficulty": "normal"}, mode + " scrolled final row remains operable")
 			check(last.get_node("Kind").disabled, mode + " pending slot edit suppresses duplicate input")
 			lobby.get_node("%SlotTimeout").timeout.emit()
 			check(not last.get_node("Kind").disabled and lobby._pending_slots.is_empty(), mode + " slot request timeout restores controls")
+		state = room_state(mode)
+		await publish_room(state)
+		var difficulty: OptionButton = last.get_node("Difficulty")
+		check(difficulty.visible and not difficulty.disabled, mode + " host can configure individual computer difficulty")
+		difficulty.select(2)
+		difficulty.item_selected.emit(2)
+		check(fake.relay.calls[-1].bot_difficulty == "very_hard" and difficulty.disabled and control("StartMatch").disabled, mode + " difficulty edit waits for authoritative acknowledgement")
+		state.slots[count - 1].bot_difficulty = "very_hard"
+		await publish_room(state)
+		check(lobby._pending_slots.is_empty() and difficulty.selected == 2 and not control("StartMatch").disabled, mode + " acknowledged difficulty is displayed and releases start")
 		state = room_state(mode)
 		for owner in range(1, count):
 			state.slots[owner].kind = "open"
@@ -204,7 +220,7 @@ func _run() -> void:
 		state.slots[count - 1].ready = true
 		await publish_room(state, count - 1)
 		check(control("Ready").visible and not control("StartMatch").visible and not control("FillBots").visible, mode + " guest only controls own readiness")
-		check(control("Slots").get_children().all(func(row): return not row.visible or (row.get_node("Team").disabled and row.get_node("Kind").disabled)), mode + " guests cannot configure any seat")
+		check(control("Slots").get_children().all(func(row): return not row.visible or (row.get_node("Team").disabled and row.get_node("Kind").disabled and row.get_node("Difficulty").disabled)), mode + " guests cannot configure any seat or difficulty")
 		await publish_room(state)
 		if mode == "4v4":
 			check(control("SlotScroll").get_global_rect().encloses(control("Slots").get_child(7).get_global_rect()), "desktop room displays the eighth native seat without scrolling")
@@ -300,6 +316,7 @@ func _run() -> void:
 	fake.fail_load = false
 	await click(control("SoloStart"))
 	check(fake.offline_modes == ["4v4"], "retried solo start uses the selected eight-player mode without relay dependency")
+	check(fake.offline_difficulties == ["nightmare"], "solo launch carries selected nightmare difficulty into the match")
 	lobby.queue_free()
 	await process_frame
 	fake.queue_free()

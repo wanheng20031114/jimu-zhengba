@@ -153,7 +153,8 @@ def validate(data: dict[str, Any], final: bool) -> dict[str, Any]:
                 if units[a]["military"] and units[d]["military"]:
                     for al in range(4):
                         for dl in range(4):
-                            check(matchups[a, d, al, dl]["hits"] <= 40, f"军事 {a}→{d} A{al}D{dl} 不超过40击")
+                            limit = 120 if (a, d) == ("archer", "knight") else 40
+                            check(matchups[a, d, al, dl]["hits"] <= limit, f"军事 {a}→{d} A{al}D{dl} 不超过{limit}击（弓手对重甲骑兵保留科技差例外）")
         check(base("swordsman", "swordsman")["hits"] == 17, "剑士镜像保持17刀")
         check(units["knight"]["supply"] == 1, "骑士占一人口")
         check(all(units[kind]["sight"] == 14 for kind in ("swordsman", "catapult", "cannon")), "剑士、投石车、加农炮视野统一为14")
@@ -161,7 +162,7 @@ def validate(data: dict[str, Any], final: bool) -> dict[str, Any]:
         check(units["cannon"]["damage"] == 40 and units["cannon"]["bonuses"] == {"building": 100}, "炮基础攻击40、仅对建筑增加100")
         for row in data["defense_matchups"]:
             if row["attacker"] == "defense_tower" and row["defender"] in ("swordsman", "archer", "knight"):
-                check(6 <= row["hits"] <= 10, f"箭塔攻击 {row['defender']} 防御{row['defense_level']} 为6至10击")
+                check(6 <= row["hits"] <= 8, f"箭塔攻击 {row['defender']} 防御{row['defense_level']} 为6至8击")
         support = data["support_technology"]
         check(support["tower_quotes_first_eight"] == [150, 185, 225, 255, 280, 270, 270, 270], "塔造价严格遵循指定阶梯与封顶")
         check(support["cannon_range_before"] == 13 and support["cannon_range_after"] == 14, "炮科技仅从13增加至14射程")
@@ -194,9 +195,11 @@ def validate(data: dict[str, Any], final: bool) -> dict[str, Any]:
             if all(label in samples for label in ("center", "inner", "edge")):
                 check(samples["center"]["actual"] == samples["inner"]["actual"] == samples["edge"]["actual"], "真实投石相同目标在中心与边缘同伤")
         check(units["farmer"]["hp"] == 150, "农民生命翻倍至150")
-        check(units["swordsman"]["ranged_armor"] == 0, "剑士远程护甲为0")
-        check(units["archer"]["ranged_armor"] > 0, "弓手具有远程护甲")
-        check(units["knight"]["ranged_armor"] > 0, "骑兵具有远程护甲")
+        check(units["swordsman"]["ranged_armor"] == 1, "剑士远程护甲为1")
+        check(units["archer"]["damage"] == 11 and units["archer"]["ranged_armor"] == 5, "弓手基础攻击11、远程护甲5")
+        check(units["knight"]["ranged_armor"] == 7, "骑兵远程护甲7")
+        buildings = {b["id"]: b for b in data["buildings"]}
+        check(buildings["headquarters"]["damage"] == 40 and buildings["defense_tower"]["damage"] == 16, "大本营攻击40、箭塔攻击16")
     return {"checks": checks, "failures": failures, "final_requirements_checked": final}
 
 
@@ -236,17 +239,20 @@ def render_economy(data: dict[str, Any]) -> list[str]:
 
 def render_design(data: dict[str, Any], lookup: dict, names: dict[str, str]) -> list[str]:
     military = [u for u in data["units"] if u["military"]]
+    definitions = {u["id"]: u for u in data["units"]}
+    archer, knight = definitions["archer"], definitions["knight"]
+    tower = next(b for b in data["buildings"] if b["id"] == "defense_tower")
     parts = ["", "## 克制关系与每种单位的使用方式", "",
-        "剑士采用低价反骑兵的长矛兵职责：靠类别附伤拦住骑士，基础攻击足够完成普通近战，但零远甲让弓手有明确输出目标。骑兵的1人口使机动部队更容易成形，不能再依赖人口惩罚来平衡它；45金剑士与80金骑士的正面交换、6.1移速的绕后价值需要一起看。", ""]
+        "剑士采用低价反骑兵的长矛兵职责：靠类别附伤拦住骑士，基础攻击足够完成普通近战，但较低远甲让弓手有明确输出目标。骑兵的1人口使机动部队更容易成形，不能再依赖人口惩罚来平衡它；45金剑士与80金骑士的正面交换、6.1移速的绕后价值需要一起看。", ""]
     pairs = [("swordsman", "knight"), ("knight", "archer"), ("archer", "swordsman"), ("knight", "catapult"), ("cannon", "catapult")]
     parts += [table(["优势方向", "优势方伤害 / 击杀次数 / 秒", "反方向伤害 / 击杀次数 / 秒", "优势来源"], [
         [f"{names[a]} → {names[d]}", cell(lookup[a, d, 0, 0]), cell(lookup[d, a, 0, 0]), reason]
-        for (a, d), reason in zip(pairs, ["对骑兵+14；低价前排反骑", "对弓手+3、6远甲、高机动", "射程10、目标0远甲；需要保持距离", "对攻城器+11，贴近后利用对方最小射程", "40基础攻击；单体炮战，对攻城器没有类别附伤"]) ]), "",
-        "弓手不是贴身肉搏克制剑士：无科技首次同时命中后，弓手需12秒，剑士只需8.4秒。弓手利用远程先手、齐射与前排掩护形成优势；骑士切入弓手约4.4秒完成击杀，剑士反骑约6秒。这些时长留出操作空间，但多名单位集火仍可能迅速击杀单体。", ""]
+        for (a, d), reason in zip(pairs, ["对骑兵+14；低价前排反骑", f"对弓手+3、{number(knight['ranged_armor'])}远甲、高机动", "射程10、目标远甲较低；需要保持距离", "对攻城器+11，贴近后利用对方最小射程", "40基础攻击；单体炮战，对攻城器没有类别附伤"]) ]), "",
+        f"弓手不是贴身肉搏克制剑士：无科技首次同时命中后，弓手需{number(lookup['archer', 'swordsman', 0, 0]['seconds_after_first_hit'])}秒，剑士只需{number(lookup['swordsman', 'archer', 0, 0]['seconds_after_first_hit'])}秒。弓手利用远程先手、齐射与前排掩护形成优势；骑士切入弓手约4.4秒完成击杀，剑士反骑约6秒。这些时长留出操作空间，但多名单位集火仍可能迅速击杀单体。", ""]
     roles = {
         "swordsman": "45金的反骑前排，适合保护弓手、投石车与炮。保留8基础攻击、对骑兵+14，视野由11提高到14。17刀镜像约19.2秒；不应单靠剑士追逐弓手或拆重甲建筑。",
-        "archer": "60金、7秒训练的远程步兵，12基础攻击、无骑兵附伤；射剑士12点、射骑士6点。3远甲抵抗对方箭雨，但近甲为0，被骑士切入需撤退并依赖剑士保护。它依靠射程先手，不承担正面抗骑职责。",
-        "knight": "80金、8秒训练、1人口、120生命、6远甲；速度与16视野适合侦察绕后。对弓手+3、对攻城器+11，能高效切后排，但剑士反骑伤害高，不应在正面用骑兵硬换廉价剑士。",
+        "archer": f"60金、7秒训练的远程步兵，{number(archer['damage'])}基础攻击、无骑兵附伤；射剑士{number(lookup['archer', 'swordsman', 0, 0]['damage'])}点、射骑士{number(lookup['archer', 'knight', 0, 0]['damage'])}点。{number(archer['ranged_armor'])}远甲抵抗对方箭雨，但近甲为0，被骑士切入需撤退并依赖剑士保护。它依靠射程先手，不承担正面抗骑职责。",
+        "knight": f"80金、8秒训练、1人口、120生命、{number(knight['ranged_armor'])}远甲；速度与16视野适合侦察绕后。对弓手+3、对攻城器+11，能高效切后排，但剑士反骑伤害高，不应在正面用骑兵硬换廉价剑士。",
         "catapult": "200金、3人口、140生命；18基础远程攻击，对剑士+6、建筑+50，视野由20调整至14。半径3内无边缘衰减、无友伤；落点发射时锁定，步兵可以散开或走位躲避。单台对普通步兵需要4至5次命中，多个单位同时受击才是其价值。没有近甲，最小射程3，必须保护。",
         "cannon": "250金、3人口、180生命；40基础远程攻击，仅对建筑+100，没有攻城器附伤，视野由21调整至14。炮弹仅伤害锁定单体，爆炸只作视觉效果。对投石车38伤4炮、同款38伤5炮；对10甲建筑130伤，比上一版166伤降低。基础攻击提高使其打普通单位更强，但仍无近甲、有2.5最小射程，需要前排保护。",
         "farmer": "50金、独立农民名额、150生命；5近战攻击，无军事攻防科技。同类互打30次，遇骑士40次；这是逃生和紧急自卫单位，不是反满科技军队的选择。单位恢复科技同样保护农民。",
@@ -260,12 +266,12 @@ def render_design(data: dict[str, Any], lookup: dict, names: dict[str, str]) -> 
     max_military = max(r["hits"] for r in data["matchups"] if r["attacker"] in ids and r["defender"] in ids)
     over = [r for r in data["matchups"] if r["hits"] > 40]
     parts += ["## 超过40次命中的专项审查", "",
-        f"全部36种无科技可移动单位对位均不超过40次，最大值为 **{max_default}**。五种军事单位互打，枚举全部16种攻防等级差后的400种情况最大值为 **{max_military}**，没有超过40次的军事对位。", "",
-        "以下保留非军事农民攻击高科技军队的例外。农民不吃军事科技，表格将相同的攻击等级结果去重；它们应撤离战斗，恢复科技不能把它们变成前排。", "",
-        table(["攻击者 → 目标", "目标防御等级", "伤害", "命中次数"], [
-            [f"{names[r['attacker']]} → {names[r['defender']]}", LEVELS[r["defense_level"]], number(r["damage"]), r["hits"]]
-            for r in over if r["attack_level"] == 0]), "",
-        "**重甲建筑是另一类明确保留的例外。** 1000至3000生命、10护甲承担据点防守职责，不能要求一名普通兵40击内拆除全部建筑，否则会削弱专用攻城器。无科技剑士／骑士对建筑仍为1伤、弓手为2伤，单兵拆塔分别1000／1000／500击；这意味着失去攻城器的残局可能很慢。投石对建筑58伤，炮130伤；1000血塔分别18投石／8炮。完整建筑表下文逐项列出，没有把这些异常隐藏在移动单位统计里。", "",
+        f"全部36种无科技可移动单位对位最大值为 **{max_default}**。五种军事单位互打，枚举全部16种攻防等级差后的400种情况最大值为 **{max_military}**。下表明确列出超过40次的情况。", "",
+        "弓手攻击科技落后于重甲骑兵时，固定护甲会显著压低每箭伤害；该科技差是本次数值调整明确保留的例外。农民也不适合攻击高科技军队，表格将其不生效的攻击等级结果去重；恢复科技不能把它们变成前排。", "",
+        table(["攻击者 → 目标", "攻击等级", "目标防御等级", "伤害", "命中次数"], [
+            [f"{names[r['attacker']]} → {names[r['defender']]}", LEVELS[r["attack_level"]], LEVELS[r["defense_level"]], number(r["damage"]), r["hits"]]
+            for r in over if r["attacker"] in ids or r["attack_level"] == 0]), "",
+        "**重甲建筑是另一类明确保留的例外。** 1000至3000生命、10护甲承担据点防守职责，不能要求一名普通兵40击内拆除全部建筑，否则会削弱专用攻城器。弓手基础攻击降低后，单箭拆楼更慢，完整建筑表下文逐项列出真实伤害与命中次数。投石对建筑58伤，炮130伤；1000血塔分别18投石／8炮。", "",
         "### 《帝国时代 IV》的参考边界", "",
         "参考其兵种职责与固定类别附伤。官方内容编辑器指南以弓手对轻近战步兵（长矛兵）+5伤害为例，同时区分前摇、后摇、冷却与装填；本作采用现有完整攻击循环，不把动画时间重复加入面板间隔。[官方 Weapons Masterclass](https://support.ageofempires.com/hc/en-us/articles/4418736198292-6-Weapons-Masterclass)", "",
         "官方2022年第三赛季补丁记录了黑暗时代长矛兵由70生命/6攻击改为80生命/7攻击。这是可核对的历史数据，而非声称当前所有文明统一使用这些数值：忽略护甲，80/7约为12击；本作剑士镜像17击，保留稍长交战方向。不同射程、成本、攻击循环和时代升级不能直接跨游戏换算秒数。[官方 Update 24916](https://www.ageofempires.com/news/age_of_empires_iv_update_24916_season3/)", "",
@@ -273,7 +279,7 @@ def render_design(data: dict[str, Any], lookup: dict, names: dict[str, str]) -> 
         "## 箭塔阶梯造价与两项辅助科技", "",
         table(["本局第几次付费放置箭塔", *[str(i) for i in range(1, 9)]], [["金币", *data["support_technology"]["tower_quotes_first_eight"]]]), "",
         "开局免费塔不计数。只有服务器成功支付并放置工地才推进本玩家的累计次数；失败、重复网络命令不推进。取消和毁坏不倒退次数；取消工地按实际已付金币与未完工比例退款。各玩家独立计价，计数只同步给本人。第五座280、随后270完全按指定顺序实现。", "",
-        "箭塔1000生命、13射程、基础13远程伤害，对剑士+3、骑兵+9。无科技击杀剑士／弓手／骑士为7／6／8次；满防目标为8／9／10次，保持全科技阶段6至10次。塔不吃军事攻防科技；同一战斗类别只取一项附伤。", ""]
+        f"箭塔1000生命、13射程、基础{number(tower['damage'])}远程伤害，对剑士+3、骑兵+9。各目标和防御等级的真实伤害、命中次数见防御建筑表。塔不吃军事攻防科技；同一战斗类别只取一项附伤。", ""]
     parts += [table(["科技", "金币", "研究秒数", "实际效果"], [
         [u["name"], u["cost"], number(u["research_seconds"]), "加农炮13→14射程" if u["track"] == "cannon_range" else "全部己方可移动单位10秒未受伤后，每秒恢复1生命"]
         for u in data["upgrades"] if u["track"] in ("cannon_range", "recovery")]), "",
@@ -281,7 +287,7 @@ def render_design(data: dict[str, Any], lookup: dict, names: dict[str, str]) -> 
         "恢复技术包括农民和两种攻城器，不作用于建筑。受伤后先等满10秒，再积累1秒恢复1生命，即持续无伤时第11秒首次回血；再次受伤清空等待和恢复进度，满血停止，死亡不复活。使用对局逻辑时间，暂停期间不回血，客户端不自行计时加血。连续攻击间隔均小于10秒，因此本报告的连续命中矩阵不受脱战回血影响；打停后再打需要按实际剩余生命重新计算。", "",
         "### 性能与同步边界", "",
         "塔价以玩家累计计数直接索引短数组，报价、放置计数和工地退款均为O(1)，不扫描历史建筑。恢复在单位既有30TPS逻辑步内以常数状态处理，只在有效整数回复时修改生命；每单位O(1)、整体O(N)，不创建逐单位Timer，也不额外做全场邻居查询。射程直接读取所属玩家科技，完成科技无需遍历重建所有单位。", "",
-        "只有房主结算造价、科技、伤害与恢复；已有可见性过滤的15Hz快照同步生命和有效射程，玩家科技与塔累计次数只发本人。协议升级为9，0.9.0客户端不能混入。增加视野会扩大迷雾可见区域与可能发送的敌军数量；不能因这几项机制为O(1)就宣称八人满人口性能已解决。", ""]
+        "只有房主结算造价、科技、伤害与恢复；已有可见性过滤的15Hz快照同步生命和有效射程，玩家科技与塔累计次数只发本人。联机双方需使用同一版本与协议。增加视野会扩大迷雾可见区域与可能发送的敌军数量；不能因这几项机制为O(1)就宣称八人满人口性能已解决。", ""]
     return parts
 
 
@@ -304,7 +310,7 @@ def render(data: dict[str, Any]) -> str:
                  ("knight", "archer"), ("archer", "swordsman"), ("swordsman", "knight")]
     parts.append(table(["无科技攻击者 → 目标", "实际伤害", "命中次数", "首次命中后秒数"], [
         [f"{names[a]} → {names[d]}", number(lookup[a, d, 0, 0]["damage"]), lookup[a, d, 0, 0]["hits"], number(lookup[a, d, 0, 0]["seconds_after_first_hit"])] for a, d in key_pairs]))
-    parts += ["", "骑兵依靠机动、对弓手附伤和远程护甲切后排；弓箭手利用射程和齐射压制零远程护甲的剑士；剑士依靠对骑兵附伤守住阵线。延长交战仍需依靠站位与兵种配合，不能把命中次数表当作一对一必胜结论。", ""]
+    parts += ["", "骑兵依靠机动、对弓手附伤和远程护甲切后排；弓箭手利用射程和齐射压制远程护甲较低的剑士；剑士依靠对骑兵附伤守住阵线。延长交战仍需依靠站位与兵种配合，不能把命中次数表当作一对一必胜结论。", ""]
     if "baseline" in data:
         baseline = data["baseline"]
         old_units = {u["id"]: u for u in baseline["units"]}
@@ -321,11 +327,11 @@ def render(data: dict[str, Any]) -> str:
             table(["攻击者 → 目标", "旧版首击后秒数", "新版首击后秒数", "变化"], [
                 [f"{names[a]} → {names[d]}", number(old_lookup[a, d]["seconds_after_first_hit"]), number(lookup[a, d, 0, 0]["seconds_after_first_hit"]),
                  f"{lookup[a, d, 0, 0]['seconds_after_first_hit'] - old_lookup[a, d]['seconds_after_first_hit']:+.1f} 秒"] for a, d in key_pairs]), "",
-            "生命、护甲、价格、人口和攻击间隔沿用0.10.0；弓手训练8→7秒，骑士训练10→8秒。炮基础攻击26→40，删除对攻城器+12附伤，对建筑附伤150→100。剑士视野11→14，投石车20→14，加农炮21→14；其他单位视野保持。", "",
+            "上表逐项对照生命、基础攻击与护甲；下表继续列出视野和训练时长的实际变化。类别附伤及建筑对位见后续数据表。", "",
             table(["单位", "旧视野 → 新视野", "旧训练秒 → 新训练秒"], [
                 [u["name"], f"{number(old_units[u['id']]['sight'])} → {number(u['sight'])}",
                  f"{number(old_units[u['id']]['training_seconds'])} → {number(u['training_seconds'])}"] for u in units]), ""]
-        parts += ["弓箭手仍为12基础攻击、没有骑兵附伤；骑兵6点远甲与剑士0点远甲保持不变。炮对建筑实际伤害166→130，对攻城器36→38；因此炮打兵变强、拆楼变慢，炮战基础击杀次数仍为4击投石车、5击同款炮。", "",
+        parts += ["基础攻击和固定护甲会共同影响实际命中次数；相同的攻击变化对无甲步兵、重甲骑兵和建筑的效果不同。具体变化以实际资源对比为准。", "",
             table(["单位", "旧基础攻击", "新基础攻击", "基础攻击变化"], [
                 [names[kind], number(old_units[kind]["damage"]), number(next(u for u in units if u["id"] == kind)["damage"]),
                  f"{(next(u for u in units if u['id'] == kind)['damage'] / old_units[kind]['damage'] - 1) * 100:+.1f}%"]

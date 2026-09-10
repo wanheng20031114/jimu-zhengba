@@ -46,6 +46,7 @@ func _ready() -> void:
 						launch_mode = candidate
 				call_deferred("_launch_compatibility_mode", launch_mode)
 				return
+	_populate_difficulties(%SoloDifficulty)
 	_load_preferences()
 	set_mode("1v1")
 	relay.room_changed.connect(_on_room_changed)
@@ -58,6 +59,8 @@ func _ready() -> void:
 		var row: HBoxContainer = rows.get_child(owner)
 		row.get_node("Kind").pressed.connect(_on_slot_bot_pressed.bind(owner))
 		row.get_node("Team").item_selected.connect(_on_slot_team_selected.bind(owner))
+		_populate_difficulties(row.get_node("Difficulty"))
+		row.get_node("Difficulty").item_selected.connect(_on_slot_difficulty_selected.bind(owner))
 	if not relay.room.is_empty():
 		_on_room_changed(relay.room)
 	_on_connection_state_changed(relay.connection_state)
@@ -115,7 +118,7 @@ func _on_solo_start() -> void:
 		relay.leave_room()
 	else:
 		relay.disconnect_relay()
-	if session.start_offline(mode) != OK:
+	if session.start_offline(mode, %SoloDifficulty.get_selected_metadata()) != OK:
 		_transitioning = false
 		%SoloStart.disabled = false
 
@@ -315,13 +318,17 @@ func _on_room_changed(value: Dictionary) -> void:
 		var slot: Dictionary = room.slots[owner]
 		if _pending_slots.has(owner):
 			var desired: Dictionary = _pending_slots[owner]
-			if slot.kind == desired.kind and int(slot.team_id) == int(desired.team):
+			if slot.kind == desired.kind and int(slot.team_id) == int(desired.team) and slot.get("bot_difficulty", "normal") == desired.bot_difficulty:
 				_pending_slots.erase(owner)
 		var local: bool = int(slot.owner_id) == relay.owner_id
-		row.get_node("Name").text = ("保留空位" if slot.kind == "open" else "电脑将领 %d" % (owner + 1) if slot.kind == "bot" else slot.name) + (" · 你" if local else "")
+		row.get_node("Name").text = ("保留空位" if slot.kind == "open" else slot.name) + (" · 你" if local else "")
 		row.get_node("Name").tooltip_text = slot.name
 		row.get_node("Kind").text = "添加电脑" if slot.kind == "open" else "移除电脑" if slot.kind == "bot" else "真人玩家"
 		row.get_node("Kind").tooltip_text = "让电脑占用这个空位" if slot.kind == "open" else "腾出席位，让朋友加入" if slot.kind == "bot" else "不能替换已加入的真人"
+		var difficulty: OptionButton = row.get_node("Difficulty")
+		difficulty.visible = slot.kind == "bot"
+		difficulty.select(NetworkProtocol.BOT_DIFFICULTIES.keys().find(slot.get("bot_difficulty", "normal")))
+		difficulty.tooltip_text = "电脑难度 · 每次采集收益 %d 倍" % int(NetworkProtocol.BOT_DIFFICULTIES[slot.get("bot_difficulty", "normal")].gather_multiplier)
 		var team: OptionButton = row.get_node("Team")
 		team.clear()
 		if room.mode == "ffa":
@@ -377,6 +384,7 @@ func _refresh_room_controls() -> void:
 		var row: HBoxContainer = rows.get_child(owner)
 		row.get_node("Kind").disabled = not in_lobby or not relay.is_host or room.slots[owner].kind == "human" or _pending_slots.has(owner)
 		row.get_node("Team").disabled = not in_lobby or not relay.is_host or room.mode == "ffa" or _pending_slots.has(owner)
+		row.get_node("Difficulty").disabled = not in_lobby or not relay.is_host or room.slots[owner].kind != "bot" or _pending_slots.has(owner)
 
 func _actual_match_label() -> String:
 	if room.mode == "ffa":
@@ -395,6 +403,7 @@ func _start_block_reason() -> String:
 		"team_capacity": "单个阵营人数超过本模式上限，请调整阵营。", "human_host_required": "等待房主连接。",
 		"opponents_required": "至少需要两个敌对阵营。邀请朋友，或为对手席位添加电脑。",
 		"not_ready": "等待所有真人玩家准备就绪。", "disconnected": "等待断线玩家重新连接。",
+		"invalid_difficulty": "电脑难度配置无效，请重新设置电脑席位。",
 	}
 	assert(reasons.has(code), "Unhandled room start reason: " + code)
 	return reasons[code]
@@ -414,16 +423,34 @@ func _on_fill_bots() -> void:
 func _can_configure_slot(owner: int) -> bool:
 	return relay.is_host and not room.is_empty() and relay.connection_state == "lobby" and room.status == "lobby" and owner >= 0 and owner < room.slots.size() and not _pending_slots.has(owner)
 
-func _request_slot_change(owner: int, kind: String, team: int) -> void:
-	_pending_slots[owner] = {"kind": kind, "team": team}
-	relay.configure_slot(owner, kind, team)
+func _request_slot_change(owner: int, kind: String, team: int, bot_difficulty: String = "normal") -> void:
+	_pending_slots[owner] = {"kind": kind, "team": team, "bot_difficulty": bot_difficulty}
+	relay.configure_slot(owner, kind, team, bot_difficulty)
 	%SlotTimeout.start()
 	_refresh_room_controls()
 
 func _on_slot_team_selected(index: int, owner: int) -> void:
 	if not _can_configure_slot(owner) or room.mode == "ffa" or index < 0 or index >= int(NetworkProtocol.MODES[room.mode].teams) or int(room.slots[owner].team_id) == index:
 		return
-	_request_slot_change(owner, room.slots[owner].kind, index)
+	_request_slot_change(owner, room.slots[owner].kind, index, room.slots[owner].get("bot_difficulty", "normal"))
+
+func _populate_difficulties(button: OptionButton) -> void:
+	for id: String in NetworkProtocol.BOT_DIFFICULTIES:
+		var definition: Dictionary = NetworkProtocol.BOT_DIFFICULTIES[id]
+		button.add_item("%s · %d倍" % [definition.label, definition.gather_multiplier])
+		button.set_item_metadata(button.item_count - 1, id)
+		button.set_item_tooltip(button.item_count - 1, "农民每次采集获得 %d 倍金币" % definition.gather_multiplier)
+
+func _on_solo_difficulty_selected(_index: int) -> void:
+	_save_preferences()
+
+func _on_slot_difficulty_selected(index: int, owner: int) -> void:
+	if not _can_configure_slot(owner) or room.slots[owner].kind != "bot":
+		return
+	var button: OptionButton = rows.get_child(owner).get_node("Difficulty")
+	var difficulty: String = button.get_item_metadata(index)
+	if difficulty != room.slots[owner].get("bot_difficulty", "normal"):
+		_request_slot_change(owner, "bot", int(room.slots[owner].team_id), difficulty)
 
 func _on_ready_toggled(value: bool) -> void:
 	if not room.is_empty() and not relay.is_host:
@@ -475,11 +502,15 @@ func _load_preferences() -> void:
 	if preferences.load(PREFERENCES_PATH) == OK:
 		%Nickname.text = preferences.get_value("lobby", "nickname", "指挥官")
 		%ServerAddress.text = preferences.get_value("lobby", "address", %ServerAddress.text)
+		var difficulty: String = preferences.get_value("lobby", "bot_difficulty", "normal")
+		if difficulty in NetworkProtocol.BOT_DIFFICULTIES:
+			%SoloDifficulty.select(NetworkProtocol.BOT_DIFFICULTIES.keys().find(difficulty))
 
 func _save_preferences() -> void:
 	var preferences := ConfigFile.new()
 	preferences.set_value("lobby", "nickname", %Nickname.text.strip_edges())
 	preferences.set_value("lobby", "address", %ServerAddress.text.strip_edges())
+	preferences.set_value("lobby", "bot_difficulty", %SoloDifficulty.get_selected_metadata())
 	preferences.save(PREFERENCES_PATH)
 
 func _on_settings() -> void:

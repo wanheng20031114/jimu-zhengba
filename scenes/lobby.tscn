@@ -411,6 +411,30 @@ text = "96 × 96   ·   六座矿脉"
 theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.61,0.56,0.45,1)
 
+[node name="DifficultyRow" type="HBoxContainer" parent="CanvasLayer/UI/SoloPanel/SoloScroll/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="CanvasLayer/UI/SoloPanel/SoloScroll/Content/DifficultyRow"]
+layout_mode = 2
+text = "电脑难度"
+theme_override_font_sizes/font_size = 18
+
+[node name="SoloDifficulty" type="OptionButton" parent="CanvasLayer/UI/SoloPanel/SoloScroll/Content/DifficultyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 42)
+size_flags_horizontal = 3
+tooltip_text = "适用于全部电脑将领；倍数为农民每次采集的金币收益"
+theme_override_font_sizes/font_size = 18
+
+[node name="DifficultyHint" type="Label" parent="CanvasLayer/UI/SoloPanel/SoloScroll/Content"]
+layout_mode = 2
+text = "困难起，电脑农民每次采集获得 2 / 3 / 4 倍金币。"
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.64,0.58,0.47,1)
+
 [node name="Divider" type="HSeparator" parent="CanvasLayer/UI/SoloPanel/SoloScroll/Content"]
 layout_mode = 2
 custom_minimum_size = Vector2(0,10)
@@ -724,6 +748,12 @@ popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
 
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot0"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
+
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot0"]
 layout_mode = 2
 custom_minimum_size = Vector2(77,0)
@@ -768,6 +798,12 @@ popup/item_1/text = "联盟二"
 popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
+
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot1"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
 
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot1"]
 layout_mode = 2
@@ -814,6 +850,12 @@ popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
 
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot2"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
+
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot2"]
 layout_mode = 2
 custom_minimum_size = Vector2(77,0)
@@ -858,6 +900,12 @@ popup/item_1/text = "联盟二"
 popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
+
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot3"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
 
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot3"]
 layout_mode = 2
@@ -904,6 +952,12 @@ popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
 
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot4"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
+
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot4"]
 layout_mode = 2
 custom_minimum_size = Vector2(77,0)
@@ -948,6 +1002,12 @@ popup/item_1/text = "联盟二"
 popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
+
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot5"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
 
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot5"]
 layout_mode = 2
@@ -994,6 +1054,12 @@ popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
 
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot6"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
+
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot6"]
 layout_mode = 2
 custom_minimum_size = Vector2(77,0)
@@ -1038,6 +1104,12 @@ popup/item_1/text = "联盟二"
 popup/item_1/id = 1
 popup/item_2/text = "联盟三"
 popup/item_2/id = 2
+
+[node name="Difficulty" type="OptionButton" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot7"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(116,40)
+theme_override_font_sizes/font_size = 15
 
 [node name="State" type="Label" parent="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/SlotScroll/Slots/Slot7"]
 layout_mode = 2
@@ -1208,6 +1280,7 @@ one_shot = true
 [connection signal="pressed" from="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Setup/OnlineModeRow/OnlineMode2v2" to="." method="_on_mode_selected" binds= ["2v2"]]
 
 [connection signal="pressed" from="CanvasLayer/UI/OnlinePanel/PanelScroll/Content/Room/FillBots" to="." method="_on_fill_bots"]
+[connection signal="item_selected" from="CanvasLayer/UI/SoloPanel/SoloScroll/Content/DifficultyRow/SoloDifficulty" to="." method="_on_solo_difficulty_selected"]
 
 [connection signal="pressed" from="CanvasLayer/UI/SoloPanel/SoloScroll/Content/ModeRow/Mode3v3" to="." method="_on_mode_selected" binds= ["3v3"]]
 

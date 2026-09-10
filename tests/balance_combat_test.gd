@@ -145,8 +145,8 @@ func _stone_blast() -> void:
 	await physics_frame
 	await _wait(1.6)
 	_check(center.hp == 100, "stone fixed impact point can be dodged")
-	_check(core.hp == 45 and core.alive, "one stone deals fifteen damage to an archer")
-	_check(core_sword.hp == 76 and core_sword.alive, "the same stone deals twenty-four damage to a swordsman")
+	_check(core.hp == 47 and core.alive, "one stone deals thirteen damage to an archer")
+	_check(core_sword.hp == 77 and core_sword.alive, "the same stone deals twenty-three damage to a swordsman")
 	_check(edge.hp == core.hp, "stone outer edge deals the same damage as its center with no falloff")
 	_check(outside.hp == 60 and ally.hp == 60, "stone leaves out-of-radius and allied units unharmed")
 	_check(impact_point == Vector3(0, 1, -9), "stone initial landing point is fixed to commanded ground")

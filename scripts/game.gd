@@ -432,7 +432,8 @@ func own_selected_workers() -> Array[Node3D]:
 
 func _on_gathered(worker: Node3D, amount: int) -> void:
 	if is_authority and not finished and not get_tree().paused and worker.alive:
-		get_player(worker.owner_id).gold += amount
+		var player := get_player(worker.owner_id)
+		player.gold += amount * player.get_gather_yield_multiplier()
 
 func command_gather(mine: Node3D, queued: bool = false) -> void:
 	if not own_selected_buildings().is_empty():
@@ -1137,6 +1138,7 @@ func _setup_match() -> void:
 		var player := PlayerState.new(int(slot.owner_id), int(slot.team_id))
 		player.controller = slot.controller
 		player.display_name = slot.name
+		player.bot_difficulty = slot.get("bot_difficulty", "normal")
 		if not player.is_participating():
 			player.gold = 0
 		players.append(player)

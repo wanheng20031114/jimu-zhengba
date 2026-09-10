@@ -112,7 +112,7 @@ func validate_resource_values() -> void:
 	var began := checks
 	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "archer", "knight"],
 		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
-	var defensive_damage := {"headquarters": 10, "enemy_keep": 10, "defense_tower": 13, "tower": 14}
+	var defensive_damage := {"headquarters": 40, "enemy_keep": 40, "defense_tower": 16, "tower": 17}
 	for kind: String in production:
 		var building := BalanceCatalog.building(kind)
 		check(Array(building.produces) == production[kind], "packaged_production_members_" + kind)
@@ -128,19 +128,19 @@ func validate_resource_values() -> void:
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 15], ["swordsman", "knight", 6],
-		["swordsman", "archer", 8], ["archer", "knight", 20], ["archer", "swordsman", 9]]:
+		["swordsman", "archer", 8], ["archer", "knight", 30], ["archer", "swordsman", 10]]:
 		var defender := BalanceCatalog.unit(pair[1])
 		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
 		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
 	var archer := BalanceCatalog.unit("archer")
 	var swordsman := BalanceCatalog.unit("swordsman")
-	check(archer.damage == 12 and archer.hp == 60 and archer.ranged_armor == 3 and archer.bonuses.is_empty() and archer.sight == 14
-		and swordsman.ranged_armor == 0 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
+	check(archer.damage == 11 and archer.hp == 60 and archer.ranged_armor == 5 and archer.bonuses.is_empty() and archer.sight == 14
+		and swordsman.ranged_armor == 1 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100
 		and swordsman.damage == 8 and swordsman.bonuses == {&"cavalry": 14} and swordsman.sight == 14,
 		"packaged_archer_values_and_swordsman_anti_cavalry_bonus")
 	check(BalanceCatalog.unit("knight").sight == 16 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
-	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 6 and knight.melee_armor == 2 and knight.damage == 9
+	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 7 and knight.melee_armor == 2 and knight.damage == 9
 		and knight.bonuses == {&"archer": 3, &"siege": 11} and knight.supply == 1, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")
 	check(catapult.range == 13 and catapult.damage == 18
@@ -148,9 +148,9 @@ func validate_resource_values() -> void:
 		and catapult.cost == 200 and catapult.hp == 140 and catapult.ranged_armor == 2 and catapult.cooldown == 3 and catapult.min_range == 3 and catapult.sight == 14,
 		"packaged_catapult_reach_damage_and_class_bonuses")
 	var stone := DamageResolver.snapshot(catapult, 0, 0, 0)
-	check(DamageResolver.resolve(stone, swordsman) == 24 and DamageResolver.resolve(stone, archer) == 15
-		and ceili(swordsman.hp / 24.0) == 5 and ceili(archer.hp / 15.0) == 4,
-		"packaged_catapult_needs_five_swordsman_hits_and_four_archer_hits")
+	check(DamageResolver.resolve(stone, swordsman) == 23 and DamageResolver.resolve(stone, archer) == 13
+		and ceili(swordsman.hp / 23.0) == 5 and ceili(archer.hp / 13.0) == 5,
+		"packaged_catapult_needs_five_swordsman_and_archer_hits")
 	var cannon := BalanceCatalog.unit("cannon")
 	check(cannon.damage == 40 and cannon.bonuses == {&"building": 100} and cannon.ranged_armor == 2, "packaged_cannon_base_damage_and_building_only_bonus")
 	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)

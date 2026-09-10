@@ -53,7 +53,7 @@ func _run() -> void:
 	check(hud.get_node("%FarmersValue").text == "农民 10 / 10", "farmer supply includes seven pending trainees")
 	check("训练中 7 人" in hud.get_node("%FarmersValue").tooltip_text, "farmer tooltip explains training reservations")
 	check(game.map_definition.display_name in hud.get_node("TopLeft/Location").text, "top-left title uses active map resource")
-	check(("2v2 队伍战" if game.match_config.mode == "2v2" else "1v1 遭遇战") in hud.get_node("TopLeft/Location").text, "match mode is visible")
+	check(NetworkProtocol.MODES[game.match_config.mode].label in hud.get_node("TopLeft/Location").text, "match mode is visible")
 	check(hud.get_node("MapFrame/MapTitle").text == game.map_definition.display_name, "minimap uses active map name")
 	var own: BattleUnit = game.spawn_unit("swordsman", 0, Vector3.ZERO)
 	var other: BattleUnit = game.spawn_unit("swordsman", game.players.size() - 1, Vector3(2, 0, 0))
@@ -69,6 +69,17 @@ func _run() -> void:
 	check(hud.selected_stats.text.begins_with("攻 %d" % (definition.damage + 4)) and "近甲 %d" % (definition.melee_armor + 2) in hud.selected_stats.text, "own military shows actual upgrade bonuses")
 	_select(other)
 	check(hud.selected_stats.text.begins_with("基础 攻 %d" % definition.damage) and "近甲 %d" % definition.melee_armor in hud.selected_stats.text, "other player's unknown private upgrades are explicitly base statistics")
+	_inspect_ownership(own, other)
+	if capture_enabled:
+		_select(other)
+		var motion := InputEventMouseMotion.new()
+		motion.position = hud.selection_caption.get_global_rect().get_center()
+		motion.global_position = motion.position
+		root.push_input(motion, true)
+		await process_frame
+		check(root.gui_get_hovered_control() == hud.selection_caption, "owner caption receives native hover for full nickname tooltip")
+		await create_timer(0.75).timeout
+		await _capture(game.match_config.mode + "_enemy_owner")
 	var worker: BattleUnit = game.owned_entities(0, "units").filter(func(unit): return unit.unit_type == "farmer")[0]
 	game.online = true
 	game.is_authority = false
@@ -118,7 +129,71 @@ func _run() -> void:
 	await process_frame
 	quit(0 if failures.is_empty() else 1)
 
+func _inspect_ownership(own: BattleUnit, other: BattleUnit) -> void:
+	var hud: Control = game.hud
+	var local: PlayerState = game.get_player(own.owner_id)
+	var remote: PlayerState = game.get_player(other.owner_id)
+	local.display_name = "本地指挥官"
+	_select(own)
+	check(hud.selection_caption.text == "所属：本地指挥官（玩家）" and hud.selected_role.text == "你的部队", "own unit shows exact player name alongside self relation")
+	_select(game.headquarters)
+	check(hud.selection_caption.text == "所属：本地指挥官（玩家）" and hud.selected_role.text == "你的建筑", "own headquarters shows player name and building relation")
+	# Exercise the public snapshot application used by remote clients, including takeover.
+	game.online = true
+	game.is_authority = false
+	var state: Dictionary = remote.public_state()
+	game.replication.game = game
+	state.name = "远方玩家小明"
+	state.controller = "human"
+	game.replication._apply_players([state])
+	_select(other)
+	check(hud.selection_caption.text == "所属：远方玩家小明（玩家）" and hud.selected_role.text == "敌方部队", "replica enemy unit uses public nickname and enemy relation")
+	check(hud._actions.is_empty() and hud.get_node("%AttackButton").disabled, "inspecting remote ownership does not enable commands")
+	var enemy_base: BattleBuilding = game.owned_entities(other.owner_id, "buildings").filter(func(building): return building.building_type == "headquarters")[0]
+	_select(enemy_base)
+	check(hud.selection_caption.text == "所属：远方玩家小明（玩家）" and hud.selected_role.text == "敌方建筑", "replica enemy building uses exact human nickname")
+	state.controller = "bot"
+	game.replication._apply_players([state])
+	hud.refresh()
+	check(hud.selection_caption.text == "所属：远方玩家小明（电脑）", "AI takeover updates controller while retaining the owner's name")
+	_select(other)
+	check(hud.selection_caption.text == "所属：远方玩家小明（电脑）", "computer-owned unit also identifies the particular owner")
+	remote.bot_difficulty = "nightmare"
+	var enemy_worker: BattleUnit = game.owned_entities(other.owner_id, "units").filter(func(unit): return unit.unit_type == "farmer")[0]
+	_select(enemy_worker)
+	check(hud.selected_stats.text.begins_with("基础 采矿 +16 / 3.00秒"), "enemy worker inspection includes public difficulty yield without revealing private mining upgrades")
+	remote.bot_difficulty = "normal"
+	state.name = "这是一位拥有很长中文名字的电脑王国指挥官将领"
+	game.replication._apply_players([state])
+	hud.refresh()
+	check(hud.selection_caption.text.contains(state.name) and hud.selection_caption.tooltip_text == "所属电脑：" + state.name, "long nickname retains full text in native tooltip")
+	check(hud.selection_caption.clip_text and hud.selection_caption.text_overrun_behavior == TextServer.OVERRUN_TRIM_ELLIPSIS, "long owner caption clips with ellipsis without resizing command bar")
+	if game.match_config.mode == "2v2":
+		var ally_base: BattleBuilding = game.owned_entities(1, "buildings").filter(func(building): return building.building_type == "headquarters")[0]
+		var ally_worker: BattleUnit = game.owned_entities(1, "units")[0]
+		var ally_state: Dictionary = game.get_player(1).public_state()
+		for controller: String in ["human", "bot"]:
+			ally_state.name = "盟友张三" if controller == "human" else "盟友电脑赵四"
+			ally_state.controller = controller
+			game.replication._apply_players([ally_state])
+			var caption: String = "所属：%s（%s）" % [ally_state.name, "玩家" if controller == "human" else "电脑"]
+			_select(ally_base)
+			check(hud.selection_caption.text == caption and hud.selected_role.text == "盟友建筑", "allied building identifies its own human/bot owner independently of team: " + controller)
+			_select(ally_worker)
+			check(hud.selection_caption.text == caption and hud.selected_role.text == "盟友部队", "allied unit identifies its own human/bot owner independently of team: " + controller)
+	game.online = false
+	game.is_authority = true
+	game.selection.assign([own, game.headquarters])
+	hud.refresh()
+	check(hud.selection_caption.text == "所属：本地指挥官（玩家）", "mixed own unit and building selection retains ownership")
+	_select(get_nodes_in_group("resource_veins")[0])
+	check(hud.selection_caption.text == "所选部队" and hud.selection_caption.tooltip_text.is_empty() and hud.selected_role.text == "中立资源 · 金矿", "neutral mine clears previous ownership")
+	game.selection.clear()
+	hud.refresh()
+	check(hud.selection_caption.text == "所选部队" and hud.selection_caption.mouse_filter == Control.MOUSE_FILTER_IGNORE, "empty selection clears ownership and tooltip hit target")
+
 func _inspect_layout(hud: Control, mode: String) -> void:
+	check(root.get_visible_rect().encloses(hud.selection_caption.get_global_rect()), mode + " owner caption fits viewport")
 	var panel: Control = hud.get_node("Resources")
 	check(is_equal_approx(panel.size.x, 350.0), mode + " resources retain 350px total width")
 	check(root.get_visible_rect().encloses(panel.get_global_rect()), mode + " resources fit viewport")

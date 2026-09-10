@@ -2,7 +2,7 @@ class_name NetworkProtocol
 extends RefCounted
 ## Explicit JSON primitives only: never decode network bytes into Godot objects.
 
-const VERSION: int = 9
+const VERSION: int = 10
 const BUILD_ID: String = "0.11.0"
 const TLS_NAME: String = "jimu-zhengba-relay"
 const PORT: int = 24571
@@ -25,6 +25,13 @@ const HEADER_BYTES: int = 9
 # Shared by lobby, authority and relay. Owner IDs are stable slot indices;
 # alliance IDs are independent and only FFA fixes each owner to its own alliance.
 const MAX_PLAYERS: int = 8
+# Difficulty only changes gold paid per completed worker gathering cycle.
+const BOT_DIFFICULTIES: Dictionary = {
+	"normal": {"label": "普通", "gather_multiplier": 1},
+	"hard": {"label": "困难", "gather_multiplier": 2},
+	"very_hard": {"label": "极难", "gather_multiplier": 3},
+	"nightmare": {"label": "噩梦", "gather_multiplier": 4},
+}
 const MODES: Dictionary = {
 	"1v1": {"slots": 2, "teams": 2, "team_size": 1, "map_id": "duel", "map_resource": "amber_crossroads_1v1", "label": "1v1 遭遇战"},
 	"2v2": {"slots": 4, "teams": 2, "team_size": 2, "map_id": "teams", "map_resource": "twin_valleys_2v2", "label": "2v2 团队战"},
@@ -47,6 +54,9 @@ static func match_config_error(config: Dictionary, require_human_host: bool = tr
 			return "invalid_roster"
 		if slot.get("controller") not in ["human", "bot", "open"] or not slot.get("name") is String:
 			return "invalid_roster"
+		var difficulty: Variant = slot.get("bot_difficulty", "normal")
+		if difficulty not in BOT_DIFFICULTIES or (slot.controller != "bot" and difficulty != "normal"):
+			return "invalid_difficulty"
 		if config.mode == "ffa" and int(slot.team_id) != index:
 			return "ffa_independent"
 		if slot.controller == "open":
@@ -67,7 +77,7 @@ static func room_start_error(room: Dictionary) -> String:
 		if not slot is Dictionary:
 			return "invalid_roster"
 		config.players.append({"owner_id": slot.get("owner_id"), "team_id": slot.get("team_id"),
-			"controller": slot.get("kind"), "name": slot.get("name", "")})
+			"controller": slot.get("kind"), "name": slot.get("name", ""), "bot_difficulty": slot.get("bot_difficulty", "normal")})
 	var roster_error := match_config_error(config)
 	if not roster_error.is_empty():
 		return roster_error

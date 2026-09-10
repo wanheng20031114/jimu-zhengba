@@ -9,6 +9,7 @@ var owner_id: int
 var alliance_id: int
 var display_name: String
 var controller: String = "human"
+var bot_difficulty: String = "normal"
 var eliminated: bool = false
 var gold: int = 320
 var military_supply: int = 0
@@ -54,6 +55,9 @@ func get_supply_limit() -> int:
 
 func get_mining_rate_multiplier() -> float:
 	return 1.0 + (BalanceCatalog.upgrade("mining_%d" % mining_level).total_bonus / 100.0 if mining_level > 0 else 0.0)
+
+func get_gather_yield_multiplier() -> int:
+	return int(NetworkProtocol.BOT_DIFFICULTIES[bot_difficulty].gather_multiplier) if controller == "bot" else 1
 
 func get_cannon_range_bonus() -> float:
 	return float(BalanceCatalog.upgrade(&"cannon_range_1").total_bonus) if cannon_range_level > 0 else 0.0

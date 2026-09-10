@@ -2,7 +2,7 @@
 
 ## 大本营塔楼
 
-前方两座角塔由 4.18 提高至 5.25 世界单位，塔顶女墙高于当地坡屋面。原始建模入口为 `tools/build_environment.py::headquarters`；原生场景和五个合并网格由 `tools/build_skirmish_maps.py` 与 `tests/skirmish_maps_bake.gd` 保存。实际 1600×900 Vulkan 对局截图：`artifacts/headquarters-raised-towers.png`。
+前方两座角塔在此前由 4.18 提高至 5.25 后，再提高 0.30 至 5.55 世界单位，让塔顶女墙进一步高于当地坡屋面。原始建模入口为 `tools/build_environment.py::headquarters`；原生场景和五个合并网格由 `tools/build_skirmish_maps.py` 与 `tests/skirmish_maps_bake.gd` 保存。实际 1600×900 Vulkan 对局截图：`artifacts/headquarters-raised-towers.png`。
 
 ## 上下文鼠标
 

@@ -444,7 +444,7 @@ def headquarters():
     for sign in (-1,1):
         # The corner turrets clear the main hall's sloping eaves. Keeping the
         # parapet above the roof avoids two surfaces cutting through each other.
-        square_tower(m,sign*3.23,2.40,1.85,5.25,"blue" if sign<0 else None)
+        square_tower(m,sign*3.23,2.40,1.85,5.55,"blue" if sign<0 else None)
     m.box((2.2,.17,.8),(0,.36,3.50),"stone_light",bevel=.04)
     m.box((2.5,.13,.7),(0,.19,4.05),"stone",bevel=.04)
     m.box((2.7,.10,.45),(0,.075,4.50),"stone",bevel=.04)

@@ -42,13 +42,13 @@ func _run() -> void:
 	var archer := BalanceCatalog.unit("archer")
 	var knight := BalanceCatalog.unit("knight")
 	var swordsman := BalanceCatalog.unit("swordsman")
-	check(archer.damage == 12 and archer.bonuses.is_empty(), "archer retains twelve base damage with no anti-cavalry bonus")
+	check(archer.damage == 11 and archer.ranged_armor == 5 and archer.bonuses.is_empty(), "archer has eleven base damage and five ranged armor with no anti-cavalry bonus")
 	check(knight.sight == 16 and archer.sight == 14, "cavalry sees two world units farther than archers")
 	check(archer.range == 10 and is_equal_approx(archer.cooldown, 1.5), "archer reach and cadence stay at their approved values")
-	check(knight.ranged_armor == 6 and knight.melee_armor == 2 and knight.cost == 80, "cavalry has six ranged armor and costs eighty gold")
+	check(knight.ranged_armor == 7 and knight.melee_armor == 2 and knight.cost == 80, "cavalry has seven ranged armor and costs eighty gold")
 	check(knight.bonuses[&"archer"] == 3 and knight.damage == 9, "anti-archer damage is a class bonus, not extra damage against all units")
-	check(swordsman.ranged_armor == 0 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100 and swordsman.sight == 14, "swordsman has zero ranged armor and fourteen-unit vision")
-	for pair: Array in [["knight", 6, 20], ["swordsman", 12, 9]]:
+	check(swordsman.ranged_armor == 1 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100 and swordsman.sight == 14, "swordsman has one ranged armor and fourteen-unit vision")
+	for pair: Array in [["knight", 4, 30], ["swordsman", 10, 10], ["archer", 6, 10]]:
 		await _shoot_to_defeat(pair[0], pair[1], pair[2])
 	await _vision_case()
 	await _clear()

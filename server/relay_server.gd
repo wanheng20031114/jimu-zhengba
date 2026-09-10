@@ -249,7 +249,7 @@ func _create(peer: ENetPacketPeer, message: Dictionary, now: int) -> void:
 	var count: int = Protocol.MODES[message.mode].slots
 	var slots: Array = []
 	for owner in range(count):
-		slots.append({"owner_id": owner, "team_id": Protocol.default_alliance(message.mode, owner), "kind": "open", "token": ""})
+		slots.append({"owner_id": owner, "team_id": Protocol.default_alliance(message.mode, owner), "kind": "open", "token": "", "bot_difficulty": "normal"})
 	var code := _code()
 	var room := {"code": code, "match_id": _crypto.generate_random_bytes(16).hex_encode(), "mode": message.mode, "slots": slots, "status": "lobby", "touched": now, "seed": _crypto.generate_random_bytes(4).decode_u32(0) & 0x7fffffff}
 	rooms[code] = room
@@ -286,6 +286,7 @@ func _assign(peer: ENetPacketPeer, room: Dictionary, owner: int, name: String) -
 	_connections[peer.get_instance_id()].token = token
 	_connections[peer.get_instance_id()].match_ended = false
 	room.slots[owner].kind = "human"
+	room.slots[owner].bot_difficulty = "normal"
 	room.slots[owner].token = token
 	_joined(peer, session, token)
 
@@ -299,6 +300,10 @@ func _configure_slot(peer: ENetPacketPeer, session: Dictionary, room: Dictionary
 	if not Protocol.integer(message.get("owner"), 0, room.slots.size() - 1) or not Protocol.integer(message.get("team"), 0, int(Protocol.MODES[room.mode].teams) - 1) or message.get("kind") not in ["open", "bot", "human"]:
 		_reject(peer, "invalid_slot", "无效的席位设置")
 		return
+	var difficulty: Variant = message.get("bot_difficulty", "normal")
+	if difficulty not in Protocol.BOT_DIFFICULTIES or (message.kind != "bot" and difficulty != "normal"):
+		_reject(peer, "invalid_difficulty", "仅电脑席位可以设置有效的电脑难度")
+		return
 	if room.mode == "ffa" and int(message.team) != int(message.owner):
 		_reject(peer, "ffa_independent", "乱斗中每名玩家独立作战，不能加入其他队伍")
 		return
@@ -308,6 +313,7 @@ func _configure_slot(peer: ENetPacketPeer, session: Dictionary, room: Dictionary
 		return
 	slot.kind = message.kind
 	slot.team_id = int(message.team)
+	slot.bot_difficulty = difficulty
 	for token: String in sessions:
 		if sessions[token].code == room.code and int(sessions[token].owner) != 0:
 			sessions[token].ready = false
@@ -508,14 +514,14 @@ func _match_config(room: Dictionary) -> Dictionary:
 	var players: Array = []
 	for slot: Dictionary in room.slots:
 		var session: Dictionary = sessions.get(slot.token, {})
-		players.append({"owner_id": int(slot.owner_id), "team_id": int(slot.team_id), "controller": "bot" if session.get("bot", false) else slot.kind, "name": session.get("name", "空位" if slot.kind == "open" else "电脑")})
+		players.append({"owner_id": int(slot.owner_id), "team_id": int(slot.team_id), "controller": "bot" if session.get("bot", false) else slot.kind, "name": session.get("name", "空位" if slot.kind == "open" else "电脑 %d" % (int(slot.owner_id) + 1)), "bot_difficulty": slot.bot_difficulty})
 	return {"mode": room.mode, "match_id": room.match_id, "map_id": Protocol.MODES[room.mode].map_id, "seed": int(room.seed), "host_owner": 0, "players": players}
 
 func _room_view(room: Dictionary) -> Dictionary:
 	var view := {"code": room.code, "match_id": room.match_id, "mode": room.mode, "status": room.status, "host_owner": 0, "slots": []}
 	for slot: Dictionary in room.slots:
 		var session: Dictionary = sessions.get(slot.token, {})
-		view.slots.append({"owner_id": int(slot.owner_id), "team_id": int(slot.team_id), "kind": slot.kind, "name": session.get("name", "电脑" if slot.kind == "bot" else "空位"), "ready": session.get("ready", slot.kind == "bot"), "connected": session.get("peer") != null, "bot_takeover": session.get("bot", false)})
+		view.slots.append({"owner_id": int(slot.owner_id), "team_id": int(slot.team_id), "kind": slot.kind, "name": session.get("name", "电脑 %d" % (int(slot.owner_id) + 1) if slot.kind == "bot" else "空位"), "ready": session.get("ready", slot.kind == "bot"), "connected": session.get("peer") != null, "bot_takeover": session.get("bot", false), "bot_difficulty": slot.bot_difficulty})
 	return view
 
 func _broadcast_room(room: Dictionary) -> void:
