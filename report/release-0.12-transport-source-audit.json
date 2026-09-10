@@ -1,0 +1,161 @@
+{
+  "scope": "Read-only official native source, existing stress1 logs and old candidate artifacts; no engine/test/server process launched by this audit. Latest-state review is static, not runtime acceptance.",
+  "recorded_utc": "2026-09-10T15:52:49.798340+00:00",
+  "latest_state_review": {
+    "base_commit": "507f30a9c42572f4e2f7fadb127b079afd3b59c6",
+    "working_tree_files": {
+      "scripts/game.gd": {
+        "sha256": "cddc6a88a94bc1cbe5c29daa21b80fc70f2d7816be6fb6fb5344533bc8910233",
+        "bytes": 54956
+      },
+      "scripts/network/match_replication.gd": {
+        "sha256": "bde7cbd7a02e28a5faf81d1b9e3a2b3b2ae9f5148f3a6c20bb11b8f524acbd7d",
+        "bytes": 35600
+      },
+      "scripts/network/relay_client.gd": {
+        "sha256": "4f2010d9ccfc3708b441db2f9007073bd28c231eb8d7c19eb57866bf55764e06",
+        "bytes": 14533
+      }
+    },
+    "static_blocker_found": false,
+    "runtime_validation_pending": true,
+    "snapshot_interval_usec": 66667,
+    "authority_tps_unchanged": 30,
+    "caveats": [
+      "Low FPS limits effective snapshot rate.",
+      "All recipients form one native send burst.",
+      "Existing 50ms per-recipient BUSY guard may skip a jittered deadline.",
+      "Review does not establish transport fault fixed."
+    ]
+  },
+  "native_findings": {
+    "event_error_unique_cause": false,
+    "ordinary_err_busy_is_fatal": false,
+    "quiet_tls_close_notify_can_become_event_error": true,
+    "windows_enobufs_or_emsgsize_root_cause_proven": false,
+    "client_engine_upgrade_proven_fix": false,
+    "throttle_configuration_sent_to_remote_reliably": true,
+    "snapshot_flags": "ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT",
+    "loss_scale": 65536,
+    "throttle_scale": 32,
+    "peer_statistic_read_is_non_destructive": true,
+    "host_pop_statistic_read_is_destructive": true,
+    "configured_enet_timeout": {
+      "limit": 8,
+      "minimum_ms": 2000,
+      "maximum_ms": 5000,
+      "both_product_ends": true
+    }
+  },
+  "stress1_observed": {
+    "host_first_native_error_seconds": 30.431,
+    "host_first_receive_age_ms": 509,
+    "host_second_native_error_seconds": 35.009,
+    "host_second_receive_age_ms": 467,
+    "health_seconds": 15.805,
+    "health_fps": 2,
+    "health_tick": 243,
+    "server_first_transport_disconnect_utc": "2026-09-10T15:33:36.210361Z",
+    "server_first_dtls_error_utc": "2026-09-10T15:33:36.343756Z",
+    "server_dtls_code": -30464,
+    "server_dtls_name": "MBEDTLS_ERR_SSL_UNEXPECTED_MESSAGE",
+    "server_restart_observed": false,
+    "server_application_rejection_observed": false,
+    "udp_drop_count_has_before_baseline": false,
+    "no_single_cause_proven": true
+  },
+  "old_candidate_audit": {
+    "source_commit": "9399206dbfceb04d0d76b46c53b27402474219fc",
+    "superseded_by_later_network_changes": true,
+    "files": {
+      "积木争霸.exe": {
+        "bytes": 104588800,
+        "sha256": "332bb711a6d0aecebabe8001ca8b01c39c7a4934f89c27cdb576f7c5c65eca98"
+      },
+      "积木争霸.pck": {
+        "bytes": 49807896,
+        "sha256": "afd64d753aaff5834bc9660d2b1533e195f129de4f043bfcdf1d67fb558416df"
+      },
+      "START_HERE.txt": {
+        "bytes": 14380,
+        "sha256": "ad24e920686b61864acebc5fd426039ff5dd791e9ed941ceb64dec0b5f3c7a28"
+      },
+      "collect_diagnostics.ps1": {
+        "bytes": 10004,
+        "sha256": "e1ec5d2946d49876244a3006b8b5a854d3cc9cefdc7833e4b16cfa49b70319ea"
+      },
+      "COLLECT_DIAGNOSTICS.cmd": {
+        "bytes": 294,
+        "sha256": "e5163607f844620a5e2d6bd507f49c0fd54d8be6034bb77dce053b9e5fb7aca9"
+      }
+    },
+    "five_file_hashes_and_sizes_match": true,
+    "zip_sha256": "0e893dbfe0e4b5abd0a6f0614fd6522d06022305d6dd5773954c60da6fb4208f",
+    "zip_bytes": 67380586,
+    "zip_hash_matches_receipt": true,
+    "zip_five_contents_equal_external_files": true,
+    "pck_format": 3,
+    "pck_entries": 835,
+    "six_batched_scenes_present": true,
+    "excluded_path_match_counts": {
+      "skinned": 0,
+      "tests/": 0,
+      "tools/": 0,
+      "server/": 0,
+      ".local/": 0,
+      "private": 0,
+      ".env": 0
+    },
+    "default_flags": {
+      "batched_models": true,
+      "stationary_rvo_pruning": true,
+      "omit_path_metadata": true,
+      "cache_map_iterations": true,
+      "shared_paths": false,
+      "static_motion_fast_path": false,
+      "skinned_models": false
+    },
+    "audio_normalization": {
+      "before": "2dfd80d97b76523e0013a1f649756b07bf243e4cbca23a06c16d4f91d1eca9ec",
+      "after": "24a5ec1abdce8ff711364ba1e30c219bd7cc34b620cd7959207c9acb99b51a3f",
+      "semantic_change_found": false,
+      "master_volume_db": -1.411621,
+      "master_limiter_ceiling_db": -1.0,
+      "master_limiter_release": 0.12,
+      "combat_compressor": {
+        "threshold": -16.0,
+        "ratio": 2.5,
+        "attack_us": 2000.0,
+        "release_ms": 160.0,
+        "mix": 0.7,
+        "gain_db": 0.0
+      }
+    }
+  },
+  "main_integration_read_only": {
+    "root_head": "c67d54d979e68a086f645c718338ec7c7fd0bb44",
+    "is_ancestor_of_old_candidate": true,
+    "dirty_tracked_count": 11,
+    "colliding_untracked_navigation_files": 9,
+    "identical_after_line_endings": 8,
+    "remaining_difference": "Only two comment lines in static_motion_grid.gd; no behavior difference.",
+    "integration_actions_executed": false
+  },
+  "sources": [
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/modules/enet/enet_connection.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/modules/enet/enet_packet_peer.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/thirdparty/enet/enet_godot.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/thirdparty/enet/protocol.c",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/thirdparty/enet/peer.c",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/drivers/windows/net_socket_winsock.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/modules/mbedtls/packet_peer_mbed_dtls.cpp",
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/modules/enet/enet_packet_peer.cpp",
+    "https://github.com/godotengine/godot/blob/4.7.2-stable/thirdparty/enet/enet_godot.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/main/main.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/scene/main/scene_tree.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/audio/effects/audio_effect_hard_limiter.h",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/audio/effects/audio_effect_compressor.cpp",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/audio/audio_server.h",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/servers/audio/audio_server.cpp"
+  ]
+}
