@@ -124,6 +124,11 @@ func _process(_delta: float) -> void:
 			ENetConnection.EVENT_RECEIVE:
 				var peer: ENetPacketPeer = event[1]
 				_receive(peer, peer.get_packet(), int(event[3]), now)
+				# ENet service() can return an already-dispatched receive event
+				# before servicing outgoing traffic. Heavy JSON validation can keep
+				# that queue busy across many messages: forward each validated packet
+				# now instead of accumulating a multi-snapshot burst until frame end.
+				connection.flush()
 			ENetConnection.EVENT_DISCONNECT:
 				_drop_connection(event[1], now)
 			ENetConnection.EVENT_ERROR:
