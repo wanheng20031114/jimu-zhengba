@@ -42,6 +42,10 @@ var _pending_snapshot_json: Dictionary[int, String] = {}
 var _deferred_visual: Dictionary[int, bool] = {}
 var _recipient_cursor: int = 0
 var _last_drain_frame: int = -1
+var _snapshot_job: SnapshotJsonBatchJob
+var _outbound_epoch: int = 0
+var last_json_encode_usec: int = 0
+var last_json_queue_usec: int = 0
 
 func configure(match_game: Node3D, transport: RelayClient) -> void:
 	reset()
@@ -53,6 +57,8 @@ func configure(match_game: Node3D, transport: RelayClient) -> void:
 	relay.outbound_invalidated.connect(_discard_outbound)
 
 func reset() -> void:
+	_outbound_epoch += 1
+	_join_snapshot_job()
 	if is_instance_valid(relay) and relay.snapshot_received.is_connected(receive_snapshot):
 		relay.snapshot_received.disconnect(receive_snapshot)
 	if is_instance_valid(relay) and relay.event_received.is_connected(_relay_event):
@@ -87,10 +93,12 @@ func publish_latest() -> void:
 	# are already obsolete: build/encode only the latest complete state once.
 	if game == null or not game.is_authority or game.finished or get_tree().paused or relay.connection_state != "match":
 		_discard_outbound()
+		_collect_snapshot_job()
 		return
+	_collect_snapshot_job()
 	var current_tick: int = game.simulation_tick
 	var now: int = Time.get_ticks_usec()
-	if current_tick > _last_sent_tick and now >= _next_publish_usec:
+	if _snapshot_job == null and current_tick > _last_sent_tick and now >= _next_publish_usec:
 		if _next_publish_usec == 0:
 			_next_publish_usec = now + SNAPSHOT_INTERVAL_USEC
 		else:
@@ -102,15 +110,43 @@ func publish_latest() -> void:
 		for player: PlayerState in game.players:
 			if player.owner_id != game.local_owner_id and player.controller == "human":
 				recipients.append(player.owner_id)
-		# Batch-local public JSON reuse stays intact. Only one immutable latest
-		# payload per recipient survives: a newer publication replaces unsent state.
-		_pending_snapshot_json = snapshot_batch_json(build_snapshots(recipients))
-		var completed: int = Time.get_ticks_usec()
-		if _next_publish_usec <= completed:
-			_next_publish_usec += (int((completed - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
+		# Sampling Nodes and visibility stays on the main thread. The resulting
+		# primitive tree is detached from game state and transferred to one job.
+		# While it runs, drain existing payloads without building a queued history.
+		if not recipients.is_empty():
+			_snapshot_job = SnapshotJsonBatchJob.new()
+			var error: Error = _snapshot_job.submit(build_snapshots(recipients), _outbound_epoch, current_tick)
+			assert(error == OK, "A fresh snapshot JSON job must accept its single batch")
+		var submitted: int = Time.get_ticks_usec()
+		if _next_publish_usec <= submitted:
+			_next_publish_usec += (int((submitted - _next_publish_usec) / SNAPSHOT_INTERVAL_USEC) + 1) * SNAPSHOT_INTERVAL_USEC
 	_drain_pending()
 
+func _collect_snapshot_job() -> void:
+	if _snapshot_job == null or not _snapshot_job.is_completed():
+		return
+	var job: SnapshotJsonBatchJob = _snapshot_job
+	var encoded: Dictionary[int, String] = job.take_result()
+	_snapshot_job = null
+	last_json_encode_usec = job.encode_usec
+	last_json_queue_usec = job.queue_usec
+	if job.epoch == _outbound_epoch:
+		# Completion does not change the captured tick/time. A newly encoded
+		# batch replaces unsent state, while recipient rotation stays independent.
+		_pending_snapshot_json = encoded
+
+func _join_snapshot_job() -> void:
+	if _snapshot_job != null:
+		_snapshot_job.join_and_discard()
+		_snapshot_job = null
+
+func _exit_tree() -> void:
+	_join_snapshot_job()
+
 func _discard_outbound() -> void:
+	# Do not mutate or discard worker-owned containers while encoding runs.
+	# Completed work from before a pause, reset or reconnect cannot be published.
+	_outbound_epoch += 1
 	_pending_snapshot_json.clear()
 	_deferred_visual.clear()
 	_outbound_visual.clear()
@@ -179,11 +215,10 @@ func build_snapshots(recipients: Array[int]) -> Dictionary[int, Dictionary]:
 	var snapshots: Dictionary[int, Dictionary] = {}
 	if recipients.is_empty():
 		return snapshots
-	# Public dictionaries are shared only inside this short-lived batch; callers
-	# must treat the snapshot trees as immutable until synchronous encoding ends.
-	# Each owner's private state uses a separate dictionary. No Node or snapshot
-	# cache survives this call, so death, visibility and reconnect need no cache
-	# invalidation hooks and later ticks cannot mutate earlier wire snapshots.
+	# Public dictionaries are shared only inside this batch; callers transfer the
+	# immutable primitive tree to the encoder. Each owner's private state uses a
+	# separate dictionary. No live Node, Resource or mutable game-state container
+	# escapes, so later ticks cannot mutate a batch still being encoded.
 	var public_players: Array = []
 	for player: PlayerState in game.players:
 		public_players.append(player.public_state())
@@ -230,40 +265,7 @@ func build_snapshots(recipients: Array[int]) -> Dictionary[int, Dictionary]:
 	return snapshots
 
 static func snapshot_batch_json(snapshots: Dictionary[int, Dictionary]) -> Dictionary[int, String]:
-	# This cache lives for exactly one already-built authority batch. An owner's
-	# complete state is encoded separately; only the same public dictionary may
-	# be reused by other recipients. Fog and visibility stay in the existing
-	# builder, and no received packet or client dictionary enters this path.
-	var public_entities: Dictionary[int, String] = {}
-	var public_players: Dictionary[int, String] = {}
-	var public_mines: Dictionary[int, String] = {}
-	var result: Dictionary[int, String] = {}
-	for recipient: int in snapshots:
-		var snapshot: Dictionary = snapshots[recipient]
-		var fields := PackedStringArray()
-		for key: String in snapshot:
-			var value_json: String
-			if key in ["entities", "players", "mines"]:
-				var items := PackedStringArray()
-				for state: Dictionary in snapshot[key]:
-					var id: int = int(state.owner_id) if key == "players" else int(state.id)
-					var owner: int = int(state.owner_id) if key == "players" else int(state.get("owner", -1))
-					if owner == recipient:
-						# The owner-only version includes orders, queues, gold and
-						# research. It must never enter a shared public cache.
-						items.append(JSON.stringify(state, "", false))
-						continue
-					var cache: Dictionary[int, String] = public_entities
-					if key == "players": cache = public_players
-					elif key == "mines": cache = public_mines
-					if not cache.has(id): cache[id] = JSON.stringify(state, "", false)
-					items.append(cache[id])
-				value_json = "[" + ",".join(items) + "]"
-			else:
-				value_json = JSON.stringify(snapshot[key], "", false)
-			fields.append(JSON.stringify(key) + ":" + value_json)
-		result[recipient] = "{" + ",".join(fields) + "}"
-	return result
+	return SnapshotJsonBatchJob.stringify_batch(snapshots)
 
 func _entity_public_state(entity: Node3D) -> Dictionary:
 	var state := {"id": entity.entity_id, "owner": entity.owner_id,
@@ -451,15 +453,17 @@ func _flush_visual(recipient: int) -> Error:
 	if pending.is_empty():
 		return OK
 	var batch: Array = pending.slice(0, mini(pending.size(), MAX_BATCH_EVENTS))
-	# Reserve room for the transport envelope. Binary size is enforced again by
-	# RelayClient; a large effect burst stays one reliable packet per 15 Hz phase.
-	while JSON.stringify(batch, "", false).to_utf8_buffer().size() > NetworkProtocol.MAX_EVENT_BYTES - 256:
-		if batch.size() == 1:
-			pending.pop_front()
-			replication_error.emit(recipient, ERR_INVALID_DATA)
-			return ERR_INVALID_DATA
-		batch = batch.slice(0, maxi(1, batch.size() / 2))
+	# Encode the normal batch only once. RelayClient checks the actual envelope
+	# size before native submission; only that size failure may shrink a batch.
+	# BUSY keeps the complete queue for the next fair process opportunity.
 	var error := relay.send_event(recipient, {"kind": "visual_batch", "events": batch})
+	while error == ERR_OUT_OF_MEMORY and batch.size() > 1:
+		batch = batch.slice(0, maxi(1, batch.size() / 2))
+		error = relay.send_event(recipient, {"kind": "visual_batch", "events": batch})
+	if error == ERR_OUT_OF_MEMORY:
+		pending.pop_front()
+		replication_error.emit(recipient, ERR_INVALID_DATA)
+		return ERR_INVALID_DATA
 	if error == OK:
 		_last_visual_tick[recipient] = game.simulation_tick
 		_outbound_visual[recipient] = pending.slice(batch.size())

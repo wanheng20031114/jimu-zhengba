@@ -1,0 +1,27 @@
+{
+  "scope": "Actual RelayClient encoding and MatchReplication visual queue, final packet capture sink; not network delivery or performance",
+  "utc": "2026-09-10T16:48:38.611586+00:00",
+  "checks": 20,
+  "failed": 0,
+  "normal_events": 96,
+  "normal_encode_calls": 1,
+  "normal_decoded_bytes": 13731,
+  "normal_encoded_bytes": 392,
+  "normal_wire_byte_equal": true,
+  "oversized_attempt_sizes": [96, 48, 24, 12],
+  "oversized_accepted_decoded_bytes": 18003,
+  "oversized_actual_submissions": 1,
+  "helper_exit_code": 0,
+  "helper_exit_verified_by_cim": true,
+  "stderr_bytes": 0,
+  "engine_sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424",
+  "source_sha256": {
+    "scripts/network/match_replication.gd": "3a249f6bf49f8ec1389b253533817f5e222b02f351d929403315278487d68284",
+    "scripts/network/relay_client.gd": "5867fc9819c3d3d478c206277242960254a80e4dfea707868123ed1d41b4187b",
+    "scripts/network/network_protocol.gd": "11862984cf36f6dc0e401605c76922d77c77b53796f9c69f0a498a876411531b"
+  },
+  "raw_result_sha256": "05bf07b272ab14dd921d93865e99340582535adf228e8298311c7a84d52410d2",
+  "metadata_sha256": "94541ad5589f031f2f5be44b3cd698c3af9e85c1af2e9be4bd69f286499e586b",
+  "temporary_directory": ".local/release-0.12-visual-encode-tests",
+  "temporary_files_retained": true
+}

@@ -1,0 +1,79 @@
+{
+  "scope": "Single exclusive snapshot JSON WorkerThreadPool job; actual main correctness only, not public multiplayer or FPS acceptance",
+  "base_commit": "2b9da87",
+  "engine": "Godot 4.6.3 stable official 7d41c59c4 editor binary, headless correctness",
+  "receipt": {
+    "utc": "2026-09-10T16:47:48.113101+00:00",
+    "engine_sha256": "ef90e929ba1a6a4322860285d97f40f4aa349c90329a91b0e8b55b8df0f4cb00",
+    "import": {
+      "pid": 36208,
+      "exit_code": 0,
+      "helper_exited": true,
+      "seconds": 7.532000000006519,
+      "stderr": ""
+    },
+    "correctness": {
+      "pid": 9408,
+      "exit_code": 0,
+      "helper_exited": true,
+      "seconds": 1.75,
+      "stderr": ""
+    },
+    "source_sha256": {
+      "scripts/network/match_replication.gd": "3a249f6bf49f8ec1389b253533817f5e222b02f351d929403315278487d68284",
+      "scripts/network/snapshot_json_batch_job.gd": "cc4f20d7711ce73468a31fe19582a02cb0af1ec984967b2a2cbfb48c7833b31e"
+    },
+    "fixture_sha256": {
+      "capture_relay.gd": "de5449e7d65f5dad35f74f76d87becfaa2e4d479637d4bf21569c8b7e895986b",
+      "entry.gd": "32bdcb89bdc41c7725fca56f80750e1c399d78577804bfa400f7feec87ebec8d",
+      "run.py": "da63aa4795c6ed7ba67c967c27e2793a842f888182c8d8e862712a687daa1076"
+    }
+  },
+  "result": {
+    "checks": 1938,
+    "details": {
+      "ownership_encode_usec": 1067,
+      "scope": "actual main scene and native worker correctness; capture transport; no public relay or FPS claim"
+    },
+    "failures": []
+  },
+  "process_verification": {
+    "own_helpers_exited": [
+      36208,
+      9408
+    ],
+    "only_user_editor_remaining_at_verification": 36624
+  },
+  "thread_ownership": {
+    "main": [
+      "build_snapshots",
+      "live SceneTree and fog sampling",
+      "task completion polling and join",
+      "transport pacing and sends"
+    ],
+    "worker": [
+      "one exclusive immutable primitive graph",
+      "batch-local public JSON cache",
+      "output strings",
+      "input graph release"
+    ],
+    "max_inflight_per_match": 1,
+    "queued_snapshot_jobs": 0,
+    "normal_pending_task_wait": false,
+    "reset_exit_join": true,
+    "epoch_invalidates_pause_reconnect_finish": true,
+    "runtime_deep_copy_or_recursive_scan_added": false,
+    "capture_tick_time_preserved": true
+  },
+  "limitations": [
+    "No measured seven-client performance benefit yet",
+    "Completion polling adds up to a process frame and worker scheduling latency",
+    "Finite batch size is not a hard 30 ms worker deadline",
+    "Snapshot sampling and physics remain on main thread"
+  ],
+  "sources": [
+    "https://docs.godotengine.org/en/4.6/classes/class_workerthreadpool.html",
+    "https://docs.godotengine.org/en/4.6/tutorials/performance/thread_safe_apis.html",
+    "https://github.com/godotengine/godot/blob/4.6.3-stable/core/io/json.cpp"
+  ]
+}
