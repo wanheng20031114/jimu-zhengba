@@ -1,6 +1,6 @@
 class_name UnitRenderBatches
 extends Node3D
-## Experimental presentation only. All animation, visibility tracks and sockets
+## Batched presentation only. All animation, visibility tracks and sockets
 ## stay in the original Node3D hierarchy. Authored MultiMeshes share source meshes.
 ## https://docs.godotengine.org/en/4.6/classes/class_multimesh.html
 

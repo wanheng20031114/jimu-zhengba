@@ -43,8 +43,8 @@ func _physics_process(_delta: float) -> void:
 	set_physics_process(false)
 
 func schedule_rebuild() -> void:
-	# Normal games leave the experimental cache unconfigured. Construction
-	# events must not start scanning a map when both experiments are disabled.
+	# Replicas and isolated scenes may leave this cache unconfigured. Their
+	# construction events must not initiate an authoritative collision scan.
 	if _map_root == null: return
 	# Multiple construction/death events in one tick publish a single new
 	# certificate after deferred collision changes. Invalid means native motion.

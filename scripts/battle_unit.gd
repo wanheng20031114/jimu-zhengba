@@ -28,7 +28,7 @@ const MELEE_CONTACT_TOLERANCE: float = 0.2
 
 @export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
-# Experimental presentation and RVO switches are fixed before this unit enters
+# Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
 var render_batches: UnitRenderBatches
 @export var prune_stationary_avoidance: bool = false

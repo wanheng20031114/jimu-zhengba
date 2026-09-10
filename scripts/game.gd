@@ -1,6 +1,6 @@
 extends Node3D
-## Authored model variants for the separate CPU experiment. Empty keeps every
-## original rigid-part scene; no per-frame model switching or runtime baking.
+## Authored model variants: the production main scene selects batched rigs.
+## Empty keeps the original editable rigs for portraits and isolated scenes.
 @export var unit_model_overrides: Dictionary[String, PackedScene] = {}
 @export var unit_batches_enabled: bool = false
 @export var stationary_avoidance_pruning_enabled: bool = false
