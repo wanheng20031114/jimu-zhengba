@@ -64,13 +64,18 @@ def relay_service_identity(output: str, expected: tuple[str, int, int] | None = 
     return identity
 
 
-def rollback_failed_start(run, legacy_active: bool, was_enabled: bool) -> None:
+def rollback_failed_start(run, legacy_active: bool, was_enabled: bool, restore_previous=None) -> None:
     # Cancel Restart=on-failure before returning the shared UDP port to legacy.
     # A failed first migration must not create a second auto-starting service.
     run("systemctl stop " + SERVICE)
     if not was_enabled:
         run("systemctl disable " + SERVICE)
-    if legacy_active:
+    if restore_previous is not None:
+        # A normal version update already had this same service. Restore its
+        # exact release, unit and configuration before allowing another start.
+        restore_previous()
+        run("systemctl start " + SERVICE)
+    elif legacy_active:
         run("systemctl start " + LEGACY_SERVICE)
 
 
@@ -216,6 +221,30 @@ def deploy(max_rooms: int = 8, max_humans: int = 8) -> None:
         if not old_pid.isdigit() or int(old_pid) <= 0:
             raise RuntimeError("Existing relay was not in the expected running state")
         was_enabled = run("systemctl is-enabled " + SERVICE + " || true") in ("enabled", "enabled-runtime")
+        was_active = run("systemctl is-active " + SERVICE + " || true") == "active"
+        previous_release = ""
+        previous_files: dict[str, bytes] = {}
+        previous_unit = b""
+        if was_active:
+            previous_release = run("readlink -f " + shlex.quote(BASE + "/current"))
+            if not re.fullmatch(re.escape(BASE) + r"/releases/[0-9a-f]{16}", previous_release):
+                raise RuntimeError("Cannot verify the active release for rollback")
+            with ssh.open_sftp() as sftp:
+                for name in ("relay.cfg", "relay.crt", "relay-private.key"):
+                    with sftp.open(BASE + "/config/" + name, "rb") as handle:
+                        previous_files[name] = handle.read()
+                with sftp.open("/etc/systemd/system/" + SERVICE, "rb") as handle:
+                    previous_unit = handle.read()
+
+        def restore_previous() -> None:
+            with ssh.open_sftp() as sftp:
+                for name, content in previous_files.items():
+                    upload(sftp, BASE + "/config/" + name, content, 0o644 if name.endswith(".crt") else 0o600)
+                upload(sftp, BASE + "/config/" + SERVICE, previous_unit)
+            run("ln -sfn " + shlex.quote(previous_release) + " " + shlex.quote(BASE + "/current"))
+            run("install -m 644 " + shlex.quote(BASE + "/config/" + SERVICE) + " /etc/systemd/system/" + SERVICE)
+            run("systemctl daemon-reload")
+
         run("install -d -m 755 " + shlex.quote(BASE) + " " + shlex.quote(BASE + "/bin") + " " + shlex.quote(BASE + "/config"))
         run("id -u jimuzhengba >/dev/null 2>&1 || useradd --system --home-dir " + shlex.quote(BASE) + " --shell /usr/sbin/nologin jimuzhengba")
         with ssh.open_sftp() as sftp:
@@ -259,14 +288,14 @@ WantedBy=multi-user.target
             upload(sftp, BASE + "/config/" + SERVICE, unit.encode())
         run("install -d -m 750 -o jimuzhengba -g jimuzhengba " + shlex.quote(BASE + "/state"))
         run("chown -R jimuzhengba:jimuzhengba " + shlex.quote(release) + " " + shlex.quote(BASE + "/config"))
-        run("ln -sfn " + shlex.quote(release) + " " + shlex.quote(BASE + "/current"))
-        run("install -m 644 " + shlex.quote(BASE + "/config/" + SERVICE) + " /etc/systemd/system/" + SERVICE)
-        run("systemctl daemon-reload")
-        run("systemctl enable " + SERVICE)
         legacy_active = run("systemctl is-active " + LEGACY_SERVICE + " || true") == "active"
-        if legacy_active:
-            run("systemctl stop " + LEGACY_SERVICE)
         try:
+            run("ln -sfn " + shlex.quote(release) + " " + shlex.quote(BASE + "/current"))
+            run("install -m 644 " + shlex.quote(BASE + "/config/" + SERVICE) + " /etc/systemd/system/" + SERVICE)
+            run("systemctl daemon-reload")
+            run("systemctl enable " + SERVICE)
+            if legacy_active:
+                run("systemctl stop " + LEGACY_SERVICE)
             run("systemctl restart " + SERVICE)
             # Require readiness from this invocation, not a stale journal entry.
             identity_command = "systemctl show " + SERVICE + " -p InvocationID -p MainPID -p ActiveState -p SubState -p NRestarts"
@@ -284,7 +313,7 @@ WantedBy=multi-user.target
                 raise RuntimeError("The new relay did not report readiness")
             relay_service_identity(run(identity_command), identity)
         except Exception:
-            rollback_failed_start(run, legacy_active, was_enabled)
+            rollback_failed_start(run, legacy_active, was_enabled, restore_previous if was_active else None)
             raise
         if legacy_active:
             run("systemctl disable " + LEGACY_SERVICE)
