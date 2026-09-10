@@ -165,5 +165,18 @@
     "target_frames": 180,
     "actual_vulkan": true,
     "pid": 42116
+  },
+  "cleanup": {
+    "verification_godot_processes_remaining": 0,
+    "preserved_editor_pid": 33896,
+    "preserved_user_game_pid": 48520,
+    "temporary_file_removal": "blocked_by_automatic_approval",
+    "reason": "blocked by policy; no more specific reason returned",
+    "attempted_directory": ".local/kill-statistics-20260910",
+    "command_executed": false,
+    "retained_directories": [
+      {"path": ".local/kill-statistics-20260910", "bytes_at_inventory": 286803},
+      {"path": ".local/client-kills-hotfix-20260910", "bytes_at_inventory": 366806378}
+    ]
   }
 }

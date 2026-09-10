@@ -54,3 +54,13 @@
 - PCK SHA256：`dac631b9a8b2fbdb594b4c07ab603b611c246eed75bdadd42e3ff08bb326a37c`。
 
 汇总与构建差异哈希见 [验证数据](kill-statistics-0.11.0.2.json)。
+
+本地通用入口 `builds/windows/积木争霸.exe` 和 `builds/积木争霸-Windows-x64.zip` 已同步到最终版本。同步前确认该目录没有运行中的用户游戏，同步后逐一核对EXE、PCK、说明和诊断脚本；通用ZIP的SHA256与上述版本ZIP一致。
+
+公开下载：[0.11.0.2 Windows x64完整包](https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.2/jimu-zhengba-0.11.0.2-Windows-x64.zip)。GitHub正式发布 `v0.11.0.2` 指向中文代码提交 `7c09e360b787e303eafd31cdbfaaf5eb63a77351`；独立匿名查询确认非草稿、附件大小及服务端SHA256与本地一致。见 [发布收据](release-0.11.0.2-github.json)。
+
+## 清理状态
+
+所有本轮验证Godot进程均已退出。最终命令核实，用户正常编辑器PID33896和用户刚启动的0.11.0.2游戏PID48520保持运行；后者没有测试参数。未关闭用户游戏或编辑器。
+
+自动审批拒绝了删除 `.local/kill-statistics-20260910` 的PowerShell命令，返回 `blocked by policy`，没有更具体原因；命令未执行，未换工具或父目录重试。该目录仍保留约287KB，隔离构建目录 `.local/client-kills-hotfix-20260910` 约367MB也暂时保留，文件数会受发布收尾影响。此前被拒的临时目录未再次删除。正式发行包、回退快照、运行时及原中继密钥均保留。

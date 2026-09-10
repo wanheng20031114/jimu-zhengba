@@ -1,0 +1,22 @@
+{
+  "tag": "v0.11.0.2",
+  "target_commit": "7c09e360b787e303eafd31cdbfaaf5eb63a77351",
+  "release_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/tag/v0.11.0.2",
+  "download_url": "https://github.com/wanheng20031114/jimu-zhengba/releases/download/v0.11.0.2/jimu-zhengba-0.11.0.2-Windows-x64.zip",
+  "asset_id": 554807697,
+  "state": "uploaded",
+  "size": 67318155,
+  "sha256": "2f52677cda08ab486f9d70e7c9defbfc341dceb55a9d5daf8fe9f141adf71f0f",
+  "github_digest": "sha256:2f52677cda08ab486f9d70e7c9defbfc341dceb55a9d5daf8fe9f141adf71f0f",
+  "compatibility_build": "0.11.0",
+  "protocol": 10,
+  "content_manifest_sha256": "b78f1a5c73687b3ccdfe34f2f5a5a409f172235641322c9d02eb5376a3d14c7b",
+  "binary_sha256": {
+    "积木争霸.exe": "d4bb285d1ce32596526b57e202954c1980b7b4f2535f3d43d52fa9f6c314fe81",
+    "积木争霸.pck": "dac631b9a8b2fbdb594b4c07ab603b611c246eed75bdadd42e3ff08bb326a37c"
+  },
+  "support_document_sha256": "4248a8eadc258a69c1e30e89bcedaa7d067a6a7117df327bd1fff25f6af7f144",
+  "previous_releases_untouched": true,
+  "public_release_verified": true,
+  "download_head_status": "Direct HEAD remote disconnected; published URL, asset state and digest verified through GitHub API."
+}
