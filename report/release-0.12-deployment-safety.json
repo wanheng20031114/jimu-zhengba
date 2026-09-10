@@ -1,0 +1,184 @@
+{
+  "reviewed_commit": "81962ed3c94d7f8dbbe580d73b519a511a70a518",
+  "reviewed_source": "tools/deploy_relay.py",
+  "source_sha256": "6eb25a2bd61872b7c2e41969bc3032680118b39befa9e28e997a52a4c13fcc1c",
+  "scope": "Real local Linux bundle validation and offline in-memory SSH/SFTP failure injection; no network connection or deployment was performed by this review",
+  "bundle": {
+    "jimu-relay": {
+      "sha256": "d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63",
+      "bytes": 73519416
+    },
+    "jimu-relay.pck": {
+      "sha256": "f4e86bc90b5b202593c5951c116a7b0a98bc7d077ec3f116f87cc6e57c77406d",
+      "bytes": 51020
+    }
+  },
+  "new_checks": {
+    "count": 34,
+    "failures": [],
+    "assertions": [
+      {
+        "ok": true,
+        "label": "actual bundle accepted with exactly binary and adjacent PCK"
+      },
+      {
+        "ok": true,
+        "label": "actual Linux ELF template"
+      },
+      {
+        "ok": true,
+        "label": "official Linux release binary pin"
+      },
+      {
+        "ok": true,
+        "label": "wrong_runtime rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_platform rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_archive_pin rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_template_pin rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "missing_source rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "stale_source rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "outside_source rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_pck_digest rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "wrong_pck_size rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "missing_pck rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "extra_file rejected before any connection"
+      },
+      {
+        "ok": true,
+        "label": "success connection closed"
+      },
+      {
+        "ok": true,
+        "label": "success expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "ExecStart uses content-addressed release directory"
+      },
+      {
+        "ok": true,
+        "label": "ExecStart does not pair immutable executable with mutable PCK path"
+      },
+      {
+        "ok": true,
+        "label": "installed executable verified"
+      },
+      {
+        "ok": true,
+        "label": "matching immutable adjacent PCK installed"
+      },
+      {
+        "ok": true,
+        "label": "immutable_upload connection closed"
+      },
+      {
+        "ok": true,
+        "label": "immutable_upload expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "failed immutable upload leaves shared configuration and old unit untouched"
+      },
+      {
+        "ok": true,
+        "label": "failed immutable upload leaves running service untouched"
+      },
+      {
+        "ok": true,
+        "label": "config_write connection closed"
+      },
+      {
+        "ok": true,
+        "label": "config_write expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "config_write restores all prior shared configuration and unit bytes"
+      },
+      {
+        "ok": true,
+        "label": "config_write starts restored prior service"
+      },
+      {
+        "ok": true,
+        "label": "config_write restores prior release symlink"
+      },
+      {
+        "ok": true,
+        "label": "start_identity connection closed"
+      },
+      {
+        "ok": true,
+        "label": "start_identity expected outcome"
+      },
+      {
+        "ok": true,
+        "label": "start_identity restores all prior shared configuration and unit bytes"
+      },
+      {
+        "ok": true,
+        "label": "start_identity starts restored prior service"
+      },
+      {
+        "ok": true,
+        "label": "start_identity restores prior release symlink"
+      }
+    ],
+    "fixture_sha256": "e27c5b1a4aeacd6f2776df0508b07484333ac047c850094505285a27ef0bd61d"
+  },
+  "existing_recovery_checks": {
+    "count": 4,
+    "failed": 0,
+    "execution_evidence": "Coordinator executed the four checks against the finalized deployment implementation and reported success; test definitions independently inspected, no redundant rerun during archival",
+    "fixture_sha256": "4d2a599e66dbcab591d6d4b3d09ce203960cee87901dc1cb05650e7fbf7e64f3",
+    "cases": [
+      "upgrade restores exact release/unit/config before restart",
+      "disabled service remains disabled",
+      "restore failure cannot start partial configuration",
+      "stop failure cannot restore running configuration"
+    ]
+  },
+  "transaction_guarantees_checked": [
+    "immutable upload failure does not stop old service or change shared files",
+    "config partial-write failure restores all previous config and unit bytes",
+    "startup identity failure restores old release and starts old service",
+    "content-addressed ExecStart uses its matching adjacent immutable PCK"
+  ],
+  "processes": {
+    "godot_or_server_launched": false,
+    "review_helper_exited_and_verified": true
+  },
+  "limitations": [
+    "Readiness and rollback were mocked here; actual remote deployment and sustained multiplayer require their own receipts"
+  ]
+}
