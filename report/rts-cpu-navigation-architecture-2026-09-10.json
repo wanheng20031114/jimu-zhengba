@@ -1,0 +1,731 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-09-10",
+  "generated_utc": "2026-09-10T08:19:16.463749+00:00",
+  "audit_commit": "8b616cbb0b025bd455863c1c191d575320cd4c83",
+  "scope": "Investigation and proposed architecture only; no production navigation/physics change and no new release FPS measurement.",
+  "historical_source": {
+    "file": "report/performance-0.11.0.json",
+    "sha256": "09a7fc2d30a18136e5f7dec4807af86c62d4b4fb5a462e18a5d4da21dc5769bc",
+    "source_role": "0.11.0 archived final and separately instrumented historical samples"
+  },
+  "historical_movement_sample": {
+    "authority_steps": 280,
+    "functions": {
+      "_profile_move_body": {
+        "calls": 250880,
+        "inclusive_total_ms": 2124.35200000284,
+        "whole_army_ms_per_tick": 7.586971428581572,
+        "us_per_call": 8.467602040827646
+      },
+      "native_move_and_slide": {
+        "calls": 212655,
+        "inclusive_total_ms": 1236.06500000113,
+        "whole_army_ms_per_tick": 4.414517857146893,
+        "us_per_call": 5.812536737914134
+      },
+      "_physics_process": {
+        "calls": 250880,
+        "inclusive_total_ms": 5180.90099999857,
+        "whole_army_ms_per_tick": 18.503217857137752,
+        "us_per_call": 20.650912786984097
+      },
+      "_chase_velocity": {
+        "calls": 149417,
+        "inclusive_total_ms": 1084.98999999859,
+        "whole_army_ms_per_tick": 3.8749642857092503,
+        "us_per_call": 7.261489656455356
+      },
+      "_valid_target": {
+        "calls": 278402,
+        "inclusive_total_ms": 788.698000001222,
+        "whole_army_ms_per_tick": 2.816778571432936,
+        "us_per_call": 2.832946602399487
+      },
+      "_refresh_target": {
+        "calls": 22771,
+        "inclusive_total_ms": 107.89300000002,
+        "whole_army_ms_per_tick": 0.3853321428572143,
+        "us_per_call": 4.7381757498581525
+      },
+      "_work_velocity": {
+        "calls": 26880,
+        "inclusive_total_ms": 248.661000000056,
+        "whole_army_ms_per_tick": 0.8880750000002,
+        "us_per_call": 9.250781250002083
+      }
+    },
+    "movement_remainder_ms_per_tick": 3.172453571434679,
+    "path_query_ms_per_tick_same_sample": 2.10205357142857,
+    "note": "Nested/inclusive times cannot be summed; different from final release and new query-count sample."
+  },
+  "historical_final_release": {
+    "unit_ratio": 3.2941176470588234,
+    "scene_marker_cost_ratio": 3.67228111093956,
+    "ticks_per_render_896": 7.68,
+    "path_cost_fraction_of_scene_marker_896": 0.162628484722084,
+    "scene_marker_after_hypothetically_zero_queries_ms": 18.03603385416666,
+    "note": "Arithmetic illustration within a scope; not a predicted frame rate or full-tick cost."
+  },
+  "fresh_query_count_sample": {
+    "actual_queries_by_latest_enqueue_cause": {
+      "off_corridor": 3,
+      "request_with_combat_target": 657
+    },
+    "actual_queries_by_native_call_context": {
+      "budget_execution": 660
+    },
+    "actual_queries_by_order": {
+      "ATTACK_MOVE": 660
+    },
+    "actual_queries_by_unit_type": {
+      "archer": 225,
+      "swordsman": 435
+    },
+    "authority_steps": 180,
+    "build": "0.11.0",
+    "checks": 21,
+    "conditions": "Headless 30 TPS authority; --fixed-fps 120 accelerates simulation clock. Native RVO, combat and per-unit routes preserved. HP x100, Bots/passive income disabled. No FPS measurement.",
+    "damage_events_during_sample": 1535,
+    "failures": [],
+    "fixture": "tests/six_player_performance.gd _populate(maximum_light), 4v4, 896 units, 6 simulation seconds warmup, seed 803036",
+    "godot": "4.6.3-stable (official)",
+    "limitations": [
+      "Query callbacks and request wrappers add overhead; no performance inference.",
+      "Coarse cell/tile groups do not establish identical legal flow fields or equal cost-to-go.",
+      "Request contexts distinguish presence of a combat target, not a captured GDScript call stack.",
+      "Latest enqueue cause may be superseded by another request while pending.",
+      "No scripted building topology changes; this captures the fixture's current map and combat state.",
+      "Windows are disjoint 30-authority-step intervals, not arbitrary rolling windows.",
+      "Direct mode is the cached route strategy; it does not mean every such unit moved during the sampled tick."
+    ],
+    "native_queries": 660,
+    "new_queue_entries_by_cause": {
+      "off_corridor": 1,
+      "request_with_combat_target": 668
+    },
+    "non_overlapping_one_simulation_second_windows": [
+      {
+        "cell_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 2,
+          "groups": 8,
+          "groups_with_multiple_units": 1,
+          "maximum_distinct_units_in_group": 2
+        },
+        "distinct_combat_target_entities": 3,
+        "distinct_querying_units": 7,
+        "end_authority_step": 30,
+        "exact_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 0,
+          "groups": 11,
+          "groups_with_multiple_units": 0,
+          "maximum_distinct_units_in_group": 1
+        },
+        "queries": 11,
+        "tile_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 7,
+          "groups": 4,
+          "groups_with_multiple_units": 3,
+          "maximum_distinct_units_in_group": 3
+        }
+      },
+      {
+        "cell_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 22,
+          "groups": 22,
+          "groups_with_multiple_units": 11,
+          "maximum_distinct_units_in_group": 6
+        },
+        "distinct_combat_target_entities": 12,
+        "distinct_querying_units": 28,
+        "end_authority_step": 60,
+        "exact_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 0,
+          "groups": 47,
+          "groups_with_multiple_units": 0,
+          "maximum_distinct_units_in_group": 1
+        },
+        "queries": 47,
+        "tile_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 25,
+          "groups": 10,
+          "groups_with_multiple_units": 6,
+          "maximum_distinct_units_in_group": 10
+        }
+      },
+      {
+        "cell_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 41,
+          "groups": 50,
+          "groups_with_multiple_units": 17,
+          "maximum_distinct_units_in_group": 9
+        },
+        "distinct_combat_target_entities": 13,
+        "distinct_querying_units": 61,
+        "end_authority_step": 90,
+        "exact_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 0,
+          "groups": 93,
+          "groups_with_multiple_units": 0,
+          "maximum_distinct_units_in_group": 1
+        },
+        "queries": 93,
+        "tile_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 59,
+          "groups": 14,
+          "groups_with_multiple_units": 11,
+          "maximum_distinct_units_in_group": 15
+        }
+      },
+      {
+        "cell_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 70,
+          "groups": 68,
+          "groups_with_multiple_units": 28,
+          "maximum_distinct_units_in_group": 10
+        },
+        "distinct_combat_target_entities": 18,
+        "distinct_querying_units": 97,
+        "end_authority_step": 120,
+        "exact_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 0,
+          "groups": 143,
+          "groups_with_multiple_units": 0,
+          "maximum_distinct_units_in_group": 1
+        },
+        "queries": 143,
+        "tile_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 94,
+          "groups": 16,
+          "groups_with_multiple_units": 13,
+          "maximum_distinct_units_in_group": 19
+        }
+      },
+      {
+        "cell_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 62,
+          "groups": 83,
+          "groups_with_multiple_units": 25,
+          "maximum_distinct_units_in_group": 8
+        },
+        "distinct_combat_target_entities": 19,
+        "distinct_querying_units": 95,
+        "end_authority_step": 150,
+        "exact_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 0,
+          "groups": 132,
+          "groups_with_multiple_units": 0,
+          "maximum_distinct_units_in_group": 1
+        },
+        "queries": 132,
+        "tile_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 94,
+          "groups": 14,
+          "groups_with_multiple_units": 13,
+          "maximum_distinct_units_in_group": 18
+        }
+      },
+      {
+        "cell_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 115,
+          "groups": 126,
+          "groups_with_multiple_units": 55,
+          "maximum_distinct_units_in_group": 7
+        },
+        "distinct_combat_target_entities": 23,
+        "distinct_querying_units": 154,
+        "end_authority_step": 180,
+        "exact_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 0,
+          "groups": 234,
+          "groups_with_multiple_units": 0,
+          "maximum_distinct_units_in_group": 1
+        },
+        "queries": 234,
+        "tile_radius_alliance_groups": {
+          "distinct_units_in_multi_unit_groups": 152,
+          "groups": 15,
+          "groups_with_multiple_units": 12,
+          "maximum_distinct_units_in_group": 30
+        }
+      }
+    ],
+    "population_snapshots": [
+      {
+        "alive_units": 896,
+        "authority_step": 0,
+        "distinct_combat_targets": 44,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 226,
+          "direct": 583,
+          "finished_or_inactive": 87
+        },
+        "units_with_combat_target": 585
+      },
+      {
+        "alive_units": 896,
+        "authority_step": 30,
+        "distinct_combat_targets": 54,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 133,
+          "direct": 676,
+          "finished_or_inactive": 87
+        },
+        "units_with_combat_target": 683
+      },
+      {
+        "alive_units": 896,
+        "authority_step": 60,
+        "distinct_combat_targets": 63,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 71,
+          "direct": 735,
+          "finished_or_inactive": 87,
+          "pending": 3
+        },
+        "units_with_combat_target": 765
+      },
+      {
+        "alive_units": 896,
+        "authority_step": 90,
+        "distinct_combat_targets": 67,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 59,
+          "direct": 747,
+          "finished_or_inactive": 87,
+          "pending": 3
+        },
+        "units_with_combat_target": 794
+      },
+      {
+        "alive_units": 896,
+        "authority_step": 120,
+        "distinct_combat_targets": 71,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 99,
+          "direct": 708,
+          "finished_or_inactive": 87,
+          "pending": 2
+        },
+        "units_with_combat_target": 800
+      },
+      {
+        "alive_units": 896,
+        "authority_step": 150,
+        "distinct_combat_targets": 71,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 101,
+          "direct": 704,
+          "finished_or_inactive": 87,
+          "pending": 4
+        },
+        "units_with_combat_target": 800
+      },
+      {
+        "alive_units": 896,
+        "authority_step": 180,
+        "distinct_combat_targets": 71,
+        "orders": {
+          "ATTACK_MOVE": 800,
+          "GATHER": 96
+        },
+        "route_modes": {
+          "corridor": 139,
+          "direct": 661,
+          "finished_or_inactive": 87,
+          "pending": 9
+        },
+        "units_with_combat_target": 800
+      }
+    ],
+    "queries_per_tick": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      0,
+      1,
+      0,
+      1,
+      2,
+      2,
+      1,
+      2,
+      1,
+      3,
+      2,
+      0,
+      1,
+      1,
+      3,
+      1,
+      1,
+      1,
+      4,
+      0,
+      1,
+      0,
+      3,
+      2,
+      0,
+      3,
+      1,
+      2,
+      2,
+      0,
+      4,
+      3,
+      3,
+      1,
+      2,
+      1,
+      0,
+      4,
+      4,
+      4,
+      5,
+      1,
+      2,
+      5,
+      2,
+      4,
+      5,
+      7,
+      2,
+      5,
+      5,
+      3,
+      2,
+      3,
+      4,
+      4,
+      3,
+      2,
+      0,
+      4,
+      3,
+      3,
+      3,
+      5,
+      6,
+      3,
+      7,
+      5,
+      6,
+      5,
+      4,
+      13,
+      8,
+      8,
+      5,
+      1,
+      2,
+      3,
+      0,
+      4,
+      3,
+      4,
+      4,
+      5,
+      7,
+      5,
+      4,
+      2,
+      7,
+      6,
+      4,
+      4,
+      2,
+      5,
+      3,
+      3,
+      3,
+      3,
+      5,
+      3,
+      8,
+      1,
+      5,
+      6,
+      5,
+      5,
+      5,
+      4,
+      2,
+      4,
+      4,
+      2,
+      4,
+      9,
+      4,
+      7,
+      3,
+      2,
+      4,
+      6,
+      6,
+      9,
+      4,
+      8,
+      4,
+      4,
+      6,
+      8,
+      10,
+      11,
+      3,
+      6,
+      11,
+      5,
+      7,
+      9,
+      8,
+      9,
+      5,
+      10,
+      8,
+      7,
+      11,
+      6,
+      9,
+      14,
+      7,
+      9,
+      9,
+      10,
+      7,
+      9
+    ],
+    "request_calls_by_context": {
+      "request_with_combat_target": 668
+    },
+    "unique_combat_target_entities_in_queries": 31,
+    "unique_units_querying": 203,
+    "whole_sample_unique_goals": {
+      "exact_float_vector": 659,
+      "one_metre_cell": 238,
+      "sixteen_metre_tile": 11
+    }
+  },
+  "fresh_run": {
+    "godot": "4.6.3-stable official editor",
+    "headless": true,
+    "fixed_fps_argument": 120,
+    "timeout_seconds": 180,
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_seconds": 23.75,
+    "source_hashes": {
+      "tests/six_player_performance.gd": "a20984631a9e39139c4fc0870b018fa09281944ddec982e3686365cb429651ca",
+      "scripts/path_budget.gd": "f40c1f557389601eff20fadc3efcab2b22ca72c3b3bbd230a5a07e16eb1d9143",
+      "scripts/battle_unit.gd": "b7272763201a44e959ccc5bec9808d33330914d0f3fcc6603f2a7cf502a32149",
+      "scripts/construction_navigation.gd": "daed224844ba1e7e347eeb68db8c6edb8a97005bdf1d8585e107505d3357884d",
+      "scenes/main.tscn": "ee8119867aa1184b05946b74d54faada1a5ee81c3e4d16eab9aad02d77f611f6",
+      "scenes/unit.tscn": "38950fbe79bee124b0b655e9108ec1157e9be280f3c11362ca14ee6ca59591bc",
+      "scenes/maps/four_banners_4v4.tscn": "e7c42bcef3f5703e1715f2ce91c287707620bf8e85f0b11b345d5b6f6feddee0",
+      ".local/rts-path-audit-20260910/audit_budget.gd": "48528b9cad05e6e42f7a2cacc975e3231e1b03541da9eb54887029596e417d9c",
+      ".local/rts-path-audit-20260910/audit_driver.gd": "85016561308172e1960650422fab3c508587a62a29d05e7c669119bbbca53439",
+      ".local/rts-path-audit-20260910/audit_main.tscn": "fa95baef9d3ab59c0e2f0f4b0348cbba8e46bb476a3805c286b35cc47aec90a5"
+    },
+    "note": "No FPS claimed. Latest request context is not a stack trace. Earlier provisional run overwritten and excluded.",
+    "result_sha256": "914be8d2b2cbd05a215d0d1b43d3470ca7271a526b85cba9c66a16ad96673a8c"
+  },
+  "fresh_window_derived": {
+    "multi_unit_tile_group_participation_fraction_min": 0.8928571428571429,
+    "max": 1.0,
+    "mean_unweighted": 0.9676048489638681,
+    "denominator": "Distinct querying units in each non-overlapping30-tick window; grouping by16m target tile, radius and alliance. Not a legal flow-field cache hit rate."
+  },
+  "static_rig_counts": {
+    "swordsman": {
+      "nodes": 14,
+      "meshes": 6,
+      "animation_players": 2
+    },
+    "archer": {
+      "nodes": 19,
+      "meshes": 11,
+      "animation_players": 2
+    },
+    "knight": {
+      "nodes": 18,
+      "meshes": 10,
+      "animation_players": 2
+    },
+    "catapult": {
+      "nodes": 18,
+      "meshes": 7,
+      "animation_players": 2
+    },
+    "cannon": {
+      "nodes": 13,
+      "meshes": 4,
+      "animation_players": 2
+    },
+    "farmer": {
+      "nodes": 18,
+      "meshes": 10,
+      "animation_players": 2
+    }
+  },
+  "static_896_totals": {
+    "nodes": 22096,
+    "model_meshes": 7760,
+    "bars_and_rings": 2688,
+    "animation_players": 1792,
+    "note": "Allocated scene counts, not active processing or visible draw counts.400 swordsmen+400 archers+96 farmers plus8 common nodes per unit."
+  },
+  "validation": {
+    "checks_passed": 21,
+    "checks": [
+      "180 authority steps",
+      "one count per authority step",
+      "per-step query total equals signal query total",
+      "six complete disjoint 30-step windows",
+      "window totals match sample",
+      "actual_queries_by_latest_enqueue_cause total",
+      "actual_queries_by_order total",
+      "actual_queries_by_unit_type total",
+      "actual_queries_by_native_call_context total",
+      "population and route modes total896",
+      "no exact same-goal cross-unit groups",
+      "query budget respected",
+      "fixture checks and real damage",
+      "bounded helper exited cleanly",
+      "recorded source and probe hashes still match",
+      "swordsman rig has no nested scene instances omitted by static count",
+      "archer rig has no nested scene instances omitted by static count",
+      "knight rig has no nested scene instances omitted by static count",
+      "catapult rig has no nested scene instances omitted by static count",
+      "cannon rig has no nested scene instances omitted by static count",
+      "farmer rig has no nested scene instances omitted by static count"
+    ],
+    "helper_cleanup_verified": true,
+    "cleanup_verification": "CIM query after both bounded probes: only pre-existing Godot editor remained; no Godot headless/check-only helper."
+  },
+  "sources": [
+    {
+      "name": "Bob Fitch: Evolution of RTS AI",
+      "url": "https://movingai.com/aiide11/speakers.html",
+      "original_slides": "https://movingai.com/aiide11/BlizzardAI.zip",
+      "pages": [
+        31,
+        34,
+        67,
+        68,
+        69
+      ]
+    },
+    {
+      "name": "Google DeepMind PySC2: Game and Action Speed",
+      "url": "https://github.com/google-deepmind/pysc2/blob/master/docs/environment.md#game-and-action-speed"
+    },
+    {
+      "name": "Frank Cheng: Pathing in Age of Empires IV",
+      "url": "https://www.gdcvault.com/play/1027659/Pathing-in-Age-of-Empires",
+      "slides": "https://www.gdcvault.com/play/mediaProxy.php?sid=1027659",
+      "pages": [
+        2,
+        13,
+        18,
+        19,
+        22,
+        23,
+        30,
+        32,
+        33,
+        34,
+        35
+      ]
+    },
+    {
+      "name": "Elijah Emerson: Crowd Pathfinding and Steering Using Flow Field Tiles",
+      "url": "https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter23_Crowd_Pathfinding_and_Steering_Using_Flow_Field_Tiles.pdf"
+    },
+    {
+      "name": "Paul Bettner and Mark Terrano:1500 Archers on a28.8",
+      "url": "https://www.gamedeveloper.com/programming/1500-archers-on-a-28-8-network-programming-in-age-of-empires-and-beyond"
+    },
+    {
+      "name": "Joel Pritchett:The MAW",
+      "url": "https://www.gdcvault.com/play/1027610/The-MAW-Safely-Multithreading-the",
+      "scope": "Official abstract only; no internal implementation claims"
+    },
+    {
+      "name": "Godot4.6 navigation performance",
+      "url": "https://docs.godotengine.org/en/4.6/tutorials/navigation/navigation_optimizing_performance.html"
+    },
+    {
+      "name": "Godot4.6 NavigationAgent3D",
+      "url": "https://docs.godotengine.org/en/4.6/classes/class_navigationagent3d.html"
+    },
+    {
+      "name": "Godot4.6 servers",
+      "url": "https://docs.godotengine.org/en/4.6/tutorials/performance/using_servers.html"
+    },
+    {
+      "name": "Godot4.6 threading",
+      "url": "https://docs.godotengine.org/en/4.6/tutorials/performance/thread_safe_apis.html"
+    },
+    {
+      "name": "Glenn Fiedler:Fix Your Timestep",
+      "url": "https://gafferongames.com/post/fix_your_timestep/"
+    }
+  ],
+  "temporary_files": {
+    "path": ".local/rts-path-audit-20260910",
+    "files": 8,
+    "bytes": 28902,
+    "deletion_status": "blocked_by_automatic_approval",
+    "reason": "blocked by policy",
+    "note": "Deletion not performed; no alternate deletion method attempted; excluded from Git."
+  }
+}
