@@ -679,4 +679,3 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_47")
 metadata/batch_key = &"farmer::Rig/Action/LegRight"
-

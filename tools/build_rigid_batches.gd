@@ -124,7 +124,7 @@ func _manager_text() -> String:
 		var part: Dictionary = _parts[index]
 		var node_name: String = part.kind.capitalize() + "_" + String(part.path).replace("/", "_")
 		resources.append("[node name=%s type=\"MultiMeshInstance3D\" parent=\".\"]\nphysics_interpolation_mode = 2\nmaterial_override = ExtResource(\"2_material\")\nmultimesh = SubResource(\"batch_%d\")\nmetadata/batch_key = &%s\n" % [JSON.stringify(node_name), index, JSON.stringify(part.kind + "::" + part.path)])
-	return "\n".join(resources) + "\n"
+	return "\n".join(resources).strip_edges() + "\n"
 
 func _validate(kind: String) -> void:
 	var original: UnitVisual = load("res://assets/models/units/%s.tscn" % kind).instantiate()
