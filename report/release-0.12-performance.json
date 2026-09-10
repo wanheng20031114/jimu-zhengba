@@ -1,0 +1,4095 @@
+{
+  "schema": 1,
+  "date": "2026-09-10",
+  "scope": "0.12 candidate rendered performance, frozen 2ba4579 runtime; not final public PCK or multi-client network FPS",
+  "hardware": {
+    "cpu": "Intel Core i9-10900KF",
+    "physical_cores": 10,
+    "logical_processors": 20,
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "godot": "4.6.3 official Windows release template",
+    "renderer": "Vulkan Forward+",
+    "viewport": [
+      1600,
+      900
+    ],
+    "orthographic_camera_size": 58,
+    "render_scale": 1.0,
+    "msaa": "4x",
+    "taa": true,
+    "vsync": false,
+    "fps_cap": 0,
+    "physics_tps": 30,
+    "max_catchup_steps": 8
+  },
+  "fixture": {
+    "map": "4v4",
+    "seed": 803036,
+    "total_units": 500,
+    "military": 452,
+    "workers": 48,
+    "composition": {
+      "swordsman": 164,
+      "archer": 128,
+      "knight": 96,
+      "catapult": 32,
+      "cannon": 32,
+      "farmer": 48
+    },
+    "warmup_wall_seconds": 6,
+    "sample_wall_seconds": 20,
+    "steady_excludes_initial_seconds": 3,
+    "hp_multiplier_for_sustained_load": 100,
+    "strategic_bots_enabled": false,
+    "passive_income_enabled": false,
+    "real_movement_attack_projectile_fog_audio_and_gathering": true,
+    "input": "8 normal owner-validated commands, 452 army units in one authority tick",
+    "response": "40 representatives, >=0.15m displacement; reversal additionally requires progress toward new slot and opposing old heading",
+    "march_reverse_at_seconds": 10
+  },
+  "measurement_limits": [
+    "Pre-existing editor and normal user game preserved. First 14 runs and reverse-a1 retain the user game; it naturally exits between reverse-a1 and reverse-b1. Last three runs retain editor only. Within-run identities are stable. Final reversal ABBA FPS is not an uncontaminated temporal comparison.",
+    "Scene callback markers do not enclose native physics/navigation and are not total authority-step timings. Frame setup/render CPU/GPU counters are different domains and must not simply be added to callbacks.",
+    "Godot cached TIME_PHYSICS_PROCESS/TIME_NAVIGATION_PROCESS window maxima are not per-tick P95; omitted from published timing tables.",
+    "Godot Forward+ MultiMesh LOD primitive counter omits instance multiplication; no primitive-count speedup claim.",
+    "Fixed seed and commands do not make Jolt/RVO a deterministic lockstep. Visibility, crowds, paths and combat evolution differ; single-factor samples are directional, not confidence intervals.",
+    "HP x100 keeps the 500-unit load stable; these are sustained-load scenarios, not normal-balance full matches. Snapshot encoding/Relay/8 separate client CPUs are not in these FPS measurements.",
+    "No new 896-unit rendered measurement. Neither 60 FPS at 500 nor a solved 896-unit extreme case is claimed.",
+    "Reverse response quantiles exclude censored representatives; pending counts are reported alongside them. Long detours are not expected to finish in 20 seconds."
+  ],
+  "bundles": [
+    {
+      "label": "base2",
+      "source_commit": "2ba4579aa7b97fb16d74678c5f77e4eff341827e",
+      "source_archive_sha256": "a85c2cf7debf42c66d7d6daa599f28341f61e277beb661cfeed4df621bdf12f7",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "release_template_sha256": "91724f15024a3a545e28ccd83134403d31ce2323a38e51c95e4dfa282f732ab6",
+      "overlay_changes": [
+        "isolated main-loop and user preferences",
+        "attack release and completion integer counters",
+        "one batch process duration accumulator"
+      ],
+      "packer_exited": true
+    },
+    {
+      "label": "base3",
+      "source_commit": "2ba4579aa7b97fb16d74678c5f77e4eff341827e",
+      "source_archive_sha256": "a85c2cf7debf42c66d7d6daa599f28341f61e277beb661cfeed4df621bdf12f7",
+      "pck_sha256": "1710bbfd02c1da0bfb0b689d03a3e56db6b01e5336f194976e79d6a4cec91030",
+      "release_template_sha256": "91724f15024a3a545e28ccd83134403d31ce2323a38e51c95e4dfa282f732ab6",
+      "overlay_changes": [
+        "isolated main-loop and user preferences",
+        "attack release and completion integer counters",
+        "one batch process duration accumulator"
+      ],
+      "packer_exited": true
+    },
+    {
+      "label": "base4",
+      "source_commit": "2ba4579aa7b97fb16d74678c5f77e4eff341827e",
+      "source_archive_sha256": "a85c2cf7debf42c66d7d6daa599f28341f61e277beb661cfeed4df621bdf12f7",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "release_template_sha256": "91724f15024a3a545e28ccd83134403d31ce2323a38e51c95e4dfa282f732ab6",
+      "overlay_changes": [
+        "isolated main-loop and user preferences",
+        "attack release and completion integer counters",
+        "one batch process duration accumulator"
+      ],
+      "packer_exited": true
+    }
+  ],
+  "harness_sha256": {
+    "harness.gd": "05c00c2ceac9ff533c50e3386aea0afccd17f3ccc87ebfb78e2cd867a4c48b85",
+    "markers.gd": "5d9ae3012f17265ef35d05571dcaf28d6bab02c5d483858b02c6e9fd48914a4b",
+    "markers.tscn": "991f4766437ab03e93b488050fa11e45a3be481f6326d607849561c7d4f8ee30",
+    "packer.gd": "dc350ce277eb9e6a30e0ebbfbf565eaed95c7d9bdeb760e6039b509691086903",
+    "prepare.py": "3f6e783ce56397d3b09830f24d92cc3edf8bd08c8d425d6257ab9effbcc32620",
+    "run.py": "dfaf85f7e98a62848a0f6bc7f51dd2b2a4c2a67028b657059cf9441f50d28e31",
+    "analyze.py": "945a400fb44d938c955cb9f6203874fcfc53abf772a0e0c94c5563a75e58db28"
+  },
+  "bundle_differences": {
+    "base2": "ABBA and individual factors",
+    "base3": "same runtime; independent metadata flag and two aggregate map-iteration counters",
+    "base4": "same runtime and timing loop as base3; PNG after sampling stops"
+  },
+  "comparisons": {
+    "abba_original_mean_fps": 35.2905269042149,
+    "abba_batch_prune_mean_fps": 38.73648299979955,
+    "abba_descriptive_fps_gain_percent": 9.764535692361909,
+    "final_pair_descriptive_gain_percent": 11.939322400384246
+  },
+  "recommendations": [
+    {
+      "candidate": "rigid MultiMesh batches",
+      "default": true,
+      "evidence": "ABBA ~9.8% combined gain; batch-only 38.91 FPS; lower frame setup and render CPU; batch updater itself ~3.3ms/frame remains a hotspot."
+    },
+    {
+      "candidate": "stationary RVO pruning",
+      "default": true,
+      "evidence": "Prior correctness supports safe stationary pruning. Current prune-only 34.74 FPS is inside original variance; independent FPS benefit is not established."
+    },
+    {
+      "candidate": "certified static sweep grid",
+      "default": false,
+      "evidence": "Combat positive directional samples, but repeated dense reversal leaves 4/5 pending vs native 3/3. Responded-only P95 is not worse, yet a behavioral regression cannot be excluded. Keep experimental, not default."
+    },
+    {
+      "candidate": "omit unused path metadata and cache map iterations",
+      "default": true,
+      "evidence": "Removes hundreds of thousands of repeated native map iteration reads with per-tick cache, preserves native paths in prior oracle; standalone FPS gain not isolated."
+    },
+    {
+      "candidate": "shared flow fields",
+      "default": false,
+      "evidence": "Real shared samples and valid fields confirmed, but aggregate FPS and cold detour response not improved. Native requests still occur; routes/visibility change."
+    },
+    {
+      "candidate": "skinned models",
+      "default": false,
+      "evidence": "Prior all-skin experiments did not establish overall benefit; not retested or enabled here."
+    }
+  ],
+  "results": [
+    {
+      "run": "combat-a1",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "01ec344e02164afc45a19c64ef2b16d4d52a2cac387099796ef915a69b2a1bf0",
+      "batches": false,
+      "prune": false,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1026,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 41.8916846803407,
+        "frame_ms": {
+          "count": 839,
+          "max": 60.52,
+          "mean": 23.8710667461264,
+          "p50": 28.519,
+          "p95": 37.729,
+          "p99": 40.503
+        },
+        "gpu_ms": {
+          "count": 839,
+          "max": 3.24499988555908,
+          "mean": 2.89055661365159,
+          "p50": 3.02699995040894,
+          "p95": 3.14599990844727,
+          "p99": 3.16100001335144
+        },
+        "last_lag_ms": 27.8250000000007,
+        "render_cpu_ms": {
+          "count": 839,
+          "max": 3.47699999809265,
+          "mean": 1.86673182526135,
+          "p50": 2.04699993133545,
+          "p95": 2.54200005531311,
+          "p99": 2.98699998855591
+        },
+        "setup_cpu_ms": {
+          "count": 839,
+          "max": 6.356,
+          "mean": 3.12768891537545,
+          "p50": 3.745,
+          "p95": 4.202,
+          "p99": 4.821
+        },
+        "tps": 29.958296553283
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 34.2380457980551,
+        "frame_ms": {
+          "count": 583,
+          "max": 60.52,
+          "mean": 29.228756432247,
+          "p50": 30.337,
+          "p95": 38.344,
+          "p99": 42.65
+        },
+        "gpu_ms": {
+          "count": 583,
+          "max": 3.24499988555908,
+          "mean": 3.05311492540415,
+          "p50": 3.09899997711182,
+          "p95": 3.15000009536743,
+          "p99": 3.16899991035461
+        },
+        "last_lag_ms": 27.8250000000007,
+        "render_cpu_ms": {
+          "count": 583,
+          "max": 3.47699999809265,
+          "mean": 2.16340137386813,
+          "p50": 2.16700005531311,
+          "p95": 2.61500000953674,
+          "p99": 3.21900010108948
+        },
+        "setup_cpu_ms": {
+          "count": 583,
+          "max": 6.356,
+          "mean": 3.82752144082333,
+          "p50": 3.847,
+          "p95": 4.291,
+          "p99": 5.173
+        },
+        "tps": 30.0096765056709
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.922084148727986,
+        "p95": 16.507,
+        "p99": 17.363,
+        "max": 25.908
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.027743639921722116,
+        "p95": 0.344,
+        "p99": 0.505,
+        "max": 0.946
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 295.97058823529414,
+        "p95": 307,
+        "p99": 307,
+        "max": 307
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 153.11764705882354,
+        "p95": 415,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 406.29411764705884,
+        "p95": 418,
+        "p99": 419,
+        "max": 419
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 1218.1176470588234,
+        "p95": 1316.0,
+        "p99": 1324.0,
+        "max": 1324.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 0,
+        "batch_usec": 0,
+        "certified_steps": 0,
+        "completions": 19,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 112296,
+        "queries": 531,
+        "releases": 3236,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 0,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 433.4022250000001,
+        "p95": 707.608,
+        "p99": 741.102,
+        "max": 741.102
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4119,
+      "damage_amount": 49585.0,
+      "gather_cycles": 329,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 29.3832187652588,
+          "mean": 14.3200352666652,
+          "p50": 13.2416477203369,
+          "p95": 23.4857769012451,
+          "p99": 26.8982639312744
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 15.5934858322144,
+          "mean": 6.36524557183802,
+          "p50": 5.66145801544189,
+          "p95": 13.3218383789063,
+          "p99": 14.6006603240967
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.046875
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.65625
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-b1",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "9745528bd4bc023afa76ac86e4c23a3b3a3a2eb298f8b71abd944334f8824a31",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1028,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 47.0438184422567,
+        "frame_ms": {
+          "count": 941,
+          "max": 43.398,
+          "mean": 21.2567640807651,
+          "p50": 25.875,
+          "p95": 35.813,
+          "p99": 38.487
+        },
+        "gpu_ms": {
+          "count": 941,
+          "max": 3.66300010681152,
+          "mean": 3.17561636670363,
+          "p50": 3.29099988937378,
+          "p95": 3.58899998664856,
+          "p99": 3.63100004196167
+        },
+        "last_lag_ms": 2.61499999999796,
+        "render_cpu_ms": {
+          "count": 941,
+          "max": 2.23799991607666,
+          "mean": 1.08730924547542,
+          "p50": 1.09300005435944,
+          "p95": 1.56700003147125,
+          "p99": 1.83899998664856
+        },
+        "setup_cpu_ms": {
+          "count": 941,
+          "max": 1.659,
+          "mean": 0.573489904357067,
+          "p50": 0.621,
+          "p95": 0.903,
+          "p99": 1.041
+        },
+        "tps": 29.9960585179107
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 38.6410853663328,
+        "frame_ms": {
+          "count": 657,
+          "max": 43.398,
+          "mean": 25.8822541856926,
+          "p50": 28.368,
+          "p95": 36.484,
+          "p99": 38.951
+        },
+        "gpu_ms": {
+          "count": 657,
+          "max": 3.66300010681152,
+          "mean": 3.35488736792786,
+          "p50": 3.36500000953674,
+          "p95": 3.59699988365173,
+          "p99": 3.63299989700317
+        },
+        "last_lag_ms": 2.61499999999796,
+        "render_cpu_ms": {
+          "count": 657,
+          "max": 2.23799991607666,
+          "mean": 1.23157838680973,
+          "p50": 1.22899997234344,
+          "p95": 1.62199997901917,
+          "p99": 1.875
+        },
+        "setup_cpu_ms": {
+          "count": 657,
+          "max": 1.659,
+          "mean": 0.707671232876713,
+          "p50": 0.728,
+          "p95": 0.938,
+          "p99": 1.063
+        },
+        "tps": 29.995363069756
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 510,
+        "mean": 12.788949019607845,
+        "p95": 16.067,
+        "p99": 18.581,
+        "max": 19.298
+      },
+      "steady_path_query_ms": {
+        "count": 510,
+        "mean": 0.022870588235294115,
+        "p95": 0.33,
+        "p99": 0.405,
+        "max": 0.908
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 280.9117647058824,
+        "p95": 290,
+        "p99": 291,
+        "max": 291
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 162.73529411764707,
+        "p95": 418,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 407.9117647058824,
+        "p95": 420,
+        "p99": 421,
+        "max": 421
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 923.9117647058823,
+        "p95": 1018.0,
+        "p99": 1033.0,
+        "max": 1033.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 407.8235294117647,
+        "p95": 420,
+        "p99": 421,
+        "max": 421
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3323.1176470588234,
+        "p95": 3423,
+        "p99": 3424,
+        "max": 3424
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 941,
+        "batch_usec": 3094795,
+        "certified_steps": 0,
+        "completions": 16,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 116974,
+        "queries": 519,
+        "releases": 3249,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 3.288836344314559,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 434.89232499999997,
+        "p95": 705.161,
+        "p99": 736.208,
+        "max": 736.208
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4193,
+      "damage_amount": 50805.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 28.8064956665039,
+          "mean": 14.5676971832208,
+          "p50": 13.3576326370239,
+          "p95": 23.9597053527832,
+          "p99": 26.9072132110596
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 16.5009365081787,
+          "mean": 6.38879709605095,
+          "p50": 5.69457149505615,
+          "p95": 13.3495588302612,
+          "p99": 15.4824123382568
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 3.453125
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-b2",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "446df7a6c7f7441935a3760b50fd159eb0932cbe31e444491cee7b150707b13d",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1028,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 47.0480213460169,
+        "frame_ms": {
+          "count": 942,
+          "max": 46.331,
+          "mean": 21.2548630573249,
+          "p50": 25.965,
+          "p95": 35.4,
+          "p99": 38.775
+        },
+        "gpu_ms": {
+          "count": 942,
+          "max": 3.75300002098084,
+          "mean": 3.18549150443634,
+          "p50": 3.30699992179871,
+          "p95": 3.60500001907349,
+          "p99": 3.63700008392334
+        },
+        "last_lag_ms": 22.0809999999983,
+        "render_cpu_ms": {
+          "count": 942,
+          "max": 2.0460000038147,
+          "mean": 1.08009978806137,
+          "p50": 1.10399997234344,
+          "p95": 1.557000041008,
+          "p99": 1.79799997806549
+        },
+        "setup_cpu_ms": {
+          "count": 942,
+          "max": 1.084,
+          "mean": 0.555663481953291,
+          "p50": 0.634,
+          "p95": 0.834,
+          "p99": 0.922
+        },
+        "tps": 29.9668925770808
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 38.8318806332663,
+        "frame_ms": {
+          "count": 661,
+          "max": 46.331,
+          "mean": 25.7578487140696,
+          "p50": 28.27,
+          "p95": 36.103,
+          "p99": 39.277
+        },
+        "gpu_ms": {
+          "count": 661,
+          "max": 3.75300002098084,
+          "mean": 3.36853101033486,
+          "p50": 3.37899994850159,
+          "p95": 3.61400008201599,
+          "p99": 3.63899993896484
+        },
+        "last_lag_ms": 22.0809999999983,
+        "render_cpu_ms": {
+          "count": 661,
+          "max": 2.0460000038147,
+          "mean": 1.22375491680789,
+          "p50": 1.21800005435944,
+          "p95": 1.6139999628067,
+          "p99": 1.80999994277954
+        },
+        "setup_cpu_ms": {
+          "count": 661,
+          "max": 1.084,
+          "mean": 0.678745839636914,
+          "p50": 0.693,
+          "p95": 0.856,
+          "p99": 0.95
+        },
+        "tps": 30.0198048465947
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.830681017612518,
+        "p95": 16.507,
+        "p99": 17.916,
+        "max": 19.555
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.018146771037182,
+        "p95": 0.0,
+        "p99": 0.364,
+        "max": 1.201
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 286.20588235294116,
+        "p95": 295,
+        "p99": 295,
+        "max": 295
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 161.52941176470588,
+        "p95": 418,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 407.8235294117647,
+        "p95": 418,
+        "p99": 418,
+        "max": 418
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 918.2058823529412,
+        "p95": 1009.0,
+        "p99": 1014.0,
+        "max": 1014.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 407.7352941176471,
+        "p95": 418,
+        "p99": 418,
+        "max": 418
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3329.6176470588234,
+        "p95": 3418,
+        "p99": 3418,
+        "max": 3418
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 942,
+        "batch_usec": 3127069,
+        "certified_steps": 0,
+        "completions": 19,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 116670,
+        "queries": 508,
+        "releases": 3216,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 3.3196061571125264,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 431.15922500000005,
+        "p95": 707.397,
+        "p99": 741.059,
+        "max": 741.059
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4144,
+      "damage_amount": 49992.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 28.636999130249,
+          "mean": 14.4322644820256,
+          "p50": 13.2464742660522,
+          "p95": 23.8371067047119,
+          "p99": 26.6954612731934
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 15.6919164657593,
+          "mean": 6.3838418737977,
+          "p50": 5.81599807739258,
+          "p95": 12.9777317047119,
+          "p99": 14.7125339508057
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.5
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-a2",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "69fdefb21e116c8056cace18472541d96b9f9a4e4d9f4934b064c634d6ad3754",
+      "batches": false,
+      "prune": false,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1026,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 44.6781530620609,
+        "frame_ms": {
+          "count": 895,
+          "max": 43.597,
+          "mean": 22.382287150838,
+          "p50": 27.117,
+          "p95": 36.472,
+          "p99": 39.874
+        },
+        "gpu_ms": {
+          "count": 895,
+          "max": 3.16400003433228,
+          "mean": 2.84763911103403,
+          "p50": 2.97000002861023,
+          "p95": 3.07699990272522,
+          "p99": 3.09800004959106
+        },
+        "last_lag_ms": -1.18633333333491,
+        "render_cpu_ms": {
+          "count": 895,
+          "max": 3.77999997138977,
+          "mean": 1.84493407950055,
+          "p50": 1.98800003528595,
+          "p95": 2.61999988555908,
+          "p99": 3.11199998855591
+        },
+        "setup_cpu_ms": {
+          "count": 895,
+          "max": 6.983,
+          "mean": 3.0338748603352,
+          "p50": 3.605,
+          "p95": 4.097,
+          "p99": 4.583
+        },
+        "tps": 30.0017541791046
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 36.3430080103747,
+        "frame_ms": {
+          "count": 619,
+          "max": 43.597,
+          "mean": 27.5210662358643,
+          "p50": 29.251,
+          "p95": 37.424,
+          "p99": 40.049
+        },
+        "gpu_ms": {
+          "count": 619,
+          "max": 3.16400003433228,
+          "mean": 2.99508724343603,
+          "p50": 3.02699995040894,
+          "p95": 3.08200001716614,
+          "p99": 3.09899997711182
+        },
+        "last_lag_ms": -1.18633333333491,
+        "render_cpu_ms": {
+          "count": 619,
+          "max": 3.77999997138977,
+          "mean": 2.15622617162295,
+          "p50": 2.12199997901917,
+          "p95": 2.68499994277954,
+          "p99": 3.19700002670288
+        },
+        "setup_cpu_ms": {
+          "count": 619,
+          "max": 6.983,
+          "mean": 3.71489983844911,
+          "p50": 3.697,
+          "p95": 4.192,
+          "p99": 4.972
+        },
+        "tps": 30.0020631555759
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.69673972602738,
+        "p95": 16.322,
+        "p99": 17.683,
+        "max": 19.586
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.015074363992172211,
+        "p95": 0.0,
+        "p99": 0.357,
+        "max": 0.65
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 278.55882352941177,
+        "p95": 284,
+        "p99": 284,
+        "max": 284
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 140.94117647058823,
+        "p95": 415,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 403.5,
+        "p95": 415,
+        "p99": 415,
+        "max": 415
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 1191.3823529411766,
+        "p95": 1285.0,
+        "p99": 1285.0,
+        "max": 1285.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 0,
+        "batch_usec": 0,
+        "certified_steps": 0,
+        "completions": 13,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 106842,
+        "queries": 520,
+        "releases": 3200,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 0,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 429.5530500000001,
+        "p95": 705.421,
+        "p99": 741.363,
+        "max": 741.363
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4115,
+      "damage_amount": 50178.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 30.4218292236328,
+          "mean": 14.1867419133144,
+          "p50": 13.3949956893921,
+          "p95": 22.8492088317871,
+          "p99": 25.7604236602783
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 16.6069660186768,
+          "mean": 6.2075373102474,
+          "p50": 5.50305557250977,
+          "p95": 13.0495100021362,
+          "p99": 14.1363363265991
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.328125
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-batch-only",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "4da0eafd62f6a5daa04c3923eec5f32f51f4532d5cb823d43715cbaeff9b155b",
+      "batches": true,
+      "prune": false,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1028,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 47.8671703012489,
+        "frame_ms": {
+          "count": 958,
+          "max": 49.736,
+          "mean": 20.8911315240083,
+          "p50": 25.406,
+          "p95": 35.881,
+          "p99": 39.551
+        },
+        "gpu_ms": {
+          "count": 958,
+          "max": 3.68700003623962,
+          "mean": 3.16965866188416,
+          "p50": 3.28999996185303,
+          "p95": 3.59800004959106,
+          "p99": 3.62700009346008
+        },
+        "last_lag_ms": 13.7040000000015,
+        "render_cpu_ms": {
+          "count": 958,
+          "max": 2.32800006866455,
+          "mean": 1.07020041750966,
+          "p50": 1.10399997234344,
+          "p95": 1.55499994754791,
+          "p99": 1.75800001621246
+        },
+        "setup_cpu_ms": {
+          "count": 958,
+          "max": 1.18,
+          "mean": 0.536568893528184,
+          "p50": 0.595,
+          "p95": 0.822,
+          "p99": 0.969
+        },
+        "tps": 29.9794386020348
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 38.9097808550595,
+        "frame_ms": {
+          "count": 662,
+          "max": 49.736,
+          "mean": 25.7120664652568,
+          "p50": 27.922,
+          "p95": 36.626,
+          "p99": 40.15
+        },
+        "gpu_ms": {
+          "count": 662,
+          "max": 3.68700003623962,
+          "mean": 3.35022054193963,
+          "p50": 3.36299991607666,
+          "p95": 3.60800004005432,
+          "p99": 3.63700008392334
+        },
+        "last_lag_ms": 13.7040000000015,
+        "render_cpu_ms": {
+          "count": 662,
+          "max": 2.32800006866455,
+          "mean": 1.22597432046498,
+          "p50": 1.21800005435944,
+          "p95": 1.60000002384186,
+          "p99": 1.7960000038147
+        },
+        "setup_cpu_ms": {
+          "count": 662,
+          "max": 1.18,
+          "mean": 0.663714501510574,
+          "p50": 0.67,
+          "p95": 0.849,
+          "p99": 0.994
+        },
+        "tps": 30.0345891494492
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.833485322896273,
+        "p95": 16.33,
+        "p99": 18.637,
+        "max": 22.194
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.021890410958904108,
+        "p95": 0.333,
+        "p99": 0.41,
+        "max": 0.69
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 284.0,
+        "p95": 297,
+        "p99": 297,
+        "max": 297
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 147.44117647058823,
+        "p95": 418,
+        "p99": 450,
+        "max": 450
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 405.6764705882353,
+        "p95": 419,
+        "p99": 419,
+        "max": 419
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 927.0294117647059,
+        "p95": 1029.0,
+        "p99": 1029.0,
+        "max": 1029.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 405.5,
+        "p95": 419,
+        "p99": 419,
+        "max": 419
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3300.294117647059,
+        "p95": 3395,
+        "p99": 3404,
+        "max": 3404
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 958,
+        "batch_usec": 3164201,
+        "certified_steps": 0,
+        "completions": 14,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 109189,
+        "queries": 526,
+        "releases": 3172,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 3.3029237995824636,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 428.10150000000004,
+        "p95": 703.588,
+        "p99": 736.632,
+        "max": 736.632
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4028,
+      "damage_amount": 47803.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 29.2992877960205,
+          "mean": 14.3572973793587,
+          "p50": 13.3931541442871,
+          "p95": 23.6727752685547,
+          "p99": 26.6702861785889
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 20.8642196655273,
+          "mean": 6.3809421948627,
+          "p50": 5.89658355712891,
+          "p95": 13.6249885559082,
+          "p99": 15.5043363571167
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 0.96875
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-prune-only",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "def8ec77ce8860da39f79329bdbafdfeabf61952306b7ebeeca057c8e095ae9d",
+      "batches": false,
+      "prune": true,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1026,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 42.6294014732081,
+        "frame_ms": {
+          "count": 853,
+          "max": 60.286,
+          "mean": 23.4579706916765,
+          "p50": 28.052,
+          "p95": 37.998,
+          "p99": 43.305
+        },
+        "gpu_ms": {
+          "count": 853,
+          "max": 3.26300001144409,
+          "mean": 2.88427080610573,
+          "p50": 3.01200008392334,
+          "p95": 3.14000010490417,
+          "p99": 3.16100001335144
+        },
+        "last_lag_ms": 9.64900000000125,
+        "render_cpu_ms": {
+          "count": 853,
+          "max": 3.47099995613098,
+          "mean": 1.83755216886402,
+          "p50": 1.99100005626678,
+          "p95": 2.48900008201599,
+          "p99": 2.93799996376038
+        },
+        "setup_cpu_ms": {
+          "count": 853,
+          "max": 6.071,
+          "mean": 3.12448065650645,
+          "p50": 3.736,
+          "p95": 4.251,
+          "p99": 4.74
+        },
+        "tps": 29.9855110010843
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 34.7449543976883,
+        "frame_ms": {
+          "count": 591,
+          "max": 60.286,
+          "mean": 28.8096717428088,
+          "p50": 30.047,
+          "p95": 38.773,
+          "p99": 49.844
+        },
+        "gpu_ms": {
+          "count": 591,
+          "max": 3.26300001144409,
+          "mean": 3.04639763114013,
+          "p50": 3.09299993515015,
+          "p95": 3.14599990844727,
+          "p99": 3.16799998283386
+        },
+        "last_lag_ms": 9.64900000000125,
+        "render_cpu_ms": {
+          "count": 591,
+          "max": 3.47099995613098,
+          "mean": 2.13209475377691,
+          "p50": 2.12700009346008,
+          "p95": 2.56100010871887,
+          "p99": 3.16400003433228
+        },
+        "setup_cpu_ms": {
+          "count": 591,
+          "max": 6.071,
+          "mean": 3.8331049069374,
+          "p50": 3.842,
+          "p95": 4.397,
+          "p99": 4.818
+        },
+        "tps": 30.0417456805731
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.841589041095888,
+        "p95": 16.331,
+        "p99": 18.343,
+        "max": 20.909
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.02835420743639921,
+        "p95": 0.338,
+        "p99": 0.593,
+        "max": 0.953
+      },
+      "steady_visible": {
+        "count": 33,
+        "mean": 289.93939393939394,
+        "p95": 298,
+        "p99": 298,
+        "max": 298
+      },
+      "steady_moving": {
+        "count": 33,
+        "mean": 165.57575757575756,
+        "p95": 412,
+        "p99": 450,
+        "max": 450
+      },
+      "steady_animated": {
+        "count": 33,
+        "mean": 408.3939393939394,
+        "p95": 420,
+        "p99": 420,
+        "max": 420
+      },
+      "steady_draw_calls": {
+        "count": 33,
+        "mean": 1204.939393939394,
+        "p95": 1295.0,
+        "p99": 1299.0,
+        "max": 1299.0
+      },
+      "steady_batch_models": {
+        "count": 33,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "steady_batch_parts": {
+        "count": 33,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 0,
+        "batch_usec": 0,
+        "certified_steps": 0,
+        "completions": 19,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 118264,
+        "queries": 535,
+        "releases": 3077,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 0,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 432.2558,
+        "p95": 709.127,
+        "p99": 739.144,
+        "max": 739.144
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4032,
+      "damage_amount": 49602.0,
+      "gather_cycles": 329,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 29.2983131408691,
+          "mean": 14.3119847605714,
+          "p50": 13.1975755691528,
+          "p95": 23.2888717651367,
+          "p99": 26.9780616760254
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 16.2665596008301,
+          "mean": 6.39924648865662,
+          "p50": 5.71983003616333,
+          "p95": 12.9603176116943,
+          "p99": 14.3985557556152
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.015625
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 1.71875
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-grid",
+      "pck_sha256": "cbbfaf208666ffd059ee5f2541bf2cfe502782e9ab8bdad1a7018bf04a6fec27",
+      "result_sha256": "378a7f681b7d598f591f332277e819e0941c9cab4722cceefbd1badf3b7b8750",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "grid",
+      "scenario": "combat",
+      "checks": 1029,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 49.0161347524995,
+        "frame_ms": {
+          "count": 981,
+          "max": 41.046,
+          "mean": 20.4014322120285,
+          "p50": 24.972,
+          "p95": 34.559,
+          "p99": 38.829
+        },
+        "gpu_ms": {
+          "count": 981,
+          "max": 3.65899991989136,
+          "mean": 3.17777778103446,
+          "p50": 3.29399991035461,
+          "p95": 3.58800005912781,
+          "p99": 3.61899995803833
+        },
+        "last_lag_ms": 13.8050000000003,
+        "render_cpu_ms": {
+          "count": 981,
+          "max": 2.35999989509583,
+          "mean": 1.09985219302163,
+          "p50": 1.12399995326996,
+          "p95": 1.56900000572205,
+          "p99": 1.75
+        },
+        "setup_cpu_ms": {
+          "count": 981,
+          "max": 1.091,
+          "mean": 0.530893985728848,
+          "p50": 0.586,
+          "p95": 0.77,
+          "p99": 0.889
+        },
+        "tps": 29.9792873103972
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 41.2018043216402,
+        "frame_ms": {
+          "count": 701,
+          "max": 41.046,
+          "mean": 24.2860841654779,
+          "p50": 27.111,
+          "p95": 35.574,
+          "p99": 38.837
+        },
+        "gpu_ms": {
+          "count": 701,
+          "max": 3.65899991989136,
+          "mean": 3.34727960612396,
+          "p50": 3.36500000953674,
+          "p95": 3.59400010108948,
+          "p99": 3.62199997901917
+        },
+        "last_lag_ms": 13.8050000000003,
+        "render_cpu_ms": {
+          "count": 701,
+          "max": 2.35999989509583,
+          "mean": 1.23945363935152,
+          "p50": 1.24600005149841,
+          "p95": 1.58500003814697,
+          "p99": 1.78600001335144
+        },
+        "setup_cpu_ms": {
+          "count": 701,
+          "max": 1.091,
+          "mean": 0.635248216833095,
+          "p50": 0.644,
+          "p95": 0.791,
+          "p99": 0.911
+        },
+        "tps": 30.034410853578
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.5608649706458,
+        "p95": 16.125,
+        "p99": 17.686,
+        "max": 18.279
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.026475538160469672,
+        "p95": 0.344,
+        "p99": 0.429,
+        "max": 1.009
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 282.0882352941176,
+        "p95": 290,
+        "p99": 292,
+        "max": 292
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 137.55882352941177,
+        "p95": 415,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 401.52941176470586,
+        "p95": 413,
+        "p99": 413,
+        "max": 413
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 928.4705882352941,
+        "p95": 1027.0,
+        "p99": 1033.0,
+        "max": 1033.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 401.47058823529414,
+        "p95": 413,
+        "p99": 413,
+        "max": 413
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3282.0,
+        "p95": 3375,
+        "p99": 3384,
+        "max": 3384
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 981,
+        "batch_usec": 3234661,
+        "certified_steps": 102758,
+        "completions": 16,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "native_steps": 1476,
+        "queries": 527,
+        "releases": 3333,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 3.297309887869521,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 427.38814999999994,
+        "p95": 706.362,
+        "p99": 735.583,
+        "max": 735.583
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4089,
+      "damage_amount": 48335.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 29.5907249450684,
+          "mean": 14.3421769627428,
+          "p50": 13.3464374542236,
+          "p95": 23.4166469573975,
+          "p99": 26.8442859649658
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 19.0443153381348,
+          "mean": 6.32989655639482,
+          "p50": 5.57315015792847,
+          "p95": 13.6348495483398,
+          "p99": 16.4011917114258
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.015625
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.953125
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-final-native",
+      "pck_sha256": "1710bbfd02c1da0bfb0b689d03a3e56db6b01e5336f194976e79d6a4cec91030",
+      "result_sha256": "fd2023b820846d745c5de620a821f1d0b8b5bc381c70d856e651c4ae4cdaa0db",
+      "batches": false,
+      "prune": false,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "combat",
+      "checks": 1026,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 44.1697768302039,
+        "frame_ms": {
+          "count": 884,
+          "max": 45.683,
+          "mean": 22.6388868778281,
+          "p50": 27.544,
+          "p95": 36.559,
+          "p99": 40.38
+        },
+        "gpu_ms": {
+          "count": 884,
+          "max": 3.21099996566772,
+          "mean": 2.85605995201957,
+          "p50": 2.96600008010864,
+          "p95": 3.09299993515015,
+          "p99": 3.12700009346008
+        },
+        "last_lag_ms": 12.775999999998,
+        "render_cpu_ms": {
+          "count": 884,
+          "max": 4.51900005340576,
+          "mean": 1.8247432128876,
+          "p50": 1.98399996757507,
+          "p95": 2.51200008392334,
+          "p99": 2.95199990272522
+        },
+        "setup_cpu_ms": {
+          "count": 884,
+          "max": 4.845,
+          "mean": 3.07116176470588,
+          "p50": 3.685,
+          "p95": 4.179,
+          "p99": 4.452
+        },
+        "tps": 29.9794865363375
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 35.9710433101353,
+        "frame_ms": {
+          "count": 612,
+          "max": 45.683,
+          "mean": 27.8081879084968,
+          "p50": 29.456,
+          "p95": 37.564,
+          "p99": 40.824
+        },
+        "gpu_ms": {
+          "count": 612,
+          "max": 3.21099996566772,
+          "mean": 3.00216503158893,
+          "p50": 3.03099989891052,
+          "p95": 3.09899997711182,
+          "p99": 3.15700006484985
+        },
+        "last_lag_ms": 12.775999999998,
+        "render_cpu_ms": {
+          "count": 612,
+          "max": 4.51900005340576,
+          "mean": 2.1200947728422,
+          "p50": 2.1029999256134,
+          "p95": 2.57999992370605,
+          "p99": 3.00399994850159
+        },
+        "setup_cpu_ms": {
+          "count": 612,
+          "max": 4.845,
+          "mean": 3.76189215686274,
+          "p50": 3.783,
+          "p95": 4.233,
+          "p99": 4.526
+        },
+        "tps": 30.0346456396718
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.711154598825832,
+        "p95": 16.036,
+        "p99": 17.472,
+        "max": 21.262
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.02415068493150685,
+        "p95": 0.333,
+        "p99": 0.642,
+        "max": 0.702
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 282.05882352941177,
+        "p95": 290,
+        "p99": 290,
+        "max": 290
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 155.26470588235293,
+        "p95": 416,
+        "p99": 451,
+        "max": 451
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 405.1764705882353,
+        "p95": 418,
+        "p99": 418,
+        "max": 418
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 1203.1470588235295,
+        "p95": 1299.0,
+        "p99": 1300.0,
+        "max": 1300.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 0.0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 0,
+        "batch_usec": 0,
+        "certified_steps": 0,
+        "completions": 17,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 0,
+        "map_iteration_reads": 51782,
+        "native_steps": 113707,
+        "queries": 516,
+        "releases": 3155,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 0,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 431.72665000000006,
+        "p95": 707.501,
+        "p99": 740.788,
+        "max": 740.788
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4006,
+      "damage_amount": 47607.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 27.91383934021,
+          "mean": 14.3836123531899,
+          "p50": 13.251166343689,
+          "p95": 23.7879428863525,
+          "p99": 26.5013103485107
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 16.1784801483154,
+          "mean": 6.44749093955729,
+          "p50": 5.75401544570923,
+          "p95": 13.396068572998,
+          "p99": 15.1845703125
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.875
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "combat-final-candidate",
+      "pck_sha256": "1710bbfd02c1da0bfb0b689d03a3e56db6b01e5336f194976e79d6a4cec91030",
+      "result_sha256": "ed4b3e6cdb6fc709d7e4f8cb8b8c383fa61ce090d7b671326e10c6d6d04c0877",
+      "batches": true,
+      "prune": true,
+      "metadata": true,
+      "nav": "grid",
+      "scenario": "combat",
+      "checks": 1029,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 47.9712652121379,
+        "frame_ms": {
+          "count": 960,
+          "max": 41.198,
+          "mean": 20.845796875,
+          "p50": 25.477,
+          "p95": 35.026,
+          "p99": 38.614
+        },
+        "gpu_ms": {
+          "count": 960,
+          "max": 3.71499991416931,
+          "mean": 3.20815312663714,
+          "p50": 3.32100009918213,
+          "p95": 3.61700010299683,
+          "p99": 3.65599989891052
+        },
+        "last_lag_ms": 11.9650000000001,
+        "render_cpu_ms": {
+          "count": 960,
+          "max": 2.21900010108948,
+          "mean": 1.10240624975413,
+          "p50": 1.12399995326996,
+          "p95": 1.61899995803833,
+          "p99": 1.81500005722046
+        },
+        "setup_cpu_ms": {
+          "count": 960,
+          "max": 1.192,
+          "mean": 0.543698958333334,
+          "p50": 0.59,
+          "p95": 0.822,
+          "p99": 0.918
+        },
+        "tps": 29.9820407575862
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 40.2657421417142,
+        "frame_ms": {
+          "count": 685,
+          "max": 41.198,
+          "mean": 24.8499868613139,
+          "p50": 27.68,
+          "p95": 35.753,
+          "p99": 38.945
+        },
+        "gpu_ms": {
+          "count": 685,
+          "max": 3.71499991416931,
+          "mean": 3.38235036543686,
+          "p50": 3.39000010490417,
+          "p95": 3.625,
+          "p99": 3.66000008583069
+        },
+        "last_lag_ms": 11.9650000000001,
+        "render_cpu_ms": {
+          "count": 685,
+          "max": 2.21900010108948,
+          "mean": 1.24087445135534,
+          "p50": 1.22599995136261,
+          "p95": 1.65400004386902,
+          "p99": 1.85699999332428
+        },
+        "setup_cpu_ms": {
+          "count": 685,
+          "max": 1.192,
+          "mean": 0.653268613138686,
+          "p50": 0.656,
+          "p95": 0.835,
+          "p99": 0.951
+        },
+        "tps": 30.0376558166657
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 12.763751467710367,
+        "p95": 16.87,
+        "p99": 18.058,
+        "max": 21.726
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.016540117416829744,
+        "p95": 0.0,
+        "p99": 0.382,
+        "max": 0.755
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 286.88235294117646,
+        "p95": 296,
+        "p99": 296,
+        "max": 296
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 145.26470588235293,
+        "p95": 417,
+        "p99": 451,
+        "max": 451
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 408.8235294117647,
+        "p95": 420,
+        "p99": 420,
+        "max": 420
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 927.2941176470588,
+        "p95": 1017.0,
+        "p99": 1018.0,
+        "max": 1018.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 408.7647058823529,
+        "p95": 420,
+        "p99": 420,
+        "max": 420
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3326.764705882353,
+        "p95": 3423,
+        "p99": 3426,
+        "max": 3426
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 960,
+        "batch_usec": 3191028,
+        "certified_steps": 106724,
+        "completions": 19,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 49611,
+        "map_iteration_reads": 599,
+        "native_steps": 1452,
+        "queries": 513,
+        "releases": 3266,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 3.3239875,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 433.39262500000007,
+        "p95": 705.171,
+        "p99": 738.955,
+        "max": 738.955
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4270,
+      "damage_amount": 51518.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 28.287576675415,
+          "mean": 14.4140122601416,
+          "p50": 13.2837963104248,
+          "p95": 24.1770706176758,
+          "p99": 27.0901699066162
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 18.7540016174316,
+          "mean": 6.53080466424272,
+          "p50": 5.93795728683472,
+          "p95": 13.4896812438965,
+          "p99": 15.3497200012207
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 1.828125
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "march-native",
+      "pck_sha256": "1710bbfd02c1da0bfb0b689d03a3e56db6b01e5336f194976e79d6a4cec91030",
+      "result_sha256": "8dd997dbd664a31573b080444c57e3a1ed7b0b67435c1adcf73a996c28c617e9",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "march",
+      "checks": 1036,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 100.493462900238,
+        "frame_ms": {
+          "count": 2010,
+          "max": 30.732,
+          "mean": 9.95088905472639,
+          "p50": 6.51,
+          "p95": 20.746,
+          "p99": 25.429
+        },
+        "gpu_ms": {
+          "count": 2010,
+          "max": 3.67000007629395,
+          "mean": 2.88699701698265,
+          "p50": 2.89499998092651,
+          "p95": 3.01099991798401,
+          "p99": 3.06599998474121
+        },
+        "last_lag_ms": 1.28700000000026,
+        "render_cpu_ms": {
+          "count": 2010,
+          "max": 1.34700000286102,
+          "mean": 0.730352239169885,
+          "p50": 0.717999994754791,
+          "p95": 0.852999985218048,
+          "p99": 1.03299999237061
+        },
+        "setup_cpu_ms": {
+          "count": 2010,
+          "max": 0.458,
+          "mean": 0.241556218905473,
+          "p50": 0.236,
+          "p95": 0.304,
+          "p99": 0.348
+        },
+        "tps": 29.9980486269368
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 99.5806144482708,
+        "frame_ms": {
+          "count": 1693,
+          "max": 30.732,
+          "mean": 10.0453951565269,
+          "p50": 6.582,
+          "p95": 20.726,
+          "p99": 25.429
+        },
+        "gpu_ms": {
+          "count": 1693,
+          "max": 3.17899990081787,
+          "mean": 2.90289958792189,
+          "p50": 2.91100001335144,
+          "p95": 3.01500010490417,
+          "p99": 3.06299996376038
+        },
+        "last_lag_ms": 1.28700000000026,
+        "render_cpu_ms": {
+          "count": 1693,
+          "max": 1.34700000286102,
+          "mean": 0.732662138647394,
+          "p50": 0.718999981880188,
+          "p95": 0.856000006198883,
+          "p99": 1.05299997329712
+        },
+        "setup_cpu_ms": {
+          "count": 1693,
+          "max": 0.458,
+          "mean": 0.240264028352038,
+          "p50": 0.235,
+          "p95": 0.302,
+          "p99": 0.351
+        },
+        "tps": 29.9977042933361
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 510,
+        "mean": 6.5717196078431455,
+        "p95": 10.352,
+        "p99": 12.907,
+        "max": 15.927
+      },
+      "steady_path_query_ms": {
+        "count": 510,
+        "mean": 0.6918549019607847,
+        "p95": 1.506,
+        "p99": 6.787,
+        "max": 8.005
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 190.61764705882354,
+        "p95": 212,
+        "p99": 212,
+        "max": 212
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 421.4117647058824,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 222.58823529411765,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 527.2058823529412,
+        "p95": 533.0,
+        "p99": 533.0,
+        "max": 533.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 222.61764705882354,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1831.8235294117646,
+        "p95": 1852,
+        "p99": 1852,
+        "max": 1852
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 2010,
+        "batch_usec": 4346290,
+        "certified_steps": 0,
+        "completions": 142,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 0,
+        "map_iteration_reads": 252781,
+        "native_steps": 252083,
+        "queries": 1592,
+        "releases": 0,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 2.162333333333333,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 453.9582999999999,
+        "p95": 739.04,
+        "p99": 770.545,
+        "max": 770.545
+      },
+      "reverse_command_ms": {
+        "count": 37,
+        "mean": 1227.7028918918916,
+        "p95": 4242.545,
+        "p99": 4574.191,
+        "max": 4574.191
+      },
+      "pending_command_responses": 3,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 63.9388427734375,
+          "mean": 15.1614324519065,
+          "p50": 13.9711809158325,
+          "p95": 32.7315254211426,
+          "p99": 49.7622413635254
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 59.6775665283203,
+          "mean": 7.73064660142481,
+          "p50": 5.33568716049194,
+          "p95": 25.4930477142334,
+          "p99": 43.5686836242676
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.109375
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 21,
+        "2000": 32,
+        "4000": 35,
+        "8000": 37,
+        "10000": 37
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "march-shared",
+      "pck_sha256": "1710bbfd02c1da0bfb0b689d03a3e56db6b01e5336f194976e79d6a4cec91030",
+      "result_sha256": "7fb0244b225e0a8c631284225e21b0bb12bbc26d1c3e3553b7dfaf4b30628763",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "shared",
+      "scenario": "march",
+      "checks": 1037,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 96.2328224411942,
+        "frame_ms": {
+          "count": 1925,
+          "max": 36.784,
+          "mean": 10.3914592207792,
+          "p50": 6.677,
+          "p95": 21.759,
+          "p99": 27.477
+        },
+        "gpu_ms": {
+          "count": 1925,
+          "max": 3.12599992752075,
+          "mean": 2.87721870187041,
+          "p50": 2.88599991798401,
+          "p95": 3.00699996948242,
+          "p99": 3.05699992179871
+        },
+        "last_lag_ms": 3.55899999999747,
+        "render_cpu_ms": {
+          "count": 1925,
+          "max": 1.19400000572205,
+          "mean": 0.72090025969914,
+          "p50": 0.705999970436096,
+          "p95": 0.830999970436096,
+          "p99": 1.05400002002716
+        },
+        "setup_cpu_ms": {
+          "count": 1925,
+          "max": 0.45,
+          "mean": 0.239514805194806,
+          "p50": 0.234,
+          "p95": 0.305,
+          "p99": 0.361
+        },
+        "tps": 29.9946459556969
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 95.215298904877,
+        "frame_ms": {
+          "count": 1619,
+          "max": 36.784,
+          "mean": 10.5071272390365,
+          "p50": 6.74,
+          "p95": 21.802,
+          "p99": 27.395
+        },
+        "gpu_ms": {
+          "count": 1619,
+          "max": 3.12599992752075,
+          "mean": 2.8940889449529,
+          "p50": 2.90499997138977,
+          "p95": 3.01200008392334,
+          "p99": 3.06200003623962
+        },
+        "last_lag_ms": 3.55899999999747,
+        "render_cpu_ms": {
+          "count": 1619,
+          "max": 1.19400000572205,
+          "mean": 0.722804817577584,
+          "p50": 0.707000017166138,
+          "p95": 0.833000004291534,
+          "p99": 1.05599999427795
+        },
+        "setup_cpu_ms": {
+          "count": 1619,
+          "max": 0.45,
+          "mean": 0.238576281655343,
+          "p50": 0.233,
+          "p95": 0.304,
+          "p99": 0.36
+        },
+        "tps": 30.0525125017864
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 7.48598630136986,
+        "p95": 11.393,
+        "p99": 14.047,
+        "max": 17.249
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.7184363992172214,
+        "p95": 1.59,
+        "p99": 6.772,
+        "max": 7.918
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 183.55882352941177,
+        "p95": 209,
+        "p99": 210,
+        "max": 210
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 416.8235294117647,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 219.85294117647058,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 527.4411764705883,
+        "p95": 533.0,
+        "p99": 533.0,
+        "max": 533.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 219.85294117647058,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1814.7941176470588,
+        "p95": 1856,
+        "p99": 1856,
+        "max": 1856
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 1925,
+        "batch_usec": 4178113,
+        "certified_steps": 0,
+        "completions": 142,
+        "fields": 12,
+        "invalid_fields": 2,
+        "living": 0,
+        "map_iteration_hits": 0,
+        "map_iteration_reads": 163847,
+        "native_steps": 250677,
+        "queries": 1578,
+        "releases": 0,
+        "shared_samples": 87735
+      },
+      "batch_process_mean_ms": 2.170448311688312,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 408.11112499999996,
+        "p95": 629.847,
+        "p99": 665.707,
+        "max": 665.707
+      },
+      "reverse_command_ms": {
+        "count": 35,
+        "mean": 1075.4399714285714,
+        "p95": 3508.277,
+        "p99": 4540.328,
+        "max": 4540.328
+      },
+      "pending_command_responses": 5,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 52.2093086242676,
+          "mean": 13.996879179657,
+          "p50": 12.9575634002686,
+          "p95": 29.111930847168,
+          "p99": 37.0670013427734
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 44.915771484375,
+          "mean": 7.52765980165089,
+          "p50": 5.94042539596558,
+          "p95": 21.9886741638184,
+          "p99": 33.4644927978516
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.625
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 24,
+        "2000": 31,
+        "4000": 34,
+        "8000": 35,
+        "10000": 35
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "march-grid-metadata",
+      "pck_sha256": "1710bbfd02c1da0bfb0b689d03a3e56db6b01e5336f194976e79d6a4cec91030",
+      "result_sha256": "aa553790bcdc53567cebee5cdd04168c3501395b77eaf1183869590622964ff6",
+      "batches": true,
+      "prune": true,
+      "metadata": true,
+      "nav": "grid",
+      "scenario": "march",
+      "checks": 1037,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 98.9679690168277,
+        "frame_ms": {
+          "count": 1980,
+          "max": 32.762,
+          "mean": 10.1042722222222,
+          "p50": 6.722,
+          "p95": 20.855,
+          "p99": 24.22
+        },
+        "gpu_ms": {
+          "count": 1980,
+          "max": 3.18300008773804,
+          "mean": 2.88680101091211,
+          "p50": 2.89299988746643,
+          "p95": 3.02900004386902,
+          "p99": 3.08100008964539
+        },
+        "last_lag_ms": 6.45899999999892,
+        "render_cpu_ms": {
+          "count": 1980,
+          "max": 1.62899994850159,
+          "mean": 0.73421363692091,
+          "p50": 0.716000020503998,
+          "p95": 0.889999985694885,
+          "p99": 1.12800002098084
+        },
+        "setup_cpu_ms": {
+          "count": 1980,
+          "max": 0.613,
+          "mean": 0.242445454545454,
+          "p50": 0.236,
+          "p95": 0.316,
+          "p99": 0.371
+        },
+        "tps": 29.9902936414629
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 97.7274947015763,
+        "frame_ms": {
+          "count": 1662,
+          "max": 32.762,
+          "mean": 10.2374277978339,
+          "p50": 6.817,
+          "p95": 20.784,
+          "p99": 24.438
+        },
+        "gpu_ms": {
+          "count": 1662,
+          "max": 3.18300008773804,
+          "mean": 2.90601203559251,
+          "p50": 2.91199994087219,
+          "p95": 3.03500008583069,
+          "p99": 3.08999991416931
+        },
+        "last_lag_ms": 6.45899999999892,
+        "render_cpu_ms": {
+          "count": 1662,
+          "max": 1.62899994850159,
+          "mean": 0.735122142608415,
+          "p50": 0.717000007629395,
+          "p95": 0.887000024318695,
+          "p99": 1.125
+        },
+        "setup_cpu_ms": {
+          "count": 1662,
+          "max": 0.613,
+          "mean": 0.241427797833934,
+          "p50": 0.234,
+          "p95": 0.315,
+          "p99": 0.37
+        },
+        "tps": 30.0473825466339
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 6.703285714285722,
+        "p95": 10.021,
+        "p99": 12.527,
+        "max": 15.81
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.7103953033268098,
+        "p95": 1.466,
+        "p99": 6.57,
+        "max": 6.9
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 188.35294117647058,
+        "p95": 215,
+        "p99": 216,
+        "max": 216
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 423.3235294117647,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 222.23529411764707,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 526.8529411764706,
+        "p95": 532.0,
+        "p99": 532.0,
+        "max": 532.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 222.2941176470588,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1830.235294117647,
+        "p95": 1852,
+        "p99": 1852,
+        "max": 1852
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 1980,
+        "batch_usec": 4343676,
+        "certified_steps": 144663,
+        "completions": 148,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 252619,
+        "map_iteration_reads": 599,
+        "native_steps": 107948,
+        "queries": 1645,
+        "releases": 0,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 2.1937757575757577,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 449.9996500000001,
+        "p95": 739.649,
+        "p99": 769.755,
+        "max": 769.755
+      },
+      "reverse_command_ms": {
+        "count": 36,
+        "mean": 1490.12175,
+        "p95": 6174.285,
+        "p99": 8075.228,
+        "max": 8075.228
+      },
+      "pending_command_responses": 4,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 63.3583297729492,
+          "mean": 14.8372453833576,
+          "p50": 13.2315673828125,
+          "p95": 30.9826335906982,
+          "p99": 48.1089897155762
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 57.9133262634277,
+          "mean": 7.33036033822372,
+          "p50": 5.09381294250488,
+          "p95": 22.7320613861084,
+          "p99": 40.7814178466797
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 1.53125
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 17,
+        "2000": 29,
+        "4000": 34,
+        "8000": 35,
+        "10000": 36
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "detour-grid-metadata",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "result_sha256": "56d299eaee901ffef0d56853936ec55da3e01944a42e07afa920e462899964ae",
+      "batches": true,
+      "prune": true,
+      "metadata": true,
+      "nav": "grid",
+      "scenario": "detour",
+      "checks": 1029,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 61.9002909713355,
+        "frame_ms": {
+          "count": 1239,
+          "max": 38.259,
+          "mean": 16.1549991928975,
+          "p50": 12.741,
+          "p95": 29.763,
+          "p99": 32.857
+        },
+        "gpu_ms": {
+          "count": 1239,
+          "max": 3.86700010299683,
+          "mean": 3.36393381473612,
+          "p50": 3.46099996566772,
+          "p95": 3.74600005149841,
+          "p99": 3.79200005531311
+        },
+        "last_lag_ms": 16.0440000000017,
+        "render_cpu_ms": {
+          "count": 1239,
+          "max": 1.4650000333786,
+          "mean": 0.871149314469729,
+          "p50": 0.861000001430511,
+          "p95": 1.07799994945526,
+          "p99": 1.30900001525879
+        },
+        "setup_cpu_ms": {
+          "count": 1239,
+          "max": 0.663,
+          "mean": 0.355745762711865,
+          "p50": 0.351,
+          "p95": 0.501,
+          "p99": 0.587
+        },
+        "tps": 29.9759278311552
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 56.182215143681,
+        "frame_ms": {
+          "count": 956,
+          "max": 38.259,
+          "mean": 17.8059466527197,
+          "p50": 20.235,
+          "p95": 30.247,
+          "p99": 33.795
+        },
+        "gpu_ms": {
+          "count": 956,
+          "max": 3.86700010299683,
+          "mean": 3.51440376392468,
+          "p50": 3.5090000629425,
+          "p95": 3.75399994850159,
+          "p99": 3.79900002479553
+        },
+        "last_lag_ms": 16.0440000000017,
+        "render_cpu_ms": {
+          "count": 956,
+          "max": 1.4650000333786,
+          "mean": 0.904161089135014,
+          "p50": 0.88400000333786,
+          "p95": 1.10300004482269,
+          "p99": 1.32000005245209
+        },
+        "setup_cpu_ms": {
+          "count": 956,
+          "max": 0.663,
+          "mean": 0.382106694560669,
+          "p50": 0.369,
+          "p95": 0.511,
+          "p99": 0.6
+        },
+        "tps": 30.030451818432
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 7.415626223091972,
+        "p95": 10.529,
+        "p99": 11.56,
+        "max": 12.063
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.5429549902152639,
+        "p95": 1.498,
+        "p99": 1.937,
+        "max": 2.324
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 304.55882352941177,
+        "p95": 324,
+        "p99": 324,
+        "max": 324
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 451.1764705882353,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 403.4117647058824,
+        "p95": 432,
+        "p99": 434,
+        "max": 434
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 731.5294117647059,
+        "p95": 759.0,
+        "p99": 759.0,
+        "max": 759.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 402.88235294117646,
+        "p95": 432,
+        "p99": 434,
+        "max": 434
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3317.4117647058824,
+        "p95": 3569,
+        "p99": 3578,
+        "max": 3578
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 1239,
+        "batch_usec": 4330493,
+        "certified_steps": 238412,
+        "completions": 14,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 265847,
+        "map_iteration_reads": 599,
+        "native_steps": 28011,
+        "queries": 1150,
+        "releases": 2,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 3.4951517352703796,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 431.28135000000003,
+        "p95": 709.225,
+        "p99": 739.971,
+        "max": 739.971
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 4,
+      "damage_amount": 132.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 100.013153076172,
+          "mean": 50.4469647428631,
+          "p50": 51.5337715148926,
+          "p95": 82.2586059570313,
+          "p99": 95.3772888183594
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 129.878158569336,
+          "mean": 68.3078886398436,
+          "p50": 65.5426406860352,
+          "p95": 119.651992797852,
+          "p99": 125.417961120605
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 4.21875
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "detour-shared-grid-metadata",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "result_sha256": "ac127ce403815c2a94533697758aa2c2b705b8540d4a2a98966a2d7d879c4058",
+      "batches": true,
+      "prune": true,
+      "metadata": true,
+      "nav": "both",
+      "scenario": "detour",
+      "checks": 1029,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 56.3867632073371,
+        "frame_ms": {
+          "count": 1128,
+          "max": 37.532,
+          "mean": 17.7346445035461,
+          "p50": 18.738,
+          "p95": 30.433,
+          "p99": 33.717
+        },
+        "gpu_ms": {
+          "count": 1128,
+          "max": 4.11899995803833,
+          "mean": 3.58766311893226,
+          "p50": 3.83299994468689,
+          "p95": 3.99900007247925,
+          "p99": 4.05200004577637
+        },
+        "last_lag_ms": 4.67900000000009,
+        "render_cpu_ms": {
+          "count": 1128,
+          "max": 1.39499998092651,
+          "mean": 0.852424645519003,
+          "p50": 0.851000010967255,
+          "p95": 1.0349999666214,
+          "p99": 1.15199995040894
+        },
+        "setup_cpu_ms": {
+          "count": 1128,
+          "max": 0.72,
+          "mean": 0.357585992907802,
+          "p50": 0.363,
+          "p95": 0.474,
+          "p99": 0.558
+        },
+        "tps": 29.9929591528389
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 52.1032573650983,
+        "frame_ms": {
+          "count": 886,
+          "max": 37.532,
+          "mean": 19.2156693002257,
+          "p50": 22.62,
+          "p95": 30.745,
+          "p99": 34.584
+        },
+        "gpu_ms": {
+          "count": 886,
+          "max": 4.11899995803833,
+          "mean": 3.78675733382223,
+          "p50": 3.89599990844727,
+          "p95": 4.00400018692017,
+          "p99": 4.06500005722046
+        },
+        "last_lag_ms": 4.67900000000009,
+        "render_cpu_ms": {
+          "count": 886,
+          "max": 1.39499998092651,
+          "mean": 0.881668171818046,
+          "p50": 0.870999991893768,
+          "p95": 1.03999996185303,
+          "p99": 1.17799997329712
+        },
+        "setup_cpu_ms": {
+          "count": 886,
+          "max": 0.72,
+          "mean": 0.384165914221219,
+          "p50": 0.376,
+          "p95": 0.485,
+          "p99": 0.563
+        },
+        "tps": 30.0505242816763
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 510,
+        "mean": 8.359064705882354,
+        "p95": 11.508,
+        "p99": 12.229,
+        "max": 14.485
+      },
+      "steady_path_query_ms": {
+        "count": 510,
+        "mean": 0.512194117647059,
+        "p95": 1.261,
+        "p99": 1.581,
+        "max": 2.064
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 403.52941176470586,
+        "p95": 440,
+        "p99": 441,
+        "max": 441
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 450.55882352941177,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 426.29411764705884,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 733.1176470588235,
+        "p95": 763.0,
+        "p99": 763.0,
+        "max": 763.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 426.0882352941176,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 3500.764705882353,
+        "p95": 3704,
+        "p99": 3704,
+        "max": 3704
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 1128,
+        "batch_usec": 4136812,
+        "certified_steps": 219255,
+        "completions": 8,
+        "fields": 8,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 101064,
+        "map_iteration_reads": 599,
+        "native_steps": 46929,
+        "queries": 1139,
+        "releases": 0,
+        "shared_samples": 164535
+      },
+      "batch_process_mean_ms": 3.667386524822695,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 436.344075,
+        "p95": 710.25,
+        "p99": 743.225,
+        "max": 743.225
+      },
+      "reverse_command_ms": {},
+      "pending_command_responses": 0,
+      "damage_events": 2,
+      "damage_amount": 66.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 104.283531188965,
+          "mean": 53.1036686770684,
+          "p50": 54.7614860534668,
+          "p95": 80.4731826782227,
+          "p99": 96.8177032470703
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 118.416366577148,
+          "mean": 61.3080712978819,
+          "p50": 63.1231575012207,
+          "p95": 105.175483703613,
+          "p99": 113.918365478516
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 1.15625
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "reverse-a1",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "result_sha256": "bf02da2f9372ee10728ead990512c3e53d0370badeb9f58d89b31f895604fcee",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "march",
+      "checks": 1036,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 104.325426145871,
+        "frame_ms": {
+          "count": 2087,
+          "max": 36.274,
+          "mean": 9.58538428366075,
+          "p50": 6.469,
+          "p95": 19.933,
+          "p99": 23.749
+        },
+        "gpu_ms": {
+          "count": 2087,
+          "max": 3.24000000953674,
+          "mean": 2.79560613415146,
+          "p50": 2.84299993515015,
+          "p95": 3.08899998664856,
+          "p99": 3.12700009346008
+        },
+        "last_lag_ms": 4.69700000000012,
+        "render_cpu_ms": {
+          "count": 2087,
+          "max": 1.37199997901917,
+          "mean": 0.692954480048282,
+          "p50": 0.688000023365021,
+          "p95": 0.787999987602234,
+          "p99": 0.910000026226044
+        },
+        "setup_cpu_ms": {
+          "count": 2087,
+          "max": 0.459,
+          "mean": 0.222012937230475,
+          "p50": 0.219,
+          "p95": 0.276,
+          "p99": 0.313
+        },
+        "tps": 29.9929351641221
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 103.441922653081,
+        "frame_ms": {
+          "count": 1759,
+          "max": 36.274,
+          "mean": 9.67827572484367,
+          "p50": 6.528,
+          "p95": 19.904,
+          "p99": 23.577
+        },
+        "gpu_ms": {
+          "count": 1759,
+          "max": 3.24000000953674,
+          "mean": 2.81069130217101,
+          "p50": 2.85500001907349,
+          "p95": 3.09599995613098,
+          "p99": 3.12899994850159
+        },
+        "last_lag_ms": 4.69700000000012,
+        "render_cpu_ms": {
+          "count": 1759,
+          "max": 1.37199997901917,
+          "mean": 0.694992609089108,
+          "p50": 0.689999997615814,
+          "p95": 0.787999987602234,
+          "p99": 0.910000026226044
+        },
+        "setup_cpu_ms": {
+          "count": 1759,
+          "max": 0.459,
+          "mean": 0.220503126776578,
+          "p50": 0.218,
+          "p95": 0.272,
+          "p99": 0.31
+        },
+        "tps": 30.0504960066654
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 510,
+        "mean": 6.327947058823532,
+        "p95": 9.575,
+        "p99": 12.303,
+        "max": 16.244
+      },
+      "steady_path_query_ms": {
+        "count": 510,
+        "mean": 0.661156862745098,
+        "p95": 1.463,
+        "p99": 6.776,
+        "max": 7.472
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 187.23529411764707,
+        "p95": 212,
+        "p99": 213,
+        "max": 213
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 422.0,
+        "p95": 451,
+        "p99": 451,
+        "max": 451
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 222.61764705882354,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 527.0588235294117,
+        "p95": 532.0,
+        "p99": 533.0,
+        "max": 533.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 222.61764705882354,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1832.6764705882354,
+        "p95": 1852,
+        "p99": 1852,
+        "max": 1852
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 2087,
+        "batch_usec": 4340827,
+        "certified_steps": 0,
+        "completions": 146,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 0,
+        "map_iteration_reads": 253257,
+        "native_steps": 252506,
+        "queries": 1570,
+        "releases": 0,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 2.079936272160997,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 456.4916000000001,
+        "p95": 742.875,
+        "p99": 774.971,
+        "max": 774.971
+      },
+      "reverse_command_ms": {
+        "count": 37,
+        "mean": 1754.1914594594598,
+        "p95": 5972.764,
+        "p99": 9939.44,
+        "max": 9939.44
+      },
+      "pending_command_responses": 3,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 62.6656150817871,
+          "mean": 15.1684589188183,
+          "p50": 13.6217060089111,
+          "p95": 33.1670188903809,
+          "p99": 51.7636909484863
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 57.9377899169922,
+          "mean": 7.77584243137225,
+          "p50": 5.50327396392822,
+          "p95": 24.9873428344727,
+          "p99": 46.0946426391602
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": true,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          },
+          {
+            "kind": "user_game",
+            "cpu_seconds_during_run": 2.34375
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 17,
+        "2000": 27,
+        "4000": 33,
+        "8000": 36,
+        "10000": 37
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "reverse-b1",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "result_sha256": "22e25c0370d1164a83ec7bf554b6620541c0bcf0ed83e7a8ec4687e911b554be",
+      "batches": true,
+      "prune": true,
+      "metadata": true,
+      "nav": "grid",
+      "scenario": "march",
+      "checks": 1037,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 105.355113453913,
+        "frame_ms": {
+          "count": 2108,
+          "max": 31.244,
+          "mean": 9.49170303605313,
+          "p50": 6.316,
+          "p95": 19.832,
+          "p99": 23.543
+        },
+        "gpu_ms": {
+          "count": 2108,
+          "max": 3.17700004577637,
+          "mean": 2.81593927577053,
+          "p50": 2.83400011062622,
+          "p95": 3.02600002288818,
+          "p99": 3.06800007820129
+        },
+        "last_lag_ms": 8.51000000000204,
+        "render_cpu_ms": {
+          "count": 2108,
+          "max": 1.24000000953674,
+          "mean": 0.724888993847755,
+          "p50": 0.712000012397766,
+          "p95": 0.84799998998642,
+          "p99": 1.02600002288818
+        },
+        "setup_cpu_ms": {
+          "count": 2108,
+          "max": 0.502,
+          "mean": 0.235584440227704,
+          "p50": 0.232,
+          "p95": 0.297,
+          "p99": 0.35
+        },
+        "tps": 29.987223943239
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 103.771515465689,
+        "frame_ms": {
+          "count": 1765,
+          "max": 31.244,
+          "mean": 9.6424045325779,
+          "p50": 6.488,
+          "p95": 19.832,
+          "p99": 23.672
+        },
+        "gpu_ms": {
+          "count": 1765,
+          "max": 3.17700004577637,
+          "mean": 2.83784078984355,
+          "p50": 2.85500001907349,
+          "p95": 3.03399991989136,
+          "p99": 3.07500004768372
+        },
+        "last_lag_ms": 8.51000000000204,
+        "render_cpu_ms": {
+          "count": 1765,
+          "max": 1.24000000953674,
+          "mean": 0.725120679481171,
+          "p50": 0.712000012397766,
+          "p95": 0.847000002861023,
+          "p99": 1.02600002288818
+        },
+        "setup_cpu_ms": {
+          "count": 1765,
+          "max": 0.449,
+          "mean": 0.233627195467422,
+          "p50": 0.23,
+          "p95": 0.294,
+          "p99": 0.344
+        },
+        "tps": 30.043764534259
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 511,
+        "mean": 6.470258317025448,
+        "p95": 9.625,
+        "p99": 12.363,
+        "max": 15.452
+      },
+      "steady_path_query_ms": {
+        "count": 511,
+        "mean": 0.6615675146771034,
+        "p95": 1.428,
+        "p99": 6.678,
+        "max": 7.332
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 189.97058823529412,
+        "p95": 215,
+        "p99": 216,
+        "max": 216
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 421.70588235294116,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 222.08823529411765,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 527.1764705882352,
+        "p95": 533.0,
+        "p99": 533.0,
+        "max": 533.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 222.11764705882354,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1828.5588235294117,
+        "p95": 1852,
+        "p99": 1852,
+        "max": 1852
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 2108,
+        "batch_usec": 4545944,
+        "certified_steps": 149202,
+        "completions": 180,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 252028,
+        "map_iteration_reads": 599,
+        "native_steps": 102761,
+        "queries": 1580,
+        "releases": 0,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 2.156519924098672,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 453.583825,
+        "p95": 738.149,
+        "p99": 772.155,
+        "max": 772.155
+      },
+      "reverse_command_ms": {
+        "count": 35,
+        "mean": 1170.0877714285716,
+        "p95": 4509.19,
+        "p99": 5574.582,
+        "max": 5574.582
+      },
+      "pending_command_responses": 5,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 59.2169151306152,
+          "mean": 14.0878263189729,
+          "p50": 12.8450088500977,
+          "p95": 26.240816116333,
+          "p99": 49.5807151794434
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 48.8112945556641,
+          "mean": 6.21485561804961,
+          "p50": 3.59777402877808,
+          "p95": 20.5445022583008,
+          "p99": 38.7197303771973
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": false,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 21,
+        "2000": 30,
+        "4000": 33,
+        "8000": 35,
+        "10000": 35
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "reverse-b2",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "result_sha256": "ac9082fd0edb2a43e3f9ef50e20ec652da8983bf4af8101a2ea65b4965484d0a",
+      "batches": true,
+      "prune": true,
+      "metadata": true,
+      "nav": "grid",
+      "scenario": "march",
+      "checks": 1037,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 110.776963930351,
+        "frame_ms": {
+          "count": 2216,
+          "max": 29.437,
+          "mean": 9.02714259927798,
+          "p50": 6.022,
+          "p95": 19.294,
+          "p99": 22.5
+        },
+        "gpu_ms": {
+          "count": 2216,
+          "max": 2.98099994659424,
+          "mean": 2.74458528748488,
+          "p50": 2.76699995994568,
+          "p95": 2.93300008773804,
+          "p99": 2.95499992370605
+        },
+        "last_lag_ms": 4.14800000000105,
+        "render_cpu_ms": {
+          "count": 2216,
+          "max": 1.09800004959106,
+          "mean": 0.692238718836101,
+          "p50": 0.685000002384186,
+          "p95": 0.783999979496002,
+          "p99": 0.893999993801117
+        },
+        "setup_cpu_ms": {
+          "count": 2216,
+          "max": 0.461,
+          "mean": 0.223460288808664,
+          "p50": 0.222,
+          "p95": 0.273,
+          "p99": 0.318
+        },
+        "tps": 29.9937627970264
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 109.62024055409,
+        "frame_ms": {
+          "count": 1864,
+          "max": 28.846,
+          "mean": 9.12276180257511,
+          "p50": 6.072,
+          "p95": 19.304,
+          "p99": 22.733
+        },
+        "gpu_ms": {
+          "count": 1864,
+          "max": 2.98099994659424,
+          "mean": 2.76360836791378,
+          "p50": 2.80200004577637,
+          "p95": 2.93600010871887,
+          "p99": 2.95799994468689
+        },
+        "last_lag_ms": 4.14800000000105,
+        "render_cpu_ms": {
+          "count": 1864,
+          "max": 1.09800004959106,
+          "mean": 0.693146459790258,
+          "p50": 0.685000002384186,
+          "p95": 0.782999992370605,
+          "p99": 0.898999989032745
+        },
+        "setup_cpu_ms": {
+          "count": 1864,
+          "max": 0.461,
+          "mean": 0.222072424892704,
+          "p50": 0.22,
+          "p95": 0.27,
+          "p99": 0.313
+        },
+        "tps": 29.9926623833616
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 510,
+        "mean": 6.423823529411762,
+        "p95": 9.798,
+        "p99": 12.523,
+        "max": 15.35
+      },
+      "steady_path_query_ms": {
+        "count": 510,
+        "mean": 0.6543862745098036,
+        "p95": 1.421,
+        "p99": 6.655,
+        "max": 7.219
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 188.76470588235293,
+        "p95": 214,
+        "p99": 215,
+        "max": 215
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 419.38235294117646,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 221.6764705882353,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 526.7647058823529,
+        "p95": 531.0,
+        "p99": 533.0,
+        "max": 533.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 221.6764705882353,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1826.0882352941176,
+        "p95": 1852,
+        "p99": 1852,
+        "max": 1852
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 2216,
+        "batch_usec": 4615709,
+        "certified_steps": 148928,
+        "completions": 160,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 250892,
+        "map_iteration_reads": 599,
+        "native_steps": 101829,
+        "queries": 1578,
+        "releases": 0,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 2.0829011732851983,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 454.43770000000006,
+        "p95": 742.235,
+        "p99": 775.925,
+        "max": 775.925
+      },
+      "reverse_command_ms": {
+        "count": 36,
+        "mean": 1152.8704166666664,
+        "p95": 3073.257,
+        "p99": 4573.489,
+        "max": 4573.489
+      },
+      "pending_command_responses": 4,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 330,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 74.6551132202148,
+          "mean": 15.2600090764793,
+          "p50": 14.125373840332,
+          "p95": 28.7641868591309,
+          "p99": 51.1092185974121
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 61.3085708618164,
+          "mean": 7.59949788583063,
+          "p50": 4.91237831115723,
+          "p95": 22.1766490936279,
+          "p99": 43.2323722839355
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": false,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 21,
+        "2000": 32,
+        "4000": 35,
+        "8000": 36,
+        "10000": 36
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    },
+    {
+      "run": "reverse-a2",
+      "pck_sha256": "6fa67827a3c3236340aafbfee6595b1d62b46ef056a4a7fa4efdc389dba61bea",
+      "result_sha256": "bc153e3966f41c209bc6abbafc421955a6e2a9557d149c70ea251183e3216aea",
+      "batches": true,
+      "prune": true,
+      "metadata": false,
+      "nav": "native",
+      "scenario": "march",
+      "checks": 1036,
+      "failures": [],
+      "summary": {
+        "eight_step_frames": 0,
+        "fps": 110.219772227467,
+        "frame_ms": {
+          "count": 2205,
+          "max": 30.519,
+          "mean": 9.07277641723357,
+          "p50": 5.971,
+          "p95": 19.095,
+          "p99": 22.942
+        },
+        "gpu_ms": {
+          "count": 2205,
+          "max": 3.06299996376038,
+          "mean": 2.73742993261809,
+          "p50": 2.7590000629425,
+          "p95": 2.92400002479553,
+          "p99": 2.94700002670288
+        },
+        "last_lag_ms": 5.47200000000157,
+        "render_cpu_ms": {
+          "count": 2205,
+          "max": 1.41600000858307,
+          "mean": 0.697008163480261,
+          "p50": 0.689000010490417,
+          "p95": 0.794000029563904,
+          "p99": 0.916000008583069
+        },
+        "setup_cpu_ms": {
+          "count": 2205,
+          "max": 0.544,
+          "mean": 0.22432380952381,
+          "p50": 0.22,
+          "p95": 0.275,
+          "p99": 0.33
+        },
+        "tps": 29.9917747557732
+      },
+      "steady": {
+        "eight_step_frames": 0,
+        "fps": 109.494083820603,
+        "frame_ms": {
+          "count": 1862,
+          "max": 30.519,
+          "mean": 9.13472556390978,
+          "p50": 6.049,
+          "p95": 19.06,
+          "p99": 22.601
+        },
+        "gpu_ms": {
+          "count": 1862,
+          "max": 3.06299996376038,
+          "mean": 2.75121858271057,
+          "p50": 2.78399991989136,
+          "p95": 2.92700004577637,
+          "p99": 2.95199990272522
+        },
+        "last_lag_ms": 5.47200000000157,
+        "render_cpu_ms": {
+          "count": 1862,
+          "max": 1.24699997901917,
+          "mean": 0.697678840250001,
+          "p50": 0.689999997615814,
+          "p95": 0.791000008583069,
+          "p99": 0.916000008583069
+        },
+        "setup_cpu_ms": {
+          "count": 1862,
+          "max": 0.403,
+          "mean": 0.221936090225564,
+          "p50": 0.219,
+          "p95": 0.269,
+          "p99": 0.319
+        },
+        "tps": 29.9903237102617
+      },
+      "steady_scene_callbacks_ms": {
+        "count": 510,
+        "mean": 6.324735294117646,
+        "p95": 9.847,
+        "p99": 12.254,
+        "max": 15.258
+      },
+      "steady_path_query_ms": {
+        "count": 510,
+        "mean": 0.6500098039215686,
+        "p95": 1.274,
+        "p99": 6.752,
+        "max": 7.131
+      },
+      "steady_visible": {
+        "count": 34,
+        "mean": 186.6764705882353,
+        "p95": 210,
+        "p99": 212,
+        "max": 212
+      },
+      "steady_moving": {
+        "count": 34,
+        "mean": 418.8529411764706,
+        "p95": 452,
+        "p99": 452,
+        "max": 452
+      },
+      "steady_animated": {
+        "count": 34,
+        "mean": 221.8235294117647,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_draw_calls": {
+        "count": 34,
+        "mean": 526.6176470588235,
+        "p95": 532.0,
+        "p99": 533.0,
+        "max": 533.0
+      },
+      "steady_batch_models": {
+        "count": 34,
+        "mean": 221.8235294117647,
+        "p95": 226,
+        "p99": 226,
+        "max": 226
+      },
+      "steady_batch_parts": {
+        "count": 34,
+        "mean": 1826.9117647058824,
+        "p95": 1852,
+        "p99": 1852,
+        "max": 1852
+      },
+      "counter_delta": {
+        "batch_capacity_growths": 0,
+        "batch_frames": 2205,
+        "batch_usec": 4626393,
+        "certified_steps": 0,
+        "completions": 149,
+        "fields": 0,
+        "invalid_fields": 0,
+        "living": 0,
+        "map_iteration_hits": 0,
+        "map_iteration_reads": 251372,
+        "native_steps": 250466,
+        "queries": 1542,
+        "releases": 0,
+        "shared_samples": 0
+      },
+      "batch_process_mean_ms": 2.0981374149659864,
+      "cold_command_ms": {
+        "count": 40,
+        "mean": 448.9061250000001,
+        "p95": 740.697,
+        "p99": 771.013,
+        "max": 771.013
+      },
+      "reverse_command_ms": {
+        "count": 37,
+        "mean": 1543.3972702702704,
+        "p95": 5804.82,
+        "p99": 7340.39,
+        "max": 7340.39
+      },
+      "pending_command_responses": 3,
+      "damage_events": 0,
+      "damage_amount": 0.0,
+      "gather_cycles": 329,
+      "progress": {
+        "displacement": {
+          "count": 452,
+          "max": 51.4067230224609,
+          "mean": 14.5502449144832,
+          "p50": 13.5905609130859,
+          "p95": 28.06374168396,
+          "p99": 45.5038719177246
+        },
+        "finite": true,
+        "slot_error": {
+          "count": 452,
+          "max": 47.9186706542969,
+          "mean": 7.04881836065149,
+          "p50": 5.00817394256592,
+          "p95": 21.9738750457764,
+          "p99": 39.1467399597168
+        }
+      },
+      "living_after": 500,
+      "context": {
+        "shared_user_game": false,
+        "background_set_changed": false,
+        "external_helper_count": 0,
+        "existing_process_cpu": [
+          {
+            "kind": "editor",
+            "cpu_seconds_during_run": 0.0
+          }
+        ],
+        "own_pid_absent": true,
+        "stderr_bytes": 0
+      },
+      "reverse_response_by_deadline": {
+        "1000": 20,
+        "2000": 29,
+        "4000": 34,
+        "8000": 37,
+        "10000": 37
+      },
+      "reverse_response_denominator": 40,
+      "path_wait_high_water_ticks": {
+        "before": 3,
+        "after": 19
+      }
+    }
+  ],
+  "validation": {
+    "rendered_runs": 18,
+    "checks": 18560,
+    "failures": 0,
+    "all_end_with_500_live": true,
+    "all_own_helpers_absent_after_run": true,
+    "all_run_stderr_empty": true,
+    "all_external_helper_counts_zero": true,
+    "all_background_identity_sets_stable": true
+  },
+  "screenshot": {
+    "path": "release-0.12-performance.png",
+    "sha256": "cc55566a72a9cddfa4cfca8646211476ad60028b03625faaaa41eeb95c7c6a9e",
+    "scenario": "detour-grid-metadata",
+    "captured_after_measurement": true
+  }
+}
