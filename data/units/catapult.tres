@@ -4,6 +4,8 @@
 
 [resource]
 script = ExtResource("1_definition")
+attack_windup_seconds = 0.48
+health_bar_height = 2.8
 id = &"catapult"
 name = "投石车"
 description = "中程抛射巨石，范围内均匀满伤，对攻城器与建筑附加伤害；近战无甲，需前排保护。"

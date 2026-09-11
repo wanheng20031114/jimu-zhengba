@@ -9,7 +9,7 @@ func _bake() -> void:
 	var saved: int = 0
 	var kinds: PackedStringArray = OS.get_cmdline_user_args()
 	if kinds.is_empty():
-		kinds = ["swordsman", "spearman", "archer", "knight", "catapult", "cannon", "farmer"]
+		kinds = ["swordsman", "shield_guard", "spearman", "archer", "knight", "catapult", "cannon", "farmer"]
 	for kind: String in kinds:
 		var folder: String = "res://assets/models/units/" + kind + "/"
 		var parts: Array = JSON.parse_string(FileAccess.get_file_as_string(folder + "parts.json"))
@@ -29,7 +29,9 @@ func _bake() -> void:
 	# Use native 3D transform tracks for the denser authored attack poses.
 	for kind: String in kinds:
 		var path: String = "res://assets/models/units/" + kind + ".tscn"
-		var sculpture: Node3D = load(path).instantiate()
+		# Autoloads may have cached the scene before its new meshes were saved.
+		# Reload the authored references instead of packing that incomplete rig.
+		var sculpture: Node3D = ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE).instantiate()
 		for player_name: String in ["Locomotion", "Attack"]:
 			var player: AnimationPlayer = sculpture.get_node(player_name)
 			var library: AnimationLibrary = player.get_animation_library("")

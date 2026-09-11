@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_definition")
+attack_windup_seconds = 0.27
 id = &"archer"
 name = "弓箭手"
 description = "远程齐射压制轻甲剑士，自带远程护甲；需要保持距离并防范重甲骑兵突袭。"

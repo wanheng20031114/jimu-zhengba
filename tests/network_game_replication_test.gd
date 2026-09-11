@@ -358,7 +358,15 @@ func _run() -> void:
 		sender._next_publish_usec = 0
 		sender.publish_latest()
 		sender.publish_latest()
-	check(recording.captured[1] == [8, 10, 12] and recording.captured[2] == [8, 10, 12] and recording.captured[3] == [8, 10, 12], "three_clients_share_latest_publication_without_duplicate_state")
+		# JSON encoding runs in a worker and native drains are gated by display
+		# frame. Observe completion without advancing the sampled simulation tick.
+		for publication_frame: int in 120:
+			await process_frame
+			sender.publish_latest()
+			if sender._snapshot_job == null and sender._pending_snapshot_json.is_empty():
+				break
+		check(sender._snapshot_job == null and sender._pending_snapshot_json.is_empty(), "snapshot_job_and_recipient_drains_complete")
+	check(recording.captured.get(1, []) == [8, 10, 12] and recording.captured.get(2, []) == [8, 10, 12] and recording.captured.get(3, []) == [8, 10, 12], "three_clients_share_latest_publication_without_duplicate_state")
 	check(not recording.captured.has(0), "host_does_not_replicate_to_itself")
 	check(recording.visual_packets.size() == 3 and recording.visual_packets[0].event.events.size() == 96 and recording.visual_packets[2].event.events.size() == 64, "300_battle_effects_use_three_bounded_reliable_batches")
 	check(recording.visual_packets.all(func(packet): return NetworkProtocol.decoded_size(NetworkProtocol.encode({"op": "event", "payload": packet.event})) < NetworkProtocol.MAX_EVENT_BYTES), "visual_batches_respect_transport_size_limit")

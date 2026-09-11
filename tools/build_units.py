@@ -413,6 +413,94 @@ def infantry(name, archer=False):
     return s
 
 
+def shield_guard():
+    """Armored infantry with an open eye slit and a tall forearm-mounted shield."""
+    s = Sculpture("shield_guard")
+    body = s.joint("Body", (0, 1.05, 0))
+    head = s.joint("Head", (0, 1.65, 0))
+    left = s.joint("ArmLeft", (-.38, 1.31, 0))
+    right = s.joint("ArmRight", (.38, 1.31, 0))
+    legs = [s.joint("LegLeft", (-.18, .75, 0)), s.joint("LegRight", (.18, .75, 0))]
+    s.add(body, lathe([(-.29,.30),(-.09,.27),(.22,.35),(.34,.28)], 8), "blue")
+    s.b(body, (.56,.40,.14), (0,.08,-.31), "steel", bevel=.07)
+    s.b(body, (.035,.35,.022), (0,.08,-.391), "edge", bevel=.007)
+    s.b(body, (.52,.39,.13), (0,.08,.31), "steel", bevel=.06)
+    s.b(body, (.035,.32,.023), (0,.08,.385), "edge", bevel=.006)
+    for sign in (-1,1):
+        s.b(body, (.095,.32,.44), (sign*.28,.055,0), "darksteel", bevel=.025)
+        s.b(body, (.11,.045,.60), (sign*.19,.28,0), "leather", bevel=.012)
+        for i in range(3):
+            s.b(body, (.245,.075,.115), (sign*.145,-.23-i*.06,-.235), "steel", rot=(0,0,-sign*.06), bevel=.015)
+        s.b(body, (.19,.28,.08), (sign*.17,-.30,.20), "blue", bevel=.02)
+        s.b(body, (.19,.025,.09), (sign*.17,-.43,.20), "gold", bevel=.004)
+    s.b(body, (.57,.105,.055), (0,-.15,-.305), "leather", bevel=.012)
+    s.b(body, (.115,.09,.035), (0,-.15,-.347), "gold", bevel=.01)
+    s.r(head, (0,-.30,0), (0,-.17,0), .105, "darksteel", 8)
+    s.e(head, (.226,.233,.217), (0,-.018,-.055), "skin")
+    # The cap starts above the eyes. Separate cheek plates leave a real opening,
+    # so the face does not disappear under a solid dark visor or low helmet rim.
+    s.add(head, lathe([(.115,.286),(.20,.30),(.31,.225),(.37,.10)], 12, (0,0,-.025)), "steel")
+    s.add(head, lathe([(.105,.298),(.145,.307)], 12, (0,0,-.025), caps=False), "edge")
+    s.b(head, (.06,.13,.18), (0,.355,.015), "edge", bevel=.025)
+    s.b(head, (.40,.29,.075), (0,-.035,.192), "steel", bevel=.035)
+    s.b(head, (.42,.027,.075), (0,-.174,.192), "edge", bevel=.006)
+    for sign in (-1,1):
+        s.b(head, (.065,.245,.205), (sign*.231,-.022,.095), "steel", bevel=.025)
+        s.add(head, polygon([(-.095,.08),(.095,.08),(.07,-.16),(-.06,-.20)], .05,
+            (sign*.205,-.065,-.21), (0,sign*.35,sign*.08)), "steel")
+        s.e(head, (.061,.095,.09), (sign*.231,-.008,.01), "darksteel")
+        s.b(head, (.033,.024,.018), (sign*.077,.060,-.270), "black", bevel=.003)
+        s.b(head, (.06,.018,.017), (sign*.078,.093,-.253), "leather", bevel=.003)
+    s.e(head, (.041,.059,.049), (0,-.009,-.286), "skin")
+    s.b(head, (.065,.017,.018), (0,-.105,-.270), "leather", bevel=.003)
+    s.b(head, (.039,.195,.033), (0,.012,-.329), "edge", bevel=.008)
+    for part, sign in ((left,-1),(right,1)):
+        s.e(part, (.24,.18,.25), (sign*.025,.008,0), "steel")
+        s.b(part, (.32,.034,.34), (sign*.03,.006,-.035), "edge", rot=(0,0,sign*.12), bevel=.02)
+        elbow = (-.075,-.275,-.06) if sign < 0 else (.105,-.27,-.055)
+        wrist = (.035,-.345,-.315) if sign < 0 else (.20,-.415,-.355)
+        hand = (.05,-.36,-.36) if sign < 0 else (.215,-.455,-.405)
+        s.r(part, (sign*.035,-.075,0), elbow, .11, "blue", 8)
+        s.e(part, (.118,.10,.115), elbow, "darksteel")
+        s.r(part, elbow, wrist, .103, "steel", 8)
+        s.b(part, (.18,.075,.16), wrist, "edge", bevel=.025)
+        s.e(part, (.095,.092,.10), hand, "darksteel")
+    # The board is centered ahead of the left breast, leaving the sword lane free.
+    center = (.055,-.31,-.56)
+    outline = [(-.41,.51),(-.30,.63),(.30,.63),(.41,.51),(.39,-.47),(.26,-.61),(-.26,-.61),(-.39,-.47)]
+    s.add(left, polygon(outline,.12,center), "darksteel")
+    s.add(left, polygon([(x*.88,y*.93) for x,y in outline],.018,(center[0],center[1],-.488)), "wood")
+    s.add(left, polygon([(x*.86,y*.91) for x,y in outline],.025,(center[0],center[1],-.636)), "blue")
+    # Broad forged edging, restrained heraldry, visible back braces and grip.
+    for a,b in zip(outline, outline[1:]+outline[:1]):
+        s.r(left, (center[0]+a[0],center[1]+a[1],-.622), (center[0]+b[0],center[1]+b[1],-.622), .022, "edge", 6)
+    s.b(left, (.058,.97,.028), (center[0],center[1],-.666), "gold", bevel=.007)
+    s.b(left, (.48,.055,.029), (center[0],center[1]+.23,-.667), "gold", bevel=.007)
+    s.e(left, (.075,.075,.030), (center[0],center[1]+.23,-.693), "goldlight")
+    for x,y in outline:
+        s.r(left, (center[0]+x*.91,center[1]+y*.94,-.637), (center[0]+x*.91,center[1]+y*.94,-.654), .018, "gold", 6)
+    for yy in (-.58,-.10):
+        s.b(left, (.59,.065,.043), (center[0],yy,-.458), "leather", bevel=.009)
+    s.r(left, (-.025,-.36,-.435), (-.025,-.36,-.35), .024, "steel", 6)
+    s.r(left, (.135,-.36,-.435), (.135,-.36,-.35), .024, "steel", 6)
+    s.r(left, (-.025,-.36,-.35), (.135,-.36,-.35), .030, "leather", 8)
+    for part in legs:
+        s.r(part, (0,.01,0), (0,-.29,.02), .123, "darksteel", 8)
+        s.e(part, (.132,.114,.12), (0,-.28,-.03), "steel")
+        s.b(part, (.205,.27,.17), (0,-.44,-.018), "steel", bevel=.04)
+        s.b(part, (.035,.23,.022), (0,-.44,-.113), "edge", bevel=.005)
+        s.b(part, (.225,.17,.34), (0,-.65,-.075), "leather", bevel=.044)
+        s.b(part, (.235,.045,.35), (0,-.714,-.07), "black", bevel=.012)
+        s.b(part, (.218,.038,.19), (0,-.535,-.025), "edge", bevel=.008)
+    blade = s.joint("Sword", (.215,-.425,-.405), parent=right)
+    sword(s, blade, (0,0,0), length=.63)
+    s.b(body, (.09,.47,.09), (.30,-.25,.15), "leather", rot=(0,0,.13), bevel=.018)
+    waist = s.pivot("Waist", (0,1.05,0))
+    for part in (body,head,left,right):
+        s.reparent(part,waist)
+    return s
+
+
 def horse_knight():
     s=Sculpture("knight")
     b=s.joint("Body",(0,1.10,0))
@@ -884,6 +972,15 @@ def attack_tracks(s):
     def pos(part,offsets,times):
         base=np.zeros(3) if part=="Action" else np.array(s.joints[part])
         tracks.append((prop(part,"position"),[tuple(base+np.array(o)) for o in offsets],times))
+    if s.name=="shield_guard":
+        t=[0,.10,.22,.30,.37,.52,.72,.96]
+        rot("Waist",[(0,0,0),(.015,.045,0),(.025,.08,0),(-.035,-.07,0),(-.04,-.09,0),(-.02,-.04,0),(0,.01,0),(0,0,0)],t)
+        rot("ArmRight",[(0,0,0),(.10,.015,-.045),(.20,.03,-.07),(.72,-.02,-.035),(.79,-.03,-.04),(.48,0,-.03),(.13,0,0),(0,0,0)],t)
+        rot("Sword",[(x,0,-.16) for x in [0,-.55,-1.25,-2.26,-2.34,-1.65,-.45,0]],t)
+        rot("ArmLeft",[(x,y,0) for x,y in [(0,0),(.018,-.02),(.03,-.035),(.045,.035),(.04,.045),(.02,.02),(0,0),(0,0)]],t)
+        rot("Head",[(0,y,0) for y in [0,-.02,-.05,.055,.06,.025,0,0]],t)
+        pos("Action",[(0,y,z) for y,z in [(0,0),(-.006,.012),(-.01,.025),(-.015,-.09),(-.016,-.105),(-.008,-.04),(0,0),(0,0)]],t)
+        return .96,tracks
     if s.name=="spearman":
         # Lower the wrist-held shaft, drive its point straight forward, then recover.
         # Every pose returns to rest; the weapon pivot remains inside the gauntlet.
@@ -981,11 +1078,13 @@ def write_scene(s):
         lines.append(f'[ext_resource type="ArrayMesh" path="res://assets/models/units/{s.name}/{p}.res" id="{i+2}_{p}"]')
     walk=[]
     idle=[]
-    if s.name in ("swordsman","spearman","archer"):
+    if s.name in ("swordsman","spearman","archer","shield_guard"):
         for p,sign in (("LegLeft",1),("LegRight",-1)):
-            walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,.56,0,-.56,0)]))
+            amplitude = .48 if s.name == "shield_guard" else .56
+            walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,amplitude,0,-amplitude,0)]))
             idle.append((f"Rig/{p}:rotation",[(0,0,0),(0,0,0)]))
-        walk.append(("Rig:position",[(0,y,0) for y in (0,.042,0,.042,0)]))
+        rise = .032 if s.name == "shield_guard" else .042
+        walk.append(("Rig:position",[(0,y,0) for y in (0,rise,0,rise,0)]))
         idle.append(("Rig:position",[(0,0,0),(0,.014,0),(0,0,0)]))
     elif s.name=="knight":
         for p,sign in (("LegFrontLeft",1),("LegFrontRight",-1),("LegRearLeft",-1),("LegRearRight",1)):
@@ -1030,8 +1129,8 @@ def write_scene(s):
             if p.startswith("String"):
                 tip_y=.57 if p=="StringUpper" else -.57
                 extra=f'\nrotation = {vec((math.atan2(-.02,tip_y),0,0))}\nscale = {vec((1,math.hypot(tip_y,.02),1))}'
-            if s.name == "swordsman" and p == "Sword":
-                extra = f'\nrotation = {vec((0,0,-.28))}'
+            if s.name in ("swordsman","shield_guard") and p == "Sword":
+                extra = f'\nrotation = {vec((0,0,-.16 if s.name == "shield_guard" else -.28))}'
             if s.name == "spearman" and p == "Spear":
                 extra = f'\nrotation = {vec((-.30,0,0))}'
             lines.append(f'[node name="{p}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[p])}\nmesh = ExtResource("{i+2}_{p}"){extra}')
@@ -1048,7 +1147,7 @@ def write_scene(s):
 
 if __name__=="__main__":
     import argparse
-    builders={"swordsman":lambda:infantry("swordsman"), "spearman":lambda:infantry("spearman"),
+    builders={"swordsman":lambda:infantry("swordsman"), "shield_guard":shield_guard, "spearman":lambda:infantry("spearman"),
               "archer":lambda:infantry("archer",True), "knight":horse_knight,
               "catapult":catapult, "cannon":cannon, "farmer":farmer}
     parser=argparse.ArgumentParser(description=__doc__)

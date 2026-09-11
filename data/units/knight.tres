@@ -4,6 +4,8 @@
 
 [resource]
 script = ExtResource("1_definition")
+attack_windup_seconds = 0.2
+health_bar_height = 3.45
 id = &"knight"
 name = "骑士"
 description = "高速重甲骑兵，抗箭能力强，额外克制弓箭手和攻城器，适合侦察迂回。"

@@ -1,6 +1,10 @@
 # 积木争霸 · 原创单位模型
 
-五种军事模型与农民由 `tools/build_units.py` 离线雕塑并导出，运行时只实例化保存的 Godot 原生场景，不拼接零碎几何。所有模型面向 -Z，Y=0 为地面。没有使用外部付费模型或素材。
+单位模型由 `tools/build_units.py` 离线雕塑并导出，运行时只实例化保存的 Godot 原生场景，不拼接零碎几何。所有模型面向 -Z，Y=0 为地面。没有使用外部付费模型或素材。
+
+盾卫首版（2026-09-12）：`shield_guard.tscn` 是可编辑模型，`shield_guard/` 保存7个分件的GLB、原生RES与部件清单，`batched/shield_guard.tscn` 用于战场批量渲染。模型4,628三角面，包含分层胸背甲、护颈头盔、眼部开口、护胫、短剑，以及带厚度、金属包边、木质背板、握把与绑带的大盾。盾与左臂合为刚性部件；持盾攻击在0.30秒向盾侧刺出短剑。待机、行走与攻击均保存为场景内的原生动画轨道。
+
+只重建盾卫时，依次运行：`python tools/build_units.py shield_guard`；Godot `--headless --path . --editor --import --quit`；Godot `--headless --path . --script res://assets/models/units/bake_native_meshes.gd -- shield_guard`；Godot `--headless --path . --script res://tools/build_rigid_batches.gd -- res://artifacts/shield_guard_batches.json shield_guard`。这会更新盾卫及共享批量渲染清单，不重写其他单位模型。保存的资源可以直接运行，无需重建。当前验收状态见项目的 `docs/unit-expansion-status.md`；下方未注明日期的统计保留早期六模型交付记录。
 
 | 模型 | 结构 | 三角面 |
 | --- | --- | ---: |

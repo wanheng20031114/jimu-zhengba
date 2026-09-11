@@ -1,6 +1,9 @@
 class_name UnitDefinition
 extends CombatDefinition
 
+## Seconds from attack start to melee contact or projectile release.
+@export var attack_windup_seconds: float = 0.22
+@export var health_bar_height: float = 2.45
 @export var cost: int = 0
 @export var supply: int = 1
 @export var speed: float = 3.5

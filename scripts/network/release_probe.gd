@@ -110,7 +110,7 @@ func validate_resource_values() -> void:
 	# File existence and a source manifest cannot detect a converter dropping a
 	# saved exported property. Exercise the actual ResourceLoader values in PCK.
 	var began := checks
-	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "spearman", "archer", "knight"],
+	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "shield_guard", "spearman", "archer", "knight"],
 		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
 	var defensive_damage := {"headquarters": 40, "enemy_keep": 40, "defense_tower": 16, "tower": 17}
 	for kind: String in production:
@@ -124,7 +124,7 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
-	var training_seconds := {"spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var training_seconds := {"shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 16], ["swordsman", "knight", 10],
@@ -134,6 +134,11 @@ func validate_resource_values() -> void:
 		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
 	var archer := BalanceCatalog.unit("archer")
 	var swordsman := BalanceCatalog.unit("swordsman")
+	var guard := BalanceCatalog.unit("shield_guard")
+	check(guard.hp == 145 and guard.damage == 6 and guard.melee_armor == 3 and guard.ranged_armor == 7
+		and guard.cost == 90 and guard.speed == 3.5 and guard.sight == 12 and guard.supply == 1
+		and guard.training_seconds == 10 and guard.cooldown == 1.6 and guard.attack_windup_seconds == 0.3
+		and guard.combat_class == &"infantry" and guard.bonuses.is_empty(), "packaged_shield_guard_approved_values")
 	var spearman := BalanceCatalog.unit("spearman")
 	check(spearman.hp == 75 and spearman.damage == 6 and spearman.melee_armor == 1 and spearman.ranged_armor == 1
 		and spearman.bonuses == {&"cavalry": 20} and spearman.cost == 40 and spearman.training_seconds == 6

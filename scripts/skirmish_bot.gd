@@ -318,7 +318,7 @@ func _composition() -> Dictionary:
 	for record: Dictionary in _memory.values():
 		if record.building or record.kind == "farmer":
 			continue
-		var kind: String = "siege" if record.kind in ["catapult", "cannon"] else String(record.kind)
+		var kind: String = "siege" if record.kind in ["catapult", "cannon"] else ("swordsman" if record.kind == "shield_guard" else String(record.kind))
 		counts[kind] += maxf(0.0, 1.0 - (_clock - float(record.seen_at)) / UNIT_MEMORY_SECONDS)
 	return counts
 
@@ -363,7 +363,7 @@ func _recruit_army(reserve: int) -> void:
 		return
 	var counts: Dictionary = {"spearman": 0, "swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0}
 	for unit: Node3D in _army:
-		counts[unit.unit_type] += 1
+		counts["swordsman" if unit.unit_type == "shield_guard" else unit.unit_type] += 1
 	var queued_counts: Dictionary = {}
 	var queued_seconds: Dictionary = {}
 	for building: Node3D in _buildings:
@@ -372,7 +372,7 @@ func _recruit_army(reserve: int) -> void:
 		for job: Dictionary in building.production.training:
 			queued_seconds[building.entity_id] += maxf(0.0, BalanceCatalog.unit(job.kind).training_seconds - float(job.elapsed))
 			if job.kind != "farmer":
-				counts[job.kind] += 1
+				counts["swordsman" if job.kind == "shield_guard" else job.kind] += 1
 	var player: PlayerState = _game.get_player(_owner)
 	var supply: int = player.used_military_supply()
 	for purchase: int in range(3):

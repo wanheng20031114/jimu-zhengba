@@ -6,7 +6,7 @@ const BUILDING_IDS: Array[String] = ["headquarters", "barracks", "factory", "aca
 const CLASS_NAMES: Dictionary = {&"infantry": "步兵", &"archer": "弓箭手", &"cavalry": "骑兵", &"siege": "攻城器", &"building": "建筑", &"worker": "农民"}
 const BUILDING_DESCRIPTIONS: Dictionary = {
 	"headquarters": "城镇的中心。训练农民、守护经济，并为重建保留希望。",
-	"barracks": "训练剑士、长矛兵、弓箭手与骑士，用不同兵种组成你的主力。",
+	"barracks": "训练剑士、盾卫、长矛兵、弓箭手与骑士，用不同兵种组成你的主力。",
 	"factory": "制造投石车与加农炮，为前线提供范围火力和攻城支援。",
 	"academy": "研究军队、人口与采矿科技。已完成的研究永久保留。",
 	"defense_tower": "自动攻击范围内的敌人。无法驻军，需要部队保护。",
@@ -20,7 +20,7 @@ const MODEL_PATHS: Dictionary = {
 }
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
-	"swordsman": Vector2(1.0, 3.2), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5),
+	"swordsman": Vector2(1.0, 3.2), "shield_guard": Vector2(1.05, 3.4), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5),
 	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
@@ -309,6 +309,8 @@ func _combat_rows(definition: CombatDefinition) -> String:
 	return rows
 
 func _unit_notes(unit: UnitDefinition) -> String:
+	if unit.id == &"shield_guard":
+		return "高远程护甲适合承受箭雨，持盾短剑攻击单个目标。护甲全方向生效，攻击与防御研究同时影响现有和新训练的盾卫。"
 	if unit.id == &"catapult":
 		return "半径 %s 的范围伤害，范围内伤害一致。巨石落点在发射时确定，可以躲避；不会伤及友军。" % _number(unit.splash_radius)
 	if unit.id == &"cannon":

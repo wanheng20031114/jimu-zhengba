@@ -4,6 +4,8 @@
 
 [resource]
 script = ExtResource("1_definition")
+attack_windup_seconds = 0.25
+health_bar_height = 2.8
 id = &"cannon"
 name = "加农炮"
 description = "单体重炮，对建筑附加伤害；学院可提高射程，近战无甲，需要前排保护。"

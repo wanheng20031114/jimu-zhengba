@@ -1,7 +1,7 @@
 class_name UnitVisual
 extends Node3D
 ## Saved rigid-part sculptures driven by native AnimationPlayers.
-@export_enum("swordsman", "spearman", "archer", "knight", "catapult", "cannon", "farmer") var kind: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "catapult", "cannon", "farmer") var kind: String = "swordsman"
 @export var projectile_socket: NodePath
 ## Optional authored rigid-skin representation. The original editable rigs
 ## continue to use their Marker3D socket and need neither field.

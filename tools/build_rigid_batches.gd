@@ -4,7 +4,7 @@ extends SceneTree
 ## The source text is retained verbatim except MeshInstance3D -> Node3D and
 ## moving each external mesh reference into UnitVisual.batch_parts.
 
-const KINDS: PackedStringArray = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "spearman"]
+const KINDS: PackedStringArray = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "spearman", "shield_guard"]
 const OUTPUT := "res://assets/models/units/batched/"
 const MANAGER := "res://scenes/unit_render_batches.tscn"
 const TOLERANCE := 0.00003
@@ -22,13 +22,21 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var args := OS.get_cmdline_user_args()
-	if args.size() != 1:
-		printerr("Expected an absolute result JSON path")
+	if args.is_empty():
+		printerr("Expected a result JSON path followed by optional unit kinds to rebuild")
 		quit(2)
 		return
+	var selected: PackedStringArray = args.slice(1) if args.size() > 1 else KINDS
+	for kind: String in selected:
+		if kind not in KINDS:
+			printerr("Unknown unit kind: ", kind)
+			quit(2)
+			return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
 	for kind: String in KINDS:
-		_convert(kind)
+		# Read all part metadata for the shared manager, but only write the
+		# requested model. Existing editor-authored scenes retain their bytes.
+		_convert(kind, kind in selected)
 	if _errors.is_empty():
 		_write(MANAGER, _manager_text())
 		for kind: String in KINDS:
@@ -52,7 +60,7 @@ func _run() -> void:
 	print("RIGID_BATCH_RESULT checks=%d errors=%d parts=%d" % [_checks, _errors.size(), _parts.size()])
 	quit(0 if _errors.is_empty() else 1)
 
-func _convert(kind: String) -> void:
+func _convert(kind: String, write_model: bool = true) -> void:
 	var source_path := "res://assets/models/units/%s.tscn" % kind
 	var text := FileAccess.get_file_as_string(source_path).replace("\r\n", "\n")
 	_sources[kind] = {"path": source_path, "sha256": FileAccess.get_sha256(source_path)}
@@ -107,7 +115,8 @@ func _convert(kind: String) -> void:
 	for edit: Dictionary in edits:
 		text = text.substr(0, edit.start) + edit.text + text.substr(edit.end)
 	text = text.insert(root_end, "\nbatch_parts = Dictionary[NodePath, Mesh]({\n" + ",\n".join(metadata) + "\n})")
-	_write(OUTPUT + kind + ".tscn", text)
+	if write_model:
+		_write(OUTPUT + kind + ".tscn", text)
 
 func _manager_text() -> String:
 	var resources := PackedStringArray([

@@ -58,6 +58,13 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Spear.res" id="mesh_53"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/LegLeft.res" id="mesh_54"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/LegRight.res" id="mesh_55"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/Body.res" id="mesh_56"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/Head.res" id="mesh_57"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/ArmLeft.res" id="mesh_58"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/ArmRight.res" id="mesh_59"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/Sword.res" id="mesh_60"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/LegLeft.res" id="mesh_61"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/LegRight.res" id="mesh_62"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -451,6 +458,55 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_55")
 
+[sub_resource type="MultiMesh" id="batch_56"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_56")
+
+[sub_resource type="MultiMesh" id="batch_57"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_57")
+
+[sub_resource type="MultiMesh" id="batch_58"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_58")
+
+[sub_resource type="MultiMesh" id="batch_59"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_59")
+
+[sub_resource type="MultiMesh" id="batch_60"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_60")
+
+[sub_resource type="MultiMesh" id="batch_61"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_61")
+
+[sub_resource type="MultiMesh" id="batch_62"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_62")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -791,3 +847,45 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_55")
 metadata/batch_key = &"spearman::Rig/Action/LegRight"
+
+[node name="Shield Guard_Rig_Action_Waist_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_56")
+metadata/batch_key = &"shield_guard::Rig/Action/Waist/Body"
+
+[node name="Shield Guard_Rig_Action_Waist_Head" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_57")
+metadata/batch_key = &"shield_guard::Rig/Action/Waist/Head"
+
+[node name="Shield Guard_Rig_Action_Waist_ArmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_58")
+metadata/batch_key = &"shield_guard::Rig/Action/Waist/ArmLeft"
+
+[node name="Shield Guard_Rig_Action_Waist_ArmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_59")
+metadata/batch_key = &"shield_guard::Rig/Action/Waist/ArmRight"
+
+[node name="Shield Guard_Rig_Action_Waist_ArmRight_Sword" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_60")
+metadata/batch_key = &"shield_guard::Rig/Action/Waist/ArmRight/Sword"
+
+[node name="Shield Guard_Rig_Action_LegLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_61")
+metadata/batch_key = &"shield_guard::Rig/Action/LegLeft"
+
+[node name="Shield Guard_Rig_Action_LegRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_62")
+metadata/batch_key = &"shield_guard::Rig/Action/LegRight"

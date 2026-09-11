@@ -31,7 +31,7 @@ func _run() -> void:
 	codex.select_entry(0, "spearman")
 	await create_timer(0.5).timeout
 	codex.set_process(false)
-	check(codex.selected_id == "spearman" and codex._entries.size() == 7, "codex lists and selects all seven units")
+	check(codex.selected_id == "spearman" and codex._entries.size() == BalanceCatalog.UNITS.size(), "codex lists and selects all catalogued units")
 	await _capture("spearman-idle", root)
 	for angle: float in [PI * 0.5, PI]:
 		codex._anchor.rotation.y = angle

@@ -1,7 +1,7 @@
 extends SceneTree
 ## Real sandbox geometry/PathBudget/RVO. Record intent separately from safe motion.
 const UNIT := preload("res://scenes/unit.tscn")
-const KINDS: Array[String] = ["swordsman", "spearman", "farmer", "knight", "archer"]
+const KINDS: Array[String] = ["swordsman", "shield_guard", "spearman", "farmer", "knight", "archer"]
 
 class ApproachProbe extends BattleUnit:
 	var attack_starts: int = 0

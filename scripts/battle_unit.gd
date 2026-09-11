@@ -9,6 +9,7 @@ signal gathered(worker: Node3D, amount: int)
 
 const MODELS: Dictionary = {
 	"swordsman": preload("res://assets/models/units/swordsman.tscn"),
+	"shield_guard": preload("res://assets/models/units/shield_guard.tscn"),
 	"spearman": preload("res://assets/models/units/spearman.tscn"),
 	"archer": preload("res://assets/models/units/archer.tscn"),
 	"knight": preload("res://assets/models/units/knight.tscn"),
@@ -27,7 +28,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
-@export_enum("swordsman", "spearman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -176,7 +177,7 @@ func _ready() -> void:
 	selection_ring.scale = Vector3.ONE * radius * 1.65
 	selection_ring.set_instance_shader_parameter("ring_color", FactionPalette.ui_color(relation))
 	health_bar.set_instance_shader_parameter("bar_color", FactionPalette.ui_color(relation))
-	health_bar.position.y = 3.45 if unit_type == "knight" else (2.8 if unit_type in ["catapult", "cannon"] else 2.45)
+	health_bar.position.y = _stats.health_bar_height
 	health_bar.scale.x = 1.65 if radius > 0.7 else 1.25
 	_update_health_bar()
 	set_selected(false)
@@ -520,17 +521,12 @@ func _start_attack() -> void:
 		_game.spawn_effect(global_position + Vector3.UP * 0.2, "charge", Color("edd9a1"))
 	_charge_time = 0.0
 	_model.strike()
-	if unit_type in ["swordsman", "spearman", "knight"]:
+	if unit_type in ["swordsman", "shield_guard", "spearman", "knight"]:
 		sound_requested.emit(&"sword_swing", global_position + Vector3.UP)
 	attack_windup.start(_windup_seconds())
 
 func _windup_seconds() -> float:
-	match unit_type:
-		"knight": return 0.2
-		"archer": return 0.27
-		"catapult": return 0.48
-		"cannon": return 0.25
-	return 0.22
+	return _stats.attack_windup_seconds
 
 func _cancel_attack() -> void:
 	attack_windup.stop()

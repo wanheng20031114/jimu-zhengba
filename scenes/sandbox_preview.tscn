@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/units/swordsman.tscn" id="swordsman"]
+[ext_resource type="PackedScene" path="res://assets/models/units/shield_guard.tscn" id="shield_guard"]
 [ext_resource type="PackedScene" path="res://assets/models/units/spearman.tscn" id="spearman"]
 
 [ext_resource type="PackedScene" path="res://assets/models/units/archer.tscn" id="archer"]
@@ -23,6 +24,9 @@ process_mode = 4
 visible = false
 
 [node name="spearman" parent="Models" instance=ExtResource("spearman")]
+visible = false
+
+[node name="shield_guard" parent="Models" instance=ExtResource("shield_guard")]
 visible = false
 
 [node name="archer" parent="Models" instance=ExtResource("archer")]

@@ -34,6 +34,7 @@
 [ext_resource type="PackedScene" path="res://scenes/static_motion_grid.tscn" id="static_motion"]
 [ext_resource type="PackedScene" path="res://scenes/unit_render_batches.tscn" id="unit_batches"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/swordsman.tscn" id="batch_swordsman"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/shield_guard.tscn" id="batch_shield_guard"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/spearman.tscn" id="batch_spearman"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/archer.tscn" id="batch_archer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/knight.tscn" id="batch_knight"]
@@ -95,6 +96,7 @@ unit_model_overrides = Dictionary[String, PackedScene]({
 "farmer": ExtResource("batch_farmer"),
 "knight": ExtResource("batch_knight"),
 "spearman": ExtResource("batch_spearman"),
+"shield_guard": ExtResource("batch_shield_guard"),
 "swordsman": ExtResource("batch_swordsman")
 })
 unit_batches_enabled = true

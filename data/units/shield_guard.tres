@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+attack_windup_seconds = 0.3
+health_bar_height = 2.45
+id = &"shield_guard"
+name = "盾卫"
+description = "持大盾与短剑的重装步兵，擅长承受远程火力，攻击较慢。"
+hp = 145
+damage = 6
+melee_armor = 3
+ranged_armor = 7
+damage_channel = 0
+combat_class = &"infantry"
+bonuses = {}
+range = 1
+cooldown = 1.6
+cost = 90
+supply = 1
+speed = 3.5
+radius = 0.52
+sight = 12
+min_range = 0
+projectile = ""
+production_building = &"barracks"
+training_seconds = 10
+military = true
