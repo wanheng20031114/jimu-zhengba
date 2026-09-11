@@ -1,0 +1,655 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/sandbox_hud.gd" id="script"]
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="theme"]
+[sub_resource type="StyleBoxFlat" id="Panel"]
+bg_color = Color(0.06, 0.063, 0.051, 0.96)
+content_margin_left = 14.0
+content_margin_right = 14.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+border_width_bottom = 1
+border_color = Color(0.55,0.43,0.22,1)
+[sub_resource type="StyleBoxFlat" id="ColorNormal"]
+bg_color = Color(0.12, 0.13, 0.11, 1)
+[sub_resource type="StyleBoxFlat" id="ColorHover"]
+bg_color = Color(0.22, 0.23, 0.18, 1)
+[sub_resource type="StyleBoxFlat" id="ColorPressed"]
+bg_color = Color(0.22, 0.20, 0.13, 1)
+border_width_left = 1
+border_width_right = 1
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.95,0.81,0.5,1)
+[sub_resource type="ButtonGroup" id="Factions"]
+[sub_resource type="ButtonGroup" id="Kinds"]
+[sub_resource type="ButtonGroup" id="Tools"]
+[node name="SandboxHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = ExtResource("theme")
+script = ExtResource("script")
+[node name="Top" type="PanelContainer" parent="."]
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 14.0
+offset_right = -16.0
+offset_bottom = 70.0
+theme_override_styles/panel = SubResource("Panel")
+[node name="Row" type="HBoxContainer" parent="Top"]
+layout_mode = 2
+theme_override_constants/separation = 20
+[node name="Brand" type="Label" parent="Top/Row"]
+layout_mode = 2
+text = "积木争霸  /  自由沙盘"
+theme_override_font_sizes/font_size = 22
+[node name="State" type="Label" parent="Top/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.8,0.71,0.52,1)
+text = "布阵中"
+[node name="Population" type="Label" parent="Top/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0 / 500 单位"
+[node name="Elapsed" type="Label" parent="Top/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00:00"
+[node name="Settings" type="Button" parent="Top/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "设置"
+[node name="Back" type="Button" parent="Top/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "返回主菜单"
+[node name="Sidebar" type="PanelContainer" parent="."]
+offset_left = 16.0
+offset_top = 90.0
+offset_right = 294.0
+anchor_bottom = 1.0
+offset_bottom = -16.0
+theme_override_styles/panel = SubResource("Panel")
+[node name="Scroll" type="ScrollContainer" parent="Sidebar"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+[node name="Content" type="VBoxContainer" parent="Sidebar/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="MapLabel" type="Label" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "地图"
+theme_override_font_sizes/font_size = 14
+
+[node name="Map" type="OptionButton" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 34)
+tooltip_text = "切换地图会清空当前沙盘"
+
+[node name="Faction" type="Label" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "01 · 苍蓝阵营"
+theme_override_font_sizes/font_size = 17
+
+[node name="Colors" type="GridContainer" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 4
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+
+[node name="Faction1" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "01"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction1"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction2" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "02"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction2"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction3" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "03"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction3"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction4" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "04"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction4"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction5" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "05"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction5"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction6" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "06"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction6"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction7" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "07"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction7"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction8" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "08"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction8"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction9" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "09"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction9"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction10" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "10"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction10"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction11" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "11"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction11"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction12" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "12"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction12"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction13" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "13"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction13"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction14" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "14"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction14"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction15" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "15"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction15"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="Faction16" type="Button" parent="Sidebar/Scroll/Content/Colors"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(52, 30)
+size_flags_horizontal = 3
+text = "16"
+toggle_mode = true
+button_group = SubResource("Factions")
+theme_override_styles/normal = SubResource("ColorNormal")
+theme_override_styles/hover = SubResource("ColorHover")
+theme_override_styles/pressed = SubResource("ColorPressed")
+theme_override_styles/hover_pressed = SubResource("ColorPressed")
+theme_override_font_sizes/font_size = 15
+
+[node name="Swatch" type="ColorRect" parent="Sidebar/Scroll/Content/Colors/Faction16"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 8.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+mouse_filter = 2
+
+[node name="UnitLabel" type="Label" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "兵种"
+theme_override_font_sizes/font_size = 14
+
+[node name="Kinds" type="GridContainer" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+
+[node name="swordsman" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "剑士 Q"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
+[node name="archer" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "弓手 W"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
+[node name="knight" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "骑士 E"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
+[node name="catapult" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "投石车"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
+[node name="cannon" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "加农炮"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
+[node name="farmer" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "农民"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
+[node name="CountRow" type="HBoxContainer" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+
+
+[node name="CountLabel" type="Label" parent="Sidebar/Scroll/Content/CountRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "每次放置"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+
+[node name="Count" type="SpinBox" parent="Sidebar/Scroll/Content/CountRow"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 50.0
+value = 1.0
+custom_minimum_size = Vector2(104, 32)
+
+[node name="Rotate" type="Button" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "朝向 0°   R"
+theme_override_font_sizes/font_size = 15
+
+[node name="Tools" type="HBoxContainer" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+
+
+[node name="Place" type="Button" parent="Sidebar/Scroll/Content/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "放置部队"
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("Tools")
+theme_override_font_sizes/font_size = 15
+
+[node name="Select" type="Button" parent="Sidebar/Scroll/Content/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "选择 / 下令"
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("Tools")
+theme_override_font_sizes/font_size = 15
+
+[node name="Run" type="Button" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "开始交战   F5"
+custom_minimum_size = Vector2(0, 40)
+
+[node name="Selection" type="Label" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "选择模式：框选当前阵营，右键下令"
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
+
+[node name="EditRow" type="HBoxContainer" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+
+
+[node name="Remove" type="Button" parent="Sidebar/Scroll/Content/EditRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "移除选中"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="Clear" type="Button" parent="Sidebar/Scroll/Content/EditRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "清空部队"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="Help" type="Label" parent="Sidebar/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "右键 / Esc 退出放置 · R 旋转\nF2 全选当前阵营军队 · Delete 移除\n中键拖动 · 滚轮缩放 · 方向键移动\n不同颜色互为敌人，无胜负限制"
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.67,0.63,0.52,1)
+
+[node name="Notice" type="Label" parent="."]
+unique_name_in_owner = true
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 324.0
+offset_top = -56.0
+offset_right = -28.0
+offset_bottom = -22.0
+mouse_filter = 2
+text = ""
+theme_override_colors/font_shadow_color = Color(0.1,0.07,0.02,1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2

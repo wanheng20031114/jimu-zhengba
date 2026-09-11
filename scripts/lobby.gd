@@ -150,6 +150,13 @@ func _on_close_solo() -> void:
 func _on_open_codex() -> void:
 	%UnitCodex.open_codex()
 
+func _on_open_sandbox() -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	if session.start_sandbox() != OK:
+		_transitioning = false
+
 func _on_close_codex() -> void:
 	%Codex.grab_focus()
 

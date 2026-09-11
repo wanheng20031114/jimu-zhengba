@@ -1,0 +1,37 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/units/swordsman.tscn" id="swordsman"]
+
+[ext_resource type="PackedScene" path="res://assets/models/units/archer.tscn" id="archer"]
+
+[ext_resource type="PackedScene" path="res://assets/models/units/knight.tscn" id="knight"]
+
+[ext_resource type="PackedScene" path="res://assets/models/units/catapult.tscn" id="catapult"]
+
+[ext_resource type="PackedScene" path="res://assets/models/units/cannon.tscn" id="cannon"]
+
+[ext_resource type="PackedScene" path="res://assets/models/units/farmer.tscn" id="farmer"]
+
+[node name="PlacementPreview" type="Node3D"]
+physics_interpolation_mode = 2
+
+[node name="Models" type="Node3D" parent="."]
+process_mode = 4
+
+[node name="swordsman" parent="Models" instance=ExtResource("swordsman")]
+visible = false
+
+[node name="archer" parent="Models" instance=ExtResource("archer")]
+visible = false
+
+[node name="knight" parent="Models" instance=ExtResource("knight")]
+visible = false
+
+[node name="catapult" parent="Models" instance=ExtResource("catapult")]
+visible = false
+
+[node name="cannon" parent="Models" instance=ExtResource("cannon")]
+visible = false
+
+[node name="farmer" parent="Models" instance=ExtResource("farmer")]
+visible = false

@@ -969,6 +969,14 @@ func _on_minimap_clicked(at: Vector3, command: bool) -> void:
 func get_player(owner: int) -> PlayerState:
 	return players[owner]
 
+func presentation_faction(owner: int, alliance: int) -> int:
+	if owner == local_owner_id:
+		return FactionPalette.SELF
+	return FactionPalette.ALLY if alliance == get_player(local_owner_id).alliance_id else FactionPalette.ENEMY
+
+func command_unit_limit(owner: int) -> int:
+	return get_player(owner).get_supply_limit() + get_player(owner).get_worker_limit()
+
 func register_entity(entity: Node3D) -> void:
 	if entity.entity_id == 0:
 		entity.entity_id = _next_entity_id

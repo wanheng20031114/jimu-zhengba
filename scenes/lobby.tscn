@@ -274,6 +274,14 @@ text = "战争图鉴     →"
 alignment = 0
 theme_override_font_sizes/font_size = 23
 
+[node name="Sandbox" type="Button" parent="CanvasLayer/UI/MainMenu"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+text = "自由沙盘     →"
+alignment = 0
+theme_override_font_sizes/font_size = 23
+
 [node name="UtilityActions" type="HBoxContainer" parent="CanvasLayer/UI/MainMenu"]
 layout_mode = 2
 
@@ -1311,3 +1319,5 @@ one_shot = true
 [connection signal="closed" from="CanvasLayer/UI/UnitCodex" to="." method="_on_close_codex"]
 
 [connection signal="timeout" from="SlotTimeout" to="." method="_on_slot_timeout"]
+
+[connection signal="pressed" from="CanvasLayer/UI/MainMenu/Sandbox" to="." method="_on_open_sandbox"]

@@ -48,6 +48,19 @@ func start_online(match_data: Dictionary) -> Error:
 	config = match_data.duplicate(true)
 	return _load_match_scene()
 
+func start_sandbox(map_mode: String = "1v1") -> Error:
+	if map_mode not in NetworkProtocol.MODES:
+		return ERR_INVALID_PARAMETER
+	relay.leave_room()
+	relay.disconnect_relay()
+	online = false
+	config = {"mode": map_mode}
+	var error := get_tree().change_scene_to_file("res://scenes/sandbox.tscn")
+	if error != OK:
+		config.clear()
+		load_failed.emit("无法载入自由沙盘，请检查游戏文件后重试")
+	return error
+
 func _load_match_scene() -> Error:
 	var error := get_tree().change_scene_to_file("res://scenes/main.tscn")
 	if error != OK:

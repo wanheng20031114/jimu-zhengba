@@ -1,0 +1,208 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
+[ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
+
+[ext_resource type="Script" path="res://scripts/sandbox.gd" id="game"]
+
+[ext_resource type="Script" path="res://scripts/rts_camera.gd" id="camera"]
+
+[ext_resource type="Script" path="res://scripts/selection_overlay.gd" id="selection"]
+
+
+
+
+[ext_resource type="PackedScene" path="res://scenes/sandbox_hud.tscn" id="hud"]
+
+
+
+
+
+
+
+
+[ext_resource type="PackedScene" path="res://scenes/audio.tscn" id="audio"]
+
+
+[ext_resource type="PackedScene" path="res://scenes/building_preview.tscn" id="ghost"]
+
+[ext_resource type="Script" path="res://scripts/construction_navigation.gd" id="construction_nav"]
+
+[ext_resource type="PackedScene" path="res://scenes/fog_of_war.tscn" id="fog"]
+[ext_resource type="PackedScene" path="res://scenes/match_replication.tscn" id="replication"]
+[ext_resource type="PackedScene" path="res://scenes/path_budget.tscn" id="path_budget"]
+[ext_resource type="PackedScene" path="res://scenes/static_motion_grid.tscn" id="static_motion"]
+[ext_resource type="PackedScene" path="res://scenes/unit_render_batches.tscn" id="unit_batches"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/swordsman.tscn" id="batch_swordsman"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/archer.tscn" id="batch_archer"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/knight.tscn" id="batch_knight"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/catapult.tscn" id="batch_catapult"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/cannon.tscn" id="batch_cannon"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/farmer.tscn" id="batch_farmer"]
+[ext_resource type="PackedScene" path="res://scenes/effect_pool.tscn" id="effect_pool"]
+[ext_resource type="PackedScene" path="res://scenes/projectile_pool.tscn" id="projectile_pool"]
+
+[ext_resource type="Script" path="res://scripts/sandbox_visibility.gd" id="sandbox_visibility"]
+[ext_resource type="PackedScene" path="res://scenes/sandbox_preview.tscn" id="sandbox_preview"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_material"]
+sky_top_color = Color(0.32,0.41,0.48,1)
+sky_horizon_color = Color(0.81,0.73,0.55,1)
+ground_bottom_color = Color(0.29,0.25,0.19,1)
+ground_horizon_color = Color(0.8,0.72,0.53,1)
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_material")
+
+[sub_resource type="Environment" id="world"]
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+ambient_light_color = Color(0.76,0.81,0.85,1)
+ambient_light_energy = 0.62
+reflected_light_source = 2
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 1.7
+ssao_intensity = 1.8
+ssao_power = 1.5
+ssao_detail = 0.5
+ssil_enabled = true
+ssil_radius = 3.0
+ssil_intensity = 0.4
+glow_enabled = true
+glow_intensity = 0.3
+glow_bloom = 0.03
+fog_enabled = true
+fog_light_color = Color(0.62,0.52,0.35,1)
+fog_light_energy = 0.5
+fog_density = 0.0012
+adjustment_enabled = true
+adjustment_brightness = 1.0
+adjustment_contrast = 1.06
+adjustment_saturation = 0.93
+
+[sub_resource type="Shader" id="vignette"]
+code = "shader_type canvas_item;\nvoid fragment() {\n vec2 d = (UV - vec2(0.5, 0.43)) * vec2(1.12, 1.0);\n float edge = smoothstep(0.31, 0.76, length(d));\n float top = pow(1.0 - UV.y, 5.0) * 0.22;\n COLOR = vec4(0.085, 0.066, 0.047, edge * 0.43 + top);\n}"
+
+[sub_resource type="ShaderMaterial" id="vignette_material"]
+shader = SubResource("vignette")
+
+[node name="积木争霸" type="Node3D"]
+script = ExtResource("game")
+unit_model_overrides = Dictionary[String, PackedScene]({
+"archer": ExtResource("batch_archer"),
+"cannon": ExtResource("batch_cannon"),
+"catapult": ExtResource("batch_catapult"),
+"farmer": ExtResource("batch_farmer"),
+"knight": ExtResource("batch_knight"),
+"swordsman": ExtResource("batch_swordsman")
+})
+unit_batches_enabled = true
+stationary_avoidance_pruning_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("world")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-54,-31,0)
+light_color = Color(1,0.89,0.72,1)
+light_energy = 1.15
+shadow_enabled = true
+directional_shadow_max_distance = 135.0
+shadow_bias = 0.06
+shadow_normal_bias = 2.0
+directional_shadow_blend_splits = true
+directional_shadow_mode = 0
+light_angular_distance = 1.6
+
+[node name="CameraRig" type="Node3D" parent="."]
+physics_interpolation_mode = 2
+position = Vector3(-16,0,21)
+script = ExtResource("camera")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+position = Vector3(-29.698485,42,29.698485)
+rotation_degrees = Vector3(-45,-45,0)
+projection = 1
+size = 31.0
+near = 0.1
+far = 180.0
+current = true
+
+[node name="AudioListener3D" type="AudioListener3D" parent="CameraRig"]
+position = Vector3(0,6,0)
+rotation_degrees = Vector3(0,-45,0)
+
+[node name="MapContainer" type="Node3D" parent="."]
+
+[node name="PathBudget" parent="." instance=ExtResource("path_budget")]
+omit_path_metadata = true
+cache_map_iterations = true
+
+[node name="StaticMotionGrid" parent="." instance=ExtResource("static_motion")]
+
+[node name="UnitRenderBatches" parent="." instance=ExtResource("unit_batches")]
+
+[node name="MatchReplication" parent="." instance=ExtResource("replication")]
+
+[node name="Buildings" type="Node3D" parent="."]
+
+[node name="Units" type="Node3D" parent="."]
+
+[node name="ConstructionNavigation" type="Node" parent="."]
+script = ExtResource("construction_nav")
+
+[node name="BuildingPreview" parent="." instance=ExtResource("ghost")]
+visible = false
+
+[node name="FogOfWar" parent="." instance=ExtResource("fog")]
+script = ExtResource("sandbox_visibility")
+
+[node name="Effects" type="Node3D" parent="."]
+
+[node name="ContextCursor" parent="." instance=ExtResource("context_cursor")]
+
+[node name="OrderPlanOverlay" parent="." instance=ExtResource("order_plan")]
+
+[node name="EffectPool" parent="." instance=ExtResource("effect_pool")]
+
+[node name="ProjectilePool" parent="." instance=ExtResource("projectile_pool")]
+
+
+[node name="Audio" parent="." instance=ExtResource("audio")]
+
+
+[node name="IncomeTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 1.0
+
+[node name="EnemyTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 100.0
+
+[node name="Atmosphere" type="CanvasLayer" parent="."]
+layer = 1
+
+[node name="Vignette" type="ColorRect" parent="Atmosphere"]
+material = SubResource("vignette_material")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Interface" parent="HUD" instance=ExtResource("hud")]
+
+
+[node name="SelectionOverlay" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("selection")
+
+[node name="PlacementPreview" parent="." instance=ExtResource("sandbox_preview")]
