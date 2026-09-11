@@ -292,17 +292,32 @@ func _chase_velocity(entity: Node3D) -> Vector3:
 		approach = Vector3.RIGHT
 	var target_radius: float = 0.0 if building else entity.radius
 	var spacing: float = maxf(attack_range * 0.6, min_attack_range + 0.35)
-	var chase_destination: Vector3 = attack_point + approach.normalized() * (target_radius + radius + spacing)
+	var contact_distance: float = target_radius + radius + spacing
 	if entity is BattleUnit:
-		# A retreating target must not leave us parked at yesterday's contact
-		# point. Predict only one replan interval using observed velocity.
-		chase_destination += entity._observed_velocity * CHASE_PREDICTION_SECONDS
+		# Lead only as far as the remaining approach permits. A fixed time lead
+		# can cross behind us when a fast enemy approaches, ordering a retreat.
+		# Include incoming radial speed in the closing time, but keep the full
+		# replan horizon for distant or fleeing targets. Use actual planar motion.
+		var target_velocity: Vector3 = entity._observed_velocity
+		target_velocity.y = 0.0
+		var remaining: float = maxf(0.0, approach.length() - contact_distance)
+		var closing_speed: float = speed + target_velocity.dot(approach.normalized())
+		var lead_time: float = CHASE_PREDICTION_SECONDS
+		if closing_speed > 0.0:
+			lead_time = minf(lead_time, remaining / closing_speed)
+		attack_point += target_velocity * lead_time
+		# Rebuild the contact offset around the predicted center. Translating
+		# yesterday's offset also gives the wrong approach side on crossing paths.
+		approach = global_position - attack_point
+		approach.y = 0.0
+	var chase_destination: Vector3 = attack_point + approach.normalized() * contact_distance
 	if _path_budget.try_direct_pursuit(self, chase_destination):
 		# The authoritative cell cache certifies the whole body corridor on
 		# this tick. Native RVO and CharacterBody collision still resolve motion.
 		var direction: Vector3 = chase_destination - global_position
 		direction.y = 0.0
-		return direction.normalized() * speed
+		# Arrive at the contact point without stepping past it on a coarse tick.
+		return direction.limit_length(speed * get_physics_process_delta_time()) / get_physics_process_delta_time()
 	if _repath_time <= 0.0 or _path_budget.is_finished(self):
 		_repath_time = randf_range(0.4, CHASE_PREDICTION_SECONDS)
 		if _path_budget.is_finished(self) or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
@@ -310,8 +325,8 @@ func _chase_velocity(entity: Node3D) -> Vector3:
 	var desired_velocity: Vector3 = _path_velocity()
 	if building and _stats.projectile.is_empty() and _path_budget.is_finished(self):
 		# Finish contact with physical walls beyond a padded navigation edge.
-		var contact_distance: float = attack_range + radius + 1.0
-		if approach.length_squared() <= contact_distance * contact_distance:
+		var wall_contact_distance: float = attack_range + radius + 1.0
+		if approach.length_squared() <= wall_contact_distance * wall_contact_distance:
 			desired_velocity = -approach.normalized() * speed
 	return desired_velocity
 

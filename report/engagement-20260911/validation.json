@@ -1,0 +1,4461 @@
+{
+  "engine": "4.6.3.stable",
+  "renderer": "Forward+ (Vulkan)",
+  "headon_before": {
+    "cases": [
+      {
+        "attacks": 3,
+        "backwards_intents": 33,
+        "cavalry_attacks": 4,
+        "label": "30 TPS swordsman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 2.27386658079922,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.820743262767792,
+            "gap": 5.15320587158203,
+            "intent_radial": 0.128236472606659,
+            "safe_radial": -0.894910752773285,
+            "step_radial": -0.0298303905874491,
+            "target_speed": -5.96667098999023,
+            "tick": 30
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.976749658584595,
+            "gap": 5.00066518783569,
+            "intent_radial": 0.352826118469238,
+            "safe_radial": -1.02957224845886,
+            "step_radial": -0.0343190357089043,
+            "target_speed": -5.44731092453003,
+            "tick": 31
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.309782981872559,
+            "gap": 4.83269262313843,
+            "intent_radial": -3.47371983528137,
+            "safe_radial": -3.47371983528137,
+            "step_radial": -0.115790665149689,
+            "target_speed": -6.09474945068359,
+            "tick": 32
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.16237398982048,
+            "gap": 4.7655668258667,
+            "intent_radial": -0.283697932958603,
+            "safe_radial": -1.82812702655792,
+            "step_radial": -0.0609376840293407,
+            "target_speed": -5.47248554229736,
+            "tick": 33
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.265240550041199,
+            "gap": 4.62613296508789,
+            "intent_radial": -2.87739586830139,
+            "safe_radial": -2.87739562988281,
+            "step_radial": -0.0959132164716721,
+            "target_speed": -6.04454040527344,
+            "tick": 34
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.251236796379089,
+            "gap": 4.53846836090088,
+            "intent_radial": -0.863233625888824,
+            "safe_radial": -1.51171267032623,
+            "step_radial": -0.0503903478384018,
+            "target_speed": -5.50194215774536,
+            "tick": 35
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.396176785230637,
+            "gap": 4.39495420455933,
+            "intent_radial": -2.14851379394531,
+            "safe_radial": -2.14851379394531,
+            "step_radial": -0.0716171637177467,
+            "target_speed": -5.8475980758667,
+            "tick": 36
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.35245007276535,
+            "gap": 4.2895565032959,
+            "intent_radial": -1.05561316013336,
+            "safe_radial": -1.20374774932861,
+            "step_radial": -0.0401248969137669,
+            "target_speed": -5.31070852279663,
+            "tick": 37
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.404348134994507,
+            "gap": 4.14608335494995,
+            "intent_radial": -1.74042117595673,
+            "safe_radial": -1.74042117595673,
+            "step_radial": -0.0580139867961407,
+            "target_speed": -5.52949953079224,
+            "tick": 38
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.364360153675079,
+            "gap": 4.03560447692871,
+            "intent_radial": -1.12806463241577,
+            "safe_radial": -1.12806463241577,
+            "step_radial": -0.037602111697197,
+            "target_speed": -5.05066967010498,
+            "tick": 39
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.604367971420288
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 33,
+        "cavalry_attacks": 4,
+        "label": "30 TPS spearman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 2.27624059654772,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.820743262767792,
+            "gap": 5.15320587158203,
+            "intent_radial": 0.128236472606659,
+            "safe_radial": -0.894910752773285,
+            "step_radial": -0.0298303905874491,
+            "target_speed": -5.96667098999023,
+            "tick": 186
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.976749658584595,
+            "gap": 5.00066518783569,
+            "intent_radial": 0.352826118469238,
+            "safe_radial": -1.02957224845886,
+            "step_radial": -0.0343190357089043,
+            "target_speed": -5.44731092453003,
+            "tick": 187
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.309782981872559,
+            "gap": 4.83269262313843,
+            "intent_radial": -3.47371983528137,
+            "safe_radial": -3.47371983528137,
+            "step_radial": -0.115790665149689,
+            "target_speed": -6.09474945068359,
+            "tick": 188
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.150968566536903,
+            "gap": 4.76299095153809,
+            "intent_radial": -0.392612397670746,
+            "safe_radial": -1.87656986713409,
+            "step_radial": -0.0625524446368217,
+            "target_speed": -5.54861402511597,
+            "tick": 189
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.271373182535172,
+            "gap": 4.62516403198242,
+            "intent_radial": -2.8748562335968,
+            "safe_radial": -2.8748562335968,
+            "step_radial": -0.095828577876091,
+            "target_speed": -6.04414129257202,
+            "tick": 190
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.258999079465866,
+            "gap": 4.53688430786133,
+            "intent_radial": -0.899590969085693,
+            "safe_radial": -1.51419627666473,
+            "step_radial": -0.0504732504487038,
+            "target_speed": -5.51855087280273,
+            "tick": 191
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.400549203157425,
+            "gap": 4.39348030090332,
+            "intent_radial": -2.14825248718262,
+            "safe_radial": -2.14825248718262,
+            "step_radial": -0.0716083124279976,
+            "target_speed": -5.84674263000488,
+            "tick": 192
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.355506122112274,
+            "gap": 4.28806114196777,
+            "intent_radial": -1.05919015407562,
+            "safe_radial": -1.20495772361755,
+            "step_radial": -0.0401652604341507,
+            "target_speed": -5.3110876083374,
+            "tick": 193
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.406293869018555,
+            "gap": 4.14464616775513,
+            "intent_radial": -1.7418395280838,
+            "safe_radial": -1.7418395280838,
+            "step_radial": -0.0580613501369953,
+            "target_speed": -5.52895069122314,
+            "tick": 194
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.36574986577034,
+            "gap": 4.0342230796814,
+            "intent_radial": -1.13001537322998,
+            "safe_radial": -1.13001537322998,
+            "step_radial": -0.0376670807600021,
+            "target_speed": -5.05038213729858,
+            "tick": 195
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.604492545127869
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 37,
+        "cavalry_attacks": 3,
+        "label": "30 TPS farmer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 4.25185638293624,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.895440518856049,
+            "gap": 5.21806287765503,
+            "intent_radial": 1.42610394954681,
+            "safe_radial": 0.670283257961273,
+            "step_radial": 0.0223427433520556,
+            "target_speed": -5.8545184135437,
+            "tick": 342
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.895590126514435,
+            "gap": 5.00837373733521,
+            "intent_radial": 3.22676515579224,
+            "safe_radial": 0.662546753883362,
+            "step_radial": 0.02208480425179,
+            "target_speed": -5.62035226821899,
+            "tick": 343
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0294820684939623,
+            "gap": 4.78661298751831,
+            "intent_radial": -3.59995913505554,
+            "safe_radial": -3.59995913505554,
+            "step_radial": -0.119998663663864,
+            "target_speed": -5.99810791015625,
+            "tick": 344
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.041495468467474,
+            "gap": 4.71436548233032,
+            "intent_radial": -0.604895234107971,
+            "safe_radial": -2.38883900642395,
+            "step_radial": -0.0796280652284622,
+            "target_speed": -5.75341653823853,
+            "tick": 345
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.649032294750214,
+            "gap": 4.59152460098267,
+            "intent_radial": -3.58068156242371,
+            "safe_radial": -3.58068156242371,
+            "step_radial": -0.119355998933315,
+            "target_speed": -6.09925746917725,
+            "tick": 346
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.503056347370148,
+            "gap": 4.52046632766724,
+            "intent_radial": -1.01383674144745,
+            "safe_radial": -2.65863180160522,
+            "step_radial": -0.0886211395263672,
+            "target_speed": -5.69606256484985,
+            "tick": 347
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.875229358673096,
+            "gap": 4.40678071975708,
+            "intent_radial": -3.4665048122406,
+            "safe_radial": -3.4665048122406,
+            "step_radial": -0.115550272166729,
+            "target_speed": -6.09007692337036,
+            "tick": 348
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.728403151035309,
+            "gap": 4.33020544052124,
+            "intent_radial": -1.64417088031769,
+            "safe_radial": -3.00649571418762,
+            "step_radial": -0.100216746330261,
+            "target_speed": -5.75203657150269,
+            "tick": 349
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.97060614824295,
+            "gap": 4.22932481765747,
+            "intent_radial": -3.17128920555115,
+            "safe_radial": -3.39908003807068,
+            "step_radial": -0.11330246925354,
+            "target_speed": -6.04515361785889,
+            "tick": 350
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.878073334693909,
+            "gap": 4.1470627784729,
+            "intent_radial": -2.37663149833679,
+            "safe_radial": -3.20788073539734,
+            "step_radial": -0.106929361820221,
+            "target_speed": -5.86138105392456,
+            "tick": 351
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.9999840259552
+      },
+      {
+        "attacks": 0,
+        "backwards_intents": 67,
+        "cavalry_attacks": 0,
+        "label": "30 TPS knight vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 13.623336315155,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 6.30666542053223,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 491
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.89999866485596,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 492
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.309016972780228,
+            "gap": 5.49333190917969,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 493
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.728968620300293,
+            "gap": 5.89999866485596,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": 6.10000085830688,
+            "tick": 494
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.137790337204933,
+            "gap": 5.49333190917969,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 495
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.518743395805359,
+            "gap": 5.89999866485596,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": 6.10000085830688,
+            "tick": 496
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.296561628580093,
+            "gap": 5.49333190917969,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 497
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.43286120891571,
+            "gap": 5.89999866485596,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": 6.10000085830688,
+            "tick": 498
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.352012097835541,
+            "gap": 5.49333190917969,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 499
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.400888621807098,
+            "gap": 5.89999866485596,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": 6.10000085830688,
+            "tick": 500
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.382683396339417
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "label": "30 TPS archer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 41,
+        "cavalry_attacks": 3,
+        "label": "30 TPS swordsman vs cavalry direct avoidance=false angle=0.00",
+        "retreat_distance": 5.05666971206665,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.79333019256592,
+            "intent_radial": 3.70000004768372,
+            "safe_radial": 3.70000004768372,
+            "step_radial": 0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 808
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.4666633605957,
+            "intent_radial": 3.70000004768372,
+            "safe_radial": 3.70000004768372,
+            "step_radial": 0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 809
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.309016972780228,
+            "gap": 5.13999652862549,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 810
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.42577937245369,
+            "gap": 5.05999660491943,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 811
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.778462290763855,
+            "gap": 4.97999668121338,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 812
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.918252944946289,
+            "gap": 4.89999675750732,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 813
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.970309257507324,
+            "gap": 4.81999683380127,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 814
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.989277243614197,
+            "gap": 4.73999691009521,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 815
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.996135354042053,
+            "gap": 4.65999698638916,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 816
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.99860817193985,
+            "gap": 4.57999706268311,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.09999990463257,
+            "tick": 817
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.999998927116394
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 33,
+        "cavalry_attacks": 4,
+        "label": "30 TPS spearman vs cavalry direct avoidance=true angle=1.57",
+        "retreat_distance": 2.27623936906457,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.821164965629578,
+            "gap": 5.15320587158203,
+            "intent_radial": 0.128236636519432,
+            "safe_radial": -0.894910752773285,
+            "step_radial": -0.0298303905874491,
+            "target_speed": -5.96667098999023,
+            "tick": 966
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.976654529571533,
+            "gap": 5.00066518783569,
+            "intent_radial": 0.352825969457626,
+            "safe_radial": -1.02957189083099,
+            "step_radial": -0.0343190394341946,
+            "target_speed": -5.44731092453003,
+            "tick": 967
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.30952987074852,
+            "gap": 4.83269262313843,
+            "intent_radial": -3.47372031211853,
+            "safe_radial": -3.47372031211853,
+            "step_radial": -0.115790665149689,
+            "target_speed": -6.09474945068359,
+            "tick": 968
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.150811210274696,
+            "gap": 4.76299095153809,
+            "intent_radial": -0.392607599496841,
+            "safe_radial": -1.87657010555267,
+            "step_radial": -0.0625524446368217,
+            "target_speed": -5.54861068725586,
+            "tick": 969
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.271465390920639,
+            "gap": 4.62516403198242,
+            "intent_radial": -2.87485766410828,
+            "safe_radial": -2.87485766410828,
+            "step_radial": -0.095828577876091,
+            "target_speed": -6.04414129257202,
+            "tick": 970
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.259054452180862,
+            "gap": 4.53688430786133,
+            "intent_radial": -0.899590253829956,
+            "safe_radial": -1.51419711112976,
+            "step_radial": -0.0504732504487038,
+            "target_speed": -5.51855087280273,
+            "tick": 971
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.400580942630768,
+            "gap": 4.39348030090332,
+            "intent_radial": -2.14825463294983,
+            "safe_radial": -2.14825463294983,
+            "step_radial": -0.0716085582971573,
+            "target_speed": -5.84674263000488,
+            "tick": 972
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.355525434017181,
+            "gap": 4.28806114196777,
+            "intent_radial": -1.05918908119202,
+            "safe_radial": -1.20495927333832,
+            "step_radial": -0.040165264159441,
+            "target_speed": -5.3110876083374,
+            "tick": 973
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.406305521726608,
+            "gap": 4.14464664459229,
+            "intent_radial": -1.74184167385101,
+            "safe_radial": -1.74184167385101,
+            "step_radial": -0.0580613575875759,
+            "target_speed": -5.52895212173462,
+            "tick": 974
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.365756928920746,
+            "gap": 4.0342230796814,
+            "intent_radial": -1.1300151348114,
+            "safe_radial": -1.1300151348114,
+            "step_radial": -0.0376670882105827,
+            "target_speed": -5.05038261413574,
+            "tick": 975
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.604491829872131
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 3,
+        "cavalry_attacks": 4,
+        "label": "30 TPS swordsman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0930894564371556,
+        "first_reversal_trace": [
+          {
+            "attacks": 1,
+            "facing_dot": 0.0564089715480804,
+            "gap": 2.13973259925842,
+            "intent_radial": 0.160671472549438,
+            "safe_radial": 0.160671472549438,
+            "step_radial": 0.0053558237850666,
+            "target_speed": 0.0,
+            "tick": 1145
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.00642716884613037,
+            "gap": 2.13793039321899,
+            "intent_radial": -0.0526405572891235,
+            "safe_radial": -0.0526405572891235,
+            "step_radial": -0.00175477564334869,
+            "target_speed": 0.0,
+            "tick": 1146
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.0725743919610977,
+            "gap": 2.14323592185974,
+            "intent_radial": -0.316325008869171,
+            "safe_radial": -0.316325008869171,
+            "step_radial": -0.0105441771447659,
+            "target_speed": 0.0,
+            "tick": 1147
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.134406298398972,
+            "gap": 2.15728259086609,
+            "intent_radial": -0.525796890258789,
+            "safe_radial": -0.525796890258789,
+            "step_radial": -0.0175265707075596,
+            "target_speed": 0.0,
+            "tick": 1148
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.491476774215698,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1149
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.80554187297821,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1150
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.928470075130463,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1151
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.974049270153046,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1152
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.990631759166718,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1153
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.996624052524567,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1154
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": 0.215915650129318
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 3,
+        "cavalry_attacks": 4,
+        "label": "30 TPS spearman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0930894564371556,
+        "first_reversal_trace": [
+          {
+            "attacks": 1,
+            "facing_dot": 0.0564089715480804,
+            "gap": 2.13973259925842,
+            "intent_radial": 0.160671472549438,
+            "safe_radial": 0.160671472549438,
+            "step_radial": 0.0053558237850666,
+            "target_speed": 0.0,
+            "tick": 1301
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.00642716884613037,
+            "gap": 2.13793039321899,
+            "intent_radial": -0.0526405572891235,
+            "safe_radial": -0.0526405572891235,
+            "step_radial": -0.00175477564334869,
+            "target_speed": 0.0,
+            "tick": 1302
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.0725743919610977,
+            "gap": 2.14323592185974,
+            "intent_radial": -0.316325008869171,
+            "safe_radial": -0.316325008869171,
+            "step_radial": -0.0105441771447659,
+            "target_speed": 0.0,
+            "tick": 1303
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.134406298398972,
+            "gap": 2.15728259086609,
+            "intent_radial": -0.525796890258789,
+            "safe_radial": -0.525796890258789,
+            "step_radial": -0.0175265707075596,
+            "target_speed": 0.0,
+            "tick": 1304
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.491476774215698,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1305
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.80554187297821,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1306
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.928470075130463,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1307
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.974049270153046,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1308
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.990631759166718,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1309
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.996624052524567,
+            "gap": 2.17823314666748,
+            "intent_radial": -0.730236649513245,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1310
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": 0.215915650129318
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 7,
+        "cavalry_attacks": 4,
+        "label": "30 TPS farmer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.22433065995574,
+        "first_reversal_trace": [
+          {
+            "attacks": 1,
+            "facing_dot": 0.0715224295854568,
+            "gap": 2.08874011039734,
+            "intent_radial": 0.192871510982513,
+            "safe_radial": 0.192871510982513,
+            "step_radial": 0.00642902404069901,
+            "target_speed": 0.0,
+            "tick": 1457
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.00690844655036926,
+            "gap": 2.0857560634613,
+            "intent_radial": -0.0139715075492859,
+            "safe_radial": -0.0139715075492859,
+            "step_radial": -0.000465743243694305,
+            "target_speed": 0.0,
+            "tick": 1458
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.0548361986875534,
+            "gap": 2.08967018127441,
+            "intent_radial": -0.220676302909851,
+            "safe_radial": -0.220676302909851,
+            "step_radial": -0.00735590234398842,
+            "target_speed": 0.0,
+            "tick": 1459
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.114257335662842,
+            "gap": 2.10044384002686,
+            "intent_radial": -0.425214827060699,
+            "safe_radial": -0.425214827060699,
+            "step_radial": -0.0141738597303629,
+            "target_speed": 0.0,
+            "tick": 1460
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.171500116586685,
+            "gap": 2.11797213554382,
+            "intent_radial": -0.625664055347443,
+            "safe_radial": -0.625664055347443,
+            "step_radial": -0.0208555068820715,
+            "target_speed": 0.0,
+            "tick": 1461
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.228528589010239,
+            "gap": 2.14209008216858,
+            "intent_radial": -0.838562071323395,
+            "safe_radial": -0.838562071323395,
+            "step_radial": -0.0279520265758038,
+            "target_speed": 0.0,
+            "tick": 1462
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.282215476036072,
+            "gap": 2.17317771911621,
+            "intent_radial": -1.02535367012024,
+            "safe_radial": -1.02535367012024,
+            "step_radial": -0.0341784097254276,
+            "target_speed": 0.0,
+            "tick": 1463
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.332783937454224,
+            "gap": 2.21035122871399,
+            "intent_radial": -1.2035539150238,
+            "safe_radial": -1.2035539150238,
+            "step_radial": -0.040118396282196,
+            "target_speed": 0.0,
+            "tick": 1464
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.379694521427155,
+            "gap": 2.25330948829651,
+            "intent_radial": -1.37232720851898,
+            "safe_radial": -1.37232720851898,
+            "step_radial": -0.0457442626357079,
+            "target_speed": 0.0,
+            "tick": 1465
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.423841834068298,
+            "gap": 2.30172896385193,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1466
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": 0.362238347530365
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 1,
+        "cavalry_attacks": 4,
+        "label": "30 TPS knight vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.199931859970093,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.89999866485596,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.203333377838135,
+            "target_speed": -6.10000085830688,
+            "tick": 1585
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.49333190917969,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 5.60806560516357,
+            "step_radial": 0.186935424804688,
+            "target_speed": -6.10000085830688,
+            "tick": 1586
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.38681349158287,
+            "gap": 5.11193704605103,
+            "intent_radial": -5.99795913696289,
+            "safe_radial": -5.99795913696289,
+            "step_radial": -0.199931859970093,
+            "target_speed": -5.83976697921753,
+            "tick": 1587
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.380374699831009,
+            "gap": 5.31199789047241,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1588
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.759431898593903,
+            "gap": 5.31199789047241,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 1589
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.912514925003052,
+            "gap": 5.20780944824219,
+            "intent_radial": 6.09996032714844,
+            "safe_radial": 1.55138921737671,
+            "step_radial": 0.0517130307853222,
+            "target_speed": -3.12461161613464,
+            "tick": 1590
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.970526337623596,
+            "gap": 5.02153778076172,
+            "intent_radial": 6.09983587265015,
+            "safe_radial": 2.8539445400238,
+            "step_radial": 0.0951313897967339,
+            "target_speed": -4.03297901153564,
+            "tick": 1591
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.991360187530518,
+            "gap": 4.73529529571533,
+            "intent_radial": 6.09999895095825,
+            "safe_radial": 5.18774890899658,
+            "step_radial": 0.172924906015396,
+            "target_speed": -5.73957109451294,
+            "tick": 1592
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.997834622859955,
+            "gap": 4.36947154998779,
+            "intent_radial": 6.09951639175415,
+            "safe_radial": 5.04318809509277,
+            "step_radial": 0.168106243014336,
+            "target_speed": -5.80354166030884,
+            "tick": 1593
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.999551892280579,
+            "gap": 4.00966691970825,
+            "intent_radial": 6.09763860702515,
+            "safe_radial": 4.8366870880127,
+            "step_radial": 0.161222994327545,
+            "target_speed": -5.76867341995239,
+            "tick": 1594
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": 0.380374699831009
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "label": "30 TPS archer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 14,
+        "cavalry_attacks": 4,
+        "label": "30 TPS swordsman vs cavalry native avoidance=false angle=0.00",
+        "retreat_distance": 1.72666835784912,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 3.1799955368042,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -6.10000085830688,
+            "tick": 1909
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.30901712179184,
+            "gap": 2.97666215896606,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -6.09999990463257,
+            "tick": 1910
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.425779283046722,
+            "gap": 2.77332878112793,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.09999990463257,
+            "tick": 1911
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.778462409973145,
+            "gap": 2.69332885742188,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.09999990463257,
+            "tick": 1912
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.918253004550934,
+            "gap": 2.81666231155396,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": 0.0,
+            "tick": 1913
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.970309317111969,
+            "gap": 2.7366623878479,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.09999990463257,
+            "tick": 1914
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.989277243614197,
+            "gap": 2.65666246414185,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 1915
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.996135413646698,
+            "gap": 2.57666254043579,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 1916
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.99860817193985,
+            "gap": 2.49666261672974,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 1917
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.999498903751373,
+            "gap": 2.41666269302368,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.12333345413208,
+            "target_speed": -6.10000085830688,
+            "tick": 1918
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.999819576740265
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 3,
+        "cavalry_attacks": 4,
+        "label": "30 TPS spearman vs cavalry native avoidance=true angle=1.57",
+        "retreat_distance": 0.0887106923037209,
+        "first_reversal_trace": [
+          {
+            "attacks": 1,
+            "facing_dot": 0.0455630421638489,
+            "gap": 2.15215730667114,
+            "intent_radial": 0.118820786476135,
+            "safe_radial": 0.118820786476135,
+            "step_radial": 0.00396058708429337,
+            "target_speed": 0.0,
+            "tick": 2081
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.0171241164207459,
+            "gap": 2.15173077583313,
+            "intent_radial": -0.0932329893112183,
+            "safe_radial": -0.0932328701019287,
+            "step_radial": -0.00310764461755753,
+            "target_speed": 0.0,
+            "tick": 2082
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.0774327665567398,
+            "gap": 2.158362865448,
+            "intent_radial": -0.304372310638428,
+            "safe_radial": -0.304372310638428,
+            "step_radial": -0.0101458467543125,
+            "target_speed": 0.0,
+            "tick": 2083
+          },
+          {
+            "attacks": 1,
+            "facing_dot": -0.135650292038918,
+            "gap": 2.17198944091797,
+            "intent_radial": -0.512561857700348,
+            "safe_radial": -0.512561738491058,
+            "step_radial": -0.0170855056494474,
+            "target_speed": 0.0,
+            "tick": 2084
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.490996181964874,
+            "gap": 2.19248008728027,
+            "intent_radial": -0.715907454490662,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 2085
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.805345594882965,
+            "gap": 2.19248008728027,
+            "intent_radial": -0.715907454490662,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 2086
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.928396224975586,
+            "gap": 2.19248008728027,
+            "intent_radial": -0.715907454490662,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 2087
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.974022209644318,
+            "gap": 2.19248008728027,
+            "intent_radial": -0.715907454490662,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 2088
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.99062192440033,
+            "gap": 2.19248008728027,
+            "intent_radial": -0.715907454490662,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 2089
+          },
+          {
+            "attacks": 1,
+            "facing_dot": 0.99662047624588,
+            "gap": 2.19248008728027,
+            "intent_radial": -0.715907454490662,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 2090
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": 0.211252465844154
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 51,
+        "cavalry_attacks": 4,
+        "label": "60 TPS swordsman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 1.69615119160153,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.377845257520676,
+            "gap": 4.38809633255005,
+            "intent_radial": 0.0481420643627644,
+            "safe_radial": 0.0481420643627644,
+            "step_radial": 0.000802252732682973,
+            "target_speed": -4.54357671737671,
+            "tick": 2244
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.300950974225998,
+            "gap": 4.31113195419312,
+            "intent_radial": -0.0987521186470985,
+            "safe_radial": -0.0987521186470985,
+            "step_radial": -0.00164592126384377,
+            "target_speed": -4.56464195251465,
+            "tick": 2245
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.231466054916382,
+            "gap": 4.23660802841187,
+            "intent_radial": -0.222631871700287,
+            "safe_radial": -0.222631841897964,
+            "step_radial": -0.00371063104830682,
+            "target_speed": -4.56500244140625,
+            "tick": 2246
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.168314710259438,
+            "gap": 4.1640510559082,
+            "intent_radial": -0.347963243722916,
+            "safe_radial": -0.347963243722916,
+            "step_radial": -0.00579933170229197,
+            "target_speed": -4.57077217102051,
+            "tick": 2247
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.111179925501347,
+            "gap": 4.09360074996948,
+            "intent_radial": -0.461818814277649,
+            "safe_radial": -0.461818814277649,
+            "step_radial": -0.00769699271768332,
+            "target_speed": -4.56945514678955,
+            "tick": 2248
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0590040124952793,
+            "gap": 4.024986743927,
+            "intent_radial": -0.576322317123413,
+            "safe_radial": -0.576322197914124,
+            "step_radial": -0.00960527081042528,
+            "target_speed": -4.5729398727417,
+            "tick": 2249
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0113124148920178,
+            "gap": 3.9582576751709,
+            "intent_radial": -0.683827459812164,
+            "safe_radial": -0.683827340602875,
+            "step_radial": -0.0113972118124366,
+            "target_speed": -4.57399797439575,
+            "tick": 2250
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.032720647752285,
+            "gap": 3.89323258399963,
+            "intent_radial": -0.791190326213837,
+            "safe_radial": -0.791190266609192,
+            "step_radial": -0.0131864389404655,
+            "target_speed": -4.57899808883667,
+            "tick": 2251
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.0734935849905014,
+            "gap": 3.82991766929626,
+            "intent_radial": -0.893526077270508,
+            "safe_radial": -0.893526077270508,
+            "step_radial": -0.0148921022191644,
+            "target_speed": -4.58338642120361,
+            "tick": 2252
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.111597426235676,
+            "gap": 3.76817631721497,
+            "intent_radial": -0.995107412338257,
+            "safe_radial": -0.995107412338257,
+            "step_radial": -0.0165850780904293,
+            "target_speed": -4.59098529815674,
+            "tick": 2253
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.691827535629272
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 51,
+        "cavalry_attacks": 4,
+        "label": "60 TPS spearman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 1.69615119160153,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.377845257520676,
+            "gap": 4.38809633255005,
+            "intent_radial": 0.0481420643627644,
+            "safe_radial": 0.0481420643627644,
+            "step_radial": 0.000802252732682973,
+            "target_speed": -4.54357671737671,
+            "tick": 2550
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.300950974225998,
+            "gap": 4.31113195419312,
+            "intent_radial": -0.0987521186470985,
+            "safe_radial": -0.0987521186470985,
+            "step_radial": -0.00164592126384377,
+            "target_speed": -4.56464195251465,
+            "tick": 2551
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.231466054916382,
+            "gap": 4.23660802841187,
+            "intent_radial": -0.222631871700287,
+            "safe_radial": -0.222631841897964,
+            "step_radial": -0.00371063104830682,
+            "target_speed": -4.56500244140625,
+            "tick": 2552
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.168314710259438,
+            "gap": 4.1640510559082,
+            "intent_radial": -0.347963243722916,
+            "safe_radial": -0.347963243722916,
+            "step_radial": -0.00579933170229197,
+            "target_speed": -4.57077217102051,
+            "tick": 2553
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.111179925501347,
+            "gap": 4.09360074996948,
+            "intent_radial": -0.461818814277649,
+            "safe_radial": -0.461818814277649,
+            "step_radial": -0.00769699271768332,
+            "target_speed": -4.56945514678955,
+            "tick": 2554
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0590040124952793,
+            "gap": 4.024986743927,
+            "intent_radial": -0.576322317123413,
+            "safe_radial": -0.576322197914124,
+            "step_radial": -0.00960527081042528,
+            "target_speed": -4.5729398727417,
+            "tick": 2555
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0113124148920178,
+            "gap": 3.9582576751709,
+            "intent_radial": -0.683827459812164,
+            "safe_radial": -0.683827340602875,
+            "step_radial": -0.0113972118124366,
+            "target_speed": -4.57399797439575,
+            "tick": 2556
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.032720647752285,
+            "gap": 3.89323258399963,
+            "intent_radial": -0.791190326213837,
+            "safe_radial": -0.791190266609192,
+            "step_radial": -0.0131864389404655,
+            "target_speed": -4.57899808883667,
+            "tick": 2557
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.0734935849905014,
+            "gap": 3.82991766929626,
+            "intent_radial": -0.893526077270508,
+            "safe_radial": -0.893526077270508,
+            "step_radial": -0.0148921022191644,
+            "target_speed": -4.58338642120361,
+            "tick": 2558
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.111597426235676,
+            "gap": 3.76817631721497,
+            "intent_radial": -0.995107412338257,
+            "safe_radial": -0.995107412338257,
+            "step_radial": -0.0165850780904293,
+            "target_speed": -4.59098529815674,
+            "tick": 2559
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.691827535629272
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 52,
+        "cavalry_attacks": 4,
+        "label": "60 TPS farmer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 1.43000341480365,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.993293464183807,
+            "gap": 5.14780902862549,
+            "intent_radial": 3.36349678039551,
+            "safe_radial": 0.818386375904083,
+            "step_radial": 0.0136397602036595,
+            "target_speed": -5.6887264251709,
+            "tick": 2848
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.954553246498108,
+            "gap": 5.04368257522583,
+            "intent_radial": 1.76423907279968,
+            "safe_radial": 0.221435993909836,
+            "step_radial": 0.0036905303131789,
+            "target_speed": -5.42763328552246,
+            "tick": 2849
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.773129165172577,
+            "gap": 4.93871021270752,
+            "intent_radial": -2.10301566123962,
+            "safe_radial": -2.10301566123962,
+            "step_radial": -0.0350503697991371,
+            "target_speed": -6.08824348449707,
+            "tick": 2850
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.663368463516235,
+            "gap": 4.88284397125244,
+            "intent_radial": 0.338393449783325,
+            "safe_radial": -0.683828413486481,
+            "step_radial": -0.0113971959799528,
+            "target_speed": -5.45685386657715,
+            "tick": 2851
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.535130381584167,
+            "gap": 4.79956722259521,
+            "intent_radial": -0.214485585689545,
+            "safe_radial": -0.214485585689545,
+            "step_radial": -0.00357472663745284,
+            "target_speed": -5.693528175354,
+            "tick": 2852
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.444712042808533,
+            "gap": 4.71577548980713,
+            "intent_radial": 0.188288956880569,
+            "safe_radial": 0.188288956880569,
+            "step_radial": 0.00313815264962614,
+            "target_speed": -5.24761295318604,
+            "tick": 2853
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.37077260017395,
+            "gap": 4.62846946716309,
+            "intent_radial": 0.209740087389946,
+            "safe_radial": 0.209740087389946,
+            "step_radial": 0.00349578564055264,
+            "target_speed": -5.05227136611938,
+            "tick": 2854
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.311842530965805,
+            "gap": 4.54398059844971,
+            "intent_radial": 0.233574658632278,
+            "safe_radial": 0.233574658632278,
+            "step_radial": 0.00389301124960184,
+            "target_speed": -4.85830926895142,
+            "tick": 2855
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.259580969810486,
+            "gap": 4.46024036407471,
+            "intent_radial": 0.149976581335068,
+            "safe_radial": 0.149976551532745,
+            "step_radial": 0.00249955034814775,
+            "target_speed": -4.78831481933594,
+            "tick": 2856
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.213606968522072,
+            "gap": 4.37911510467529,
+            "intent_radial": 0.0787029042840004,
+            "safe_radial": 0.0787029042840004,
+            "step_radial": 0.0013116504997015,
+            "target_speed": -4.71372556686401,
+            "tick": 2857
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.595700263977051
+      },
+      {
+        "attacks": 0,
+        "backwards_intents": 134,
+        "cavalry_attacks": 0,
+        "label": "60 TPS knight vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 13.623336315155,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.90000772476196,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 3141
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.69667434692383,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 3142
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.80901700258255,
+            "gap": 5.49334096908569,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 3143
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.876306653022766,
+            "gap": 5.69667434692383,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": 6.10000085830688,
+            "tick": 3144
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.514439582824707,
+            "gap": 5.49334096908569,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 3145
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.679031431674957,
+            "gap": 5.69667434692383,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": 6.10000085830688,
+            "tick": 3146
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.27923247218132,
+            "gap": 5.49334096908569,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 3147
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.514612019062042,
+            "gap": 5.69667434692383,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": 6.10000085830688,
+            "tick": 3148
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.118009142577648,
+            "gap": 5.49334096908569,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 3149
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.39749664068222,
+            "gap": 5.69667434692383,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": 6.10000085830688,
+            "tick": 3150
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.173648193478584
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "label": "60 TPS archer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 82,
+        "cavalry_attacks": 3,
+        "label": "60 TPS swordsman vs cavalry direct avoidance=false angle=0.00",
+        "retreat_distance": 5.05665445327759,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.46667575836182,
+            "intent_radial": 3.70000004768372,
+            "safe_radial": 3.70000004768372,
+            "step_radial": 0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3763
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.30334186553955,
+            "intent_radial": 3.70000004768372,
+            "safe_radial": 3.70000004768372,
+            "step_radial": 0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3764
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.80901700258255,
+            "gap": 5.1400089263916,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3765
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.425779312849045,
+            "gap": 5.10000896453857,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3766
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0376902483403683,
+            "gap": 5.06000900268555,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3767
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.280197620391846,
+            "gap": 5.02000904083252,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3768
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.515301465988159,
+            "gap": 4.98000907897949,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3769
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.679621577262878,
+            "gap": 4.94000911712646,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3770
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.790703177452087,
+            "gap": 4.90000915527344,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3771
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.864283740520477,
+            "gap": 4.86000919342041,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 3772
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.999998033046722
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 51,
+        "cavalry_attacks": 4,
+        "label": "60 TPS spearman vs cavalry direct avoidance=true angle=1.57",
+        "retreat_distance": 1.69614893454127,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.378000199794769,
+            "gap": 4.38809633255005,
+            "intent_radial": 0.0481422133743763,
+            "safe_radial": 0.0481422133743763,
+            "step_radial": 0.000802255235612392,
+            "target_speed": -4.54357624053955,
+            "tick": 4080
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.301078617572784,
+            "gap": 4.31113195419312,
+            "intent_radial": -0.0987519472837448,
+            "safe_radial": -0.0987519472837448,
+            "step_radial": -0.00164591870270669,
+            "target_speed": -4.56464147567749,
+            "tick": 4081
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.231570199131966,
+            "gap": 4.23660802841187,
+            "intent_radial": -0.222631707787514,
+            "safe_radial": -0.222631677985191,
+            "step_radial": -0.00371062848716974,
+            "target_speed": -4.56500244140625,
+            "tick": 4082
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.168399065732956,
+            "gap": 4.1640510559082,
+            "intent_radial": -0.347963094711304,
+            "safe_radial": -0.347963094711304,
+            "step_radial": -0.00579932890832424,
+            "target_speed": -4.57077169418335,
+            "tick": 4083
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.111248038709164,
+            "gap": 4.09360074996948,
+            "intent_radial": -0.461818635463715,
+            "safe_radial": -0.461818635463715,
+            "step_radial": -0.00769698992371559,
+            "target_speed": -4.56945466995239,
+            "tick": 4084
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0590588748455048,
+            "gap": 4.024986743927,
+            "intent_radial": -0.576322078704834,
+            "safe_radial": -0.576321959495544,
+            "step_radial": -0.00960526801645756,
+            "target_speed": -4.57293939590454,
+            "tick": 4085
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.01135628297925,
+            "gap": 3.9582576751709,
+            "intent_radial": -0.683827221393585,
+            "safe_radial": -0.683827102184296,
+            "step_radial": -0.0113972090184689,
+            "target_speed": -4.57399797439575,
+            "tick": 4086
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.032685499638319,
+            "gap": 3.89323258399963,
+            "intent_radial": -0.791190147399902,
+            "safe_radial": -0.791190147399902,
+            "step_radial": -0.0131864361464977,
+            "target_speed": -4.57899808883667,
+            "tick": 4087
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.0734655410051346,
+            "gap": 3.82991766929626,
+            "intent_radial": -0.8935267329216,
+            "safe_radial": -0.8935267329216,
+            "step_radial": -0.0148921003565192,
+            "target_speed": -4.58338642120361,
+            "tick": 4088
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.111575171351433,
+            "gap": 3.76817631721497,
+            "intent_radial": -0.995107293128967,
+            "safe_radial": -0.995107293128967,
+            "step_radial": -0.0165850762277842,
+            "target_speed": -4.59098529815674,
+            "tick": 4089
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.69182676076889
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 139,
+        "cavalry_attacks": 4,
+        "label": "60 TPS swordsman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 4.098108952865,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.680771350860596,
+            "gap": 2.49561882019043,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -1.012047290802,
+            "tick": 4405
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.550930082798004,
+            "gap": 2.45415163040161,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -2.38271546363831,
+            "tick": 4406
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.443902850151062,
+            "gap": 2.41625285148621,
+            "intent_radial": -0.695647835731506,
+            "safe_radial": -1.14870810508728,
+            "step_radial": -0.0191450789570808,
+            "target_speed": -2.16342329978943,
+            "tick": 4407
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.343981683254242,
+            "gap": 2.39979815483093,
+            "intent_radial": -0.597207188606262,
+            "safe_radial": -0.597207188606262,
+            "step_radial": -0.00995353981852531,
+            "target_speed": -2.05167198181152,
+            "tick": 4408
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.261209845542908,
+            "gap": 2.38478350639343,
+            "intent_radial": -0.539531469345093,
+            "safe_radial": -0.539531350135803,
+            "step_radial": -0.0089922770857811,
+            "target_speed": -1.42249512672424,
+            "tick": 4409
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.196829676628113,
+            "gap": 2.37036991119385,
+            "intent_radial": -0.481002926826477,
+            "safe_radial": -0.481002926826477,
+            "step_radial": -0.0080168079584837,
+            "target_speed": -1.32757925987244,
+            "tick": 4410
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.148040995001793,
+            "gap": 2.35656809806824,
+            "intent_radial": -0.421648621559143,
+            "safe_radial": -0.421648621559143,
+            "step_radial": -0.00702757015824318,
+            "target_speed": -1.23118221759796,
+            "tick": 4411
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.112140417098999,
+            "gap": 2.34338927268982,
+            "intent_radial": -0.361499190330505,
+            "safe_radial": -0.361499190330505,
+            "step_radial": -0.00602508336305618,
+            "target_speed": -1.13334846496582,
+            "tick": 4412
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0867496728897095,
+            "gap": 2.3308436870575,
+            "intent_radial": -0.300587177276611,
+            "safe_radial": -0.300587177276611,
+            "step_radial": -0.00500989146530628,
+            "target_speed": -1.03412485122681,
+            "tick": 4413
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0698675811290741,
+            "gap": 2.31894159317017,
+            "intent_radial": -0.238949418067932,
+            "safe_radial": -0.238949418067932,
+            "step_radial": -0.00398238189518452,
+            "target_speed": -0.933569669723511,
+            "tick": 4414
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.641260743141174
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 132,
+        "cavalry_attacks": 4,
+        "label": "60 TPS spearman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 3.32398151699454,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.681117296218872,
+            "gap": 2.49639463424683,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -1.02672731876373,
+            "tick": 4711
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.552264809608459,
+            "gap": 2.45540952682495,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -2.35335493087769,
+            "tick": 4712
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.446133553981781,
+            "gap": 2.41800665855408,
+            "intent_radial": -0.674467206001282,
+            "safe_radial": -1.12812864780426,
+            "step_radial": -0.0188021957874298,
+            "target_speed": -2.1332802772522,
+            "tick": 4713
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.346989721059799,
+            "gap": 2.40171432495117,
+            "intent_radial": -0.575748920440674,
+            "safe_radial": -0.575748920440674,
+            "step_radial": -0.00959582254290581,
+            "target_speed": -2.02104187011719,
+            "tick": 4714
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.264845937490463,
+            "gap": 2.38698863983154,
+            "intent_radial": -0.517912864685059,
+            "safe_radial": -0.517912864685059,
+            "step_radial": -0.00863188505172729,
+            "target_speed": -1.38343966007233,
+            "tick": 4715
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.200967147946358,
+            "gap": 2.37286686897278,
+            "intent_radial": -0.459241628646851,
+            "safe_radial": -0.459241628646851,
+            "step_radial": -0.00765403173863888,
+            "target_speed": -1.28822565078735,
+            "tick": 4716
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.152574509382248,
+            "gap": 2.35935950279236,
+            "intent_radial": -0.399763345718384,
+            "safe_radial": -0.399763345718384,
+            "step_radial": -0.00666272826492786,
+            "target_speed": -1.19156074523926,
+            "tick": 4717
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.116985350847244,
+            "gap": 2.34647703170776,
+            "intent_radial": -0.339510202407837,
+            "safe_radial": -0.339510202407837,
+            "step_radial": -0.00565850920975208,
+            "target_speed": -1.09349012374878,
+            "tick": 4718
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0918386578559875,
+            "gap": 2.33423042297363,
+            "intent_radial": -0.278515696525574,
+            "safe_radial": -0.278515577316284,
+            "step_radial": -0.0046419370919466,
+            "target_speed": -0.994067668914795,
+            "tick": 4719
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.075147420167923,
+            "gap": 2.32262873649597,
+            "intent_radial": -0.216817736625671,
+            "safe_radial": -0.216817736625671,
+            "step_radial": -0.00361363776028156,
+            "target_speed": -0.893351316452026,
+            "tick": 4720
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.639140486717224
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 76,
+        "cavalry_attacks": 4,
+        "label": "60 TPS farmer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 3.09143681451678,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.796969056129456,
+            "gap": 2.39352130889893,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -4.36684370040894,
+            "tick": 5014
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.994610786437988,
+            "gap": 2.32182598114014,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -4.23458385467529,
+            "tick": 5015
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.948020935058594,
+            "gap": 2.25243854522705,
+            "intent_radial": -2.01436400413513,
+            "safe_radial": -2.34794640541077,
+            "step_radial": -0.039132434874773,
+            "target_speed": -4.08970069885254,
+            "tick": 5016
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.781186640262604,
+            "gap": 2.22367739677429,
+            "intent_radial": -1.93398642539978,
+            "safe_radial": -1.93398642539978,
+            "step_radial": -0.0322331599891186,
+            "target_speed": -4.01891422271729,
+            "tick": 5017
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.54919046163559,
+            "gap": 2.25647830963135,
+            "intent_radial": -2.00159764289856,
+            "safe_radial": -2.00159764289856,
+            "step_radial": -0.0333600156009197,
+            "target_speed": 0.0,
+            "tick": 5018
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.319713830947876,
+            "gap": 2.29038119316101,
+            "intent_radial": -2.06627655029297,
+            "safe_radial": -2.06627655029297,
+            "step_radial": -0.0344380028545856,
+            "target_speed": 0.0,
+            "tick": 5019
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.137809976935387,
+            "gap": 2.3064079284668,
+            "intent_radial": -2.06575727462769,
+            "safe_radial": -2.06575727462769,
+            "step_radial": -0.0344293490052223,
+            "target_speed": -1.10416090488434,
+            "tick": 5020
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.000947058200836182,
+            "gap": 2.29898977279663,
+            "intent_radial": -2.03413414955139,
+            "safe_radial": -2.03413414955139,
+            "step_radial": -0.0339023023843765,
+            "target_speed": -2.47132706642151,
+            "tick": 5021
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.10795596241951,
+            "gap": 2.27469611167908,
+            "intent_radial": -1.99628925323486,
+            "safe_radial": -1.99628925323486,
+            "step_radial": -0.0332715660333633,
+            "target_speed": -3.44281840324402,
+            "tick": 5022
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.190841138362885,
+            "gap": 2.24284625053406,
+            "intent_radial": -1.95997667312622,
+            "safe_radial": -1.95997667312622,
+            "step_radial": -0.0326663553714752,
+            "target_speed": -3.86101198196411,
+            "tick": 5023
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.367397964000702
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 1,
+        "cavalry_attacks": 4,
+        "label": "60 TPS knight vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.101666688919067,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.69667434692383,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 5285
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 5.49334096908569,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": -6.10000085830688,
+            "tick": 5286
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.809019029140472,
+            "gap": 5.39167404174805,
+            "intent_radial": -6.09999990463257,
+            "safe_radial": -6.09999990463257,
+            "step_radial": -0.101666688919067,
+            "target_speed": 0.0,
+            "tick": 5287
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.809018850326538,
+            "gap": 5.49334096908569,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 0.0,
+            "tick": 5288
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.876307845115662,
+            "gap": 5.59500789642334,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": 6.10000085830688,
+            "tick": 5289
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.920232474803925,
+            "gap": 5.59500789642334,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": 0.0,
+            "tick": 5290
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.948699951171875,
+            "gap": 5.49334096908569,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": 0.0,
+            "tick": 5291
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.967065691947937,
+            "gap": 5.38928985595703,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.09999990463257,
+            "step_radial": 0.101666688919067,
+            "target_speed": -0.143065437674522,
+            "tick": 5292
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.978879928588867,
+            "gap": 5.28549194335938,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.0906343460083,
+            "step_radial": 0.101510524749756,
+            "target_speed": -0.127887725830078,
+            "tick": 5293
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.986465811729431,
+            "gap": 5.18333768844604,
+            "intent_radial": 6.09999990463257,
+            "safe_radial": 6.04546117782593,
+            "step_radial": 0.100757598876953,
+            "target_speed": -0.0386095009744167,
+            "tick": 5294
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": 0.809018850326538
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "label": "60 TPS archer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 40,
+        "cavalry_attacks": 4,
+        "label": "60 TPS swordsman vs cavalry native avoidance=false angle=0.00",
+        "retreat_distance": 2.46666479110718,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 1.0,
+            "gap": 3.18000769615173,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -6.10000085830688,
+            "tick": 5920
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.80901700258255,
+            "gap": 3.07834100723267,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -6.10000085830688,
+            "tick": 5921
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.425779283046722,
+            "gap": 2.9766743183136,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.10000085830688,
+            "tick": 5922
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.0376901142299175,
+            "gap": 2.93667435646057,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.09999990463257,
+            "tick": 5923
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.280197739601135,
+            "gap": 2.89667439460754,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.09999990463257,
+            "tick": 5924
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.515301465988159,
+            "gap": 2.85667443275452,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.09999990463257,
+            "tick": 5925
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.679621756076813,
+            "gap": 2.91834115982056,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": 0.0,
+            "tick": 5926
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.790703296661377,
+            "gap": 2.9800078868866,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": 0.0,
+            "tick": 5927
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.864283859729767,
+            "gap": 2.94000792503357,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.09999990463257,
+            "tick": 5928
+          },
+          {
+            "attacks": 0,
+            "facing_dot": -0.912412047386169,
+            "gap": 2.90000796318054,
+            "intent_radial": -3.70000004768372,
+            "safe_radial": -3.70000004768372,
+            "step_radial": -0.06166672706604,
+            "target_speed": -6.09999990463257,
+            "tick": 5929
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.999929547309875
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 60,
+        "cavalry_attacks": 4,
+        "label": "60 TPS spearman vs cavalry native avoidance=true angle=1.57",
+        "retreat_distance": 1.15580870001577,
+        "first_reversal_trace": [
+          {
+            "attacks": 0,
+            "facing_dot": 0.679843008518219,
+            "gap": 2.49163508415222,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -0.981253862380981,
+            "tick": 6241
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.560609340667725,
+            "gap": 2.45549345016479,
+            "intent_radial": 0.0,
+            "safe_radial": 0.0,
+            "step_radial": 0.0,
+            "target_speed": -2.05817556381226,
+            "tick": 6242
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.463509202003479,
+            "gap": 2.42308139801025,
+            "intent_radial": -0.475092530250549,
+            "safe_radial": -0.93149745464325,
+            "step_radial": -0.0155248669907451,
+            "target_speed": -1.82976472377777,
+            "tick": 6243
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.371342152357101,
+            "gap": 2.40859508514404,
+            "intent_radial": -0.390705585479736,
+            "safe_radial": -0.390705704689026,
+            "step_radial": -0.00651187263429165,
+            "target_speed": -1.71264636516571,
+            "tick": 6244
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.293986439704895,
+            "gap": 2.38683819770813,
+            "intent_radial": -0.33477246761322,
+            "safe_radial": -0.33477246761322,
+            "step_radial": -0.00557943247258663,
+            "target_speed": -1.62351834774017,
+            "tick": 6245
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.233875259757042,
+            "gap": 2.36564183235168,
+            "intent_radial": -0.277744650840759,
+            "safe_radial": -0.277744650840759,
+            "step_radial": -0.00462918728590012,
+            "target_speed": -1.5323885679245,
+            "tick": 6246
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.188430607318878,
+            "gap": 2.34502172470093,
+            "intent_radial": -0.219631433486938,
+            "safe_radial": -0.219631433486938,
+            "step_radial": -0.0036604180932045,
+            "target_speed": -1.43925583362579,
+            "tick": 6247
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.155159905552864,
+            "gap": 2.32499313354492,
+            "intent_radial": -0.160446643829346,
+            "safe_radial": -0.160446643829346,
+            "step_radial": -0.00267400592565537,
+            "target_speed": -1.34412562847137,
+            "tick": 6248
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.131862223148346,
+            "gap": 2.30557084083557,
+            "intent_radial": -0.100206971168518,
+            "safe_radial": -0.100206971168518,
+            "step_radial": -0.0016702227294445,
+            "target_speed": -1.24701690673828,
+            "tick": 6249
+          },
+          {
+            "attacks": 0,
+            "facing_dot": 0.116677850484848,
+            "gap": 2.28677105903625,
+            "intent_radial": -0.0389326810836792,
+            "safe_radial": -0.0389326810836792,
+            "step_radial": -0.00064898282289505,
+            "target_speed": -1.14794874191284,
+            "tick": 6250
+          }
+        ],
+        "minimum_facing_dot_before_first_attack_near_contact": -0.573038816452026
+      }
+    ],
+    "checks": 84,
+    "failures": [
+      "30 TPS swordsman vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS swordsman vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS spearman vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS spearman vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS farmer vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS farmer vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS knight vs cavalry direct avoidance=true angle=0.00 both units sustain attacks",
+      "30 TPS knight vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS knight vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS swordsman vs cavalry direct avoidance=false angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS swordsman vs cavalry direct avoidance=false angle=0.00 no visible reverse displacement",
+      "30 TPS spearman vs cavalry direct avoidance=true angle=1.57 pursuit never orders retreat from an approaching enemy",
+      "30 TPS spearman vs cavalry direct avoidance=true angle=1.57 no visible reverse displacement",
+      "30 TPS swordsman vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS swordsman vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS spearman vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS spearman vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS farmer vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS farmer vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS knight vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS knight vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "30 TPS swordsman vs cavalry native avoidance=false angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "30 TPS swordsman vs cavalry native avoidance=false angle=0.00 no visible reverse displacement",
+      "30 TPS spearman vs cavalry native avoidance=true angle=1.57 pursuit never orders retreat from an approaching enemy",
+      "30 TPS spearman vs cavalry native avoidance=true angle=1.57 no visible reverse displacement",
+      "60 TPS swordsman vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS swordsman vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS spearman vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS spearman vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS farmer vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS farmer vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS knight vs cavalry direct avoidance=true angle=0.00 both units sustain attacks",
+      "60 TPS knight vs cavalry direct avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS knight vs cavalry direct avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS swordsman vs cavalry direct avoidance=false angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS swordsman vs cavalry direct avoidance=false angle=0.00 no visible reverse displacement",
+      "60 TPS spearman vs cavalry direct avoidance=true angle=1.57 pursuit never orders retreat from an approaching enemy",
+      "60 TPS spearman vs cavalry direct avoidance=true angle=1.57 no visible reverse displacement",
+      "60 TPS swordsman vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS swordsman vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS spearman vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS spearman vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS farmer vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS farmer vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS knight vs cavalry native avoidance=true angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS knight vs cavalry native avoidance=true angle=0.00 no visible reverse displacement",
+      "60 TPS swordsman vs cavalry native avoidance=false angle=0.00 pursuit never orders retreat from an approaching enemy",
+      "60 TPS swordsman vs cavalry native avoidance=false angle=0.00 no visible reverse displacement",
+      "60 TPS spearman vs cavalry native avoidance=true angle=1.57 pursuit never orders retreat from an approaching enemy",
+      "60 TPS spearman vs cavalry native avoidance=true angle=1.57 no visible reverse displacement"
+    ]
+  },
+  "headon_after": {
+    "cases": [
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS swordsman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.994481265544891
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS spearman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.998587131500244
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS farmer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.991573810577393
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS knight vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.00962925143539906,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.999657213687897
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS archer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS swordsman vs cavalry direct avoidance=false angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS spearman vs cavalry direct avoidance=true angle=1.57",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.998582005500793
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS swordsman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.779996275901794
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS spearman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.779996275901794
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS farmer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.00338928587734699,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.725255608558655
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS knight vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0236406661570072,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.801833152770996
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS archer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS swordsman vs cavalry native avoidance=false angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "30 TPS spearman vs cavalry native avoidance=true angle=1.57",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.74383956193924
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS swordsman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.999064385890961
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS spearman vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.999064385890961
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS farmer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.992809295654297
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS knight vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.00164117850363255,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.999318420886993
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS archer vs cavalry direct avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS swordsman vs cavalry direct avoidance=false angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS spearman vs cavalry direct avoidance=true angle=1.57",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.999055325984955
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS swordsman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.810930192470551
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS spearman vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.810930192470551
+      },
+      {
+        "attacks": 3,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.000530068762600422,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS farmer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.838997542858124
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS knight vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.00811535399407148,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.827513933181763
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 3,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS archer vs cavalry native avoidance=true angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS swordsman vs cavalry native avoidance=false angle=0.00",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 1.0
+      },
+      {
+        "attacks": 4,
+        "backwards_intents": 0,
+        "cavalry_attacks": 4,
+        "cavalry_retreat": 0.0,
+        "cavalry_turned_away": 0,
+        "label": "60 TPS spearman vs cavalry native avoidance=true angle=1.57",
+        "retreat_distance": 0.0,
+        "turned_away": 0,
+        "minimum_facing_dot_before_first_attack_near_contact": 0.809948682785034
+      }
+    ],
+    "checks": 208,
+    "failures": []
+  },
+  "pursuit": {
+    "build": "0.11.0",
+    "checks": 536,
+    "failures": [],
+    "pursuits": [
+      {
+        "attack_starts": 6,
+        "attacker": "knight",
+        "first_hit_seconds": 1.66666666666667,
+        "hits": 6,
+        "minimum_start_interval_seconds": 1.1,
+        "target": "archer",
+        "tps": 30
+      },
+      {
+        "attack_starts": 3,
+        "attacker": "swordsman",
+        "first_hit_seconds": 5.03333333333333,
+        "hits": 2,
+        "minimum_start_interval_seconds": 1.6,
+        "target": "archer",
+        "tps": 30
+      },
+      {
+        "attack_starts": 3,
+        "attacker": "spearman",
+        "first_hit_seconds": 5.03333333333333,
+        "hits": 2,
+        "minimum_start_interval_seconds": 1.6,
+        "target": "archer",
+        "tps": 30
+      },
+      {
+        "attack_starts": 6,
+        "attacker": "farmer",
+        "first_hit_seconds": 0.966666666666667,
+        "hits": 5,
+        "minimum_start_interval_seconds": 1.3,
+        "target": "catapult",
+        "tps": 30
+      },
+      {
+        "attack_starts": 5,
+        "attacker": "archer",
+        "first_hit_seconds": 1.46666666666667,
+        "hits": 5,
+        "minimum_start_interval_seconds": 1.5,
+        "target": "catapult",
+        "tps": 30
+      },
+      {
+        "attack_starts": 1,
+        "attacker": "catapult",
+        "first_hit_seconds": 1.86666666666667,
+        "hits": 1,
+        "minimum_start_interval_seconds": -1,
+        "target": "cannon",
+        "tps": 30
+      },
+      {
+        "attack_starts": 1,
+        "attacker": "cannon",
+        "first_hit_seconds": 0.833333333333333,
+        "hits": 1,
+        "minimum_start_interval_seconds": -1,
+        "target": "cannon",
+        "tps": 30
+      },
+      {
+        "attack_starts": 6,
+        "attacker": "knight",
+        "first_hit_seconds": 1.35,
+        "hits": 6,
+        "minimum_start_interval_seconds": 1.21666666666667,
+        "target": "archer",
+        "tps": 60
+      },
+      {
+        "attack_starts": 4,
+        "attacker": "swordsman",
+        "first_hit_seconds": 2.91666666666667,
+        "hits": 4,
+        "minimum_start_interval_seconds": 1.58333333333333,
+        "target": "archer",
+        "tps": 60
+      },
+      {
+        "attack_starts": 4,
+        "attacker": "spearman",
+        "first_hit_seconds": 2.91666666666667,
+        "hits": 4,
+        "minimum_start_interval_seconds": 1.58333333333333,
+        "target": "archer",
+        "tps": 60
+      },
+      {
+        "attack_starts": 6,
+        "attacker": "farmer",
+        "first_hit_seconds": 0.8,
+        "hits": 6,
+        "minimum_start_interval_seconds": 1.3,
+        "target": "catapult",
+        "tps": 60
+      },
+      {
+        "attack_starts": 5,
+        "attacker": "archer",
+        "first_hit_seconds": 1.38333333333333,
+        "hits": 5,
+        "minimum_start_interval_seconds": 1.5,
+        "target": "catapult",
+        "tps": 60
+      },
+      {
+        "attack_starts": 1,
+        "attacker": "catapult",
+        "first_hit_seconds": 1.83333333333333,
+        "hits": 1,
+        "minimum_start_interval_seconds": -1,
+        "target": "cannon",
+        "tps": 60
+      },
+      {
+        "attack_starts": 1,
+        "attacker": "cannon",
+        "first_hit_seconds": 0.8,
+        "hits": 1,
+        "minimum_start_interval_seconds": -1,
+        "target": "cannon",
+        "tps": 60
+      }
+    ]
+  },
+  "crowd": {
+    "cases": [
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 462.0,
+          "hit_rate": 1.0,
+          "hits": 66,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.13333333333333,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 11,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 1,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.26666666666667,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 0
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 0,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 2
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 455.0,
+          "hit_rate": 0.984848484848485,
+          "hits": 65,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.2,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 0,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.26666666666667,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 1
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 1,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 3
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 448.0,
+          "hit_rate": 0.96969696969697,
+          "hits": 64,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.2,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 3,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.23333333333333,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 2
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 2,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 4
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 455.0,
+          "hit_rate": 0.984848484848485,
+          "hits": 65,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.16666666666667,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 2,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.23333333333333,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 3
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 3,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 5
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 455.0,
+          "hit_rate": 0.984848484848485,
+          "hits": 65,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.16666666666667,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 5,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.23333333333333,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 4
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 4,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 6
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 448.0,
+          "hit_rate": 0.96969696969697,
+          "hits": 64,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.2,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 4,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.26666666666667,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 5
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 5,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 7
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2666666666666,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 448.0,
+          "hit_rate": 0.96969696969697,
+          "hits": 64,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.23333333333333,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 7,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.0666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.33333333333333,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 6
+      },
+      {
+        "advanced_riders": 24,
+        "case": "allied_rear_pressure",
+        "holding_owner": 6,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 0
+      },
+      {
+        "case": "24v24",
+        "cavalry_front": {
+          "attempts": 66,
+          "contact_units": [
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            },
+            {
+              "contact_seconds": 11.3333333333333,
+              "hits": 11,
+              "longest_contact_wait": 1.1
+            }
+          ],
+          "damage": 455.0,
+          "hit_rate": 0.984848484848485,
+          "hits": 65,
+          "longest_contact_wait": 1.1,
+          "longest_hit_gap": 1.1,
+          "maximum_first_hit": 1.2,
+          "minimum_contact_hit_margin": 0,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "cavalry_owner": 6,
+        "infantry_front": {
+          "attempts": 60,
+          "contact_units": [
+            {
+              "contact_seconds": 11.2333333333333,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.2,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.3,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            },
+            {
+              "contact_seconds": 11.1666666666666,
+              "hits": 10,
+              "longest_contact_wait": 1.2
+            }
+          ],
+          "damage": 720.0,
+          "hit_rate": 1.0,
+          "hits": 60,
+          "longest_contact_wait": 1.2,
+          "longest_hit_gap": 1.2,
+          "maximum_first_hit": 1.23333333333333,
+          "minimum_contact_hit_margin": 1,
+          "minimum_hits": 10,
+          "stalled_samples": [],
+          "sustained_contact_units": 6
+        },
+        "infantry_owner": 7
+      },
+      {
+        "advanced_riders": 23,
+        "case": "allied_rear_pressure",
+        "holding_owner": 7,
+        "maximum_hold_displacement": 0.0,
+        "moving_owner": 1
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 0,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 1,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 2,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 3,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 4,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 5,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 6,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "stationary_neighbor_passage",
+        "maximum_stationary_displacement": 0.0,
+        "owner": 7,
+        "resumed_hold_position": "(-6.413338, 0.0, 0.0)",
+        "rider_arrival_distance": 0.559645593166351
+      },
+      {
+        "case": "target_selection_guards",
+        "order": "IDLE",
+        "owner": 0
+      },
+      {
+        "case": "target_selection_guards",
+        "order": "ATTACK_MOVE",
+        "owner": 3
+      }
+    ],
+    "checks": 152,
+    "failures": [],
+    "native_rvo": true,
+    "physics_ticks_per_second": 30
+  },
+  "native_batches": {
+    "checks": 1829,
+    "errors": [],
+    "godot": "4.6.3-stable (official)",
+    "limitations": [
+      "Native clip/transform sampling, not a GPU or FPS test.",
+      "Original mesh resources and LODs are referenced unchanged; MultiMesh LOD selection need not match per-instance MeshInstance3D selection.",
+      "Batch-wide AABB is conservative; model notifier gates submissions, while fog visibility is an independent strict gate.",
+      "Corpse opacity uses opaque screen-door coverage rather than per-GeometryInstance3D transparency."
+    ],
+    "manager": "res://scenes/unit_render_batches.tscn",
+    "manager_sha256": "6de5f7ca97085a76f9981d76b799ef071e2bfe8f35469b0c7776cd8e2a9fd6c9",
+    "max_socket_error": 0.0,
+    "max_transform_error": 0.0,
+    "parts": [
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/Body.res",
+        "mesh_sha256": "acd0f00c030d9d17c5aed89ec6def217218a47078c5624b0d66f559adadb8b3d",
+        "path": "Rig/Action/Waist/Body"
+      },
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/Head.res",
+        "mesh_sha256": "2b5055e40cb2d526b062bcca91fe17b93a9bd85a254ad1d4a071e130ea023994",
+        "path": "Rig/Action/Waist/Head"
+      },
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/ArmLeft.res",
+        "mesh_sha256": "54bb2c7bdac0894604c94e89c8c022d347a88f8bd90de1d7af55b8827984a1db",
+        "path": "Rig/Action/Waist/ArmLeft"
+      },
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/ArmRight.res",
+        "mesh_sha256": "972cc72357a63273bb196e17bb542fcf2a807879709211ba5a36eac48ee7929c",
+        "path": "Rig/Action/Waist/ArmRight"
+      },
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/Sword.res",
+        "mesh_sha256": "41b9a21382594d5b9ade8a554d727ad72c46af3c8567ba06242b9b57d624ffb2",
+        "path": "Rig/Action/Waist/ArmRight/Sword"
+      },
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/LegLeft.res",
+        "mesh_sha256": "b480d5beeb3516245ae6ad119dac9e8dfc2a65b01bcc63c043b2265bbc367980",
+        "path": "Rig/Action/LegLeft"
+      },
+      {
+        "kind": "swordsman",
+        "mesh": "res://assets/models/units/swordsman/LegRight.res",
+        "mesh_sha256": "ea19acfeec1ce3955c31fd007b2e744d941e1b34e1e5860a7a670c0ceb3d9da4",
+        "path": "Rig/Action/LegRight"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/Body.res",
+        "mesh_sha256": "2f6589660c7d9ab9116e3108c6f1f3f1d497047c5c2c3f2273743f2d4066871c",
+        "path": "Rig/Action/Waist/Body"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/Head.res",
+        "mesh_sha256": "80965c21a064a85b4097fda739007c4d3240c60166e53b14438a73027c4965f6",
+        "path": "Rig/Action/Waist/Head"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/ArmLeft.res",
+        "mesh_sha256": "9df212964b6bb87374dbc6eeb3925415764375547068f7b3e6fcdfbfee8361ec",
+        "path": "Rig/Action/Waist/ArmLeft"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/Bow.res",
+        "mesh_sha256": "c42b626c493f0eebad587c4d2a819c8f098e39421c5d5aaccc8a915b5e5fee6e",
+        "path": "Rig/Action/Waist/ArmLeft/Bow"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/StringUpper.res",
+        "mesh_sha256": "e6d1b9cac0963fc2499995f6cc68f8ab1ee0fdf6bcb26b3b4049843e0ed39cdd",
+        "path": "Rig/Action/Waist/ArmLeft/Bow/StringUpper"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/StringLower.res",
+        "mesh_sha256": "349477d224809bfd45c7c95677a890c015b5eaa6b9f0928583856f4368fc8793",
+        "path": "Rig/Action/Waist/ArmLeft/Bow/StringLower"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/Arrow.res",
+        "mesh_sha256": "b7104d0c05055ee86ecc05dd57fa80cb609951520c0cdc8940fd7b76b4109218",
+        "path": "Rig/Action/Waist/ArmLeft/Bow/Arrow"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/ArmRight.res",
+        "mesh_sha256": "c2a3d942a58e953a23f1870d21eda312eaaa77991991e8c97289194d9e3e0a7c",
+        "path": "Rig/Action/Waist/ArmRight"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/ForearmRight.res",
+        "mesh_sha256": "f2fe82ceb43d4724b20b90387a5e15fa02bfd8d40838eab01e04179a6df5d08e",
+        "path": "Rig/Action/Waist/ArmRight/ForearmRight"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/LegLeft.res",
+        "mesh_sha256": "a9ecb384bf5ca24d2dee7121f2564b52fac173bfaeaa86c6996072c9c98ed439",
+        "path": "Rig/Action/LegLeft"
+      },
+      {
+        "kind": "archer",
+        "mesh": "res://assets/models/units/archer/LegRight.res",
+        "mesh_sha256": "0a942f582f3fafdaf2c2b3453940379aa1b56173e49346348f407d57f87bd6c7",
+        "path": "Rig/Action/LegRight"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/Body.res",
+        "mesh_sha256": "576ebeaaa775f13167e1326e738d848f9c60fca3fd07c1fffe5929e28efa7b45",
+        "path": "Rig/Action/Body"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/HorseHead.res",
+        "mesh_sha256": "0c3a1b04e862aedc363b17c0fcc386768a4060dd12985c4fae54cf768a46c363",
+        "path": "Rig/Action/Body/HorseHead"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/LegFrontLeft.res",
+        "mesh_sha256": "0a30a7b8c6c51acf41db0d2be0de444cf8b122312fdcbbb3026a73ff884ef86b",
+        "path": "Rig/Action/LegFrontLeft"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/LegFrontRight.res",
+        "mesh_sha256": "2579c701ed5159b0a78657c08cfd8fac9253f16e681f22b8b8e436bbf49b572e",
+        "path": "Rig/Action/LegFrontRight"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/LegRearLeft.res",
+        "mesh_sha256": "4e2d1e8a55c1dc6d35d2fbaa5aacab98cab0a1ab6e21847de50fe3a76306ff06",
+        "path": "Rig/Action/LegRearLeft"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/LegRearRight.res",
+        "mesh_sha256": "6fd11ebf48298da320a54f18afe9e3bb7aa8298ec73a74ca5a09f6f50d717aa3",
+        "path": "Rig/Action/LegRearRight"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/Rider.res",
+        "mesh_sha256": "8e70f34971e3ece51e6dd7f69c26dd7fb79f3fc7bb9ef5d9868cdf7e2eee65c5",
+        "path": "Rig/Action/Waist/Rider"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/Head.res",
+        "mesh_sha256": "95b5e0ce84db94740b31fc83136e1cc748437bcf515cfed73a506fc0ece62596",
+        "path": "Rig/Action/Waist/Head"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/ArmLeft.res",
+        "mesh_sha256": "e8f1a5eac3a1c8b90b261d8b06e20f316f6afb7bc85db5bb28a42dde8eba62cb",
+        "path": "Rig/Action/Waist/ArmLeft"
+      },
+      {
+        "kind": "knight",
+        "mesh": "res://assets/models/units/knight/ArmRight.res",
+        "mesh_sha256": "7e759223ebfe407dd4d14018dc28dfbdb7d4a027cd90bf4a4dd47a242c43a816",
+        "path": "Rig/Action/Waist/ArmRight"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/Body.res",
+        "mesh_sha256": "3cfa5c5893e7e9632a51ca99ffe43083b013cb2cdfe3823eee2bea4679ccbb79",
+        "path": "Rig/Action/Body"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/WheelLeftFront.res",
+        "mesh_sha256": "895b44d3dd68ee25bf684fa1813ae45162193724e418487417e4504079cb40b3",
+        "path": "Rig/Action/WheelLeftFrontKick/WheelLeftFront"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/WheelRightFront.res",
+        "mesh_sha256": "055b875398c01cec3fbf7de6d537d21d1d3221530de5dbe1977896b7eadb3b44",
+        "path": "Rig/Action/WheelRightFrontKick/WheelRightFront"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/WheelLeftRear.res",
+        "mesh_sha256": "82cca26ec816cc8179bd9536f0baa5599900ecd9ba89fa276fd87c16034d48ac",
+        "path": "Rig/Action/WheelLeftRearKick/WheelLeftRear"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/WheelRightRear.res",
+        "mesh_sha256": "009c481b90c80c753e9ebec29c989fc6b0580f223a5565b9ff7f7c7deb54f447",
+        "path": "Rig/Action/WheelRightRearKick/WheelRightRear"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/ThrowArm.res",
+        "mesh_sha256": "6ccde7b4c87c0b327bd89318079a8190925f682fcc94edc7a80157973a1a3bdb",
+        "path": "Rig/Action/ThrowArm"
+      },
+      {
+        "kind": "catapult",
+        "mesh": "res://assets/models/units/catapult/Payload.res",
+        "mesh_sha256": "f353281e42dadfb512a1a1129c3c445fe070045eaa8d3175aca0c8f6a0c01966",
+        "path": "Rig/Action/ThrowArm/Payload"
+      },
+      {
+        "kind": "cannon",
+        "mesh": "res://assets/models/units/cannon/Body.res",
+        "mesh_sha256": "67a21ad3614b602019aa58b6e435e3f4946f2ab3b84cabc96cde1a02a49fdc7e",
+        "path": "Rig/Action/Body"
+      },
+      {
+        "kind": "cannon",
+        "mesh": "res://assets/models/units/cannon/WheelLeft.res",
+        "mesh_sha256": "91a6a2983bb2b40624f9ac0e3a1a9c87b71042607d9c20b712393c9241d5cd76",
+        "path": "Rig/Action/WheelLeftKick/WheelLeft"
+      },
+      {
+        "kind": "cannon",
+        "mesh": "res://assets/models/units/cannon/WheelRight.res",
+        "mesh_sha256": "024e6fbfb257125506cec81f63fcb6cb4cb64c5befc8bda37c6622c11e795bf1",
+        "path": "Rig/Action/WheelRightKick/WheelRight"
+      },
+      {
+        "kind": "cannon",
+        "mesh": "res://assets/models/units/cannon/Barrel.res",
+        "mesh_sha256": "f941013abfdda98c24d81ae1320391da0ded222d370f5beb525cfce225ebbd58",
+        "path": "Rig/Action/Barrel"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/Body.res",
+        "mesh_sha256": "d41ce05fd4dcc66a28052e195e1316581b065e8eb9f75f14d3d4d529820a2639",
+        "path": "Rig/Action/Waist/Body"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/Head.res",
+        "mesh_sha256": "9c5d9a8575cd85c93363a60eb355f6a4af815a8a8d134445ff0cb41e622efbe4",
+        "path": "Rig/Action/Waist/Head"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/ArmLeft.res",
+        "mesh_sha256": "5df99ceb543f9df12a2629b9aab2184e7490852ce6af6978a30b71c9921ae6df",
+        "path": "Rig/Action/Waist/ArmLeft"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/ForearmLeft.res",
+        "mesh_sha256": "1d89573ad32aa2c253852660f7014194cd12650700e8cf1a0baaa25a21a42aea",
+        "path": "Rig/Action/Waist/ArmLeft/ForearmLeft"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/ArmRight.res",
+        "mesh_sha256": "a173bde61390496f10c75e3479620dbc1223788fb16da4f102c07eb35be6f0e2",
+        "path": "Rig/Action/Waist/ArmRight"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/ForearmRight.res",
+        "mesh_sha256": "564f589630cea4c77c4bd760a169c29baa05dd3a1a99aa23474397d3bb741e9e",
+        "path": "Rig/Action/Waist/ArmRight/ForearmRight"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/Pick.res",
+        "mesh_sha256": "07364fc2d96f98d9235e7ea64ecfe0090fd02dc29a054fd888f7c4460c4d4dae",
+        "path": "Rig/Action/Waist/Pick"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/Mallet.res",
+        "mesh_sha256": "0546d28e5326168e51a831a8fe053074eb70d8d8586ead39111d04f8d313ce7d",
+        "path": "Rig/Action/Waist/Mallet"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/LegLeft.res",
+        "mesh_sha256": "d18af579e01c651c24cb84de6a8edc2859187f9286d66c706adc877a4d353c9b",
+        "path": "Rig/Action/LegLeft"
+      },
+      {
+        "kind": "farmer",
+        "mesh": "res://assets/models/units/farmer/LegRight.res",
+        "mesh_sha256": "c3573b0ac227ee8e0365fd2d7925e2d1e20f686567eecdd36fb035fb997a66ed",
+        "path": "Rig/Action/LegRight"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/Body.res",
+        "mesh_sha256": "8d689d11094d66f8bcdfc4ef2e5c84fa41df9fd4f2dceedf52b95ec0782c531a",
+        "path": "Rig/Action/Waist/Body"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/Head.res",
+        "mesh_sha256": "86c7eed8029b97ef137bda17265f1fa25cdfd7701dc045d57b2d10ea710c6f11",
+        "path": "Rig/Action/Waist/Head"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/ArmLeft.res",
+        "mesh_sha256": "3ef5a0f40174c89cebe3333146258b828c71b2ae20070954c92869a3ef71f1f7",
+        "path": "Rig/Action/Waist/ArmLeft"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/ArmRight.res",
+        "mesh_sha256": "d9f26eabfbabe084b87a6975aa866113c34f7024062d98a53ffed2a529496700",
+        "path": "Rig/Action/Waist/ArmRight"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/Spear.res",
+        "mesh_sha256": "70db5178c2dee95c155ea7aa6689fb53963cf263b7929a134e6591e88a7cb897",
+        "path": "Rig/Action/Waist/ArmRight/Spear"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/LegLeft.res",
+        "mesh_sha256": "7ab723ece9dfa478bb0fae761711831acf690c54a72be0d3ecb6ea61831a11d2",
+        "path": "Rig/Action/LegLeft"
+      },
+      {
+        "kind": "spearman",
+        "mesh": "res://assets/models/units/spearman/LegRight.res",
+        "mesh_sha256": "5d4b7d7d468145cf4d1a57d613d309003df162c13a57acfa80c4c02d6b912661",
+        "path": "Rig/Action/LegRight"
+      }
+    ],
+    "pose_comparisons": 1128,
+    "socket_comparisons": 138,
+    "sources": {
+      "archer": {
+        "path": "res://assets/models/units/archer.tscn",
+        "sha256": "67bb805b12091331ad7035c76de447f9749edb293e9ddd369fcb47e8f7dad321"
+      },
+      "cannon": {
+        "path": "res://assets/models/units/cannon.tscn",
+        "sha256": "60ab9dae3632f3295ffe8e59c713b15c421255989082fb15b5ee15f42685640d"
+      },
+      "catapult": {
+        "path": "res://assets/models/units/catapult.tscn",
+        "sha256": "900ff80fa64eb4ef9c49c474bae3a55306ea691026473bb6d36aed9673a59ea6"
+      },
+      "farmer": {
+        "path": "res://assets/models/units/farmer.tscn",
+        "sha256": "0ff6ae4b699ae6b8c807a5990a6e326aa6fa21018bb1578598c9f9d74b5dedaa"
+      },
+      "knight": {
+        "path": "res://assets/models/units/knight.tscn",
+        "sha256": "8cfb879d6e48a41f79186c1805d3b6f41d984c2a00a19f65c70d0e2218bd77a7"
+      },
+      "spearman": {
+        "path": "res://assets/models/units/spearman.tscn",
+        "sha256": "3d5a248a97671ef4bd40f5e2b5ac07034a1d797901c1e907a0b59876d5197a0c"
+      },
+      "swordsman": {
+        "path": "res://assets/models/units/swordsman.tscn",
+        "sha256": "9b36a6c540c2b29c8f5134399b2dc40b0da1f9360a8334bf4f3c7cc3aba3970a"
+      }
+    },
+    "tolerance": 3e-05
+  },
+  "visual_integration": {
+    "checks": 37,
+    "failures": []
+  },
+  "passed_checks": 2762
+}

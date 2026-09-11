@@ -28,7 +28,7 @@ font_weight = 700
 [sub_resource type="Environment" id="Environment"]
 background_mode = 1
 background_color = Color(0.063, 0.056, 0.043, 1)
-ambient_light_source = 3
+ambient_light_source = 2
 ambient_light_color = Color(0.81, 0.85, 0.94, 1)
 ambient_light_energy = 0.58
 tonemap_mode = 2

@@ -2,7 +2,7 @@ extends SceneTree
 ## Native codex poses, sandbox buttons, batch visibility and AI composition.
 var checks: int = 0
 var failures: Array[String] = []
-const OUTPUT := "res://report/spearman-20260911/"
+var output_dir := "res://report/spearman-20260911/"
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -16,12 +16,15 @@ func check(ok: bool, label: String) -> void:
 func _capture(name: String, viewport: Viewport) -> void:
 	await process_frame
 	await RenderingServer.frame_post_draw
-	check(viewport.get_texture().get_image().save_png(OUTPUT + name + ".png") == OK, "saved rendered " + name)
+	check(viewport.get_texture().get_image().save_png(output_dir.path_join(name + ".png")) == OK, "saved rendered " + name)
 
 func _run() -> void:
 	create_timer(60.0, true, false, true).timeout.connect(func(): quit(3))
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
+	var args := OS.get_cmdline_user_args()
+	if not args.is_empty():
+		output_dir = args[0]
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_dir))
 	var codex: Control = load("res://scenes/unit_codex.tscn").instantiate()
 	root.add_child(codex)
 	codex.open_codex()
@@ -30,6 +33,11 @@ func _run() -> void:
 	codex.set_process(false)
 	check(codex.selected_id == "spearman" and codex._entries.size() == 7, "codex lists and selects all seven units")
 	await _capture("spearman-idle", root)
+	for angle: float in [PI * 0.5, PI]:
+		codex._anchor.rotation.y = angle
+		codex._request_preview_redraw()
+		await _capture("spearman-idle-" + str(roundi(rad_to_deg(angle))), root)
+	codex._anchor.rotation.y = 0.0
 	codex._select_preview_action(2)
 	var model: UnitVisual = codex._model
 	model.locomotion.stop()
@@ -106,6 +114,6 @@ func _run() -> void:
 	game.queue_free()
 	await process_frame
 	await process_frame
-	FileAccess.open(OUTPUT + "integration.json", FileAccess.WRITE).store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t") + "\n")
+	FileAccess.open(output_dir.path_join("integration.json"), FileAccess.WRITE).store_string(JSON.stringify({"checks": checks, "failures": failures}, "\t") + "\n")
 	print("SPEARMAN_INTEGRATION %d checks; %d failures" % [checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)

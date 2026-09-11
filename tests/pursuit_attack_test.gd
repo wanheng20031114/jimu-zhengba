@@ -3,7 +3,7 @@ extends SceneTree
 ## --fixed-fps 120 accelerates wall time without changing the fixed physics delta.
 
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit.tscn")
-const KINDS: Array[String] = ["knight", "swordsman", "farmer", "archer", "catapult", "cannon"]
+const KINDS: Array[String] = ["knight", "swordsman", "spearman", "farmer", "archer", "catapult", "cannon"]
 
 class Fighter extends BattleUnit:
 	var attack_ticks: Array[int] = []
@@ -103,6 +103,7 @@ func _run() -> void:
 		await _sync()
 		await _pursuit("knight", "archer", 5.0, 8.0, 3)
 		await _pursuit("swordsman", "archer", 1.95, 8.0, 2)
+		await _pursuit("spearman", "archer", 1.95, 8.0, 2)
 		await _pursuit("farmer", "catapult", 3.0, 8.0, 2)
 		await _pursuit("archer", "catapult", 11.8, 8.0, 2)
 		await _pursuit("catapult", "cannon", 14.0, 8.0, 1)

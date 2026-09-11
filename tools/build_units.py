@@ -281,21 +281,38 @@ def infantry(name, archer=False):
             s.b(body,(.073,.103,.008),(xx+.038,yy-.018,zz),"ivory",rot=(0,0,-.12),bevel=.002)
     else:
         # Leave a visible throat gap between the breastplate and cheek guards.
-        s.b(body,(.47,.35,.14),(0,.065,-.20),"leather" if name=="spearman" else "steel",bevel=.060)
-        s.b(body,(.035,.31,.024),(0,.065,-.282),"gold" if name=="spearman" else "edge",bevel=.006)
+        s.b(body,(.47,.35,.14),(0,.065,-.295 if name=="spearman" else -.20),"steel",bevel=.060)
+        s.b(body,(.035,.31,.024),(0,.065,-.377 if name=="spearman" else -.282),"edge",bevel=.006)
         for sign in (-1,1):
             for i in range(3):
                 s.b(body,(.20,.065,.095),(sign*.145,-.24-i*.060,-.175),"darksteel",rot=(0,0,-sign*.09),bevel=.016)
         if name=="spearman":
-            # Open kettle helmet, mail collar and face distinguish the lighter levy.
+            # Keep the torso protected like the swordsman, including a readable
+            # back plate. The exposed head and wooden shield carry the contrast.
+            s.b(body,(.46,.37,.13),(0,.075,.295),"steel",bevel=.055)
+            s.b(body,(.035,.30,.026),(0,.075,.370),"edge",bevel=.006)
+            for sign in (-1,1):
+                s.b(body,(.080,.28,.40),(sign*.27,.045,.005),"darksteel",bevel=.025)
+                s.b(body,(.12,.055,.12),(sign*.18,.21,.32),"leather",bevel=.012)
+            # A soft cloth cap, cropped hair and exposed ears give the levy a
+            # light, open silhouette next to the swordsman's armored helmet.
             s.e(head,(.225,.235,.215),(0,-.005,-.055),"skin")
-            s.add(head,lathe([(-.07,.265),(.08,.28),(.23,.21),(.28,.065)],12,(0,.065,0)),"steel")
-            s.add(head,lathe([(-.025,.28),(0,.385),(.035,.37),(.065,.275)],12,(0,.01,0)),"edge")
-            s.b(head,(.055,.20,.03),(0,.155,-.252),"gold",bevel=.007)
-            s.add(head,lathe([(-.29,.22),(-.21,.25),(-.15,.225)],10,(0,0,.018)),"darksteel")
+            s.e(head,(.225,.19,.17),(0,.055,.038),"leather")
+            s.e(head,(.245,.135,.23),(.018,.205,-.005),"blue",rot=(0,0,-.10))
+            s.add(head,lathe([(.115,.223),(.163,.228)],12,(0,0,-.015),caps=False),"leatherlight")
+            s.b(head,(.115,.075,.035),(-.104,.117,-.210),"leather",rot=(0,0,-.22),bevel=.012)
+            s.b(head,(.09,.055,.035),(.024,.129,-.217),"leather",rot=(0,0,.12),bevel=.012)
+            for sign in (-1,1):
+                s.e(head,(.045,.066,.039),(sign*.223,.007,-.057),"skin")
+                s.b(head,(.035,.115,.11),(sign*.211,.018,.015),"leather",bevel=.012)
+            # Eyes sit above the middle of the exposed face; keep each fitting
+            # just outside the faceted skin instead of down at the jawline.
             for xx in (-.075,.075):
-                s.b(head,(.035,.025,.019),(xx,-.065,-.258),"black",bevel=.003)
-            s.e(head,(.04,.055,.05),(0,-.10,-.258),"skin")
+                s.b(head,(.035,.025,.019),(xx,.025,-.264),"black",bevel=.003)
+                s.b(head,(.055,.014,.018),(xx,.061,-.251),"leather",bevel=.002)
+            s.e(head,(.04,.055,.05),(0,-.035,-.270),"skin")
+            s.b(head,(.060,.014,.015),(0,-.103,-.250),"leather",bevel=.003)
+            s.r(head,(0,-.29,.005),(0,-.16,.005),.104,"skin",8)
         else:
             helmet(s,head,(0,.055,-.10))
     for part,sign in ((left,-1),(right,1)):
@@ -352,15 +369,20 @@ def infantry(name, archer=False):
         s.b(arrow,(.10,.015,.13),(0,0,-.08),"ivory",bevel=.004)
     else:
         if name=="spearman":
-            # Small round shield, painted in the same faction heraldry as the army.
-            center=(-.24,-.37,-.425)
-            s.r(left,(-.24,-.37,-.38),(-.24,-.37,-.46),.33,"wood",12)
-            s.r(left,(-.24,-.37,-.463),(-.24,-.37,-.48),.288,"blue",12)
-            s.add(left,ring(.31,.022,center,n=12),"gold")
-            s.b(left,(.035,.50,.015),(-.24,-.37,-.49),"goldlight",bevel=.003)
-            s.b(left,(.50,.035,.015),(-.24,-.37,-.49),"goldlight",bevel=.003)
-            s.e(left,(.10,.10,.065),(-.24,-.37,-.50),"steel")
-            rivets(s,left,[(-.24+math.cos(a)*.26,-.37+math.sin(a)*.26,-.492) for a in np.linspace(0,math.tau,8,endpoint=False)],.016)
+            # Four unpainted planks and a narrow leather binding: a small wooden
+            # buckler with no heraldic cross, broad metal rim or armored boss.
+            center=(-.24,-.37,-.465)
+            shield_radius=.25
+            s.r(left,(-.24,-.37,-.395),(-.24,-.37,-.451),shield_radius,"wooddark",16)
+            for index, (a,b) in enumerate([(-.247,-.126),(-.12,-.003),(.003,.12),(.126,.247)]):
+                xs=np.linspace(a,b,5)
+                arc=[(x,math.sqrt(shield_radius**2-x*x)) for x in xs]
+                outline=arc+[(x,-y) for x,y in reversed(arc)]
+                s.add(left,polygon(outline,.018,center),"woodlight" if index%2 else "wood")
+            s.add(left,ring(.25,.012,center,n=16),"leather")
+            for xx in (-.16,.16):
+                for yy in (-.12,.12):
+                    s.e(left,(.012,.012,.007),(-.24+xx,-.37+yy,-.480),"darksteel")
         else:
             shield(s,left,(-.24,-.37,-.425))
         # Back grip meets the gauntlet while the board clears the breastplate.

@@ -6,7 +6,7 @@
 script = ExtResource("1_definition")
 id = &"spearman"
 name = "长矛兵"
-description = "持长矛与圆盾的轻装步兵，低成本拦截骑兵。"
+description = "持长矛与小木盾的轻装步兵，低成本拦截骑兵。"
 hp = 75
 damage = 6
 melee_armor = 1
