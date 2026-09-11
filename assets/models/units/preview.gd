@@ -1,15 +1,18 @@
 extends Node3D
 
+const OUTPUT_DIR := "res://artifacts/model-previews/units"
+
 func _ready() -> void:
+	DirAccess.make_dir_recursive_absolute(OUTPUT_DIR)
 	for i: int in range(20):
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
-	get_viewport().get_texture().get_image().save_png("res://assets/models/units/preview.png")
+	get_viewport().get_texture().get_image().save_png(OUTPUT_DIR.path_join("preview.png"))
 	for unit: Node in $Units.get_children():
 		unit.set_team(1)
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
-	get_viewport().get_texture().get_image().save_png("res://assets/models/units/preview_enemy.png")
+	get_viewport().get_texture().get_image().save_png(OUTPUT_DIR.path_join("preview_enemy.png"))
 	var camera: Camera3D = $Camera3D
 	for unit: Node3D in $Units.get_children():
 		unit.set_team(0)
@@ -21,14 +24,14 @@ func _ready() -> void:
 		for i: int in range(20):
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_png("res://assets/models/units/detail_%s.png" % unit.name.to_lower())
+		get_viewport().get_texture().get_image().save_png(OUTPUT_DIR.path_join("detail_%s.png" % unit.name.to_lower()))
 		unit.strike()
 		var attack_player: AnimationPlayer = unit.get_node("Attack")
 		var impact: float = 0.49 if unit.name == "Catapult" else 0.29
 		attack_player.advance(impact)
 		attack_player.pause()
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_png("res://assets/models/units/detail_%s_attack.png" % unit.name.to_lower())
+		get_viewport().get_texture().get_image().save_png(OUTPUT_DIR.path_join("detail_%s_attack.png" % unit.name.to_lower()))
 		if unit.name == "Catapult":
 			assert(not unit.get_node("Rig/Action/ThrowArm/Payload").visible, "Catapult payload must leave the spoon at release")
 		if unit.name == "Archer":
