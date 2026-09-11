@@ -33,7 +33,7 @@ func _run() -> void:
 		_freeze(building)
 	_check(game.players.map(func(p): return p.alliance_id) == [0, 0, 1, 1], "real 2v2 has four owners and two alliances")
 	var definition := BalanceCatalog.unit("catapult")
-	_check(definition.damage == 32 and definition.bonuses == {&"building": 50} and definition.splash_radius == 2.7 and definition.range == 13 and definition.hp == 140 and definition.ranged_armor == 2,
+	_check(definition.damage == 26 and definition.bonuses == {&"building": 50, &"siege": 20} and definition.splash_radius == 2.7 and definition.range == 13 and definition.hp == 140 and definition.ranged_armor == 2,
 		"production catapult matches approved damage and range")
 	for legacy: bool in [true, false]:
 		for owner in 4:

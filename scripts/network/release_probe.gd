@@ -148,15 +148,17 @@ func validate_resource_values() -> void:
 	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 7 and knight.melee_armor == 2 and knight.damage == 9
 		and knight.bonuses == {&"archer": 3, &"siege": 11} and knight.supply == 1, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")
-	check(catapult.range == 13 and catapult.damage == 32 and catapult.speed == 2 and catapult.splash_radius == 2.7
-		and catapult.bonuses == {&"building": 50}
+	check(catapult.range == 13 and catapult.damage == 26 and catapult.speed == 2 and catapult.splash_radius == 2.7
+		and catapult.bonuses == {&"building": 50, &"siege": 20}
 		and catapult.cost == 240 and catapult.hp == 140 and catapult.ranged_armor == 2 and catapult.cooldown == 3 and catapult.min_range == 3 and catapult.sight == 14,
 		"packaged_catapult_reach_damage_and_class_bonuses")
 	var stone := DamageResolver.snapshot(catapult, 0, 0, 0)
-	check(DamageResolver.resolve(stone, swordsman) == 30 and DamageResolver.resolve(stone, archer) == 27
-		and ceili(swordsman.hp / 30.0) == 4 and ceili(archer.hp / 27.0) == 3,
-		"packaged_catapult_needs_four_sword_and_three_archer_hits")
+	check(DamageResolver.resolve(stone, swordsman) == 24 and DamageResolver.resolve(stone, archer) == 21
+		and ceili(swordsman.hp / 24.0) == 5 and ceili(archer.hp / 21.0) == 3,
+		"packaged_catapult_needs_five_sword_and_three_archer_hits")
 	var cannon := BalanceCatalog.unit("cannon")
+	check(DamageResolver.resolve(stone, catapult) == 44 and DamageResolver.resolve(stone, cannon) == 44,
+		"packaged_catapult_adds_twenty_damage_against_siege")
 	check(cannon.damage == 40 and cannon.bonuses == {&"building": 100} and cannon.ranged_armor == 2, "packaged_cannon_base_damage_and_building_only_bonus")
 	var cannon_damage := DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
 	check(cannon_damage == 38 and ceili(cannon.hp / cannon_damage) == 5

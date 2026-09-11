@@ -6,7 +6,7 @@ const EXPECTED_DAMAGE: Array = [
 	[7, 9, 12, 9, 9, 9, 8],
 	[9, 6, 4, 9, 9, 11, 10],
 	[7, 12, 7, 20, 20, 9, 8],
-	[30, 27, 25, 30, 30, 32, 31],
+	[24, 21, 19, 44, 44, 26, 25],
 	[38, 35, 33, 38, 38, 40, 39],
 	[3, 5, 3, 5, 5, 5, 4],
 	[4, 6, 24, 6, 6, 6, 5],
@@ -15,14 +15,14 @@ const EXPECTED_HITS: Array = [
 	[16, 7, 10, 16, 20, 17, 10],
 	[13, 10, 30, 16, 20, 14, 8],
 	[16, 5, 18, 7, 9, 17, 10],
-	[4, 3, 5, 5, 6, 5, 3],
+	[5, 3, 7, 4, 5, 6, 3],
 	[3, 2, 4, 4, 5, 4, 2],
 	[37, 12, 40, 28, 36, 30, 19],
 	[28, 10, 5, 24, 30, 25, 15],
 ]
 const EXPECTED_HP: Array[int] = [110, 60, 120, 140, 180, 150, 75]
 # Keep negative pre-floor damage: upgrades apply before the minimum-one clamp.
-const BUILDING_RAW_DAMAGE: Array[int] = [-1, 1, -1, 72, 130, -5, -4]
+const BUILDING_RAW_DAMAGE: Array[int] = [-1, 1, -1, 66, 130, -5, -4]
 const ATTACK_BONUS: Array[int] = [0, 1, 2, 4]
 const DEFENSE_BONUS: Array[int] = [0, 1, 2, 3]
 var checks: int = 0
@@ -115,7 +115,7 @@ func _test_snapshot() -> void:
 func _test_siege() -> void:
 	for kind: StringName in [&"swordsman", &"archer"]:
 		var defender := BalanceCatalog.unit(kind)
-		var raw_damage: float = 32.0
+		var raw_damage: float = 26.0
 		var base_armor: float = 2.0 if kind == &"swordsman" else 5.0
 		for attack_bonus: int in ATTACK_BONUS:
 			for defense_bonus: int in DEFENSE_BONUS:
@@ -124,12 +124,12 @@ func _test_siege() -> void:
 				var actual: float = DamageResolver.resolve(packet, defender, defense_bonus)
 				_check(is_equal_approx(actual, expected), "full stone damage: %s attack %d defense %d" % [kind, attack_bonus, defense_bonus])
 				var needed: int = ceili(defender.hp / actual)
-				_check((needed >= 4 and needed <= 5) if kind == &"swordsman" else (needed >= 2 and needed <= 3), "stone hit count across all upgrade differences: %s attack %d defense %d" % [kind, attack_bonus, defense_bonus])
+				_check((needed >= 4 and needed <= 6) if kind == &"swordsman" else (needed >= 3 and needed <= 4), "stone hit count across all upgrade differences: %s attack %d defense %d" % [kind, attack_bonus, defense_bonus])
 	var catapult := BalanceCatalog.unit(&"catapult")
 	var cannon := BalanceCatalog.unit(&"cannon")
 	var tower := BalanceCatalog.building(&"defense_tower")
-	_check(catapult.range == 13 and catapult.damage == 32 and catapult.cost == 240 and catapult.speed == 2 and catapult.splash_radius == 2.7 and catapult.hp == 140 and catapult.cooldown == 3, "catapult uses approved health, attack, range, price and cycle")
-	_check(catapult.bonuses == {&"building": 50}, "catapult has building bonus and no infantry bonus")
+	_check(catapult.range == 13 and catapult.damage == 26 and catapult.cost == 240 and catapult.speed == 2 and catapult.splash_radius == 2.7 and catapult.hp == 140 and catapult.cooldown == 3, "catapult uses approved health, attack, range, price and cycle")
+	_check(catapult.bonuses == {&"building": 50, &"siege": 20}, "catapult has building and siege bonuses without an infantry bonus")
 	_check(cannon.range == 13 and cannon.damage == 40 and cannon.cost == 255 and cannon.speed == 2 and cannon.hp == 180, "cannon uses approved health, attack, range and price")
 	_check(cannon.bonuses == {&"building": 100}, "cannon has a building bonus without a siege-class bonus")
 	var cannon_damage: float = DamageResolver.resolve(DamageResolver.snapshot(cannon, 0, 0, 0), cannon)
