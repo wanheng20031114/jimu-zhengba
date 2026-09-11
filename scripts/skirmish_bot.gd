@@ -314,7 +314,7 @@ func _recruit_farmer(reserve: int) -> void:
 		_farmer_pending_until = _clock + 3.0
 
 func _composition() -> Dictionary:
-	var counts: Dictionary = {"swordsman": 0.0, "archer": 0.0, "knight": 0.0, "siege": 0.0}
+	var counts: Dictionary = {"spearman": 0.0, "swordsman": 0.0, "archer": 0.0, "knight": 0.0, "siege": 0.0}
 	for record: Dictionary in _memory.values():
 		if record.building or record.kind == "farmer":
 			continue
@@ -332,23 +332,23 @@ func _known_fortifications() -> int:
 func _choose_recruit(counts: Dictionary) -> String:
 	var factory: Node3D = _building("factory", true)
 	var enemy: Dictionary = _composition()
-	var total: int = int(counts.swordsman + counts.archer + counts.knight + counts.catapult + counts.cannon)
+	var total: int = int(counts.swordsman + counts.spearman + counts.archer + counts.knight + counts.catapult + counts.cannon)
 	if factory != null and total >= MINIMUM_RAID_SIZE:
 		if _known_fortifications() > 0 and int(counts.cannon) < maxi(1, total / 10):
 			return "cannon"
-		if float(enemy.swordsman) + float(enemy.archer) >= 3.0 and int(counts.catapult) < maxi(1, total / 12):
+		if float(enemy.swordsman) + float(enemy.spearman) + float(enemy.archer) >= 3.0 and int(counts.catapult) < maxi(1, total / 12):
 			return "catapult"
-	var ratios: Dictionary = {"swordsman": 0.45, "archer": 0.30, "knight": 0.25}
-	if float(enemy.knight) > float(enemy.archer) + float(enemy.swordsman):
-		ratios = {"swordsman": 0.45, "archer": 0.45, "knight": 0.10}
-	elif float(enemy.archer) > float(enemy.knight) + float(enemy.swordsman):
-		ratios = {"swordsman": 0.30, "archer": 0.20, "knight": 0.50}
+	var ratios: Dictionary = {"swordsman": 0.30, "spearman": 0.15, "archer": 0.30, "knight": 0.25}
+	if float(enemy.knight) > float(enemy.archer) + float(enemy.swordsman) + float(enemy.spearman):
+		ratios = {"swordsman": 0.15, "spearman": 0.55, "archer": 0.20, "knight": 0.10}
+	elif float(enemy.archer) > float(enemy.knight) + float(enemy.swordsman) + float(enemy.spearman):
+		ratios = {"swordsman": 0.25, "spearman": 0.05, "archer": 0.20, "knight": 0.50}
 	elif float(enemy.siege) >= 2.0:
-		ratios = {"swordsman": 0.45, "archer": 0.10, "knight": 0.45}
+		ratios = {"swordsman": 0.40, "spearman": 0.05, "archer": 0.10, "knight": 0.45}
 	var choice: String = "swordsman"
 	var deficit: float = -INF
-	var troops: int = int(counts.swordsman + counts.archer + counts.knight)
-	for kind: String in ["swordsman", "archer", "knight"]:
+	var troops: int = int(counts.swordsman + counts.spearman + counts.archer + counts.knight)
+	for kind: String in ["swordsman", "spearman", "archer", "knight"]:
 		var wanted: float = float(ratios[kind]) * (troops + 1) - int(counts[kind])
 		if wanted > deficit:
 			choice = kind
@@ -361,7 +361,7 @@ func _recruit_army(reserve: int) -> void:
 	# of saving forever for infrastructure that this player can no longer build.
 	if factory_only and (_building("headquarters") != null or not _workers.is_empty() or _building("factory", true) == null):
 		return
-	var counts: Dictionary = {"swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0}
+	var counts: Dictionary = {"spearman": 0, "swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0}
 	for unit: Node3D in _army:
 		counts[unit.unit_type] += 1
 	var queued_counts: Dictionary = {}

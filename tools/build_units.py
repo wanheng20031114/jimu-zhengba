@@ -281,12 +281,23 @@ def infantry(name, archer=False):
             s.b(body,(.073,.103,.008),(xx+.038,yy-.018,zz),"ivory",rot=(0,0,-.12),bevel=.002)
     else:
         # Leave a visible throat gap between the breastplate and cheek guards.
-        s.b(body,(.47,.35,.14),(0,.065,-.20),"steel",bevel=.060)
-        s.b(body,(.035,.31,.024),(0,.065,-.282),"edge",bevel=.006)
+        s.b(body,(.47,.35,.14),(0,.065,-.20),"leather" if name=="spearman" else "steel",bevel=.060)
+        s.b(body,(.035,.31,.024),(0,.065,-.282),"gold" if name=="spearman" else "edge",bevel=.006)
         for sign in (-1,1):
             for i in range(3):
                 s.b(body,(.20,.065,.095),(sign*.145,-.24-i*.060,-.175),"darksteel",rot=(0,0,-sign*.09),bevel=.016)
-        helmet(s,head,(0,.055,-.10))
+        if name=="spearman":
+            # Open kettle helmet, mail collar and face distinguish the lighter levy.
+            s.e(head,(.225,.235,.215),(0,-.005,-.055),"skin")
+            s.add(head,lathe([(-.07,.265),(.08,.28),(.23,.21),(.28,.065)],12,(0,.065,0)),"steel")
+            s.add(head,lathe([(-.025,.28),(0,.385),(.035,.37),(.065,.275)],12,(0,.01,0)),"edge")
+            s.b(head,(.055,.20,.03),(0,.155,-.252),"gold",bevel=.007)
+            s.add(head,lathe([(-.29,.22),(-.21,.25),(-.15,.225)],10,(0,0,.018)),"darksteel")
+            for xx in (-.075,.075):
+                s.b(head,(.035,.025,.019),(xx,-.065,-.258),"black",bevel=.003)
+            s.e(head,(.04,.055,.05),(0,-.10,-.258),"skin")
+        else:
+            helmet(s,head,(0,.055,-.10))
     for part,sign in ((left,-1),(right,1)):
         s.e(part,(.235,.18,.24),(sign*.04,.018,0),"leather" if archer else "steel")
         if not archer:
@@ -340,13 +351,36 @@ def infantry(name, archer=False):
         s.add(arrow,polygon([(-.046,0),(.046,0),(0,.12)],.020,(0,0,-.975),(math.pi/2,0,0)),"edge")
         s.b(arrow,(.10,.015,.13),(0,0,-.08),"ivory",bevel=.004)
     else:
-        shield(s,left,(-.24,-.37,-.425))
+        if name=="spearman":
+            # Small round shield, painted in the same faction heraldry as the army.
+            center=(-.24,-.37,-.425)
+            s.r(left,(-.24,-.37,-.38),(-.24,-.37,-.46),.33,"wood",12)
+            s.r(left,(-.24,-.37,-.463),(-.24,-.37,-.48),.288,"blue",12)
+            s.add(left,ring(.31,.022,center,n=12),"gold")
+            s.b(left,(.035,.50,.015),(-.24,-.37,-.49),"goldlight",bevel=.003)
+            s.b(left,(.50,.035,.015),(-.24,-.37,-.49),"goldlight",bevel=.003)
+            s.e(left,(.10,.10,.065),(-.24,-.37,-.50),"steel")
+            rivets(s,left,[(-.24+math.cos(a)*.26,-.37+math.sin(a)*.26,-.492) for a in np.linspace(0,math.tau,8,endpoint=False)],.016)
+        else:
+            shield(s,left,(-.24,-.37,-.425))
         # Back grip meets the gauntlet while the board clears the breastplate.
         s.r(left,(-.28,-.43,-.37),(-.16,-.43,-.37),.025,"leather",8)
         # A wrist pivot keeps the hilt inside the gauntlet while the blade leads
         # the cut. The arm no longer swings an upright sword as a rigid paddle.
-        blade = s.joint("Sword",(.25,-.415,-.45),parent=right)
-        sword(s,blade,(0,0,0))
+        if name=="spearman":
+            spear=s.joint("Spear",(.25,-.445,-.45),parent=right)
+            s.r(spear,(0,-.68,0),(0,1.37,0),.032,"woodlight",10)
+            s.r(spear,(0,-.72,0),(0,-.57,0),.037,"darksteel",8,r2=.029)
+            s.r(spear,(0,-.12,0),(0,.13,0),.039,"leather",10)
+            for y in np.linspace(-.1,.1,5):
+                s.add(spear,ring(.04,.005,(0,y,0),(math.pi/2,0,0),n=10),"rope")
+            s.r(spear,(0,1.18,0),(0,1.40,0),.05,"steel",8,r2=.033)
+            s.add(spear,polygon([(-.035,0),(-.105,.17),(0,.52),(.105,.17),(.035,0)],.044,(0,1.35,0)),"edge")
+            s.r(spear,(0,1.37,-.025),(0,1.79,-.025),.015,"steel",6,r2=.004)
+            s.r(spear,(0,1.18,0),(0,1.22,0),.054,"gold",10)
+        else:
+            blade = s.joint("Sword",(.25,-.415,-.45),parent=right)
+            sword(s,blade,(0,0,0))
         # Sheath and a small hip pouch complete the back and side silhouette.
         s.b(body,(.082,.58,.084),(-.27,-.25,.1),"leather",rot=(0,0,-.16))
         s.b(body,(.15,.17,.12),(.265,-.13,.08),"leatherlight",bevel=.025)
@@ -828,6 +862,17 @@ def attack_tracks(s):
     def pos(part,offsets,times):
         base=np.zeros(3) if part=="Action" else np.array(s.joints[part])
         tracks.append((prop(part,"position"),[tuple(base+np.array(o)) for o in offsets],times))
+    if s.name=="spearman":
+        # Lower the wrist-held shaft, drive its point straight forward, then recover.
+        # Every pose returns to rest; the weapon pivot remains inside the gauntlet.
+        t=[0,.08,.16,.22,.29,.43,.65,.88]
+        rot("Waist",[(0,0,0),(.015,.07,0),(.02,.13,0),(-.10,-.10,0),(-.12,-.12,0),(-.04,-.04,0),(0,.01,0),(0,0,0)],t)
+        rot("ArmRight",[(x,y,0) for x,y in [(0,0),(.10,.05),(.22,.04),(.88,-.03),(.94,-.03),(.60,0),(.18,0),(0,0)]],t)
+        rot("Spear",[(x,0,0) for x in [-.30,-.75,-1.55,-2.35,-2.39,-1.96,-.85,-.30]],t)
+        rot("ArmLeft",[(x,0,z) for x,z in [(0,0),(.12,.04),(.24,.08),(.40,.09),(.42,.10),(.28,.05),(.10,.02),(0,0)]],t)
+        rot("Head",[(0,y,0) for y in [0,-.035,-.07,.08,.09,.035,0,0]],t)
+        pos("Action",[(0,y,z) for y,z in [(0,0),(0,.035),(-.01,.06),(-.025,-.17),(-.03,-.20),(-.01,-.07),(0,0),(0,0)]],t)
+        return .88,tracks
     if s.name=="swordsman":
         t=[0,.075,.15,.195,.22,.26,.35,.51,.69,.86]
         rot("Waist",[(0,0,0),(.02,.08,-.02),(.03,.16,-.04),(.02,.14,-.035),(-.06,-.10,.015),(-.075,-.16,.025),(-.035,-.10,.015),(.005,-.04,0),(0,.01,0),(0,0,0)],t)
@@ -914,7 +959,7 @@ def write_scene(s):
         lines.append(f'[ext_resource type="ArrayMesh" path="res://assets/models/units/{s.name}/{p}.res" id="{i+2}_{p}"]')
     walk=[]
     idle=[]
-    if s.name in ("swordsman","archer"):
+    if s.name in ("swordsman","spearman","archer"):
         for p,sign in (("LegLeft",1),("LegRight",-1)):
             walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,.56,0,-.56,0)]))
             idle.append((f"Rig/{p}:rotation",[(0,0,0),(0,0,0)]))
@@ -965,6 +1010,8 @@ def write_scene(s):
                 extra=f'\nrotation = {vec((math.atan2(-.02,tip_y),0,0))}\nscale = {vec((1,math.hypot(tip_y,.02),1))}'
             if s.name == "swordsman" and p == "Sword":
                 extra = f'\nrotation = {vec((0,0,-.28))}'
+            if s.name == "spearman" and p == "Spear":
+                extra = f'\nrotation = {vec((-.30,0,0))}'
             lines.append(f'[node name="{p}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[p])}\nmesh = ExtResource("{i+2}_{p}"){extra}')
         emitted.add(p)
     for p in parts:emit(p)
@@ -978,5 +1025,14 @@ def write_scene(s):
 
 
 if __name__=="__main__":
-    for model in (infantry("swordsman"),infantry("archer",True),horse_knight(),catapult(),cannon(),farmer()):
-        model.save()
+    import argparse
+    builders={"swordsman":lambda:infantry("swordsman"), "spearman":lambda:infantry("spearman"),
+              "archer":lambda:infantry("archer",True), "knight":horse_knight,
+              "catapult":catapult, "cannon":cannon, "farmer":farmer}
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("kinds",nargs="*",help="Only rebuild these units (default: all)")
+    args=parser.parse_args()
+    for kind in args.kinds or builders:
+        if kind not in builders:
+            parser.error(f"Unknown unit: {kind}")
+        builders[kind]().save()

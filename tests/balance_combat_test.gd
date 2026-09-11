@@ -58,6 +58,7 @@ func _run() -> void:
 	host = current_scene
 	await physics_frame
 	await physics_frame
+	await _spearman_thrust()
 	await _melee_and_vision()
 	await _cannon_snapshot()
 	await _stone_blast()
@@ -75,6 +76,24 @@ func _run() -> void:
 	print("BALANCE_COMBAT ", checks, " checks; ", failures.size(), " failures")
 	quit(0 if failures.is_empty() else 1)
 
+func _spearman_thrust() -> void:
+	var spear: BattleUnit = _spawn("spearman", 0, Vector3.ZERO)
+	var knight: BattleUnit = _spawn("knight", 1, Vector3(0, 0, -1.8))
+	_check(spear.hp == 75 and spear.get_combat_definition().cost == 40, "spearman spawns with requested health and price")
+	spear.issue_attack(knight)
+	for strike: int in range(1, 6):
+		spear._start_attack()
+		await _wait(0.12)
+		_check(knight.hp == 120 - (strike - 1) * 24, "spearman anticipation does not deal early damage")
+		await _wait(0.22)
+		_check(knight.hp == maxf(0, 120 - strike * 24) and knight.alive == (strike < 5), "native spear thrust applies cavalry bonus on hit " + str(strike))
+	var sword: BattleUnit = _spawn("swordsman", 1, Vector3(0, 0, -1.8))
+	spear.issue_attack(sword)
+	spear._start_attack()
+	await _wait(0.35)
+	_check(sword.hp == 106, "spearman cavalry bonus does not apply to infantry")
+	await _clear()
+
 func _melee_and_vision() -> void:
 	var sword: BattleUnit = _spawn("swordsman", 0, Vector3.ZERO)
 	var knight: BattleUnit = _spawn("knight", 1, Vector3(1.5, 0, 0))
@@ -89,11 +108,11 @@ func _melee_and_vision() -> void:
 	for repeat: int in range(20):
 		sword.issue_attack(knight)
 	await _wait(0.35)
-	_check(knight.hp == 100, "twenty repeated commands preserve one twenty-damage strike")
-	for strike: int in range(2, 7):
+	_check(knight.hp == 108, "twenty repeated commands preserve one twelve-damage strike")
+	for strike: int in range(2, 11):
 		sword._start_attack()
 		await _wait(0.35)
-		_check(knight.hp == maxf(0, 120 - strike * 20) and knight.alive == (strike < 6), "native sword strike " + str(strike) + " defeats cavalry on the sixth compact-damage hit")
+		_check(knight.hp == maxf(0, 120 - strike * 12) and knight.alive == (strike < 10), "native sword strike " + str(strike) + " defeats cavalry on the tenth hit")
 	var packet: DamagePayload = DamageResolver.snapshot(sword.get_combat_definition(), 0, 0, 0)
 	ally.receive_hit(packet, sword)
 	_check(ally.hp == ally.max_hp, "friendly receive_hit rejects allied owner damage")
@@ -144,9 +163,9 @@ func _stone_blast() -> void:
 	center.position.x += 6
 	await physics_frame
 	await _wait(1.6)
-	_check(center.hp == 100, "stone fixed impact point can be dodged")
-	_check(core.hp == 47 and core.alive, "one stone deals thirteen damage to an archer")
-	_check(core_sword.hp == 77 and core_sword.alive, "the same stone deals twenty-three damage to a swordsman")
+	_check(center.hp == 110, "stone fixed impact point can be dodged")
+	_check(core.hp == 33 and core.alive, "one stone deals twenty-seven damage to an archer")
+	_check(core_sword.hp == 80 and core_sword.alive, "the same stone deals thirty damage to a swordsman")
 	_check(edge.hp == core.hp, "stone outer edge deals the same damage as its center with no falloff")
 	_check(outside.hp == 60 and ally.hp == 60, "stone leaves out-of-radius and allied units unharmed")
 	_check(impact_point == Vector3(0, 1, -9), "stone initial landing point is fixed to commanded ground")

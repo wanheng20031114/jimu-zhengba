@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3]
+[gd_scene load_steps=35 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
@@ -34,6 +34,7 @@
 [ext_resource type="PackedScene" path="res://scenes/static_motion_grid.tscn" id="static_motion"]
 [ext_resource type="PackedScene" path="res://scenes/unit_render_batches.tscn" id="unit_batches"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/swordsman.tscn" id="batch_swordsman"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/spearman.tscn" id="batch_spearman"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/archer.tscn" id="batch_archer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/knight.tscn" id="batch_knight"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/catapult.tscn" id="batch_catapult"]
@@ -93,6 +94,7 @@ unit_model_overrides = Dictionary[String, PackedScene]({
 "catapult": ExtResource("batch_catapult"),
 "farmer": ExtResource("batch_farmer"),
 "knight": ExtResource("batch_knight"),
+"spearman": ExtResource("batch_spearman"),
 "swordsman": ExtResource("batch_swordsman")
 })
 unit_batches_enabled = true

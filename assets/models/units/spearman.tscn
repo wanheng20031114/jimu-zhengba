@@ -1,0 +1,176 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="1_script"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Body.res" id="2_Body"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Head.res" id="3_Head"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/ArmLeft.res" id="4_ArmLeft"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/ArmRight.res" id="5_ArmRight"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/LegLeft.res" id="6_LegLeft"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/LegRight.res" id="7_LegRight"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Spear.res" id="8_Spear"]
+
+[sub_resource type="Animation" id="Animation_2at6t"]
+resource_name = "idle"
+length = 2.6
+loop_mode = 1
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/LegLeft")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 2.6, 1, 0, 0, 0, 1)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Action/LegRight")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 2.6, 1, 0, 0, 0, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig")
+tracks/2/interp = 1
+tracks/2/loop_wrap = false
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1.3, 1, 0, 0.014, 0, 2.6, 1, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_6x20t"]
+resource_name = "walk"
+length = 0.72
+loop_mode = 1
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/LegLeft")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, 0.27635565, 0, 0, 0.96105546, 0.36, 1, 0, 0, 0, 1, 0.54, 1, -0.27635565, 0, 0, 0.96105546, 0.72, 1, 0, 0, 0, 1)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Action/LegRight")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.18, 1, -0.27635565, 0, 0, 0.96105546, 0.36, 1, 0, 0, 0, 1, 0.54, 1, 0.27635565, 0, 0, 0.96105546, 0.72, 1, 0, 0, 0, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig")
+tracks/2/interp = 1
+tracks/2/loop_wrap = false
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.18, 1, 0, 0.042, 0, 0.36, 1, 0, 0, 0, 0.54, 1, 0, 0.042, 0, 0.72, 1, 0, 0, 0)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]
+_data = {
+&"idle": SubResource("Animation_2at6t"),
+&"walk": SubResource("Animation_6x20t")
+}
+
+[sub_resource type="Animation" id="Animation_j2iyd"]
+resource_name = "strike"
+length = 0.88
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/Waist")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.08, 1, 0.007495336, 0.034991868, -0.00026244394, 0.9993595, 0.16, 1, 0.009978717, 0.064950995, -0.00064953155, 0.9978383, 0.22, 1, -0.04991671, -0.049916707, -0.0024979175, 0.9975021, 0.29, 1, -0.0598561, -0.059856094, -0.0035956816, 0.99640435, 0.43, 1, -0.019994667, -0.019994667, -0.00039994664, 0.99960005, 0.65, 1, 0, 0.004999979, 0, 0.9999875, 0.88, 1, 0, 0, 0, 1)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Action/Waist/ArmRight")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.08, 1, 0.049963553, 0.024966154, -0.0012493491, 0.9984382, 0.16, 1, 0.10975634, 0.019877795, -0.0021954195, 0.9937573, 0.22, 1, 0.42589158, -0.013570766, 0.006388853, 0.90464985, 0.29, 1, 0.45283535, -0.013373023, 0.0067930394, 0.891468, 0.43, 1, 0.29552022, 0, 0, 0.9553365, 0.65, 1, 0.08987856, 0, 0, 0.9959527, 0.88, 1, 0, 0, 0, 1)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/Action/Waist/ArmRight/Spear")
+tracks/2/interp = 1
+tracks/2/loop_wrap = false
+tracks/2/keys = PackedFloat32Array(0, 1, -0.14943814, 0, 0, 0.9887711, 0.08, 1, -0.36627254, 0, 0, 0.9305076, 0.16, 1, -0.6997161, 0, 0, 0.71442103, 0.22, 1, 0.9226898, 0, 0, -0.38554314, 0.29, 1, 0.93021566, 0, 0, -0.36701334, 0.43, 1, -0.83049744, 0, 0, 0.5570225, 0.65, 1, -0.4123208, 0, 0, 0.91103876, 0.88, 1, -0.14943814, 0, 0, 0.9887711)
+tracks/3/type = "rotation_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/Action/Waist/ArmLeft")
+tracks/3/interp = 1
+tracks/3/loop_wrap = false
+tracks/3/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.08, 1, 0.059952013, -0.0011992003, 0.019962681, 0.9980009, 0.16, 1, 0.11961645, -0.004787211, 0.039701752, 0.9920145, 0.22, 1, 0.19846821, -0.008937102, 0.04408811, 0.9790744, 0.29, 1, 0.20819938, -0.0104186535, 0.048881173, 0.97680867, 0.43, 1, 0.1394995, -0.003488215, 0.024752822, 0.98990655, 0.65, 1, 0.04997667, -0.00049978355, 0.009987336, 0.9987003, 0.88, 1, 0, 0, 0, 1)
+tracks/4/type = "rotation_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Rig/Action/Waist/Head")
+tracks/4/interp = 1
+tracks/4/loop_wrap = false
+tracks/4/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.08, 1, 0, -0.017499108, 0, 0.9998469, 0.16, 1, 0, -0.034992855, 0, 0.99938756, 0.22, 1, 0, 0.03998933, 0, 0.9992001, 0.29, 1, 0, 0.044984818, 0, 0.9989877, 0.43, 1, 0, 0.017499108, 0, 0.9998469, 0.65, 1, 0, 0, 0, 1, 0.88, 1, 0, 0, 0, 1)
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Rig/Action")
+tracks/5/interp = 1
+tracks/5/loop_wrap = false
+tracks/5/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.08, 1, 0, 0, 0.035, 0.16, 1, 0, -0.01, 0.06, 0.22, 1, 0, -0.025, -0.17, 0.29, 1, 0, -0.03, -0.2, 0.43, 1, 0, -0.01, -0.07, 0.65, 1, 0, 0, 0, 0.88, 1, 0, 0, 0)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]
+_data = {
+&"strike": SubResource("Animation_j2iyd")
+}
+
+[node name="Spearman" type="Node3D" unique_id=147440189]
+script = ExtResource("1_script")
+kind = "spearman"
+projectile_socket = NodePath("Rig/Action/ProjectileSocket")
+
+[node name="Rig" type="Node3D" parent="." unique_id=150177755]
+
+[node name="Action" type="Node3D" parent="Rig" unique_id=735163349]
+
+[node name="Waist" type="Node3D" parent="Rig/Action" unique_id=91097261]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Rig/Action/Waist" unique_id=2129613395]
+mesh = ExtResource("2_Body")
+
+[node name="Head" type="MeshInstance3D" parent="Rig/Action/Waist" unique_id=1002177671]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
+mesh = ExtResource("3_Head")
+
+[node name="ArmLeft" type="MeshInstance3D" parent="Rig/Action/Waist" unique_id=265559810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34, 0.23, 0)
+mesh = ExtResource("4_ArmLeft")
+
+[node name="ArmRight" type="MeshInstance3D" parent="Rig/Action/Waist" unique_id=469776936]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34, 0.23, 0)
+mesh = ExtResource("5_ArmRight")
+
+[node name="Spear" type="MeshInstance3D" parent="Rig/Action/Waist/ArmRight" unique_id=1281257832]
+transform = Transform3D(1, 0, 0, 0, 0.9553365, 0.29552022, 0, -0.29552022, 0.9553365, 0.25, -0.445, -0.45)
+mesh = ExtResource("8_Spear")
+
+[node name="LegLeft" type="MeshInstance3D" parent="Rig/Action" unique_id=785774784]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.155, 0.75, 0)
+mesh = ExtResource("6_LegLeft")
+
+[node name="LegRight" type="MeshInstance3D" parent="Rig/Action" unique_id=833313264]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.155, 0.75, 0)
+mesh = ExtResource("7_LegRight")
+
+[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action" unique_id=786972745]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, -0.6)
+
+[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=1351463351]
+callback_mode_process = 0
+libraries/ = SubResource("AnimationLibrary_locomotion")
+autoplay = &"idle"
+
+[node name="Attack" type="AnimationPlayer" parent="." unique_id=745416878]
+callback_mode_process = 0
+libraries/ = SubResource("AnimationLibrary_attack")
+
+[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=1480962665]
+aabb = AABB(-4, -2, -4, 8, 9, 8)
+
+[connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier" to="." method="_on_screen_exited"]

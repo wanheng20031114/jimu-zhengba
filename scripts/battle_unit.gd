@@ -9,6 +9,7 @@ signal gathered(worker: Node3D, amount: int)
 
 const MODELS: Dictionary = {
 	"swordsman": preload("res://assets/models/units/swordsman.tscn"),
+	"spearman": preload("res://assets/models/units/spearman.tscn"),
 	"archer": preload("res://assets/models/units/archer.tscn"),
 	"knight": preload("res://assets/models/units/knight.tscn"),
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
@@ -26,7 +27,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
-@export_enum("swordsman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "spearman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -504,7 +505,7 @@ func _start_attack() -> void:
 		_game.spawn_effect(global_position + Vector3.UP * 0.2, "charge", Color("edd9a1"))
 	_charge_time = 0.0
 	_model.strike()
-	if unit_type in ["swordsman", "knight"]:
+	if unit_type in ["swordsman", "spearman", "knight"]:
 		sound_requested.emit(&"sword_swing", global_position + Vector3.UP)
 	attack_windup.start(_windup_seconds())
 

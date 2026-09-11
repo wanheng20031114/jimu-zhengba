@@ -84,7 +84,7 @@ func _exits() -> void:
 		if at.is_finite():
 			var alignment: float = at.normalized().dot(rally.normalized())
 			check(alignment > 0.999, "clear_rally_ray_has_first_priority_" + str(rally))
-	for kind: String in ["farmer", "swordsman", "archer", "knight", "catapult", "cannon"]:
+	for kind: String in ["farmer", "swordsman", "spearman", "archer", "knight", "catapult", "cannon"]:
 		var at: Vector3 = game.find_recruit_position(kind, producer)
 		check(at.is_finite(), "all_body_sizes_find_valid_exit_" + kind)
 		if at.is_finite():

@@ -28,6 +28,11 @@ func register_entity(entity: Node3D) -> void:
 func get_player(owner: int) -> PlayerState:
 	return players[owner]
 
+func presentation_faction(owner: int, alliance: int) -> int:
+	if owner == local_owner_id:
+		return FactionPalette.SELF
+	return FactionPalette.ALLY if alliance == get_player(local_owner_id).alliance_id else FactionPalette.ENEMY
+
 func are_hostile(a: Node3D, b: Node3D) -> bool:
 	return a.alliance_id != b.alliance_id
 

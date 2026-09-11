@@ -91,7 +91,7 @@ func impact() -> void:
 			# stones share this native shape/query; intersect_shape returns its own hits.
 			if _shared_blast_query == null:
 				var shape := SphereShape3D.new()
-				shape.radius = 3.25
+				shape.radius = BalanceCatalog.unit(&"catapult").splash_radius + 0.25
 				_shared_blast_query = PhysicsShapeQueryParameters3D.new()
 				_shared_blast_query.shape = shape
 			_shared_blast_query.collision_mask = collision_mask
@@ -106,7 +106,7 @@ func impact() -> void:
 				var separation: Vector3 = contact - _end
 				separation.y = 0.0
 				var distance: float = maxf(0.0, separation.length() - (0.0 if building else entity.radius))
-				if distance <= 3.0:
+				if distance <= BalanceCatalog.unit(&"catapult").splash_radius:
 					entity.receive_hit(_payload, damage_source)
 		_game.spawn_effect(_end - Vector3.UP * 0.7, "stone_hit", Color("efbb76"))
 

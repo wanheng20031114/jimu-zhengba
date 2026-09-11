@@ -5,6 +5,7 @@ const ECONOMY: EconomyDefinition = preload("res://data/economy.tres")
 
 const UNITS: Dictionary = {
 	"swordsman": preload("res://data/units/swordsman.tres"),
+	"spearman": preload("res://data/units/spearman.tres"),
 	"archer": preload("res://data/units/archer.tres"),
 	"knight": preload("res://data/units/knight.tres"),
 	"catapult": preload("res://data/units/catapult.tres"),

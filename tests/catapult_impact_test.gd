@@ -33,7 +33,7 @@ func _run() -> void:
 		_freeze(building)
 	_check(game.players.map(func(p): return p.alliance_id) == [0, 0, 1, 1], "real 2v2 has four owners and two alliances")
 	var definition := BalanceCatalog.unit("catapult")
-	_check(definition.damage == 18 and definition.bonuses == {&"infantry": 6, &"building": 50} and definition.range == 13 and definition.hp == 140 and definition.ranged_armor == 2,
+	_check(definition.damage == 32 and definition.bonuses == {&"building": 50} and definition.splash_radius == 2.7 and definition.range == 13 and definition.hp == 140 and definition.ranged_armor == 2,
 		"production catapult matches approved damage and range")
 	for legacy: bool in [true, false]:
 		for owner in 4:
@@ -120,23 +120,23 @@ func _edge_and_allies() -> void:
 	var source := _unit("catapult", 0, Vector3(-12, 0, 0))
 	var center := _unit("archer", 2, Vector3.ZERO)
 	var inner := _unit("archer", 2, Vector3(1.5, 0, 0))
-	var archer_edge := _unit("archer", 2, Vector3(0, 0, 3.35))
-	var archer_outside := _unit("archer", 2, Vector3(-3.6, 0, 0))
+	var archer_edge := _unit("archer", 2, Vector3(0, 0, 3.05))
+	var archer_outside := _unit("archer", 2, Vector3(-3.25, 0, 0))
 	var archer_friendly := _unit("archer", 1, Vector3(-1, 0, 0))
 	var friendly_unit := _unit("catapult", 1, Vector3(0, 0, 1))
 	var friendly_building := _building("headquarters", 1, Vector3.ZERO)
 	# Stay 0.05 inside the boundary so float32 world positions cannot round an
-	# exact mathematical edge onto the outside of the three-meter damage disk.
-	var edge := _unit("catapult", 2, Vector3(0, 0, 4.0))
-	var outside := _unit("catapult", 2, Vector3(0, 0, -4.2))
+	# exact mathematical edge onto the outside of the 2.7-meter damage disk.
+	var edge := _unit("catapult", 2, Vector3(0, 0, 3.7))
+	var outside := _unit("catapult", 2, Vector3(0, 0, -3.9))
 	var building := _building("factory", 3, Vector3.ZERO)
 	building.rotation.y = PI / 4.0
 	var size: Vector3 = building.get_combat_definition().size
-	building.position.x = (size.x + size.z) * 0.5 / sqrt(2.0) + 3.0
+	building.position.x = (size.x + size.z) * 0.5 / sqrt(2.0) + 2.65
 	await physics_frame
 	await physics_frame
 	var point: Vector3 = building.get_attack_position(Vector3.UP)
-	_check(is_equal_approx(Vector2(point.x, point.z).length(), 3.0), "rotated large building footprint touches blast edge despite distant center")
+	_check(is_equal_approx(Vector2(point.x, point.z).length(), 2.65), "rotated large building footprint lies just inside blast edge despite distant center")
 	var payload: DamagePayload = _payload(source)
 	var archer_damage: float = DamageResolver.resolve(payload, center.get_combat_definition())
 	var siege_damage: float = DamageResolver.resolve(payload, edge.get_combat_definition())
@@ -164,9 +164,9 @@ func _edge_and_allies() -> void:
 		_check(is_equal_approx(actual, sample.expected), "measured uniform native splash " + sample.label)
 	_check(center.hp == center.max_hp - archer_damage and center.alive, "stone center leaves an archer alive after one hit")
 	_check(is_equal_approx(edge.hp, edge.max_hp - siege_damage),
-		"outer siege at footprint distance 2.95 takes full damage without falloff (actual %.6f)" % (edge.max_hp - edge.hp))
+		"outer siege at footprint distance 2.65 takes full damage without falloff (actual %.6f)" % (edge.max_hp - edge.hp))
 	_check(is_equal_approx(building.hp, building.max_hp - building_damage), "rotated factory receives full edge splash at footprint instead of center")
-	_check(outside.hp == outside.max_hp, "siege outside true three-meter footprint radius takes no damage")
+	_check(outside.hp == outside.max_hp, "siege outside true 2.7-meter footprint radius takes no damage")
 	_check(friendly_unit.hp == friendly_unit.max_hp and friendly_building.hp == friendly_building.max_hp,
 		"different allied owner unit and building both reject splash")
 	await _clear_case()

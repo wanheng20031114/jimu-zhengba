@@ -51,6 +51,13 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/farmer/Mallet.res" id="mesh_46"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/farmer/LegLeft.res" id="mesh_47"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/farmer/LegRight.res" id="mesh_48"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Body.res" id="mesh_49"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Head.res" id="mesh_50"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/ArmLeft.res" id="mesh_51"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/ArmRight.res" id="mesh_52"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/Spear.res" id="mesh_53"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/LegLeft.res" id="mesh_54"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/spearman/LegRight.res" id="mesh_55"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -395,6 +402,55 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_48")
 
+[sub_resource type="MultiMesh" id="batch_49"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_49")
+
+[sub_resource type="MultiMesh" id="batch_50"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_50")
+
+[sub_resource type="MultiMesh" id="batch_51"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_51")
+
+[sub_resource type="MultiMesh" id="batch_52"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_52")
+
+[sub_resource type="MultiMesh" id="batch_53"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_53")
+
+[sub_resource type="MultiMesh" id="batch_54"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_54")
+
+[sub_resource type="MultiMesh" id="batch_55"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_55")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -693,3 +749,45 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_48")
 metadata/batch_key = &"farmer::Rig/Action/LegRight"
+
+[node name="Spearman_Rig_Action_Waist_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_49")
+metadata/batch_key = &"spearman::Rig/Action/Waist/Body"
+
+[node name="Spearman_Rig_Action_Waist_Head" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_50")
+metadata/batch_key = &"spearman::Rig/Action/Waist/Head"
+
+[node name="Spearman_Rig_Action_Waist_ArmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_51")
+metadata/batch_key = &"spearman::Rig/Action/Waist/ArmLeft"
+
+[node name="Spearman_Rig_Action_Waist_ArmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_52")
+metadata/batch_key = &"spearman::Rig/Action/Waist/ArmRight"
+
+[node name="Spearman_Rig_Action_Waist_ArmRight_Spear" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_53")
+metadata/batch_key = &"spearman::Rig/Action/Waist/ArmRight/Spear"
+
+[node name="Spearman_Rig_Action_LegLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_54")
+metadata/batch_key = &"spearman::Rig/Action/LegLeft"
+
+[node name="Spearman_Rig_Action_LegRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_55")
+metadata/batch_key = &"spearman::Rig/Action/LegRight"

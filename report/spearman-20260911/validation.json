@@ -1,0 +1,73 @@
+{
+  "engine": "Godot 4.6.3",
+  "renderer": "Forward+ Vulkan / RTX 3080; portrait compatibility check also passed",
+  "checks": {
+    "native_batch_equivalence": 1829,
+    "balance_matrix": 1390,
+    "native_combat": 82,
+    "catapult_impact": 255,
+    "timed_production": 128,
+    "portrait_rendering": 121,
+    "ranged_and_vision": 122,
+    "spawn_placement": 53,
+    "resource_values": 72,
+    "spearman_integration": 35
+  },
+  "failures": [],
+  "splash_samples": [
+    {
+      "actual": 27.0,
+      "expected": 27.0,
+      "footprint_distance": 0.0,
+      "label": "center",
+      "target": "archer"
+    },
+    {
+      "actual": 27.0,
+      "expected": 27.0,
+      "footprint_distance": 1.08,
+      "label": "inner",
+      "target": "archer"
+    },
+    {
+      "actual": 27.0,
+      "expected": 27.0,
+      "footprint_distance": 2.62999995231628,
+      "label": "edge",
+      "target": "archer"
+    },
+    {
+      "actual": 0.0,
+      "expected": 0.0,
+      "footprint_distance": 2.83,
+      "label": "outside",
+      "target": "archer"
+    },
+    {
+      "actual": 0.0,
+      "expected": 0.0,
+      "footprint_distance": 0.58,
+      "label": "friendly",
+      "target": "archer"
+    },
+    {
+      "actual": 30.0,
+      "expected": 30.0,
+      "footprint_distance": 2.65000004768372,
+      "label": "edge_siege",
+      "target": "catapult"
+    },
+    {
+      "actual": 72.0,
+      "expected": 72.0,
+      "footprint_distance": 2.65000009536743,
+      "label": "edge_building",
+      "target": "factory"
+    }
+  ],
+  "limitations": [
+    "No new Windows release or live relay match was published.",
+    "The legacy worker_ai_host motion test lacks current game APIs and was not used as a passing check. Native sandbox movement/pause/resume/arrival were verified instead.",
+    "No performance benchmark was run."
+  ]
+}

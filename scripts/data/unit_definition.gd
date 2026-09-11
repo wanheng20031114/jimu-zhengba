@@ -7,6 +7,7 @@ extends CombatDefinition
 @export var radius: float = 0.5
 @export var sight: float = 10.0
 @export var min_range: float = 0.0
+@export var splash_radius: float = 0.0
 @export var projectile: String = ""
 @export var production_building: StringName
 @export var training_seconds: float = 0.0

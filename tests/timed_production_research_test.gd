@@ -64,7 +64,7 @@ func _run() -> void:
 	factory = _building("factory")
 	academy = _building("academy")
 	academy2 = _building("academy")
-	var durations := {"swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var durations := {"spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in durations:
 		var producer: BattleBuilding = game.headquarters if kind == "farmer" else (factory if kind in ["catapult", "cannon"] else barracks)
 		await _ready_exit(producer, kind)
@@ -106,8 +106,8 @@ func _run() -> void:
 	var middle_id: int = barracks.production.training[4].job_id
 	barracks.production.training[0].elapsed = 2.0
 	check(barracks.production.cancel_training_job(middle_id).ok and player.reserved_military_supply == 9, "middle military job refunds and releases only its supply")
-	check(player.gold == gold_before + 45 and barracks.production.training[0].elapsed == 2.0, "cancelling waiting job preserves active progress")
-	check(not barracks.production.cancel_training_job(middle_id).ok and player.gold == gold_before + 45, "repeated cancellation never double refunds")
+	check(player.gold == gold_before + 60 and barracks.production.training[0].elapsed == 2.0, "cancelling waiting job preserves active progress")
+	check(not barracks.production.cancel_training_job(middle_id).ok and player.gold == gold_before + 60, "repeated cancellation never double refunds")
 	gold_before = player.gold
 	barracks.production.destroyed()
 	check(player.reserved_military_supply == 0 and barracks.production.training.is_empty() and player.gold == gold_before, "destroyed training loses paid jobs and releases supply")

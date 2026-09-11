@@ -47,8 +47,8 @@ func _run() -> void:
 	check(archer.range == 10 and is_equal_approx(archer.cooldown, 1.5), "archer reach and cadence stay at their approved values")
 	check(knight.ranged_armor == 7 and knight.melee_armor == 2 and knight.cost == 80, "cavalry has seven ranged armor and costs eighty gold")
 	check(knight.bonuses[&"archer"] == 3 and knight.damage == 9, "anti-archer damage is a class bonus, not extra damage against all units")
-	check(swordsman.ranged_armor == 1 and swordsman.melee_armor == 2 and swordsman.cost == 45 and swordsman.hp == 100 and swordsman.sight == 14, "swordsman has one ranged armor and fourteen-unit vision")
-	for pair: Array in [["knight", 4, 30], ["swordsman", 10, 10], ["archer", 6, 10]]:
+	check(swordsman.ranged_armor == 2 and swordsman.melee_armor == 2 and swordsman.cost == 60 and swordsman.hp == 110 and swordsman.sight == 14, "swordsman has two ranged armor and fourteen-unit vision")
+	for pair: Array in [["knight", 4, 30], ["swordsman", 9, 13], ["archer", 6, 10]]:
 		await _shoot_to_defeat(pair[0], pair[1], pair[2])
 	await _vision_case()
 	await _clear()

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"spearman"
+name = "长矛兵"
+description = "持长矛与圆盾的轻装步兵，低成本拦截骑兵。"
+hp = 75
+damage = 6
+melee_armor = 1
+ranged_armor = 1
+damage_channel = 0
+combat_class = &"infantry"
+bonuses = {&"cavalry": 20}
+range = 1
+cooldown = 1.2
+cost = 40
+supply = 1
+speed = 3.7
+radius = 0.48
+sight = 14
+min_range = 0
+projectile = ""
+production_building = &"barracks"
+training_seconds = 6
+military = true

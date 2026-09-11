@@ -3,10 +3,10 @@ extends Control
 signal closed
 
 const BUILDING_IDS: Array[String] = ["headquarters", "barracks", "factory", "academy", "defense_tower"]
-const CLASS_NAMES: Dictionary = {&"infantry": "剑士", &"archer": "弓箭手", &"cavalry": "骑兵", &"siege": "攻城器", &"building": "建筑", &"worker": "农民"}
+const CLASS_NAMES: Dictionary = {&"infantry": "步兵", &"archer": "弓箭手", &"cavalry": "骑兵", &"siege": "攻城器", &"building": "建筑", &"worker": "农民"}
 const BUILDING_DESCRIPTIONS: Dictionary = {
 	"headquarters": "城镇的中心。训练农民、守护经济，并为重建保留希望。",
-	"barracks": "训练剑士、弓箭手与骑士，用不同兵种组成你的主力。",
+	"barracks": "训练剑士、长矛兵、弓箭手与骑士，用不同兵种组成你的主力。",
 	"factory": "制造投石车与加农炮，为前线提供范围火力和攻城支援。",
 	"academy": "研究军队、人口与采矿科技。已完成的研究永久保留。",
 	"defense_tower": "自动攻击范围内的敌人。无法驻军，需要部队保护。",
@@ -20,7 +20,7 @@ const MODEL_PATHS: Dictionary = {
 }
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
-	"swordsman": Vector2(1.0, 3.2), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5),
+	"swordsman": Vector2(1.0, 3.2), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5),
 	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
@@ -109,6 +109,10 @@ func _request_preview_redraw() -> void:
 
 func _select_preview_action(action: PreviewAction) -> void:
 	_preview_action = action
+	if _preview_unit.kind == "spearman":
+		# The horizontal thrust has a wider silhouette than the upright carry pose.
+		_base_camera_size = 5.8 if action == PreviewAction.ATTACK else UNIT_FRAMING["spearman"].y
+		_camera.size = _base_camera_size
 	_preview_paused = false
 	_preview_complete = false
 	_cycle_elapsed = 0.0
@@ -306,7 +310,7 @@ func _combat_rows(definition: CombatDefinition) -> String:
 
 func _unit_notes(unit: UnitDefinition) -> String:
 	if unit.id == &"catapult":
-		return "半径 3 的范围伤害，范围内伤害一致。巨石落点在发射时确定，可以躲避；不会伤及友军。"
+		return "半径 %s 的范围伤害，范围内伤害一致。巨石落点在发射时确定，可以躲避；不会伤及友军。" % _number(unit.splash_radius)
 	if unit.id == &"cannon":
 		return "炮弹命中单个目标。适合拆除建筑；需要前排保护，无法攻击贴身敌人。学院研究加长炮管可使射程 +%d。" % BalanceCatalog.upgrade(&"cannon_range_1").total_bonus
 	if not unit.military:
