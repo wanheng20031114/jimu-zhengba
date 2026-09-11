@@ -280,12 +280,13 @@ def infantry(name, archer=False):
             s.r(body,(xx,.13,zz),(xx+.045,yy,zz),.012,"woodlight",6)
             s.b(body,(.073,.103,.008),(xx+.038,yy-.018,zz),"ivory",rot=(0,0,-.12),bevel=.002)
     else:
-        s.b(body,(.47,.39,.17),(0,.105,-.22),"steel",bevel=.075)
-        s.b(body,(.035,.35,.024),(0,.1,-.317),"edge",bevel=.006)
+        # Leave a visible throat gap between the breastplate and cheek guards.
+        s.b(body,(.47,.35,.14),(0,.065,-.20),"steel",bevel=.060)
+        s.b(body,(.035,.31,.024),(0,.065,-.282),"edge",bevel=.006)
         for sign in (-1,1):
             for i in range(3):
                 s.b(body,(.20,.065,.095),(sign*.145,-.24-i*.060,-.175),"darksteel",rot=(0,0,-sign*.09),bevel=.016)
-        helmet(s,head,(0,.025,0))
+        helmet(s,head,(0,.055,-.10))
     for part,sign in ((left,-1),(right,1)):
         s.e(part,(.235,.18,.24),(sign*.04,.018,0),"leather" if archer else "steel")
         if not archer:
@@ -294,11 +295,14 @@ def infantry(name, archer=False):
         # shoulder remains at its authored joint; moving the entire ArmLeft
         # instead would detach the pauldron from the torso during a strike.
         shield_arm = not archer and sign < 0
+        sword_arm = not archer and sign > 0
         elbow = (-.13,-.30,-.035) if shield_arm else (sign*.10,-.30,-.04)
         wrist = (-.21,-.42,-.25) if shield_arm else (sign*.11,-.49,-.11)
         hand = (-.22,-.43,-.28) if shield_arm else (sign*.12,-.54,-.115)
-        s.r(part,(sign*.045,-.08,0),elbow if shield_arm else (sign*.10,-.33,-.04),.106,"blue",8)
-        s.e(part,(.115,.10,.11),elbow if shield_arm else (sign*.10,-.30,-.055),"darksteel" if not archer else "leather")
+        if sword_arm:
+            elbow, wrist, hand = (.13,-.27,-.05), (.24,-.40,-.41), (.25,-.445,-.45)
+        s.r(part,(sign*.045,-.08,0),elbow if shield_arm or sword_arm else (sign*.10,-.33,-.04),.106,"blue",8)
+        s.e(part,(.115,.10,.11),elbow if shield_arm or sword_arm else (sign*.10,-.30,-.055),"darksteel" if not archer else "leather")
         fore=part
         origin=np.zeros(3)
         if archer and sign==1:
@@ -307,9 +311,11 @@ def infantry(name, archer=False):
         local=lambda p: tuple(np.array(p)-origin)
         s.r(fore,local(elbow),local(wrist),.100,"steel" if not archer else "leatherlight",8)
         cuff = (-.21,-.410,-.235) if shield_arm else (sign*.11,-.475,-.10)
+        if sword_arm:
+            cuff = (.23,-.385,-.395)
         s.b(fore,(.17,.085,.15),local(cuff),"gold" if not archer else "leather",bevel=.025)
         s.e(fore,(.097,.093,.1),local(hand),"skin" if archer else "darksteel")
-        studs = [(-.17,-.35,-.14),(-.195,-.39,-.21)] if shield_arm else [(sign*.10,-.37,-.144),(sign*.10,-.44,-.15)]
+        studs = [(-.17,-.35,-.14),(-.195,-.39,-.21)] if shield_arm else ([(.18,-.31,-.22),(.22,-.36,-.35)] if sword_arm else [(sign*.10,-.37,-.144),(sign*.10,-.44,-.15)])
         rivets(s,fore,[local(v) for v in studs],.015)
     for part in (ll,lr):
         s.r(part,(0,.01,0),(0,-.29,.02),.116,"leather" if archer else "darksteel",8)
@@ -337,7 +343,10 @@ def infantry(name, archer=False):
         shield(s,left,(-.24,-.37,-.425))
         # Back grip meets the gauntlet while the board clears the breastplate.
         s.r(left,(-.28,-.43,-.37),(-.16,-.43,-.37),.025,"leather",8)
-        sword(s,right,(.12,-.52,-.17))
+        # A wrist pivot keeps the hilt inside the gauntlet while the blade leads
+        # the cut. The arm no longer swings an upright sword as a rigid paddle.
+        blade = s.joint("Sword",(.25,-.415,-.45),parent=right)
+        sword(s,blade,(0,0,0))
         # Sheath and a small hip pouch complete the back and side silhouette.
         s.b(body,(.082,.58,.084),(-.27,-.25,.1),"leather",rot=(0,0,-.16))
         s.b(body,(.15,.17,.12),(.265,-.13,.08),"leatherlight",bevel=.025)
@@ -821,8 +830,9 @@ def attack_tracks(s):
         tracks.append((prop(part,"position"),[tuple(base+np.array(o)) for o in offsets],times))
     if s.name=="swordsman":
         t=[0,.075,.15,.195,.22,.26,.35,.51,.69,.86]
-        rot("Waist",[(0,0,0),(.035,.13,-.045),(.045,.38,-.10),(.035,.35,-.08),(-.12,-.45,.045),(-.13,-.61,.065),(-.055,-.38,.04),(.012,-.12,0),(0,.025,0),(0,0,0)],t)
-        rot("ArmRight",[(0,0,0),(.52,-.13,-.30),(1.0,-.40,-.78),(.88,-.44,-.72),(-1.38,.10,.28),(-1.56,.28,.47),(-.85,.21,.23),(-.20,.03,.02),(.045,0,0),(0,0,0)],t)
+        rot("Waist",[(0,0,0),(.02,.08,-.02),(.03,.16,-.04),(.02,.14,-.035),(-.06,-.10,.015),(-.075,-.16,.025),(-.035,-.10,.015),(.005,-.04,0),(0,.01,0),(0,0,0)],t)
+        rot("ArmRight",[(0,0,0),(.20,0,-.18),(.42,.04,-.30),(.46,.03,-.28),(.95,0,-.12),(.98,-.06,-.10),(.78,-.08,-.10),(.48,-.03,-.08),(.14,0,-.03),(0,0,0)],t)
+        rot("Sword",[(0,0,-.28),(.25,0,-.32),(.52,0,-.38),(.48,0,-.34),(-2.42,0,.08),(-3.05,0,.20),(-2.80,0,.18),(-1.85,0,.10),(-.60,0,-.10),(0,0,-.28)],t)
         rot("ArmLeft",[(0,0,0),(.18,-.10,.08),(.38,-.23,.19),(.42,-.26,.22),(.52,-.13,.15),(.50,-.08,.12),(.35,-.06,.075),(.14,0,.025),(0,0,0),(0,0,0)],t)
         rot("Head",[(0,0,0),(-.015,-.065,0),(-.02,-.22,.025),(-.01,-.21,.02),(.035,.27,-.02),(.045,.35,-.035),(.02,.24,-.02),(0,.08,0),(0,0,0),(0,0,0)],t)
         pos("Action",[(0,0,0),(-.02,-.018,.025),(-.03,-.035,.05),(-.01,-.02,.025),(.035,0,-.19),(.04,-.01,-.23),(.025,-.023,-.17),(.01,-.01,-.06),(0,0,0),(0,0,0)],t)
@@ -953,12 +963,17 @@ def write_scene(s):
             if p.startswith("String"):
                 tip_y=.57 if p=="StringUpper" else -.57
                 extra=f'\nrotation = {vec((math.atan2(-.02,tip_y),0,0))}\nscale = {vec((1,math.hypot(tip_y,.02),1))}'
+            if s.name == "swordsman" and p == "Sword":
+                extra = f'\nrotation = {vec((0,0,-.28))}'
             lines.append(f'[node name="{p}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[p])}\nmesh = ExtResource("{i+2}_{p}"){extra}')
         emitted.add(p)
     for p in parts:emit(p)
     lines.append(f'[node name="ProjectileSocket" type="Marker3D" parent="{socket_parent}"]\nposition = {vec(socket_position)}')
     lines += ['[node name="Locomotion" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
               '[node name="Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_attack")}']
+    lines += ['[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]\naabb = AABB(-4, -2, -4, 8, 9, 8)',
+              '[connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]',
+              '[connection signal="screen_exited" from="VisibilityNotifier" to="." method="_on_screen_exited"]']
     (OUT/f"{s.name}.tscn").write_text("\n\n".join(lines)+"\n",encoding="utf-8")
 
 
