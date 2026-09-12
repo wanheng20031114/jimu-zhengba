@@ -632,10 +632,10 @@ def war_elephant():
     brow=ellipsoid((.45,.34,.23),(0,.32,-.34),sub=2)
     s.add(head,tm.convex.convex_hull(np.vstack((skull.vertices,jaw.vertices,brow.vertices))),"elephant")
     for side in (-1,1):
-        # Face the eyes forward and outward, with their whole dark opening
-        # in front of the cheek surface rather than buried inside its facets.
-        eye=np.array((side*.46,.16,-.465))
+        # Seat the eyelid base in the cheek. Its previous centre was .038
+        # outside the skin, leaving even the back of the eye detached.
         normal=np.array((side*math.sin(.65),0,-math.cos(.65)))
+        eye=np.array((side*.46,.16,-.465))-normal*.04
         eye_rotation=(0,-side*.65,0)
         s.e(head,(.117,.081,.037),tuple(eye),"elephantdark",rot=eye_rotation)
         s.e(head,(.090,.060,.028),tuple(eye+normal*.026),"black",rot=eye_rotation)
