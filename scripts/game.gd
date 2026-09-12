@@ -1118,24 +1118,54 @@ func move_formation(army: Array, at: Vector3, assault: bool, queued: bool) -> vo
 	var spacing := 1.7
 	var largest_radius: float = 0.0
 	var center := Vector3.ZERO
+	var members: Array[Dictionary] = []
 	for unit: BattleUnit in army:
 		spacing = maxf(spacing, unit.radius * 2.3)
 		largest_radius = maxf(largest_radius, unit.radius)
-		center += unit.global_position
+		var origin: Vector3 = _formation_origin(unit, queued)
+		center += origin
+		members.append({"unit": unit, "origin": origin})
 	center /= army.size()
 	var forward := (at - center).normalized()
 	if forward.length_squared() < 0.01:
 		forward = Vector3.FORWARD
 	var right := Vector3(-forward.z, 0, forward.x)
+	# Preserve front-to-back ranks, then left-to-right order within each rank.
+	# Selection/entity order has no spatial meaning and used to make a whole
+	# formation exchange sides, overtake, then turn back to its assigned slots.
+	for member: Dictionary in members:
+		member["depth"] = member.origin.dot(forward)
+		member["side"] = member.origin.dot(right)
+	members.sort_custom(func(a: Dictionary, b: Dictionary):
+		if a.depth != b.depth: return a.depth > b.depth
+		if a.side != b.side: return a.side < b.side
+		return a.unit.entity_id < b.unit.entity_id)
 	# Small selections retain native paths. A group shares its macro route but
 	# each member still receives the same independent formation slot as before.
 	var plan: MovementPlan = MovementPlan.new(at, largest_radius) if army.size() >= 8 and $PathBudget.shared_paths_enabled else null
-	for index in range(army.size()):
-		var target := clamp_to_map(at + right * (float(index % columns) - float(columns - 1) * 0.5) * spacing - forward * float(index / columns) * spacing)
-		if queued:
-			army[index].queue_move(target, assault, plan)
-		else:
-			army[index].issue_move(target, assault, plan)
+	for start: int in range(0, members.size(), columns):
+		var rank: Array[Dictionary] = members.slice(start, mini(start + columns, members.size()))
+		rank.sort_custom(func(a: Dictionary, b: Dictionary):
+			return a.side < b.side if a.side != b.side else a.unit.entity_id < b.unit.entity_id)
+		@warning_ignore("integer_division")
+		var row: int = start / columns
+		for column: int in rank.size():
+			var target := clamp_to_map(at + right * (float(column) - float(rank.size() - 1) * 0.5) * spacing - forward * float(row) * spacing)
+			var unit: BattleUnit = rank[column].unit
+			if queued:
+				unit.queue_move(target, assault, plan)
+			else:
+				unit.issue_move(target, assault, plan)
+
+func _formation_origin(unit: BattleUnit, queued: bool) -> Vector3:
+	if queued:
+		for index: int in range(unit.waypoint_queue.size() - 1, -1, -1):
+			var job: Dictionary = unit.waypoint_queue[index]
+			if job.kind == "hold": continue
+			return job.position if job.kind == "move" else unit.global_position
+		if unit.order in [BattleUnit.Order.MOVE, BattleUnit.Order.ATTACK_MOVE]:
+			return unit.destination
+	return unit.global_position
 
 func notify_owner(owner: int, message: String) -> void:
 	if owner == local_owner_id:

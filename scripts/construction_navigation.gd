@@ -27,6 +27,7 @@ var _corridor_size := Vector2i.ZERO
 var _corridor_stride: int = 0
 var _blocked_prefix := PackedInt32Array()
 var _flow_blocked := PackedByteArray()
+var _published_map_iteration: int = 0
 
 class MeshJob extends RefCounted:
 	var revision: int
@@ -113,6 +114,7 @@ func _physics_process(_delta: float) -> void:
 		_start_job()
 		return
 	compact_polygon_count = 0
+	_published_map_iteration = NavigationServer3D.map_get_iteration_id(get_parent().get_world_3d().navigation_map)
 	for index: int in _job.results.size():
 		var region: NavigationRegion3D = _sources[index].region
 		region.navigation_mesh = _job.results[index]
@@ -125,6 +127,11 @@ func is_rebuilding() -> bool:
 	# Resource work only. NavigationServer publishes the replacement through
 	# its normal asynchronous region/map iterations after this task finishes.
 	return _task_id >= 0
+
+func paths_ready() -> bool:
+	# Logical footprints change immediately. A native query must wait for both
+	# the worker mesh and its next server publication, or it sees the old gap.
+	return _task_id < 0 and NavigationServer3D.map_get_iteration_id(get_parent().get_world_3d().navigation_map) != _published_map_iteration
 
 func topology_revision() -> int:
 	return _revision

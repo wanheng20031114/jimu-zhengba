@@ -1,0 +1,236 @@
+{
+  "baseline_commit": "8df2187",
+  "engine": "4.6.3.stable.official.7d41c59c4",
+  "repositories": [
+    {
+      "name": "OpenRA",
+      "path": "tmp/OpenRA",
+      "url": "https://github.com/OpenRA/OpenRA",
+      "commit": "f3ec7f8e1593b482f85fd101652deb740c33dee6",
+      "date": "2026-09-05",
+      "license": "GPL-3.0"
+    },
+    {
+      "name": "0 A.D.",
+      "path": "tmp/0ad",
+      "url": "https://github.com/0ad/0ad",
+      "commit": "61a3b9507d974084e6badb88a0826bd89a6d5b8b",
+      "date": "2024-08-17",
+      "license": "GPL-2.0-or-later (engine)",
+      "status": "Archived mirror; official Gitea Git endpoint unavailable during review"
+    },
+    {
+      "name": "Recoil",
+      "path": "tmp/RecoilEngine",
+      "url": "https://github.com/beyond-all-reason/RecoilEngine",
+      "commit": "05c054cbe2249feda3637cabfe122b75241113e9",
+      "date": "2026-09-11",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "name": "Godot",
+      "path": "tmp/godot",
+      "url": "https://github.com/godotengine/godot",
+      "commit": "35e80b3a8822a9df9be390814b62f44c0a9c69e8",
+      "date": "2026-05-20",
+      "tag": "4.6.3-stable",
+      "license": "MIT",
+      "status": "Reference source; commit differs from installed binary version hash"
+    }
+  ],
+  "original_reproduction": {
+    "units": 16,
+    "types": [
+      "knight",
+      "light_cavalry"
+    ],
+    "seed": 91821,
+    "start": "4 x 4, X=(column-1.5)*1.85, Z=-12-row*1.85",
+    "goal": [
+      0,
+      0,
+      16
+    ],
+    "before": {
+      "arrived": 7,
+      "native_queries": 57,
+      "travelled": 535.3961448823102,
+      "backward_motion_ticks": 554,
+      "abrupt_motion_turns": 21
+    },
+    "after": {
+      "arrived": 16,
+      "native_queries": 8,
+      "travelled": 450.91637552157044,
+      "backward_motion_ticks": 31,
+      "abrupt_motion_turns": 1
+    },
+    "before_physics_ticks": 540,
+    "after_physics_ticks": 198,
+    "note": "First structural prototype. Includes legitimate retreat/RVO motion, not a claim of zero backwards movement in all terrain."
+  },
+  "worst_native_open_route": {
+    "goal": "(9.5, 0.0, -21.5)",
+    "path": "[(25.5, 0.0, -6.5), (29.0, 0.0, -7.0), (19.0, 0.0, -7.0), (18.0, 0.0, -7.0), (17.0, 0.0, -7.0), (13.0, 0.0, -7.0), (12.0, 0.0, -12.0), (10.0, 0.0, -19.6), (9.5, 0.0, -21.5)]",
+    "ratio": 1.57114926563682,
+    "start": "(25.5, 0.0, -6.5)"
+  },
+  "movement_regression": {
+    "cavalry": {
+      "arrived": 16,
+      "native_queries": 0,
+      "path_reversals": 0,
+      "ticks": 96,
+      "travel_ratio": 0.973459309885423,
+      "units": 16
+    },
+    "checks": 1002,
+    "failures": [],
+    "infantry": {
+      "arrived": 16,
+      "native_queries": 0,
+      "path_reversals": 0,
+      "ticks": 165,
+      "travel_ratio": 0.969227617134072,
+      "units": 16
+    },
+    "mixed": {
+      "arrived": 16,
+      "native_queries": 0,
+      "path_reversals": 0,
+      "ticks": 157,
+      "travel_ratio": 0.970827015525577,
+      "units": 16
+    },
+    "open_routes": {
+      "native_detours": 121,
+      "native_worst_ratio": 1.57114926563682,
+      "resolved_detours": 0,
+      "samples": 219
+    }
+  },
+  "real_map_budget": {
+    "mode": "1v1",
+    "units": 70,
+    "all_paths_ticks": 3,
+    "max_path_ms": 102.815,
+    "native_query_count": 52,
+    "query_ticks": [
+      {
+        "queries": 18,
+        "query_ms": 2.161,
+        "tick": 1
+      },
+      {
+        "queries": 18,
+        "query_ms": 2.271,
+        "tick": 2
+      },
+      {
+        "queries": 16,
+        "query_ms": 2.103,
+        "tick": 3
+      }
+    ],
+    "failures": []
+  },
+  "validation": {
+    "path_budget": {
+      "checks": 94,
+      "failures": []
+    },
+    "path_budget_startup": {
+      "checks": 15,
+      "failures": []
+    },
+    "light_cavalry_navigation": {
+      "checks": 8,
+      "failures": []
+    },
+    "war_elephant_navigation": {
+      "checks": 8,
+      "failures": []
+    },
+    "mining_contact": {
+      "checks": 192,
+      "failures": []
+    },
+    "engagement_approach": {
+      "checks": 340,
+      "failures": []
+    },
+    "pursuit_attack": {
+      "checks": 536,
+      "failures": []
+    },
+    "legacy_construction": {
+      "checks": 45,
+      "failure_count": 7,
+      "unchanged_baseline_failure_count": 7,
+      "extra_fixture_error": "Missing Buildings/EnemyKeep"
+    },
+    "legacy_command_queue": {
+      "checks": 100,
+      "failures": [
+        "one_group_keypress_buys_one_unit"
+      ],
+      "baseline_failures": [
+        "one_group_keypress_buys_one_unit"
+      ]
+    }
+  },
+  "limitations": [
+    "Not a global Euclidean shortest-path implementation for arbitrary obstacle layouts",
+    "No complete 500-896 unit battle FPS claim",
+    "Main regressions executed in an isolated worktree to avoid concurrent incomplete engineer assets"
+  ],
+  "merged_workspace_validation": {
+    "movement": {
+      "cavalry": {
+        "arrived": 16,
+        "native_queries": 0,
+        "path_reversals": 0,
+        "ticks": 96,
+        "travel_ratio": 0.973318526002911,
+        "units": 16
+      },
+      "checks": 1003,
+      "failures": [],
+      "infantry": {
+        "arrived": 16,
+        "native_queries": 0,
+        "path_reversals": 0,
+        "ticks": 165,
+        "travel_ratio": 0.968957962338625,
+        "units": 16
+      },
+      "mixed": {
+        "arrived": 16,
+        "native_queries": 0,
+        "path_reversals": 0,
+        "ticks": 158,
+        "travel_ratio": 0.970671159213154,
+        "units": 16
+      },
+      "open_routes": {
+        "native_detours": 121,
+        "native_worst_ratio": 1.57114926563682,
+        "resolved_detours": 0,
+        "samples": 219
+      }
+    },
+    "path_budget": {
+      "checks": 94,
+      "failures": []
+    },
+    "path_budget_startup": {
+      "checks": 15,
+      "failures": []
+    },
+    "engagement_approach": {
+      "checks": 340,
+      "failures": []
+    },
+    "editor_import": "passed"
+  }
+}

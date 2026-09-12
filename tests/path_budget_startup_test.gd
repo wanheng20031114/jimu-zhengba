@@ -40,7 +40,7 @@ func _run() -> void:
 	var unit: BattleUnit = spawn(Vector3(-10, 0, -10))
 	unit.issue_move(Vector3(10, 0, 10))
 	await step(3)
-	check(unit.navigation_agent.get_current_navigation_path().is_empty(), "disabled region returns a real empty native corridor")
+	check(budget.current_path(unit).is_empty(), "disabled region returns a real empty native corridor")
 	check(budget.is_blocked(unit) and budget.has_pending(unit), "empty corridor explicitly retains a blocked pending intent")
 	check(not budget.is_finished(unit) and unit.order == BattleUnit.Order.MOVE, "startup cannot silently complete the move order")
 	var before: int = budget.total_queries
@@ -50,7 +50,7 @@ func _run() -> void:
 	check(budget.total_queries == before, "unchanged empty map and repeated orders do not poll native queries")
 	region.enabled = true
 	await step(6)
-	check(not unit.navigation_agent.get_current_navigation_path().is_empty(), "late region automatically resolves the original intent")
+	check(not budget.current_path(unit).is_empty(), "late region automatically resolves the original intent")
 	check(budget.total_queries == before + 1, "one new map iteration dispatches exactly one recovery query")
 	check(not budget.is_blocked(unit) and not budget.has_pending(unit), "resolved corridor leaves the blocked state")
 	check(unit.position.distance_to(Vector3(-10, 0, -10)) > 0.05, "real unit movement starts without another player command")

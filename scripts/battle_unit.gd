@@ -286,8 +286,8 @@ func _physics_process(delta: float) -> void:
 		_model.set_motion(_moving)
 	if navigation_agent.avoidance_enabled:
 		_set_avoidance_moving(is_moving)
-		# NavigationAgent stops forwarding velocity after its path completes.
-		# Drive the same native RVO agent directly, including the final wall step.
+		# Feed the native RVO agent directly: route progression is owned by
+		# PathBudget, including direct movement and the final wall-contact step.
 		NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), desired_velocity)
 	else:
 		_apply_velocity(desired_velocity)
@@ -344,10 +344,11 @@ func _path_velocity() -> Vector3:
 	var direction: Vector3 = next_position - global_position
 	direction.y = 0.0
 	if direction.length_squared() < 0.01 or _path_budget.is_finished(self):
-		if _path_budget.has_pending(self):
-			_face_direction(_path_budget.target_position(self) - global_position, get_physics_process_delta_time())
 		return Vector3.ZERO
-	return direction.normalized() * speed
+	# Never overshoot a short waypoint on a coarse physics tick. Waiting for
+	# a route keeps the existing heading; the final goal may be behind a wall.
+	var delta: float = get_physics_process_delta_time()
+	return direction.limit_length(speed * delta) / delta
 
 func _set_avoidance_moving(moving: bool) -> void:
 	if _avoidance_moving == moving:
@@ -667,11 +668,8 @@ func _work_velocity(delta: float) -> Vector3:
 			# agent's target tolerance while its last path waypoint remains short
 			# of that contact. Hand over at the actual final waypoint, so the
 			# path follower's 10 cm stop band cannot strand a miner 24 cm away.
-			# These native const getters do not issue another path query.
-			var path: PackedVector3Array = navigation_agent.get_current_navigation_path()
-			reached_approach = reached_approach or (not path.is_empty()
-				and navigation_agent.get_current_navigation_path_index() >= path.size() - 1
-				and global_position.distance_squared_to(path[-1]) <= pow(navigation_agent.path_desired_distance, 2.0))
+			# Reading the owned route cursor cannot issue another path query.
+			reached_approach = reached_approach or _path_budget.at_path_end(self, navigation_agent.path_desired_distance)
 		if reached_approach and distance.length_squared() <= pow(reach + ResourceVein.MAX_CONTACT_APPROACH, 2.0):
 			# The baked clearance band can end just outside a worker's reach.
 			# CharacterBody3D supplies the final collision-safe contact step.

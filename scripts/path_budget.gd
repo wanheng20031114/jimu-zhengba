@@ -1,9 +1,8 @@
 class_name PathBudget
 extends Node
-## Owns every lazy NavigationAgent3D path update. Native agents still follow
-## their own corridor and solve RVO; this node schedules only costly replans.
-## get_next_path_position AND is_navigation_finished can run a native query:
-## https://docs.godotengine.org/en/stable/classes/class_navigationagent3d.html
+## Owns intent, budgeted native queries and route progress. NavigationAgent3D
+## supplies RVO only; its lazy path getters never drive gameplay or completion.
+## https://docs.godotengine.org/en/4.6/tutorials/navigation/navigation_using_navigationpathqueryobjects.html
 
 @export_range(1, 64, 1) var queries_per_tick: int = 24
 # Opt in during controlled profiling. Correctness alone is not evidence that
@@ -21,6 +20,8 @@ class Route extends RefCounted:
 	var goal: Vector3
 	var next: Vector3
 	var path: PackedVector3Array
+	var corridor := PathCorridor.new()
+	var topology: int = -1
 	var active: bool = false
 	var finished: bool = true
 	var iteration: int = 0
@@ -34,6 +35,8 @@ class Route extends RefCounted:
 	var shared_following: bool = false
 
 var queries_this_tick: int = 0
+var resolved_this_tick: int = 0
+var total_direct_routes: int = 0
 var query_usec_this_tick: int = 0
 var total_queries: int = 0
 var max_wait_ticks: int = 0
@@ -51,6 +54,8 @@ var map_iteration_native_reads: int = 0
 var map_iteration_cache_hits: int = 0
 var _map_iteration_tick: int = -1
 var _map_iterations: Dictionary = {}
+var _query := NavigationPathQueryParameters3D.new()
+var _result := NavigationPathQueryResult3D.new()
 
 func _ready() -> void:
 	# A region update invalidates this map even if it is published after the
@@ -83,7 +88,7 @@ func set_walkability(navigation: ConstructionNavigation) -> void:
 
 func try_direct_pursuit(unit: BattleUnit, at: Vector3) -> bool:
 	var route: Route = _routes[unit.get_instance_id()]
-	if _walkability == null or unit.global_position.distance_squared_to(at) > DIRECT_PURSUIT_DISTANCE * DIRECT_PURSUIT_DISTANCE or not _walkability.has_clear_corridor(unit.global_position, at, unit.radius):
+	if _walkability == null or route.agent.navigation_layers != 1 or unit.global_position.distance_squared_to(at) > DIRECT_PURSUIT_DISTANCE * DIRECT_PURSUIT_DISTANCE or not _walkability.has_clear_corridor(unit.global_position, at, unit.radius):
 		if route.direct:
 			cancel(unit)
 		return false
@@ -99,15 +104,9 @@ func register(unit: BattleUnit) -> void:
 	var route := Route.new()
 	route.unit = weakref(unit)
 	route.agent = unit.navigation_agent
-	if omit_path_metadata:
-		# No path/link metadata consumer exists in this game's flat maps. Native
-		# query points, endpoint state and navigation_finished remain unchanged.
-		route.agent.path_metadata_flags = NavigationPathQueryParameters3D.PATH_METADATA_INCLUDE_NONE
 	route.goal = unit.global_position
 	route.next = unit.global_position
 	_routes[unit.get_instance_id()] = route
-	route.agent.navigation_finished.connect(_on_finished.bind(unit.get_instance_id()))
-	route.agent.path_changed.connect(_on_path_changed)
 
 func unregister(unit: BattleUnit) -> void:
 	_waiting_for_map.erase(unit.get_instance_id())
@@ -146,6 +145,7 @@ func cancel(unit: BattleUnit) -> void:
 	route.active = false
 	route.finished = true
 	route.path.clear()
+	route.corridor.clear()
 
 func has_pending(unit: BattleUnit) -> bool:
 	var route: Route = _routes[unit.get_instance_id()]
@@ -158,6 +158,13 @@ func is_blocked(unit: BattleUnit) -> bool:
 
 func target_position(unit: BattleUnit) -> Vector3:
 	return _routes[unit.get_instance_id()].goal
+
+func current_path(unit: BattleUnit) -> PackedVector3Array:
+	return _routes[unit.get_instance_id()].path
+
+func at_path_end(unit: BattleUnit, tolerance: float) -> bool:
+	var route: Route = _routes[unit.get_instance_id()]
+	return route.active and route.corridor.at_end(unit.global_position, tolerance)
 
 func is_finished(unit: BattleUnit) -> bool:
 	var route: Route = _routes[unit.get_instance_id()]
@@ -182,11 +189,13 @@ func _enqueue(id: int, route: Route) -> void:
 
 func _physics_process(_delta: float) -> void:
 	queries_this_tick = 0
+	resolved_this_tick = 0
 	query_usec_this_tick = 0
 	shared_samples_this_tick = 0
 	if not get_parent().is_authority: return
 	if _walkability != null:
 		shared_paths.poll(_walkability.topology_revision())
+		if not _walkability.paths_ready(): return
 	var tick: int = Engine.get_physics_frames()
 	for id: int in _waiting_for_map.keys():
 		var waiting: Route = _waiting_for_map[id]
@@ -197,7 +206,9 @@ func _physics_process(_delta: float) -> void:
 			continue
 		if _map_iteration(waiting.agent.get_navigation_map(), tick) != waiting.iteration:
 			_enqueue(id, waiting)
-	while _head < _queue.size() and queries_this_tick < queries_per_tick:
+	# Even certified direct routes count against scheduling work. An open-field
+	# command to hundreds of units must not become an unbounded single tick.
+	while _head < _queue.size() and resolved_this_tick < queries_per_tick:
 		var entry: Array = _queue[_head]
 		_head += 1
 		if not _routes.has(entry[0]): continue
@@ -217,13 +228,30 @@ func _physics_process(_delta: float) -> void:
 		route.finished = false
 		max_wait_ticks = maxi(max_wait_ticks, tick - route.requested_tick)
 		var began: int = Time.get_ticks_usec()
-		route.agent.target_position = route.goal
-		# Target assignment invalidates the path. Execute its actual query here.
-		route.next = route.agent.get_next_path_position()
-		route.path = route.agent.get_current_navigation_path()
+		if _walkability != null and route.agent.navigation_layers == 1 and _walkability.has_clear_corridor(unit.global_position, route.goal, unit.radius):
+			# A whole-body line certificate is both shorter and cheaper than A*.
+			# Apply to ordinary MOVE at any distance, not just close pursuit.
+			route.path = PackedVector3Array([unit.global_position, route.goal])
+			total_direct_routes += 1
+		else:
+			_query.map = route.agent.get_navigation_map()
+			_query.start_position = unit.global_position
+			_query.target_position = route.goal
+			_query.navigation_layers = route.agent.navigation_layers
+			_query.path_search_max_polygons = route.agent.path_search_max_polygons
+			_query.metadata_flags = NavigationPathQueryParameters3D.PATH_METADATA_INCLUDE_NONE if omit_path_metadata else route.agent.path_metadata_flags
+			NavigationServer3D.query_path(_query, _result)
+			route.path = _result.path
+			queries_this_tick += 1
+			total_queries += 1
+		route.corridor.reset(route.path, unit.global_position)
+		route.path = route.corridor.points
+		route.next = unit.global_position
+		route.topology = _walkability.topology_revision() if _walkability != null else -1
+		resolved_this_tick += 1
 		query_usec_this_tick += Time.get_ticks_usec() - began
 		route.iteration = iteration
-		route.sampled_tick = tick
+		route.sampled_tick = -1
 		if route.path.is_empty():
 			# The map can publish its empty first iteration before its asynchronously
 			# built region arrives. Retain the intent and retry only on a new map
@@ -251,6 +279,7 @@ func next_position(unit: BattleUnit) -> Vector3:
 				route.active = false
 				route.finished = false
 				route.path.clear()
+				route.corridor.clear()
 				route.shared_following = true
 			shared_samples_this_tick += 1
 			total_shared_samples += 1
@@ -262,27 +291,26 @@ func next_position(unit: BattleUnit) -> Vector3:
 		_enqueue(unit.get_instance_id(), route)
 	if not route.active or route.finished: return unit.global_position
 	var tick: int = Engine.get_physics_frames()
-	if route.sampled_tick == tick: return route.next
 	var iteration: int = _map_iteration(route.agent.get_navigation_map(), tick)
-	if iteration != route.iteration:
+	if iteration != route.iteration or (_walkability != null and route.topology != _walkability.topology_revision()):
 		# A new footprint may remove the old corridor. Wait before advancing.
 		_enqueue(unit.get_instance_id(), route)
 		return unit.global_position
-	var index: int = route.agent.get_current_navigation_path_index()
-	if index > 0 and index < route.path.size():
-		var nearest: Vector3 = Geometry3D.get_closest_point_to_segment(unit.global_position, route.path[index - 1], route.path[index])
-		if unit.global_position.distance_squared_to(nearest) >= route.agent.path_max_distance * route.agent.path_max_distance:
-			# Catch native off-corridor replans before a lazy getter bypasses us.
-			_enqueue(unit.get_instance_id(), route)
-			return route.next
-	route.next = route.agent.get_next_path_position()
+	if route.sampled_tick == tick: return route.next
+	var end_distance: float = route.agent.target_desired_distance
+	if not route.path.is_empty() and route.path[-1].distance_squared_to(route.goal) > end_distance * end_distance:
+		end_distance = route.agent.path_desired_distance
+	var lookahead: float = maxf(unit.radius, unit.speed * 0.25)
+	# The authored footprint cache certifies layer 1 only. Other native layers
+	# retain their own corridor without taking shortcuts through this cache.
+	var navigation: ConstructionNavigation = _walkability if route.agent.navigation_layers == 1 else null
+	route.next = route.corridor.next_position(unit.global_position, route.agent.path_desired_distance, end_distance, lookahead, navigation, unit.radius)
+	if route.corridor.distance_squared_to_segment(unit.global_position) >= route.agent.path_max_distance * route.agent.path_max_distance:
+		_enqueue(unit.get_instance_id(), route)
+		return unit.global_position
+	route.finished = route.corridor.finished
 	route.sampled_tick = tick
 	return route.next
-
-func _on_finished(id: int) -> void:
-	var route: Route = _routes[id]
-	if route.active and not route.shared_following:
-		route.finished = true
 
 func _shared_next(unit: BattleUnit, route: Route) -> Vector3:
 	var field: SharedFlowField = shared_paths.resolve(route.plan, _walkability)
@@ -315,8 +343,3 @@ func _exit_tree() -> void:
 	NavigationServer3D.map_changed.disconnect(_on_navigation_map_changed)
 	_map_iterations.clear()
 	shared_paths.shutdown()
-
-func _on_path_changed() -> void:
-	# Counts actual queries, including accidental budget escapes in tests.
-	queries_this_tick += 1
-	total_queries += 1

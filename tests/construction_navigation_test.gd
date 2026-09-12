@@ -6,7 +6,6 @@ var navigation: ConstructionNavigation
 var failures: Array[String] = []
 var checks: int = 0
 var ending: bool = false
-var agent_path_changes: int = 0
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -43,10 +42,10 @@ func _run() -> void:
 	var finish: Vector3 = at + Vector3(7, 0.03, 0)
 	var original: PackedVector3Array = _path(start, finish)
 	var marching: BattleUnit = _unit("knight", 0, start)
-	marching.navigation_agent.path_changed.connect(func(): agent_path_changes += 1)
 	marching.issue_move(finish)
-	marching.navigation_agent.get_next_path_position()
-	var changes_before: int = agent_path_changes
+	await _route(marching)
+	var budget: PathBudget = game.get_node("PathBudget")
+	var changes_before: int = budget.total_queries
 	var tower: BattleBuilding = _tower(at)
 	navigation.refresh()
 	_check(not navigation.contains_walkable_point(at), "same-frame placement cache prevents spawning inside a new site")
@@ -57,9 +56,9 @@ func _run() -> void:
 	_check(not navigation.is_placement_clear(at), "existing foundation rejects overlapping placement")
 	_check(_length(around) > _length(original) + 0.5, "native path detours around an unfinished tower")
 	_check(_avoids_footprint(around, at), "every detour segment stays outside the tower footprint")
-	marching.navigation_agent.get_next_path_position()
-	_check(agent_path_changes > changes_before, "existing NavigationAgent receives a path change after tower placement")
-	_check(marching.order == BattleUnit.Order.MOVE and _length(marching.navigation_agent.get_current_navigation_path()) > _length(original) + 0.5, "existing move command automatically follows the rebuilt detour")
+	await _route(marching)
+	_check(budget.total_queries > changes_before, "existing move receives a budgeted path change after tower placement")
+	_check(marching.order == BattleUnit.Order.MOVE and _length(budget.current_path(marching)) > _length(original) + 0.5, "existing move command automatically follows the rebuilt detour")
 	var iterations: int = navigation.rebuild_count
 	for repeat: int in range(12):
 		navigation.refresh()
@@ -125,8 +124,8 @@ func _run() -> void:
 	navigation.refresh()
 	await _sync()
 	_check(_length(_path(start, finish)) <= _length(original) + 0.05, "destroying the tower restores its former passage")
-	marching.navigation_agent.get_next_path_position()
-	_check(_length(marching.navigation_agent.get_current_navigation_path()) <= _length(original) + 0.05, "existing NavigationAgent also restores its original direct route")
+	await _route(marching)
+	_check(_length(budget.current_path(marching)) <= _length(original) + 0.05, "existing movement intent also restores its original direct route")
 	_check(navigation.is_placement_clear(at), "destroyed tower permits rebuilding on the cleared footprint")
 	_check(navigation.contains_walkable_point(at), "same-frame placement cache restores cleared ground")
 	var cancel_site: BattleBuilding = _tower(at)
@@ -238,6 +237,14 @@ func _sync() -> void:
 		await process_frame
 	NavigationServer3D.map_force_update(game.get_world_3d().navigation_map)
 	await physics_frame
+
+func _route(unit: BattleUnit) -> void:
+	var budget: PathBudget = game.get_node("PathBudget")
+	budget.next_position(unit)
+	while budget.has_pending(unit):
+		await physics_frame
+		await process_frame
+	budget.next_position(unit)
 
 func _path(start: Vector3, finish: Vector3) -> PackedVector3Array:
 	return NavigationServer3D.map_get_path(game.get_world_3d().navigation_map, start, finish, true)

@@ -63,9 +63,9 @@ func _run() -> void:
 	check(Engine.get_physics_frames() - began <= 3, "a player's seventy units receive paths within 100ms at 30TPS")
 	check(budget.total_queries - before == 70, "single-player batch does not retain cancelled jobs")
 	var first: BattleUnit = units[0]
-	var old_goal: Vector3 = first.navigation_agent.target_position
+	var old_path: PackedVector3Array = budget.current_path(first)
 	first.issue_move(Vector3(25, 0, -25))
-	check(first.navigation_agent.target_position == old_goal, "a pending replacement retains the native old corridor")
+	check(budget.current_path(first) == old_path, "a pending replacement retains the old corridor")
 	check(budget.next_position(first) != first.position, "an existing path continues while a replacement waits")
 	first.stop()
 	before = budget.total_queries

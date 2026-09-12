@@ -198,7 +198,7 @@ func _diagnostics() -> Dictionary:
 			"destination": game.vector_data(unit.destination), "order": unit.order_name, "working": unit._working,
 			"work_seconds": unit._work_seconds, "claimed_mine": unit._claimed_mine,
 			"target": unit.work_target.entity_id if is_instance_valid(unit.work_target) else 0,
-			"path_points": unit.navigation_agent.get_current_navigation_path().size(),
+			"path_points": paths.current_path(unit).size(),
 			"nearest_nav": game.vector_data(NavigationServer3D.map_get_closest_point(map, unit.position)) if map_iteration > 0 else null})
 	for building: BattleBuilding in get_tree().get_nodes_in_group("buildings"):
 		if not building.alive:

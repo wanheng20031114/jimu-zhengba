@@ -8,6 +8,7 @@ __pycache__/
 *.log
 *.pid
 .local/
+tmp/
 builds/
 artifacts/*
 !artifacts/.gdignore
