@@ -1460,11 +1460,11 @@ material_override = ExtResource("2_material")
 multimesh = SubResource("batch_101")
 metadata/batch_key = &"engineer::Rig/Action/Waist/ArmRight/ForearmRight"
 
-[node name="Engineer_Rig_Action_Waist_Hammer" type="MultiMeshInstance3D" parent="."]
+[node name="Engineer_Rig_Action_Waist_ArmRight_ForearmRight_Hammer" type="MultiMeshInstance3D" parent="."]
 physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_102")
-metadata/batch_key = &"engineer::Rig/Action/Waist/Hammer"
+metadata/batch_key = &"engineer::Rig/Action/Waist/ArmRight/ForearmRight/Hammer"
 
 [node name="Engineer_Rig_Action_LegLeft" type="MultiMeshInstance3D" parent="."]
 physics_interpolation_mode = 2

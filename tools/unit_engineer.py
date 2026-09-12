@@ -1,5 +1,16 @@
 """Engineer sculpture and saved rigid animations. Imported by build_units.py."""
-from build_units import Sculpture, OUT, lathe, polygon, anim_resource, vec, farmer_arm_pose
+from build_units import Sculpture, OUT, lathe, polygon, ring, anim_resource, vec, farmer_arm_pose, godot_rotation, godot_euler
+
+GRIP = (.025,-.235,-.055)
+CARRY = (.39,-.08,-.28)
+CARRY_ROTATION = (-.65,0,-.06)
+
+
+def tool_wrist_rotation(s, target, rotation):
+    """Bake a wrist angle; the saved forearm hierarchy owns all grip translation."""
+    shoulder, forearm = farmer_arm_pose(s, 'Right', target)
+    parent_basis = godot_rotation(shoulder) @ godot_rotation(forearm)
+    return godot_euler(parent_basis.T @ godot_rotation(rotation))
 
 
 def build_engineer():
@@ -34,9 +45,26 @@ def build_engineer():
     # Open face with eyes at the same relative height as the infantry heads.
     s.e(head, (.235,.253,.22), (0,-.015,-.01), 'skin', sub=2)
     s.e(head, (.247,.15,.232), (0,.12,.022), 'mane')
-    s.add(head, lathe([(.115,.25),(.17,.264),(.25,.21),(.29,.06)], 10), 'blue')
-    s.add(head, lathe([(.104,.254),(.143,.265)], 10, caps=False), 'leatherlight')
-    s.b(head, (.26,.037,.07), (0,.144,-.238), 'leather', bevel=.012)
+    # A reinforced work cap with lifted octagonal goggles. The lenses sit on
+    # the cap, leaving the eyes and brows open; blue panels retain team color.
+    s.add(head, lathe([(.115,.25),(.18,.27),(.30,.215),(.34,.11)], 10), 'blue')
+    s.add(head, lathe([(.105,.254),(.15,.271)], 10, caps=False), 'leather')
+    s.b(head, (.39,.04,.15), (0,.141,-.245), 'leatherlight', bevel=.02)
+    s.add(head, lathe([(.195,.265),(.234,.249)], 10, caps=False), 'leather')
+    for sign in (-1,1):
+        x=sign*.089
+        s.r(head,(x,.229,-.236),(x,.229,-.274),.075,'leather',8)
+        s.add(head, ring(.069,.012,(x,.229,-.275),n=8,m=4), 'bronzelight')
+        s.r(head,(x,.229,-.273),(x,.229,-.286),.054,'darksteel',8)
+        s.b(head,(.018,.045,.008),(x-.013,.241,-.294),'edge',rot=(0,0,-.35),bevel=.003)
+        s.b(head,(.055,.031,.035),(sign*.18,.217,-.188),'bronze',bevel=.006)
+        s.r(head,(sign*.19,.224,-.187),(sign*.153,.229,-.266),.015,'leather',6)
+    s.b(head,(.051,.023,.027),(0,.23,-.278),'bronze',bevel=.006)
+    s.b(head,(.065,.073,.025),(0,.206,.266),'bronzelight',bevel=.008)
+    s.b(head,(.032,.038,.013),(0,.206,.285),'leather',bevel=.003)
+    # Small stitched reinforcing seam over the crown, instead of a soldier crest.
+    s.r(head,(0,.324,-.12),(0,.354,.035),.015,'leatherlight',6)
+    s.r(head,(0,.354,.035),(0,.30,.18),.015,'leatherlight',6)
     for sign in (-1,1):
         s.e(head, (.044,.072,.057), (sign*.226,-.022,0), 'skin')
         s.b(head, (.046,.028,.016), (sign*.084,.026,-.229), 'black', bevel=.003)
@@ -50,8 +78,11 @@ def build_engineer():
         s.add(part, lathe([(-.03,.103),(.03,.105)],8,(sign*.035,-.19,0)), 'ivory')
         fore = s.joint('ForearmLeft' if sign < 0 else 'ForearmRight', (sign*.045,-.24,0), part)
         s.r(fore, (0,0,0), (sign*.025,-.20,-.045), .075, 'skin', 8)
-        s.b(fore, (.14,.10,.14), (sign*.025,-.20,-.048), 'leatherlight', bevel=.018)
-        s.e(fore, (.081,.078,.09), (sign*.025,-.235,-.055), 'leatherlight')
+        s.b(fore, (.14,.074,.13), (sign*.025,-.185,-.048), 'leatherlight', bevel=.018)
+        if sign<0:
+            s.e(fore, (.081,.078,.09), (sign*.025,-.235,-.055), 'leatherlight')
+        else:
+            s.e(fore, (.061,.046,.061), (.025,-.208,-.049), 'leatherlight')
     for name,x in (('LegLeft',-.155),('LegRight',.155)):
         leg = s.joint(name,(x,.74,0))
         s.r(leg,(0,0,0),(0,-.34,.005),.103,'black',8)
@@ -61,9 +92,18 @@ def build_engineer():
         s.b(leg,(.19,.036,.166),(0,-.35,0),'leatherlight',bevel=.007)
     waist=s.pivot('Waist',(0,1.05,0))
     for part in (body,head,left,right): s.reparent(part,waist)
-    hammer=s.joint('Hammer',(.39,-.19,-.09),waist)
-    s.r(hammer,(0,-.18,0),(0,.42,0),.033,'woodlight',8)
-    s.r(hammer,(0,-.13,0),(0,.12,0),.039,'leather',8)
+    hammer=s.joint('Hammer',GRIP,'ForearmRight')
+    s.r(hammer,(0,-.17,0),(0,.42,0),.030,'woodlight',8)
+    s.r(hammer,(0,-.10,0),(0,.095,0),.034,'leather',8)
+    # Closed fingers have an actual central opening for the handle. The fist
+    # and tool share one rigid part, while the rounded cuff joins the wrist.
+    fist=lathe([(-.064,.044),(-.064,.077),(-.056,.083),(-.039,.083),
+                (-.034,.077),(-.029,.083),(.004,.083),(.009,.077),
+                (.014,.083),(.054,.083),(.062,.077),(.062,.044),
+                (-.064,.044)],8,caps=False)
+    fist.apply_scale((1,1,.87))
+    s.add(hammer,fist,'leatherlight')
+    s.b(hammer,(.064,.066,.06),(-.069,.027,.018),'leatherlight',rot=(0,0,-.3),bevel=.013)
     s.b(hammer,(.34,.19,.18),(0,.43,0),'darksteel',bevel=.025)
     s.b(hammer,(.058,.177,.168),(-.15,.43,0),'steel',bevel=.009)
     s.b(hammer,(.048,.16,.16),(.15,.43,0),'edge',bevel=.008)
@@ -74,13 +114,13 @@ def build_engineer():
 def engineer_action(s, repair):
     duration=1.0 if repair else .72
     times=[0,.25,.53,.77,.94,1] if repair else [0,.12,.22,.30,.40,.72]
-    positions=[(.33,-.02,-.33),(.34,.14,-.29),(.29,.31,-.19),(.29,.23,-.22),(.32,.0,-.35),(.33,-.02,-.33)]
-    rotations=[(-1.2,0,-.1),(-.35,0,-.15),(.25,0,-.15),(-.05,0,-.12),(-1.1,0,-.10),(-1.2,0,-.1)]
+    positions=[(.38,.02,-.34),(.39,.14,-.34),(.38,.25,-.33),(.39,.20,-.35),(.40,-.01,-.36),(.38,.02,-.34)]
+    rotations=[(-1.28,0,-.1),(-.72,0,-.15),(-.32,0,-.15),(-.55,0,-.12),(-1.15,0,-.10),(-1.28,0,-.1)]
     if not repair:
-        positions=[(.39,-.19,-.09),(.34,.20,-.22),(.30,.28,-.22),(.31,.01,-.37),(.33,-.06,-.31),(.39,-.19,-.09)]
-        rotations=[(0,0,0),(.2,0,-.15),(.25,0,-.14),(-1.25,0,-.1),(-.95,0,-.08),(0,0,0)]
+        positions=[CARRY,(.38,.16,-.30),(.37,.24,-.30),(.40,.0,-.37),(.40,-.02,-.35),CARRY]
+        rotations=[CARRY_ROTATION,(-.42,0,-.15),(-.25,0,-.14),(-1.35,0,-.1),(-1.05,0,-.08),CARRY_ROTATION]
     path=lambda part,prop:s.part_path(part)+':'+prop
-    tracks=[(path('Hammer','position'),positions,times),(path('Hammer','rotation'),rotations,times)]
+    tracks=[(path('Hammer','rotation'),[tool_wrist_rotation(s,p,r) for p,r in zip(positions,rotations)],times)]
     for side in ('Left','Right'):
         shoulders=[]; forearms=[]
         for position in positions:
@@ -105,19 +145,19 @@ def write_engineer_scene(s):
         idle.append((path(part,'rotation'),[(0,0,0)]*2))
         walk.append((path(part,'rotation'),[(sign*a,0,0) for a in (0,.46,0,-.46,0)]))
     for side in ('Left','Right'):
-        shoulder,forearm=farmer_arm_pose(s,side,(.39,-.19,-.09) if side=='Right' else (-.39,-.19,-.09))
+        shoulder,forearm=farmer_arm_pose(s,side,CARRY if side=='Right' else (-.39,-.19,-.09))
         for part,pose in (('Arm'+side,shoulder),('Forearm'+side,forearm)):
             idle.append((path(part,'rotation'),[pose]*2));walk.append((path(part,'rotation'),[pose]*2))
     for tracks in (idle,walk):
         for part in ('Waist','Head'): tracks.append((path(part,'rotation'),[(0,0,0)]*2))
-        tracks += [(path('Hammer','position'),[(.39,-.19,-.09)]*2),(path('Hammer','rotation'),[(0,0,0)]*2)]
+        tracks.append((path('Hammer','rotation'),[tool_wrist_rotation(s,CARRY,CARRY_ROTATION)]*2))
     idle.append(('Rig:position',[(0,0,0),(0,.012,0),(0,0,0)]))
     walk.append(('Rig:position',[(0,y,0) for y in (0,.035,0,.035,0)]))
     repair_t,repair=engineer_action(s,True);strike_t,strike=engineer_action(s,False)
     lines += [anim_resource('idle',2.6,idle,True),anim_resource('walk',.76,walk,True),anim_resource('repair',repair_t,repair,True),anim_resource('strike',strike_t,strike),
         '[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
         '[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]\n_data = {&"strike": SubResource("Animation_strike"), &"repair": SubResource("Animation_repair")}',
-        '[node name="Engineer" type="Node3D"]\nscript = ExtResource("1_script")\nkind = "engineer"\nprojectile_socket = NodePath("Rig/Action/Waist/Hammer/ToolContact")',
+        '[node name="Engineer" type="Node3D"]\nscript = ExtResource("1_script")\nkind = "engineer"\nprojectile_socket = NodePath("Rig/Action/Waist/ArmRight/ForearmRight/Hammer/ToolContact")',
         '[node name="Rig" type="Node3D" parent="."]','[node name="Action" type="Node3D" parent="Rig"]']
     emitted=set()
     def emit(part):
@@ -129,7 +169,7 @@ def write_engineer_scene(s):
         else:lines.append(f'[node name="{part}" type="MeshInstance3D" parent="{parent}"]\nposition = {vec(s.joints[part])}\nmesh = ExtResource("{parts.index(part)+2}_{part}")')
         emitted.add(part)
     for part in parts:emit(part)
-    lines += ['[node name="ToolContact" type="Marker3D" parent="Rig/Action/Waist/Hammer"]\nposition = Vector3(0,0.43,-0.1)',
+    lines += ['[node name="ToolContact" type="Marker3D" parent="Rig/Action/Waist/ArmRight/ForearmRight/Hammer"]\nposition = Vector3(0,0.43,-0.1)',
         '[node name="Locomotion" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_locomotion")}\nautoplay = "idle"',
         '[node name="Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("AnimationLibrary_attack")}',
         '[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]\naabb = AABB(-2,-1,-2,4,4,4)',

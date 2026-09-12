@@ -17,6 +17,7 @@ func capture(label: String, viewport: Viewport) -> void:
 func _run() -> void:
 	create_timer(90,true,false,true).timeout.connect(func(): quit(3))
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS,true)
+	root.gui_disable_input = true # Keep capture poses independent of desktop input.
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
 	var codex: Control = load("res://scenes/unit_codex.tscn").instantiate()
 	root.add_child(codex)
@@ -36,6 +37,21 @@ func _run() -> void:
 		codex._request_preview_redraw()
 		await capture("angle-%03d" % angle,codex.get_node("CodexViewport"))
 	codex._anchor.rotation.y = 0
+	# Inspect the tool grip and cap at native rendering resolution before actions.
+	var camera_transform: Transform3D = codex._camera.transform
+	var camera_size: float = codex._camera.size
+	codex._camera.position = Vector3(3,2,-5)
+	codex._camera.look_at(Vector3(.36,1.17,-.30),Vector3.UP)
+	codex._camera.size = .95
+	codex._request_preview_redraw()
+	await capture("grip-detail",codex.get_node("CodexViewport"))
+	codex._camera.position = Vector3(2,2.6,-4)
+	codex._camera.look_at(Vector3(0,1.77,0),Vector3.UP)
+	codex._camera.size = 1.0
+	codex._request_preview_redraw()
+	await capture("cap-detail",codex.get_node("CodexViewport"))
+	codex._camera.transform = camera_transform
+	codex._camera.size = camera_size
 	for action: int in [1,2,3]:
 		codex._select_preview_action(action)
 		codex.set_process(false)
