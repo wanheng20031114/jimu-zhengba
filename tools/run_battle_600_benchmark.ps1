@@ -4,7 +4,9 @@ param(
     [Parameter(Mandatory)][ValidatePattern('^[a-zA-Z0-9_-]+$')][string]$RunId,
     [switch]$Cavalry,
     [switch]$NaturalHealth,
-    [switch]$HarnessCheck
+    [switch]$HarnessCheck,
+    [ValidateSet('baseline', 'no-body-sweep', 'no-avoidance', 'static-motion', 'frozen-animation', 'no-unit-draw', 'frozen-batches', 'stationary-pruning')]
+    [string]$Experiment = 'baseline'
 )
 $ErrorActionPreference = 'Stop'
 $battleExecutable = (Resolve-Path -LiteralPath $Executable).Path
@@ -18,6 +20,7 @@ $battleArguments = @('--position', '40,40', '--resolution', '1600x900', '--',
 if ($Cavalry) { $battleArguments += '--cavalry' }
 if ($NaturalHealth) { $battleArguments += '--natural-health' }
 if ($HarnessCheck) { $battleArguments += '--harness-check' }
+if ($Experiment -ne 'baseline') { $battleArguments += ('--experiment=' + $Experiment) }
 $battleProcess = Start-Process -FilePath $battleExecutable -ArgumentList $battleArguments -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput (Join-Path $battleOutput ($RunId + '.stdout.log')) `
     -RedirectStandardError (Join-Path $battleOutput ($RunId + '.stderr.log'))
@@ -42,6 +45,10 @@ try {
     if ($errors) { Write-Output $errors }
     if ($battleProcess.ExitCode -ne 0 -or $errors -match 'SCRIPT ERROR|ERROR:') { throw 'Benchmark failed; inspect its native logs.' }
     if (-not (Test-Path -LiteralPath (Join-Path $battleOutput ($RunId + '.json')))) { throw 'Benchmark exited without a result.' }
+    $battleResult = Get-Content -Raw -Encoding UTF8 (Join-Path $battleOutput ($RunId + '.json')) | ConvertFrom-Json
+    if ($Experiment -ne 'baseline' -and $battleResult.diagnostic_experiment -ne $Experiment) {
+        throw 'The executable did not apply the requested experiment; use a diagnostic build.'
+    }
 } finally {
     if (-not $battleProcess.HasExited) {
         $owned = Get-CimInstance Win32_Process -Filter ("ProcessId=" + $battleProcess.Id)
