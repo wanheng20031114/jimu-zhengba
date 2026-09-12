@@ -1234,17 +1234,18 @@ def write_scene(s):
         for p,phase in (("LegFrontLeft",0), ("LegRearLeft",.24),
                         ("LegFrontRight",.50), ("LegRearRight",.74)):
             # Four-beat walk: each foot remains down for three quarters of
-            # its cycle, with a short lifted return stroke. No runtime IK.
+            # its cycle, then lifts forward. The model faces -Z: positive
+            # X rotation puts a foot forward, so stance must decrease it.
             rotations=[]; offsets=[]
             base=np.array(s.joints[p+"Step"])
             for i in range(17):
                 u=(i/16+phase)%1
                 if u<.75:
-                    angle=-.24+.48*u/.75
+                    angle=.24-.48*u/.75
                     lift=0.0
                 else:
                     v=(u-.75)/.25
-                    angle=.24-.48*v
+                    angle=-.24+.48*v
                     lift=.15*math.sin(v*math.pi)
                 rotations.append((angle,0,0))
                 offsets.append(tuple(base+np.array((0,lift,0))))
