@@ -625,15 +625,23 @@ def war_elephant():
             s.add(leg,lathe([(y,.224),(y+.012,.224)],10,caps=False),"elephantdark")
     head_motion = s.pivot("HeadMotion", (0,.40,-1.0), parent=torso)
     head = s.joint("Head", parent=head_motion)
-    s.e(head,(.585,.68,.575),(0,.06,-.07),"elephant",sub=2)
-    s.e(head,(.38,.39,.39),(0,-.32,-.22),"elephant",sub=1)
-    # Twin brow domes, lateral eyes and heavy lids read as an elephant,
-    # independently of the rider above it.
+    # A low, continuous forehead blends into the skull. Separate tall spheres
+    # made the old brow look like two objects attached above the face.
+    skull=ellipsoid((.585,.68,.575),(0,.06,-.07),sub=2)
+    jaw=ellipsoid((.38,.39,.39),(0,-.32,-.22))
+    brow=ellipsoid((.45,.34,.23),(0,.32,-.34),sub=2)
+    s.add(head,tm.convex.convex_hull(np.vstack((skull.vertices,jaw.vertices,brow.vertices))),"elephant")
     for side in (-1,1):
-        s.e(head,(.30,.32,.28),(side*.225,.48,-.23),"elephantlight")
-        s.e(head,(.080,.046,.049),(side*.49,.115,-.345),"black")
-        s.e(head,(.019,.024,.023),(side*.51,.12,-.384),"ivory")
-        s.r(head,(side*.432,.18,-.404),(side*.551,.165,-.287),.036,"elephantdark",7)
+        # Face the eyes forward and outward, with their whole dark opening
+        # in front of the cheek surface rather than buried inside its facets.
+        eye=np.array((side*.46,.16,-.465))
+        normal=np.array((side*math.sin(.65),0,-math.cos(.65)))
+        eye_rotation=(0,-side*.65,0)
+        s.e(head,(.117,.081,.037),tuple(eye),"elephantdark",rot=eye_rotation)
+        s.e(head,(.090,.060,.028),tuple(eye+normal*.026),"black",rot=eye_rotation)
+        tangent=np.array((math.cos(.65),0,side*math.sin(.65)))
+        glint=eye+normal*.057-tangent*side*.023+np.array((0,.018,0))
+        s.e(head,(.019,.021,.014),tuple(glint),"ivory",rot=eye_rotation)
         # Ivory tusks curve forward and gently upward, rather than following
         # the nose down. Their length is decorative, never a range input.
         points=[(side*.365,-.28,-.40),(side*.45,-.40,-.70),
@@ -642,11 +650,17 @@ def war_elephant():
         for i in range(4):
             s.r(head,points[i],points[i+1],radii[i],"ivory",9,r2=radii[i+1])
         s.add(head,ring(.113,.016,points[0],(.95,side*.1,0),n=10),"gold")
-    # Small forehead plate and straps leave most of the skin exposed.
-    s.add(head,polygon([(-.19,.30),(.19,.30),(.245,.03),(0,-.21),(-.245,.03)],.055,(0,.30,-.566),(-.22,0,0)),"steel")
-    s.b(head,(.033,.29,.032),(0,.33,-.63),"gold",rot=(-.22,0,0),bevel=.007)
+    # A close-fitting riveted plate needs no straight cylindrical straps
+    # crossing the forehead. Those rods pierced the old brow domes.
+    plate_rotation=(.22,0,0)
+    plate_transform=matrix((0,.30,-.566),plate_rotation)
+    s.add(head,polygon([(-.19,.30),(.19,.30),(.245,.03),(0,-.21),(-.245,.03)],.055,(0,.30,-.566),plate_rotation),"steel")
+    emblem=tuple((plate_transform@np.array((0,.02,-.043,1)))[:3])
+    s.b(head,(.033,.29,.032),emblem,"gold",rot=plate_rotation,bevel=.007)
+    for x,y in [(-.13,.20),(.13,.20),(-.12,-.05),(.12,-.05)]:
+        at=tuple((plate_transform@np.array((x,y,-.031,1)))[:3])
+        s.e(head,(.020,.020,.011),at,"gold",rot=plate_rotation)
     for side in (-1,1):
-        s.r(head,(side*.14,.57,-.55),(side*.49,.39,-.27),.029,"leather",8)
         ear=s.joint("EarLeft" if side<0 else "EarRight",(side*.46,.16,.18),parent=head_motion)
         # Rounded upper lobe and tapered lower edge; deliberately less wide
         # than African-elephant ears, keeping the war mount's face readable.
