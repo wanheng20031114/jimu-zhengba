@@ -630,15 +630,18 @@ def light_cavalry():
         s.e(horse_head,(.076,.145,.13),(0,.79-i*.07,-.65+i*.083),"mane",rot=(-.5,0,0))
     for i in range(5):
         s.e(b,(.10-i*.01,.22,.12),(0,.1-i*.15,.86+i*.078),"mane",rot=(-.32,0,0))
-    # A small saddle cloth leaves most of the horse visible.
+    # The rear saddle cloth has a sloped front edge under the knee. Its outer
+    # surface stays inside the calf/boot layer rather than slicing through it.
     for sign in (-1,1):
-        s.add(b,polygon([(-.32,.24),(.32,.24),(.31,-.10),(0,-.19),(-.30,-.10)],.032,
-                        (sign*.416,.16,.13),(0,math.pi/2,0)),"blue")
-        s.b(b,(.035,.025,.55),(sign*.438,.065,.13),"gold",bevel=.004)
-        s.b(b,(.035,.13,.032),(sign*.44,.145,.13),"goldlight",bevel=.004)
-        s.b(b,(.039,.029,.15),(sign*.44,.155,.13),"goldlight",bevel=.004)
-        s.b(b,(.055,.43,.075),(sign*.39,.20,.10),"leather",bevel=.01)
-        s.add(b,ring(.093,.014,(sign*.43,-.01,.07),(0,math.pi/2,0),n=10),"darksteel")
+        s.add(b,polygon([(-.30,.24),(0,.24),(.29,-.055),(.29,-.10),(0,-.19),(-.30,-.10)],.032,
+                        (sign*.46,.16,.41),(0,math.pi/2,0)),"blue")
+        hem=[(-.30,-.10),(0,-.19),(.29,-.10)]
+        for a,c in zip(hem,hem[1:]):
+            s.r(b,(sign*.482,.16+a[1],.41-a[0]),(sign*.482,.16+c[1],.41-c[0]),.0125,"gold",6)
+        s.b(b,(.035,.13,.032),(sign*.484,.145,.57),"goldlight",bevel=.004)
+        s.b(b,(.039,.029,.15),(sign*.484,.155,.57),"goldlight",bevel=.004)
+        s.r(b,(sign*.30,.42,.15),(sign*.57,.06,.075),.021,"leather",6)
+        s.add(b,ring(.093,.014,(sign*.57,.005,.07),(0,math.pi/2,0),n=10),"darksteel")
     s.b(b,(.61,.13,.53),(0,.42,.12),"leatherlight",bevel=.05)
     s.b(b,(.52,.14,.095),(0,.51,.36),"leather",bevel=.025)
     s.b(b,(.42,.10,.095),(0,.49,-.15),"leather",bevel=.025)
@@ -661,10 +664,12 @@ def light_cavalry():
     s.b(rider,(.047,.28,.018),(0,.11,-.282),"edge",bevel=.004)
     s.b(rider,(.47,.085,.39),(0,-.105,0),"leather",bevel=.02)
     s.b(rider,(.09,.066,.027),(0,-.10,-.212),"gold")
+    # Seated legs belong to the horse/saddle rigid part. Waist twists animate
+    # the torso while the knees and stirrups remain seated together.
     for sign in (-1,1):
-        s.r(rider,(sign*.16,-.13,.06),(sign*.39,-.30,.10),.113,"leather",8)
-        s.r(rider,(sign*.39,-.30,.1),(sign*.41,-.57,-.005),.090,"blue",8)
-        s.b(rider,(.17,.17,.28),(sign*.41,-.65,-.075),"leather",bevel=.027)
+        s.r(b,(sign*.16,.52,.14),(sign*.57,.35,.18),.113,"leather",8)
+        s.r(b,(sign*.57,.35,.18),(sign*.58,.08,.075),.090,"blue",8)
+        s.b(b,(.17,.17,.28),(sign*.58,0,.005),"leather",bevel=.027)
     s.b(rider,(.17,.18,.13),(.28,-.10,.16),"leatherlight",bevel=.022)
     head=s.joint("Head",(0,2.20,.03))
     s.e(head,(.235,.246,.217),(0,-.005,-.008),"skin")
