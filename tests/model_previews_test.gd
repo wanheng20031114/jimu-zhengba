@@ -3,7 +3,7 @@ extends SceneTree
 var _failures: Array[String] = []
 var _checks: Array[String] = []
 var _previews: Node
-const KINDS: Array[String] = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "catapult", "cannon", "farmer", "headquarters", "gold_vein", "defense_tower"]
+const KINDS: Array[String] = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer", "headquarters", "gold_vein", "defense_tower"]
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -84,7 +84,7 @@ func _run() -> void:
 func _check_recolor_switches() -> void:
 	# These textures are shared by the selected portrait and the production buttons.
 	for relation: int in [FactionPalette.ENEMY, FactionPalette.ALLY]:
-		for pair: Array in [["swordsman", "barracks"], ["shield_guard", "barracks"], ["archer", "barracks"], ["knight", "barracks"], ["war_elephant", "barracks"],
+		for pair: Array in [["swordsman", "barracks"], ["shield_guard", "barracks"], ["archer", "barracks"], ["knight", "barracks"], ["war_elephant", "barracks"], ["light_cavalry", "barracks"],
 			["farmer", "headquarters"], ["catapult", "factory"], ["cannon", "factory"],
 			["headquarters", "farmer"], ["swordsman", ""]]:
 			var kind: String = pair[0]

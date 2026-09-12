@@ -4,7 +4,7 @@ extends SceneTree
 ## The source text is retained verbatim except MeshInstance3D -> Node3D and
 ## moving each external mesh reference into UnitVisual.batch_parts.
 
-const KINDS: PackedStringArray = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "spearman", "shield_guard", "war_elephant"]
+const KINDS: PackedStringArray = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "spearman", "shield_guard", "war_elephant", "light_cavalry"]
 const OUTPUT := "res://assets/models/units/batched/"
 const MANAGER := "res://scenes/unit_render_batches.tscn"
 const TOLERANCE := 0.00003

@@ -9,8 +9,8 @@ const UNIT_SCENE: PackedScene = preload("res://scenes/unit.tscn")
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
 const EFFECT_SCENE: PackedScene = preload("res://scenes/battle_effect.tscn")
 const BUILDING_SCENE: PackedScene = preload("res://scenes/building.tscn")
-const UNIT_TYPES := ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "catapult", "cannon", "farmer"]
-const UNIT_NAMES := {"swordsman": "剑士", "shield_guard": "盾卫", "spearman": "长矛兵", "archer": "弓箭手", "knight": "骑士", "war_elephant": "战象", "catapult": "投石车", "cannon": "加农炮", "farmer": "农民"}
+const UNIT_TYPES := ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer"]
+const UNIT_NAMES := {"swordsman": "剑士", "shield_guard": "盾卫", "spearman": "长矛兵", "archer": "弓箭手", "knight": "骑士", "war_elephant": "战象", "light_cavalry": "轻骑兵", "catapult": "投石车", "cannon": "加农炮", "farmer": "农民"}
 const MAX_ARMY: int = 160
 const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit", "stone_chip": &"stone_chip", "arrow_hit": &"arrow_hit", "muzzle": &"cannon_shot", "explosion": &"explosion", "stone_hit": &"stone_hit", "collapse": &"collapse"}
 

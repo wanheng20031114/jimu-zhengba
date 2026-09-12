@@ -79,6 +79,25 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegFrontRight.res" id="mesh_74"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegRearLeft.res" id="mesh_75"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegRearRight.res" id="mesh_76"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/Body.res" id="mesh_77"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/HorseHead.res" id="mesh_78"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/Rider.res" id="mesh_79"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/Head.res" id="mesh_80"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/ArmLeft.res" id="mesh_81"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/ArmRight.res" id="mesh_82"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/Sword.res" id="mesh_83"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegFrontLeft.res" id="mesh_84"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegFrontLeftLower.res" id="mesh_85"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegFrontLeftHoof.res" id="mesh_86"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegFrontRight.res" id="mesh_87"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegFrontRightLower.res" id="mesh_88"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegFrontRightHoof.res" id="mesh_89"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearLeft.res" id="mesh_90"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearLeftLower.res" id="mesh_91"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearLeftHoof.res" id="mesh_92"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearRight.res" id="mesh_93"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearRightLower.res" id="mesh_94"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearRightHoof.res" id="mesh_95"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -619,6 +638,139 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_76")
 
+[sub_resource type="MultiMesh" id="batch_77"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_77")
+
+[sub_resource type="MultiMesh" id="batch_78"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_78")
+
+[sub_resource type="MultiMesh" id="batch_79"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_79")
+
+[sub_resource type="MultiMesh" id="batch_80"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_80")
+
+[sub_resource type="MultiMesh" id="batch_81"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_81")
+
+[sub_resource type="MultiMesh" id="batch_82"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_82")
+
+[sub_resource type="MultiMesh" id="batch_83"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_83")
+
+[sub_resource type="MultiMesh" id="batch_84"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_84")
+
+[sub_resource type="MultiMesh" id="batch_85"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_85")
+
+[sub_resource type="MultiMesh" id="batch_86"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_86")
+
+[sub_resource type="MultiMesh" id="batch_87"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_87")
+
+[sub_resource type="MultiMesh" id="batch_88"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_88")
+
+[sub_resource type="MultiMesh" id="batch_89"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_89")
+
+[sub_resource type="MultiMesh" id="batch_90"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_90")
+
+[sub_resource type="MultiMesh" id="batch_91"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_91")
+
+[sub_resource type="MultiMesh" id="batch_92"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_92")
+
+[sub_resource type="MultiMesh" id="batch_93"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_93")
+
+[sub_resource type="MultiMesh" id="batch_94"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_94")
+
+[sub_resource type="MultiMesh" id="batch_95"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_95")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -1085,3 +1237,117 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_76")
 metadata/batch_key = &"war_elephant::Rig/Action/LegRearRightStep/LegRearRight"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_77")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Body"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Body_HorseHead" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_78")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Body/HorseHead"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Waist_Rider" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_79")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Waist/Rider"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Waist_Head" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_80")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Waist/Head"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Waist_ArmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_81")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Waist/ArmLeft"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Waist_ArmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_82")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Waist/ArmRight"
+
+[node name="Light Cavalry_Rig_Action_BodyMotion_Waist_ArmRight_Sword" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_83")
+metadata/batch_key = &"light_cavalry::Rig/Action/BodyMotion/Waist/ArmRight/Sword"
+
+[node name="Light Cavalry_Rig_Action_LegFrontLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_84")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegFrontLeft"
+
+[node name="Light Cavalry_Rig_Action_LegFrontLeft_LegFrontLeftLower" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_85")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegFrontLeft/LegFrontLeftLower"
+
+[node name="Light Cavalry_Rig_Action_LegFrontLeft_LegFrontLeftLower_LegFrontLeftHoof" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_86")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegFrontLeft/LegFrontLeftLower/LegFrontLeftHoof"
+
+[node name="Light Cavalry_Rig_Action_LegFrontRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_87")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegFrontRight"
+
+[node name="Light Cavalry_Rig_Action_LegFrontRight_LegFrontRightLower" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_88")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegFrontRight/LegFrontRightLower"
+
+[node name="Light Cavalry_Rig_Action_LegFrontRight_LegFrontRightLower_LegFrontRightHoof" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_89")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegFrontRight/LegFrontRightLower/LegFrontRightHoof"
+
+[node name="Light Cavalry_Rig_Action_LegRearLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_90")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegRearLeft"
+
+[node name="Light Cavalry_Rig_Action_LegRearLeft_LegRearLeftLower" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_91")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegRearLeft/LegRearLeftLower"
+
+[node name="Light Cavalry_Rig_Action_LegRearLeft_LegRearLeftLower_LegRearLeftHoof" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_92")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegRearLeft/LegRearLeftLower/LegRearLeftHoof"
+
+[node name="Light Cavalry_Rig_Action_LegRearRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_93")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegRearRight"
+
+[node name="Light Cavalry_Rig_Action_LegRearRight_LegRearRightLower" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_94")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegRearRight/LegRearRightLower"
+
+[node name="Light Cavalry_Rig_Action_LegRearRight_LegRearRightLower_LegRearRightHoof" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_95")
+metadata/batch_key = &"light_cavalry::Rig/Action/LegRearRight/LegRearRightLower/LegRearRightHoof"

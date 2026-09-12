@@ -9,6 +9,7 @@ const UNITS: Dictionary = {
 	"spearman": preload("res://data/units/spearman.tres"),
 	"archer": preload("res://data/units/archer.tres"),
 	"knight": preload("res://data/units/knight.tres"),
+	"light_cavalry": preload("res://data/units/light_cavalry.tres"),
 	"war_elephant": preload("res://data/units/war_elephant.tres"),
 	"catapult": preload("res://data/units/catapult.tres"),
 	"cannon": preload("res://data/units/cannon.tres"),

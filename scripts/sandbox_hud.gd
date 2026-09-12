@@ -2,7 +2,7 @@ extends Control
 ## Native sandbox controls share the battle controller's small HUD contract.
 var game: Node3D
 var _message_time: float = 0.0
-const KINDS: PackedStringArray = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "catapult", "cannon", "farmer"]
+const KINDS: PackedStringArray = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer"]
 
 func bind_game(controller: Node3D) -> void:
 	game = controller
@@ -13,9 +13,9 @@ func bind_game(controller: Node3D) -> void:
 		if mode == game.map_mode:
 			%Map.select(%Map.item_count - 1)
 	%Map.item_selected.connect(func(index: int): game.switch_map(%Map.get_item_metadata(index)))
-	for index: int in KINDS.size():
-		var button: Button = %Kinds.get_child(index)
-		button.pressed.connect(game.set_paint_kind.bind(KINDS[index]))
+	for kind: String in KINDS:
+		var button: Button = %Kinds.get_node(kind)
+		button.pressed.connect(game.set_paint_kind.bind(kind))
 	for index: int in FactionPalette.SANDBOX_COLORS.size():
 		var button: Button = %Colors.get_child(index)
 		button.text = "%02d" % (index + 1)
@@ -40,8 +40,8 @@ func refresh() -> void:
 	%Faction.modulate = FactionPalette.ui_color(game.local_owner_id + FactionPalette.SANDBOX_OFFSET)
 	for index: int in %Colors.get_child_count():
 		%Colors.get_child(index).set_pressed_no_signal(index == game.local_owner_id)
-	for index: int in KINDS.size():
-		%Kinds.get_child(index).set_pressed_no_signal(KINDS[index] == game.paint_kind)
+	for kind: String in KINDS:
+		%Kinds.get_node(kind).set_pressed_no_signal(kind == game.paint_kind)
 	%Place.set_pressed_no_signal(game.placing)
 	%Select.set_pressed_no_signal(not game.placing)
 	%Rotate.text = "朝向 %d°   R" % int(rad_to_deg(game.paint_rotation))

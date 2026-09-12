@@ -13,6 +13,7 @@ const MODELS: Dictionary = {
 	"spearman": preload("res://assets/models/units/spearman.tscn"),
 	"archer": preload("res://assets/models/units/archer.tscn"),
 	"knight": preload("res://assets/models/units/knight.tscn"),
+	"light_cavalry": preload("res://assets/models/units/light_cavalry.tscn"),
 	"war_elephant": preload("res://assets/models/units/war_elephant.tscn"),
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
@@ -29,7 +30,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -393,10 +394,11 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 	# Footsteps follow actual displacement, including RVO and walls.
 	var travelled: float = displacement.length()
 	_foley_distance += travelled
-	var stride: float = 1.65 if unit_type == "knight" else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
+	var horse_mounted: bool = unit_type in ["knight", "light_cavalry"]
+	var stride: float = 1.65 if horse_mounted else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
 	if _foley_distance >= stride:
 		_foley_distance = fmod(_foley_distance, stride)
-		var foot_sound: StringName = &"horse_hoof" if unit_type == "knight" else (&"cart_wheel" if unit_type in ["catapult", "cannon"] else &"footstep_dirt")
+		var foot_sound: StringName = &"horse_hoof" if horse_mounted else (&"cart_wheel" if unit_type in ["catapult", "cannon"] else &"footstep_dirt")
 		sound_requested.emit(foot_sound, global_position)
 
 func _set_navigation_target(at: Vector3) -> void:

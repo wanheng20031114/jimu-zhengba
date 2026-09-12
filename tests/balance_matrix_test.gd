@@ -1,32 +1,34 @@
 extends SceneTree
 ## Approved damage tables, all sixteen upgrade matchups, immutable launch data.
 
-const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult", &"cannon", &"farmer", &"spearman", &"shield_guard", &"war_elephant"]
+const KINDS: Array[StringName] = [&"swordsman", &"archer", &"knight", &"catapult", &"cannon", &"farmer", &"spearman", &"shield_guard", &"war_elephant", &"light_cavalry"]
 const EXPECTED_DAMAGE: Array = [
-	[7, 9, 12, 9, 9, 9, 8, 6, 12],
-	[9, 6, 4, 9, 9, 11, 10, 4, 8],
-	[7, 12, 7, 20, 20, 9, 8, 6, 7],
-	[24, 21, 19, 44, 44, 26, 25, 19, 23],
-	[38, 35, 33, 38, 38, 40, 39, 33, 37],
-	[3, 5, 3, 5, 5, 5, 4, 2, 3],
-	[4, 6, 24, 6, 6, 6, 5, 3, 24],
-	[4, 6, 4, 6, 6, 6, 5, 3, 4],
-	[24, 26, 24, 26, 26, 26, 25, 23, 24],
+	[7, 9, 12, 9, 9, 9, 8, 6, 12, 13],
+	[9, 6, 4, 9, 9, 11, 10, 4, 8, 8],
+	[7, 12, 7, 20, 20, 9, 8, 6, 7, 8],
+	[24, 21, 19, 44, 44, 26, 25, 19, 23, 23],
+	[38, 35, 33, 38, 38, 40, 39, 33, 37, 37],
+	[3, 5, 3, 5, 5, 5, 4, 2, 3, 4],
+	[4, 6, 24, 6, 6, 6, 5, 3, 24, 25],
+	[4, 6, 4, 6, 6, 6, 5, 3, 4, 5],
+	[24, 26, 24, 26, 26, 26, 25, 23, 24, 25],
+	[5, 9, 5, 7, 7, 7, 6, 4, 5, 6],
 ]
 const EXPECTED_HITS: Array = [
-	[16, 7, 10, 16, 20, 17, 10, 25, 30],
-	[13, 10, 30, 16, 20, 14, 8, 37, 45],
-	[16, 5, 18, 7, 9, 17, 10, 25, 52],
-	[5, 3, 7, 4, 5, 6, 3, 8, 16],
-	[3, 2, 4, 4, 5, 4, 2, 5, 10],
-	[37, 12, 40, 28, 36, 30, 19, 73, 120],
-	[28, 10, 5, 24, 30, 25, 15, 49, 15],
-	[28, 10, 30, 24, 30, 25, 15, 49, 90],
-	[5, 3, 5, 6, 7, 6, 3, 7, 15],
+	[16, 7, 10, 16, 20, 17, 10, 25, 30, 7],
+	[13, 10, 30, 16, 20, 14, 8, 37, 45, 12],
+	[16, 5, 18, 7, 9, 17, 10, 25, 52, 12],
+	[5, 3, 7, 4, 5, 6, 3, 8, 16, 4],
+	[3, 2, 4, 4, 5, 4, 2, 5, 10, 3],
+	[37, 12, 40, 28, 36, 30, 19, 73, 120, 23],
+	[28, 10, 5, 24, 30, 25, 15, 49, 15, 4],
+	[28, 10, 30, 24, 30, 25, 15, 49, 90, 18],
+	[5, 3, 5, 6, 7, 6, 3, 7, 15, 4],
+	[22, 7, 24, 20, 26, 22, 13, 37, 72, 15],
 ]
-const EXPECTED_HP: Array[int] = [110, 60, 120, 140, 180, 150, 75, 145, 360]
+const EXPECTED_HP: Array[int] = [110, 60, 120, 140, 180, 150, 75, 145, 360, 90]
 # Keep negative pre-floor damage: upgrades apply before the minimum-one clamp.
-const BUILDING_RAW_DAMAGE: Array[int] = [-1, 1, -1, 66, 130, -5, -4, -4, 16]
+const BUILDING_RAW_DAMAGE: Array[int] = [-1, 1, -1, 66, 130, -5, -4, -4, 16, -3]
 const ATTACK_BONUS: Array[int] = [0, 1, 2, 4]
 const DEFENSE_BONUS: Array[int] = [0, 1, 2, 3]
 var checks: int = 0
@@ -61,7 +63,7 @@ func _run() -> void:
 					var defense_bonus: float = DEFENSE_BONUS[defense_level] if defender.military else 0
 					var packet: DamagePayload = DamageResolver.snapshot(attacker, attack_bonus, 3, 1)
 					# Independent expectation: research never supplies melee armor to siege.
-					var applied_defense: float = 0.0 if attacker_index in [0, 2, 5, 6, 7, 8] and defender_index in [3, 4] else defense_bonus
+					var applied_defense: float = 0.0 if attacker_index in [0, 2, 5, 6, 7, 8, 9] and defender_index in [3, 4] else defense_bonus
 					var expected: float = maxf(1.0, base + attack_bonus - applied_defense)
 					var upgraded_damage: float = DamageResolver.resolve(packet, defender, defense_bonus)
 					_check(is_equal_approx(upgraded_damage, expected), label + " upgrade %d/%d" % [attack_level, defense_level])
@@ -161,16 +163,16 @@ func _test_siege() -> void:
 
 func _test_production_data() -> void:
 	_check(BalanceCatalog.building(&"headquarters").produces == PackedStringArray(["farmer"]), "HQ recruits farmers only")
-	_check(BalanceCatalog.building(&"barracks").produces == PackedStringArray(["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant"]), "barracks recruits six approved infantry and cavalry units")
+	_check(BalanceCatalog.building(&"barracks").produces == PackedStringArray(["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry"]), "barracks recruits seven approved infantry and cavalry units")
 	_check(BalanceCatalog.building(&"factory").produces == PackedStringArray(["catapult", "cannon"]), "factory recruits siege engines")
 	_check(BalanceCatalog.unit(&"farmer").training_seconds == 10, "farmer training takes ten seconds")
 	for kind: StringName in KINDS:
 		var definition: UnitDefinition = BalanceCatalog.unit(kind)
-		var supply: Dictionary = {&"war_elephant": 5, &"shield_guard": 1, &"spearman": 1, &"swordsman": 1, &"archer": 1, &"knight": 1, &"catapult": 3, &"cannon": 3, &"farmer": 0}
+		var supply: Dictionary = {&"light_cavalry": 1, &"war_elephant": 5, &"shield_guard": 1, &"spearman": 1, &"swordsman": 1, &"archer": 1, &"knight": 1, &"catapult": 3, &"cannon": 3, &"farmer": 0}
 		_check(definition.supply == supply[kind], str(kind) + " approved military supply")
 		_check(BalanceCatalog.building(definition.production_building).produces.has(String(kind)), str(kind) + " production source agrees with building")
 		if definition.military:
-			var training: Dictionary = {&"war_elephant": 30.0, &"shield_guard": 10.0, &"spearman": 6.0, &"swordsman": 6.0, &"archer": 7.0, &"knight": 8.0, &"catapult": 20.0, &"cannon": 20.0}
+			var training: Dictionary = {&"light_cavalry": 7.0, &"war_elephant": 30.0, &"shield_guard": 10.0, &"spearman": 6.0, &"swordsman": 6.0, &"archer": 7.0, &"knight": 8.0, &"catapult": 20.0, &"cannon": 20.0}
 			_check(definition.training_seconds == training[kind], str(kind) + " timed military production")
 	for kind: StringName in [&"swordsman", &"catapult", &"cannon"]:
 		_check(BalanceCatalog.unit(kind).sight == 14.0, str(kind) + " uses fourteen-unit vision")

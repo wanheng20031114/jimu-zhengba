@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+attack_windup_seconds = 0.2
+health_bar_height = 3.05
+collision_height = 2.7
+death_rest_height = 0.38
+id = &"light_cavalry"
+name = "轻骑兵"
+description = "轻装侦察骑兵，速度更快、视野更广，适合游走侦察与追击落单弓手。"
+hp = 90
+damage = 7
+melee_armor = 1
+ranged_armor = 3
+damage_channel = 0
+combat_class = &"cavalry"
+bonuses = {&"archer": 2}
+range = 1.1
+cooldown = 1.1
+cost = 70
+supply = 1
+speed = 6.8
+radius = 0.75
+sight = 20
+min_range = 0
+projectile = ""
+production_building = &"barracks"
+training_seconds = 7
+military = true

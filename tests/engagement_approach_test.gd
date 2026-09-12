@@ -48,7 +48,10 @@ class ApproachProbe extends BattleUnit:
 			if gap < 6.0 and facing_dot < 0.0 and attack_starts == 0:
 				turned_away_near_contact += 1
 			if samples.size() < 360:
+				var route: RefCounted = _path_budget._routes[get_instance_id()]
 				samples.append({"tick": Engine.get_physics_frames(), "gap": gap,
+					"position": str(before), "target_position": str(target.global_position),
+					"route_goal": str(route.goal), "route_next": str(route.next), "route_pending": route.pending,
 					"intent_radial": intent.dot(toward), "safe_radial": safe_velocity.dot(toward),
 					"step_radial": radial_step, "facing_dot": facing_dot,
 					"attacks": attack_starts, "target_speed": target._observed_velocity.dot(toward)})
@@ -87,7 +90,7 @@ func spawn(kind: String, owner: int, at: Vector3, avoidance: bool) -> ApproachPr
 	return unit
 
 func _run() -> void:
-	var deadline: int = Time.get_ticks_msec() + 90000
+	var deadline: int = Time.get_ticks_msec() + 120000
 	process_frame.connect(func():
 		if Time.get_ticks_msec() > deadline:
 			quit(3))
@@ -104,10 +107,22 @@ func _run() -> void:
 			game.get_node("PathBudget").set_walkability(game.get_node("ConstructionNavigation") if direct else null)
 			for kind: String in KINDS:
 				await duel(kind, direct, true, 0.0)
+			# New-unit acceptance exercises the production controller, including its
+			# authoritative clearance certificate. The native-only legacy cases above
+			# deliberately remove that controller for isolated diagnostics.
+			if direct:
+				await duel("light_cavalry", true, true, 0.0)
+				for kind: String in ["swordsman", "spearman", "shield_guard", "light_cavalry"]:
+					await duel(kind, true, true, 0.0, "light_cavalry")
+			if not direct and "--native-diagnostics" in OS.get_cmdline_user_args():
+				await duel("light_cavalry", false, true, 0.0)
+				for kind: String in ["swordsman", "spearman", "shield_guard", "light_cavalry"]:
+					await duel(kind, false, true, 0.0, "light_cavalry")
 			await duel("swordsman", direct, false, 0.0)
 			await duel("spearman", direct, true, PI * 0.5)
 			if direct:
 				await pursuit("knight", "archer", 5.0)
+				await pursuit("light_cavalry", "archer", 5.0)
 				await pursuit("spearman", "archer", 1.95)
 	game.set_running(false)
 	game.clear_units()
@@ -117,26 +132,26 @@ func _run() -> void:
 	await process_frame
 	var result := {"checks": checks, "failures": failures, "cases": cases}
 	var args := OS.get_cmdline_user_args()
-	var output: String = args[0] if not args.is_empty() else "res://artifacts/engagement_approach.json"
+	var output: String = args[0] if not args.is_empty() and not args[0].begins_with("--") else "res://artifacts/engagement_approach.json"
 	FileAccess.open(output, FileAccess.WRITE).store_string(JSON.stringify(result, "\t") + "\n")
 	print("ENGAGEMENT_APPROACH %d checks; %d failures" % [checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)
 
-func duel(kind: String, direct: bool, avoidance: bool, angle: float) -> void:
+func duel(kind: String, direct: bool, avoidance: bool, angle: float, opponent: String = "knight") -> void:
 	game.set_running(false)
 	game.clear_units()
 	await ticks(3)
 	seed(99133)
 	var axis: Vector3 = Vector3.FORWARD.rotated(Vector3.UP, angle)
 	var infantry: ApproachProbe = spawn(kind, 0, -axis * 6.0, avoidance)
-	var cavalry: ApproachProbe = spawn("knight", 1, axis * 6.0, avoidance)
+	var cavalry: ApproachProbe = spawn(opponent, 1, axis * 6.0, avoidance)
 	await ticks(3)
 	infantry.issue_attack(cavalry)
 	cavalry.issue_attack(infantry)
 	game.set_running(true)
 	await ticks(Engine.physics_ticks_per_second * 5)
 	game.set_running(false)
-	var label := "%d TPS %s vs cavalry %s avoidance=%s angle=%.2f" % [Engine.physics_ticks_per_second, kind, "direct" if direct else "native", avoidance, angle]
+	var label := "%d TPS %s vs %s %s avoidance=%s angle=%.2f" % [Engine.physics_ticks_per_second, kind, opponent, "direct" if direct else "native", avoidance, angle]
 	check(infantry.attack_starts >= 2 and cavalry.attack_starts >= 2, label + " both units sustain attacks")
 	check(infantry.backwards_intents == 0, label + " pursuit never orders retreat from an approaching enemy")
 	check(infantry.retreat_distance < 0.05, label + " no visible reverse displacement")
@@ -147,6 +162,7 @@ func duel(kind: String, direct: bool, avoidance: bool, angle: float) -> void:
 	cases.append({"label": label, "retreat_distance": infantry.retreat_distance,
 		"backwards_intents": infantry.backwards_intents, "attacks": infantry.attack_starts,
 		"cavalry_attacks": cavalry.attack_starts, "cavalry_retreat": cavalry.retreat_distance,
+		"cavalry_backwards_intents": cavalry.backwards_intents, "cavalry_samples": cavalry.samples,
 		"turned_away": infantry.turned_away_near_contact, "cavalry_turned_away": cavalry.turned_away_near_contact,
 		"samples": infantry.samples})
 	print("APPROACH_CASE ", label, " reverse=", infantry.retreat_distance, " intents=", infantry.backwards_intents)

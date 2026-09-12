@@ -110,7 +110,7 @@ func validate_resource_values() -> void:
 	# File existence and a source manifest cannot detect a converter dropping a
 	# saved exported property. Exercise the actual ResourceLoader values in PCK.
 	var began := checks
-	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant"],
+	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry"],
 		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
 	var defensive_damage := {"headquarters": 40, "enemy_keep": 40, "defense_tower": 16, "tower": 17}
 	for kind: String in production:
@@ -124,7 +124,7 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
-	var training_seconds := {"war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var training_seconds := {"light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 16], ["swordsman", "knight", 10],
@@ -157,6 +157,15 @@ func validate_resource_values() -> void:
 		"packaged_archer_values_and_swordsman_anti_cavalry_bonus")
 	check(BalanceCatalog.unit("knight").sight == 16 and BalanceCatalog.unit("knight").sight > archer.sight, "packaged_knight_scouting_sight")
 	var knight := BalanceCatalog.unit("knight")
+	var light := BalanceCatalog.unit("light_cavalry")
+	check(light.cost==70 and light.hp==90 and light.damage==7 and light.melee_armor==1
+		and light.ranged_armor==3 and light.speed==6.8 and light.sight==20 and light.supply==1
+		and light.training_seconds==7 and light.cooldown==1.1 and light.attack_windup_seconds==.2
+		and light.range==1.1 and light.radius==.75 and light.combat_class==&"cavalry"
+		and light.bonuses=={&"archer":2} and light.projectile.is_empty() and light.splash_radius==0,
+		"packaged_light_cavalry_approved_values")
+	check(DamageResolver.resolve(DamageResolver.snapshot(spearman,0,0,0),light)==25,
+		"packaged_light_cavalry_full_anti_cavalry_damage")
 	check(knight.cost == 80 and knight.hp == 120 and knight.ranged_armor == 7 and knight.melee_armor == 2 and knight.damage == 9
 		and knight.bonuses == {&"archer": 3, &"siege": 11} and knight.supply == 1, "packaged_knight_price_ranged_armor_and_class_bonuses")
 	var catapult := BalanceCatalog.unit("catapult")

@@ -540,6 +540,16 @@ theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = SubResource("Kinds")
 
+[node name="light_cavalry" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "轻骑兵 E"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(75, 34)
+theme_override_font_sizes/font_size = 15
+toggle_mode = true
+button_group = SubResource("Kinds")
+
 [node name="war_elephant" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
 unique_name_in_owner = true
 layout_mode = 2

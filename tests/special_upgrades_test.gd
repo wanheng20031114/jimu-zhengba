@@ -179,7 +179,7 @@ func _pause_case(subject: BattleUnit) -> void:
 func _ui(academy: BattleBuilding) -> void:
 	game.select_entities([academy])
 	var hud: Control = game.hud
-	check(hud._actions.size() == 6 and hud._actions[-1].kind == "research_page", "seven academy tracks fit six slots with an explicit more button")
+	check(hud._actions.size() == 6 and hud._actions[-1].kind == "action_page", "seven academy tracks fit six slots with an explicit more button")
 	hud.trigger_action_slot(5)
 	check(hud._actions.size() == 3 and hud._actions[0].id == &"cannon_range_1" and hud._actions[1].id == &"recovery_1", "more hotkey exposes both special research actions")
 	check(hud.buttons[0].get_node("Hotkey").text == game.settings.hotkey_text("rts_slot_1") and not hud.buttons[1].disabled, "new research cards display active slot hotkeys and paid availability")
@@ -194,7 +194,7 @@ func _ui(academy: BattleBuilding) -> void:
 	check(academy.production.research_queue.is_empty() and game.get_player(0).gold == before, "Esc queue action cancels the special research with full refund")
 	game.select_entities([])
 	game.select_entities([academy])
-	check(hud._research_page == 0 and hud._actions[-1].kind == "research_page", "changing academy selection resets action page")
+	check(hud._action_page == 0 and hud._actions[-1].kind == "action_page", "changing academy selection resets action page")
 	var codex: Control = CODEX.instantiate()
 	root.add_child(codex)
 	for id: String in ["cannon_range_1", "recovery_1"]:

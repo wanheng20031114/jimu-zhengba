@@ -604,6 +604,116 @@ def horse_knight():
     return s
 
 
+def light_cavalry():
+    s=Sculpture("light_cavalry")
+    b=s.joint("Body",(0,1.10,0))
+    # Same horse proportions as the knight, with an exposed chest and flanks.
+    s.e(b,(.43,.44,.77),(0,0,.06),"horse",sub=2)
+    s.e(b,(.39,.41,.37),(0,.018,-.49),"horselight")
+    s.e(b,(.44,.43,.40),(0,.02,.62),"horse")
+    horse_head=s.joint("HorseHead",(0,.27,-.50),parent=b)
+    s.e(horse_head,(.25,.52,.31),(0,.38,-.62),"horselight",rot=(-.43,0,0))
+    s.e(horse_head,(.225,.23,.37),(0,.72,-.89),"horse",rot=(.38,0,0))
+    s.e(horse_head,(.207,.185,.22),(0,.56,-1.17),"horselight")
+    s.e(horse_head,(.16,.11,.08),(0,.52,-1.36),"mane")
+    for sign in (-1,1):
+        s.add(horse_head,polygon([(-.06,0),(.06,0),(.025,.25)],.11,(sign*.13,.9,-.79),(0,sign*.18,sign*.15)),"horse")
+        s.e(horse_head,(.021,.040,.042),(sign*.189,.76,-1.035),"black")
+        s.e(horse_head,(.007,.012,.012),(sign*.209,.768,-1.043),"ivory")
+        s.b(horse_head,(.042,.14,.37),(sign*.208,.55,-1.14),"leather",rot=(.34,0,0),bevel=.008)
+        s.add(horse_head,ring(.056,.010,(sign*.224,.58,-1.205),(0,math.pi/2,0),n=10),"gold")
+        # Both reins meet the left hand, outside the neck rather than through it.
+        s.r(b,(sign*.224,.60,-1.21),(sign*.29,.52,-.55),.015,"leather",6)
+        s.r(b,(sign*.29,.52,-.55),(-.22,.57,-.37),.015,"leather",6)
+    s.b(horse_head,(.43,.055,.073),(0,.49,-1.32),"leather",rot=(.16,0,0))
+    for i in range(7):
+        s.e(horse_head,(.076,.145,.13),(0,.79-i*.07,-.65+i*.083),"mane",rot=(-.5,0,0))
+    for i in range(5):
+        s.e(b,(.10-i*.01,.22,.12),(0,.1-i*.15,.86+i*.078),"mane",rot=(-.32,0,0))
+    # A small saddle cloth leaves most of the horse visible.
+    for sign in (-1,1):
+        s.add(b,polygon([(-.32,.24),(.32,.24),(.31,-.10),(0,-.19),(-.30,-.10)],.032,
+                        (sign*.416,.16,.13),(0,math.pi/2,0)),"blue")
+        s.b(b,(.035,.025,.55),(sign*.438,.065,.13),"gold",bevel=.004)
+        s.b(b,(.035,.13,.032),(sign*.44,.145,.13),"goldlight",bevel=.004)
+        s.b(b,(.039,.029,.15),(sign*.44,.155,.13),"goldlight",bevel=.004)
+        s.b(b,(.055,.43,.075),(sign*.39,.20,.10),"leather",bevel=.01)
+        s.add(b,ring(.093,.014,(sign*.43,-.01,.07),(0,math.pi/2,0),n=10),"darksteel")
+    s.b(b,(.61,.13,.53),(0,.42,.12),"leatherlight",bevel=.05)
+    s.b(b,(.52,.14,.095),(0,.51,.36),"leather",bevel=.025)
+    s.b(b,(.42,.10,.095),(0,.49,-.15),"leather",bevel=.025)
+    # Articulated knees and level hooves: the saved curves plant each hoof
+    # at ground height and move it backwards at the actual 6.8 travel speed.
+    for i,(xx,zz) in enumerate(((-.29,-.49),(.29,-.49),(-.32,.57),(.32,.57))):
+        name=("LegFrontLeft","LegFrontRight","LegRearLeft","LegRearRight")[i]
+        upper=s.joint(name,(xx,.99,zz))
+        lower=s.joint(name+"Lower",(0,-.54,0),parent=upper)
+        hoof=s.joint(name+"Hoof",(0,-.57,0),parent=lower)
+        s.r(upper,(0,.02,0),(0,-.54,0),.116,"horse",8,r2=.072)
+        s.e(upper,(.092,.094,.094),(0,-.54,0),"horselight")
+        s.r(lower,(0,0,0),(0,-.56,0),.069,"horse",8,r2=.048)
+        s.b(hoof,(.16,.105,.225),(0,.009,-.030),"mane",bevel=.022)
+        s.b(hoof,(.166,.022,.23),(0,-.052,-.030),"darksteel",bevel=.006)
+    rider=s.joint("Rider",(0,1.75,.08))
+    s.add(rider,lathe([(-.23,.27),(-.10,.235),(.20,.30),(.29,.23)],8),"blue")
+    s.b(rider,(.42,.32,.11),(0,.105,-.22),"steel",bevel=.055)
+    s.b(rider,(.43,.28,.085),(0,.11,.19),"leather",bevel=.042)
+    s.b(rider,(.047,.28,.018),(0,.11,-.282),"edge",bevel=.004)
+    s.b(rider,(.47,.085,.39),(0,-.105,0),"leather",bevel=.02)
+    s.b(rider,(.09,.066,.027),(0,-.10,-.212),"gold")
+    for sign in (-1,1):
+        s.r(rider,(sign*.16,-.13,.06),(sign*.39,-.30,.10),.113,"leather",8)
+        s.r(rider,(sign*.39,-.30,.1),(sign*.41,-.57,-.005),.090,"blue",8)
+        s.b(rider,(.17,.17,.28),(sign*.41,-.65,-.075),"leather",bevel=.027)
+    s.b(rider,(.17,.18,.13),(.28,-.10,.16),"leatherlight",bevel=.022)
+    head=s.joint("Head",(0,2.20,.03))
+    s.e(head,(.235,.246,.217),(0,-.005,-.008),"skin")
+    # Simple cloth cap: team colour reads from above, with a thin leather
+    # brow band above the eyes. The light rider has no metal helmet or crest.
+    s.e(head,(.255,.125,.239),(0,.203,.014),"blue")
+    s.b(head,(.429,.034,.055),(0,.131,-.202),"leather",bevel=.011)
+    for sign in (-1,1):
+        s.e(head,(.050,.072,.057),(sign*.227,-.005,.0),"skin")
+        s.b(head,(.039,.029,.024),(sign*.085,.049,-.210),"black",bevel=.004)
+        s.b(head,(.068,.023,.024),(sign*.085,.100,-.201),"leather",bevel=.004)
+        s.b(head,(.037,.17,.06),(sign*.22,-.04,.038),"leather",bevel=.007)
+    s.e(head,(.045,.058,.055),(0,-.015,-.225),"skin")
+    s.b(head,(.103,.021,.025),(0,-.111,-.188),"leather",bevel=.004)
+    for sign,name in ((-1,"ArmLeft"),(1,"ArmRight")):
+        arm=s.joint(name,(sign*.31,1.97,.06))
+        s.e(arm,(.14,.125,.15),(0,0,0),"leather")
+        elbow=(sign*.07,-.24,-.025)
+        hand=(.09,-.30,-.43) if sign<0 else (.09,-.42,-.22)
+        s.r(arm,(0,-.055,0),elbow,.089,"blue",8)
+        s.r(arm,elbow,hand,.071,"leather",8)
+        s.e(arm,(.077,.078,.079),hand,"skin")
+    blade=s.joint("Sword",(.09,-.42,-.22),parent="ArmRight")
+    sword(s,blade,(0,0,0),.60)
+    # Head pieces were authored in horse-body coordinates; localize once.
+    for pieces in s.parts[horse_head].values():
+        for piece in pieces:
+            piece.apply_translation((0,-.27,.50))
+    waist=s.pivot("Waist",(0,1.75,.08))
+    for part in (rider,head,"ArmLeft","ArmRight"):
+        s.reparent(part,waist)
+    motion=s.pivot("BodyMotion",(0,0,0))
+    s.reparent(b,motion)
+    s.reparent(waist,motion)
+    return s
+
+
+def light_horse_leg_pose(z, lift, rear, hip_height=.99):
+    """Offline two-link pose; saved native tracks need no runtime IK."""
+    y=.065+lift-hip_height
+    distance=math.hypot(y,z)
+    direction=math.atan2(-z,-y)
+    a,b=.54,.57
+    bend=1 if rear else -1
+    upper=direction+bend*math.acos((a*a+distance*distance-b*b)/(2*a*distance))
+    lower=-bend*(math.pi-math.acos((a*a+b*b-distance*distance)/(2*a*b)))
+    return upper,lower,-upper-lower
+
+
 def war_elephant():
     s = Sculpture("war_elephant")
     torso = s.pivot("BodyMotion", (0, 1.68, .12))
@@ -1103,6 +1213,14 @@ def attack_tracks(s):
     def pos(part,offsets,times):
         base=np.zeros(3) if part=="Action" else np.array(s.joints[part])
         tracks.append((prop(part,"position"),[tuple(base+np.array(o)) for o in offsets],times))
+    if s.name=="light_cavalry":
+        t=[0,.07,.145,.18,.20,.25,.40,.62,.85]
+        rot("Waist",[(0,y,0) for y in [0,.06,.14,.12,-.12,-.18,-.08,.015,0]],t)
+        rot("ArmRight",[(x,0,z) for x,z in [(0,0),(.15,-.10),(.31,-.20),(.32,-.18),(.80,-.07),(.88,.03),(.46,.03),(.08,0),(0,0)]],t)
+        rot("Sword",[(x,0,0) for x in [0,.15,.32,.25,-1.95,-2.25,-1.35,-.25,0]],t)
+        rot("Head",[(0,y,0) for y in [0,-.03,-.07,-.06,.10,.12,.035,0,0]],t)
+        rot("HorseHead",[(x,0,0) for x in [0,-.007,-.012,0,.025,.03,-.01,0,0]],t)
+        return .85,tracks
     if s.name=="war_elephant":
         t=[0,.16,.34,.48,.55,.66,.90,1.23,1.55]
         rot("HeadMotion",[(x,0,0) for x in [0,-.055,-.12,-.08,.22,.27,.10,-.025,0]],t)
@@ -1260,6 +1378,40 @@ def write_scene(s):
                 tracks.append((f"Rig/{part}:rotation",[(0,sign*y,0) for y in (0,.07,0,-.04,0)]))
             tracks.append(("Rig/TrunkSwing:rotation",[(x,0,z) for x,z in [(0,0),(.025,.028),(0,0),(-.02,-.025),(0,0)]]))
             tracks.append(("Rig/Tail:rotation",[(0,0,z) for z in (0,.10,0,-.08,0)]))
+    elif s.name=="light_cavalry":
+        cycle=.48
+        # Diagonal pairs alternate. Stance travel = speed * planted time;
+        # knees fold on the forward recovery and hooves stay level at contact.
+        samples=100
+        times=[cycle*i/samples for i in range(samples+1)]
+        stance=.32
+        stroke=6.8*cycle*stance
+        for p,phase in (("LegFrontLeft",0),("LegRearRight",0),
+                        ("LegFrontRight",.5),("LegRearLeft",.5)):
+            curves=[[],[],[]]
+            rear=p.startswith("LegRear")
+            for i in range(samples+1):
+                u=(i/samples+phase)%1
+                if u<stance:
+                    z=-stroke/2+6.8*cycle*u
+                    lift=0
+                else:
+                    v=(u-stance)/(1-stance)
+                    z=stroke/2-stroke*v*v*(3-2*v)
+                    lift=.23*math.sin(v*math.pi)**2
+                for curve,angle in zip(curves,light_horse_leg_pose(z,lift,rear)):
+                    curve.append((angle,0,0))
+            for suffix,curve,rest in zip(("","Lower","Hoof"),curves,light_horse_leg_pose(0,0,rear,1.14)):
+                walk.append((f"Rig/{p+suffix}:rotation",curve,times))
+                idle.append((f"Rig/{p+suffix}:rotation",[(rest,0,0),(rest,0,0)]))
+            # Tuck the hip joint further inside the barrel when standing, so
+            # the exposed forelegs rest upright instead of permanently crouching.
+            base=np.array(s.joints[p])
+            walk.append((f"Rig/{p}:position",[tuple(base),tuple(base)]))
+            rest=tuple(base+np.array((0,.15,0)))
+            idle.append((f"Rig/{p}:position",[rest,rest]))
+        walk.append(("Rig/BodyMotion:position",[(0,y,0) for y in (0,.032,0,.032,0)]))
+        idle.append(("Rig/BodyMotion:position",[(0,0,0),(0,.012,0),(0,0,0)]))
     elif s.name=="knight":
         for p,sign in (("LegFrontLeft",1),("LegFrontRight",-1),("LegRearLeft",-1),("LegRearRight",1)):
             walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,.53,0,-.53,0)]))
@@ -1282,7 +1434,7 @@ def write_scene(s):
     duration,strike=attack_tracks(s)
     socket_parent=s.part_path("Bow") if s.name=="archer" else s.part_path("ThrowArm") if s.name=="catapult" else s.part_path("Barrel") if s.name=="cannon" else "Rig/Action"
     socket_position=(0,0,-.83) if s.name=="archer" else (0,.91,.89) if s.name=="catapult" else (0,-.10,-1.25) if s.name=="cannon" else (0,1.4,-.6)
-    walk_duration = 1.24 if s.name=="war_elephant" else .60 if s.name=="knight" else .72
+    walk_duration = .48 if s.name=="light_cavalry" else 1.24 if s.name=="war_elephant" else .60 if s.name=="knight" else .72
     lines += [anim_resource("walk",walk_duration,walk,True),
               anim_resource("idle",2.6,idle,True),anim_resource("strike",duration,strike),
               '[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
@@ -1323,7 +1475,7 @@ def write_scene(s):
 if __name__=="__main__":
     import argparse
     builders={"swordsman":lambda:infantry("swordsman"), "shield_guard":shield_guard, "spearman":lambda:infantry("spearman"),
-              "archer":lambda:infantry("archer",True), "knight":horse_knight, "war_elephant":war_elephant,
+              "archer":lambda:infantry("archer",True), "knight":horse_knight, "war_elephant":war_elephant, "light_cavalry":light_cavalry,
               "catapult":catapult, "cannon":cannon, "farmer":farmer}
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("kinds",nargs="*",help="Only rebuild these units (default: all)")
