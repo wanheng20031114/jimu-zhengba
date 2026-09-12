@@ -13,6 +13,7 @@ var received_config: Dictionary = {}
 var received_finish: bool = false
 var catalog_files: int = 0
 var resource_value_checks: int = 0
+var map_hash_checks: int = 0
 var handshake_msec: int = -1
 var catalogue_only: bool = false
 var room_mode: String = "2v2"
@@ -63,6 +64,10 @@ func _run() -> void:
 			var path := "res://" + relative
 			# Native export may convert scenes/resources to binary and remap them.
 			check(FileAccess.file_exists(path) if relative.ends_with(".json") else ResourceLoader.exists(path), "catalogue_resource_" + relative)
+			if relative.ends_with(".json"):
+				map_hash_checks += 1
+				var actual_hash := FileAccess.get_file_as_string(path).replace("\r\n", "\n").sha256_text()
+				check(actual_hash == manifest.files[relative], "packaged_map_content_hash_" + relative)
 	validate_resource_values()
 	resource_value_checks += validate_special_upgrade_values()
 	check(FileAccess.file_exists(RelayClient.CERTIFICATE_PATH), "packaged_public_trust_certificate_exists")
@@ -272,6 +277,6 @@ func finish() -> void:
 	relay.disconnect_relay()
 	print("NETWORK_RELEASE_PROBE " + JSON.stringify({"checks": checks, "failures": failures,
 		"error_codes": errors, "build": NetworkProtocol.BUILD_ID, "protocol": NetworkProtocol.VERSION,
-		"content_hash": NetworkProtocol.content_hash(), "catalogue_files": catalog_files, "resource_value_checks": resource_value_checks,
+		"content_hash": NetworkProtocol.content_hash(), "catalogue_files": catalog_files, "resource_value_checks": resource_value_checks, "map_hash_checks": map_hash_checks,
 		"exported_template": not OS.has_feature("editor"), "catalogue_only": catalogue_only, "handshake_msec": handshake_msec}))
 	get_tree().quit(0 if failures.is_empty() else 1)

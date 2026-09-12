@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -49,13 +50,19 @@ def main() -> int:
             summary = json.loads(line.removeprefix("NETWORK_RELEASE_PROBE "))
     stderr = (directory / "stderr.log").read_text(encoding="utf-8", errors="replace")
     success = code == 0 and summary is not None and not summary["failures"] and not stderr.strip()
-    value_audit_present = summary is not None and summary.get("resource_value_checks") == 75 and summary.get("checks", 0) >= 134
+    manifest_bytes = (ROOT / 'data/content_manifest.json').read_bytes()
+    manifest = json.loads(manifest_bytes)
+    expected_maps = sum(name.endswith('.json') for name in manifest['files'])
+    # New units add checks; bind the probe to the exact release snapshot.
+    value_audit_present = summary is not None and summary.get("resource_value_checks", 0) >= 90
+    manifest_matches = summary is not None and summary.get('content_hash') == hashlib.sha256(manifest_bytes).hexdigest()
+    map_audit_present = summary is not None and expected_maps > 0 and summary.get('map_hash_checks') == expected_maps
     if summary is not None:
-        success = success and summary["exported_template"] != args.source and value_audit_present
+        success = success and summary["exported_template"] != args.source and value_audit_present and manifest_matches and map_audit_present
         success = success and summary.get("catalogue_only", False) == args.catalogue_only
         if args.catalogue_only:
             success = success and summary.get("handshake_msec") == -1
-    report = {"passed": success, "summary": summary, "room_mode": args.room_mode, "empty_slots": args.empty_slots, "resource_value_audit_present": value_audit_present, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
+    report = {"passed": success, "summary": summary, "room_mode": args.room_mode, "empty_slots": args.empty_slots, "resource_value_audit_present": value_audit_present, "manifest_matches": manifest_matches, "map_audit_present": map_audit_present, "stderr_empty": not stderr.strip(), "log_directory": directory.name}
     (directory / "summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print("NETWORK_RELEASE_RESULTS " + json.dumps(report, ensure_ascii=False))
     return 0 if success else 1

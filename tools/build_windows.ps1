@@ -1,5 +1,6 @@
 ﻿param(
-    [string]$GodotPath = 'C:/Program Files/Godot/Godot_console.exe',
+    [string]$GodotPath = 'C:/Program Files/Godot/Godot.exe',
+    [string]$PythonPath = 'python',
     [switch]$PackOnly,
     [ValidatePattern('^$|^[0-9]+\.[0-9]+\.[0-9]+$')][string]$VersionedOutput = ''
 )
@@ -18,6 +19,9 @@ if ($VersionedOutput) {
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 $exportLog = Join-Path $projectRoot '.local/windows-export.engine.log'
 New-Item -ItemType Directory -Path (Split-Path -Parent $exportLog) -Force | Out-Null
+# Generate from the exact files being exported, including saved local map edits.
+& $PythonPath (Join-Path $PSScriptRoot 'build_content_manifest.py')
+if ($LASTEXITCODE -ne 0) { throw 'Content manifest generation failed.' }
 if ($PackOnly) {
     # Reuse the current version's launcher when only project resources changed.
     # This also avoids replacing an identical EXE while the user is playing it.
@@ -25,11 +29,21 @@ if ($PackOnly) {
     $releaseVersionMatch = [regex]::Match((Get-Content -LiteralPath (Join-Path $projectRoot 'export_presets.cfg') -Raw -Encoding UTF8), '(?m)^application/file_version="([^"]+)"')
     $launcherVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable).FileVersion
     if (-not $releaseVersionMatch.Success -or $launcherVersion -ne $releaseVersionMatch.Groups[1].Value) { throw 'Launcher version differs from the export preset; run a full export first.' }
-    & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-pack 'Windows Desktop' (Join-Path $buildRoot '积木争霸.pck')
+    $exportMode = '--export-pack'
+    $exportTarget = Join-Path $buildRoot '积木争霸.pck'
 } else {
-    & $GodotPath --headless --path $projectRoot --log-file $exportLog --export-release 'Windows Desktop' $executable
+    $exportMode = '--export-release'
+    $exportTarget = $executable
 }
-if ($LASTEXITCODE -ne 0) { throw 'Godot Windows export failed.' }
+# The GUI engine executable returns immediately under PowerShell's call operator.
+# Wait for the owned process before inspecting or launching its output package.
+$nativeArguments = @('--headless', '--path', ('"' + $projectRoot + '"'), '--log-file', ('"' + $exportLog + '"'), $exportMode, '"Windows Desktop"', ('"' + $exportTarget + '"'))
+$exportProcess = Start-Process -FilePath $GodotPath -ArgumentList $nativeArguments -WindowStyle Hidden -PassThru -Wait
+if ($exportProcess.ExitCode -ne 0) { throw 'Godot Windows export failed.' }
+& $PythonPath (Join-Path $PSScriptRoot 'build_content_manifest.py') --check
+if ($LASTEXITCODE -ne 0) { throw 'Content changed during export; export the snapshot again.' }
+& $PythonPath (Join-Path $projectRoot 'tests/network_release_runner.py') $executable --catalogue-only
+if ($LASTEXITCODE -ne 0) { throw 'Packaged content validation failed; no ZIP published.' }
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/windows-readme.txt') -Destination (Join-Path $buildRoot 'START_HERE.txt') -Force
 foreach ($supportFile in @('collect_diagnostics.ps1', 'COLLECT_DIAGNOSTICS.cmd')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $supportFile) -Destination (Join-Path $buildRoot $supportFile) -Force

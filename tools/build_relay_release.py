@@ -17,6 +17,8 @@ import subprocess
 import urllib.request
 import zipfile
 
+from build_content_manifest import manifest_bytes
+
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_VERSION = "4.7.2-stable"
 TEMPLATE_ARCHIVE_SHA256 = "f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011"
@@ -102,6 +104,8 @@ def run_native(editor: Path, project: Path, arguments: list[str], log: Path) -> 
 def build(editor: Path, templates: Path, output: Path) -> dict:
     editor = editor.resolve()
     output = output.resolve()
+    if (ROOT / 'data/content_manifest.json').read_bytes() != manifest_bytes(ROOT):
+        raise RuntimeError('Regenerate the content manifest for this release snapshot before building the relay')
     if digest(editor) != EDITOR_WINDOWS_SHA256:
         raise RuntimeError("Use the pinned official Windows Godot 4.7.2 editor to export this relay")
     native_templates = checked_templates(templates.resolve())
