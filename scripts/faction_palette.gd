@@ -5,8 +5,8 @@ const SELF := 0
 const ENEMY := 1
 const ALLY := 2
 const SANDBOX_OFFSET := 3
-const SANDBOX_NAMES: PackedStringArray = ["苍蓝", "朱红", "金黄", "翠绿", "紫罗", "橙焰", "青空", "蔷薇", "青柠", "深蓝", "棕木", "松石", "象牙", "墨黑", "银白", "酒红"]
-const SANDBOX_COLORS: Array[Color] = [Color("367eae"), Color("bb4937"), Color("d5aa35"), Color("329c59"), Color("985fc4"), Color("e98132"), Color("27b4c1"), Color("dd6eaa"), Color("a4c63b"), Color("304d85"), Color("865331"), Color("237b75"), Color("ead8ab"), Color("343946"), Color("cdd6dc"), Color("8c354e")]
+const SANDBOX_NAMES: PackedStringArray = ["海蓝", "正红", "明黄", "鲜绿", "亮紫", "橙焰", "天蓝", "嫩粉", "嫩绿", "靛蓝", "赤陶", "松绿", "杏黄", "水绿", "淡紫", "玫红"]
+const SANDBOX_COLORS: Array[Color] = [Color("0072b9"), Color("e6002b"), Color("f8d000"), Color("19b43b"), Color("a34dc7"), Color("f07800"), Color("78c9ec"), Color("f3a4c8"), Color("a4c63b"), Color("555cc5"), Color("ae593d"), Color("008a77"), Color("e9bc83"), Color("69d7bb"), Color("ba9be0"), Color("d41483")]
 
 static func relation(owner: int, alliance: int, game: Node) -> int:
 	return game.presentation_faction(owner, alliance)
