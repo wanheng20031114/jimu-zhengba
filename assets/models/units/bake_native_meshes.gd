@@ -9,7 +9,7 @@ func _bake() -> void:
 	var saved: int = 0
 	var kinds: PackedStringArray = OS.get_cmdline_user_args()
 	if kinds.is_empty():
-		kinds = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "farmer"]
+		kinds = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer"]
 	for kind: String in kinds:
 		var folder: String = "res://assets/models/units/" + kind + "/"
 		var parts: Array = JSON.parse_string(FileAccess.get_file_as_string(folder + "parts.json"))

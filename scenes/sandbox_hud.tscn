@@ -585,6 +585,11 @@ layout_mode = 2
 text = "工程兵"
 toggle_mode = true
 
+[node name="priest" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+layout_mode = 2
+text = "牧师"
+toggle_mode = true
+
 [node name="farmer" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
 unique_name_in_owner = true
 layout_mode = 2

@@ -107,6 +107,16 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/Hammer.res" id="mesh_102"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/LegLeft.res" id="mesh_103"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/LegRight.res" id="mesh_104"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/Body.res" id="mesh_105"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/Head.res" id="mesh_106"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/ArmLeft.res" id="mesh_107"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/ForearmLeft.res" id="mesh_108"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/ArmRight.res" id="mesh_109"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/ForearmRight.res" id="mesh_110"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/RobeFront.res" id="mesh_111"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/RobeBack.res" id="mesh_112"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/LegLeft.res" id="mesh_113"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/priest/LegRight.res" id="mesh_114"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -843,6 +853,76 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_104")
 
+[sub_resource type="MultiMesh" id="batch_105"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_105")
+
+[sub_resource type="MultiMesh" id="batch_106"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_106")
+
+[sub_resource type="MultiMesh" id="batch_107"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_107")
+
+[sub_resource type="MultiMesh" id="batch_108"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_108")
+
+[sub_resource type="MultiMesh" id="batch_109"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_109")
+
+[sub_resource type="MultiMesh" id="batch_110"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_110")
+
+[sub_resource type="MultiMesh" id="batch_111"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_111")
+
+[sub_resource type="MultiMesh" id="batch_112"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_112")
+
+[sub_resource type="MultiMesh" id="batch_113"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_113")
+
+[sub_resource type="MultiMesh" id="batch_114"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_114")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -1477,3 +1557,63 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_104")
 metadata/batch_key = &"engineer::Rig/Action/LegRight"
+
+[node name="Priest_Rig_Action_Waist_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_105")
+metadata/batch_key = &"priest::Rig/Action/Waist/Body"
+
+[node name="Priest_Rig_Action_Waist_Head" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_106")
+metadata/batch_key = &"priest::Rig/Action/Waist/Head"
+
+[node name="Priest_Rig_Action_Waist_ArmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_107")
+metadata/batch_key = &"priest::Rig/Action/Waist/ArmLeft"
+
+[node name="Priest_Rig_Action_Waist_ArmLeft_ForearmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_108")
+metadata/batch_key = &"priest::Rig/Action/Waist/ArmLeft/ForearmLeft"
+
+[node name="Priest_Rig_Action_Waist_ArmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_109")
+metadata/batch_key = &"priest::Rig/Action/Waist/ArmRight"
+
+[node name="Priest_Rig_Action_Waist_ArmRight_ForearmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_110")
+metadata/batch_key = &"priest::Rig/Action/Waist/ArmRight/ForearmRight"
+
+[node name="Priest_Rig_Action_Waist_RobeFront" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_111")
+metadata/batch_key = &"priest::Rig/Action/Waist/RobeFront"
+
+[node name="Priest_Rig_Action_Waist_RobeBack" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_112")
+metadata/batch_key = &"priest::Rig/Action/Waist/RobeBack"
+
+[node name="Priest_Rig_Action_LegLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_113")
+metadata/batch_key = &"priest::Rig/Action/LegLeft"
+
+[node name="Priest_Rig_Action_LegRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_114")
+metadata/batch_key = &"priest::Rig/Action/LegRight"

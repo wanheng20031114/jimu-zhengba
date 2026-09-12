@@ -19,6 +19,7 @@ const MODELS: Dictionary = {
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
 	"farmer": preload("res://assets/models/units/farmer.tscn"),
 	"engineer": preload("res://assets/models/units/engineer.tscn"),
+	"priest": preload("res://assets/models/units/priest.tscn"),
 }
 
 const STATS: Dictionary = BalanceCatalog.UNITS
@@ -31,7 +32,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -914,7 +915,7 @@ func _begin_support(entity: BattleUnit) -> void:
 	target = null
 	_move_retaliation = null
 	_cancel_attack()
-	order_name = "前往维修" + entity.display_name
+	order_name = "前往" + support.action_name() + entity.display_name
 
 func restore_health(amount: float) -> float:
 	if not alive or not _game.is_authority or not is_finite(amount) or amount <= 0.0:

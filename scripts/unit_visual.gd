@@ -1,8 +1,9 @@
 class_name UnitVisual
 extends Node3D
 ## Saved rigid-part sculptures driven by native AnimationPlayers.
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "farmer") var kind: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer") var kind: String = "swordsman"
 @export var projectile_socket: NodePath
+@export var support_particle_paths: Array[NodePath] = []
 ## Optional authored rigid-skin representation. The original editable rigs
 ## continue to use their Marker3D socket and need neither field.
 @export_node_path("Skeleton3D") var rigid_skin_skeleton: NodePath
@@ -27,8 +28,11 @@ var _dead: bool = false
 var _rigid_skeleton: Skeleton3D
 var _rigid_socket_index: int = -1
 var _batch_renderer: UnitRenderBatches
+var _support_particles: Array[GPUParticles3D] = []
 
 func _ready() -> void:
+	for path: NodePath in support_particle_paths:
+		_support_particles.append(get_node(path))
 	if not rigid_skin_skeleton.is_empty():
 		_rigid_skeleton = get_node(rigid_skin_skeleton)
 		_rigid_socket_index = _rigid_skeleton.find_bone(rigid_skin_socket_bone)
@@ -45,9 +49,11 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PAUSED:
 		_pause_started_frame = Engine.get_physics_frames()
+		for particles: GPUParticles3D in _support_particles: particles.speed_scale = 0.0
 	elif what == NOTIFICATION_UNPAUSED and _pause_started_frame >= 0:
 		_paused_frames += Engine.get_physics_frames() - _pause_started_frame
 		_pause_started_frame = -1
+		for particles: GPUParticles3D in _support_particles: particles.speed_scale = 1.0
 
 func _visual_frame() -> int:
 	var frame: int = _pause_started_frame if _pause_started_frame >= 0 else Engine.get_physics_frames()
@@ -56,6 +62,7 @@ func _visual_frame() -> int:
 func _refresh_animation_visibility() -> void:
 	if not is_node_ready() or not is_inside_tree() or _dead:
 		return
+	_refresh_support_particles()
 	# Replicas are driven explicitly by snapshot interpolation, including when
 	# their BattleUnit physics callback is disabled. Do not replace that clock.
 	if attack.callback_mode_process == AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL:
@@ -137,13 +144,14 @@ func set_motion(moving: bool) -> void:
 		_locomotion_advanced = _suspended_seconds()
 
 func set_working(active: bool, mode: String = "gather") -> void:
-	if kind not in ["farmer", "engineer"]:
+	if kind not in ["farmer", "engineer", "priest"]:
 		return
 	if _working == active and (not active or _work_mode == mode):
 		return
 	synchronize_animation()
 	_working = active
 	_work_mode = mode
+	_refresh_support_particles()
 	if active:
 		locomotion.pause()
 		attack.play(mode, 0.12)
@@ -155,6 +163,8 @@ func set_working(active: bool, mode: String = "gather") -> void:
 		_attack_advanced = _locomotion_advanced
 
 func strike() -> void:
+	if _working:
+		set_working(false)
 	synchronize_animation()
 	attack.stop()
 	attack.play("strike")
@@ -164,8 +174,21 @@ func strike() -> void:
 func die() -> void:
 	synchronize_animation()
 	_dead = true
+	_refresh_support_particles()
 	locomotion.pause()
 	attack.pause()
+
+func _refresh_support_particles() -> void:
+	var active: bool = _working and _work_mode == "heal" and not _dead and is_visible_in_tree() and visibility_notifier.is_on_screen()
+	for particles: GPUParticles3D in _support_particles:
+		if active and not particles.emitting:
+			particles.restart()
+		particles.emitting = active
+		particles.visible = active
+
+func set_support_particles_paused(value: bool) -> void:
+	for particles: GPUParticles3D in _support_particles:
+		particles.speed_scale = 0.0 if value else 1.0
 
 func get_projectile_origin() -> Vector3:
 	_synchronize_locomotion()

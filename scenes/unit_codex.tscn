@@ -1,7 +1,9 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/unit_codex.gd" id="script"]
 [ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="theme"]
+[ext_resource type="PackedScene" path="res://assets/models/units/swordsman.tscn" id="healing_target"]
+[ext_resource type="PackedScene" path="res://scenes/healing_target_particles.tscn" id="healing_particles"]
 
 [sub_resource type="StyleBoxEmpty" id="Clear"]
 
@@ -359,6 +361,27 @@ environment = SubResource("Environment")
 
 [node name="ModelAnchor" type="Node3D" parent="CodexViewport/World"]
 unique_name_in_owner = true
+
+[node name="SupportPreview" type="Node3D" parent="CodexViewport/World/ModelAnchor"]
+unique_name_in_owner = true
+visible = false
+position = Vector3(-0.8, 0, -1.1)
+
+[node name="Target" parent="CodexViewport/World/ModelAnchor/SupportPreview" instance=ExtResource("healing_target")]
+unique_name_in_owner = true
+
+[node name="Healing" parent="CodexViewport/World/ModelAnchor/SupportPreview" instance=ExtResource("healing_particles")]
+unique_name_in_owner = true
+
+[node name="Caption" type="Label3D" parent="CodexViewport/World/ModelAnchor/SupportPreview"]
+position = Vector3(0, 2.22, 0)
+billboard = 1
+pixel_size = 0.004
+font = SubResource("Bold")
+font_size = 34
+outline_size = 5
+modulate = Color(0.9, 0.79, 0.54, 1)
+text = "受伤的剑士"
 
 [node name="Pedestal" type="MeshInstance3D" parent="CodexViewport/World"]
 unique_name_in_owner = true

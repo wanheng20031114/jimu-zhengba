@@ -16,6 +16,7 @@ func spawn(kind: String,at: Vector3,owner: int=0) -> BattleUnit:
 	return unit
 func work(engineers: Array[BattleUnit],targets: Array[BattleUnit],ticks: int) -> void:
 	for step: int in ticks:
+		game.elapsed += .02
 		for target: BattleUnit in targets: target.support.advance_clock(.02)
 		for unit: BattleUnit in engineers:
 			unit.support.advance_clock(.02)

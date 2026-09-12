@@ -69,19 +69,19 @@ func _decide() -> void:
 	_command_supporters()
 
 func _command_supporters() -> void:
-	# Takeover keeps inherited engineers behind machines instead of in raids.
+	# Inherited supporters escort the troop types their own ability can restore.
 	for supporter: BattleUnit in _supporters:
 		if is_instance_valid(supporter.support.recipient) or supporter.order == BattleUnit.Order.SUPPORT:
 			continue
-		var machine: BattleUnit
+		var escort: BattleUnit
 		var closest: float = INF
 		for member: BattleUnit in _army:
-			if member._stats.combat_class != &"siege": continue
+			if not supporter.support.valid_target(member, false): continue
 			var distance := supporter.global_position.distance_squared_to(member.global_position)
 			if distance < closest:
 				closest = distance
-				machine = member
-		var at: Vector3 = _home - _front * 3.0 if machine == null else machine.global_position - _front * 3.0
+				escort = member
+		var at: Vector3 = _home - _front * 3.0 if escort == null else escort.global_position - _front * 3.0
 		at = _game.clamp_to_map(at)
 		if supporter.global_position.distance_squared_to(at) > 16.0 and (supporter.order != BattleUnit.Order.ATTACK_MOVE or supporter.destination.distance_squared_to(at) > 9.0):
 			_submit({"kind":"move", "units":[supporter.entity_id], "at":[at.x,0,at.z], "attack_move":true})

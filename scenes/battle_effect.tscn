@@ -1,6 +1,7 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle_effect.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/healing_target_particles.tscn" id="healing"]
 
 [sub_resource type="StandardMaterial3D" id="Material_spark"]
 transparency = 1
@@ -183,5 +184,7 @@ mesh = SubResource("Mesh_direction")
 
 [node name="Lifetime" type="Timer" parent="."]
 one_shot = true
+
+[node name="Healing" parent="." instance=ExtResource("healing")]
 
 [connection signal="timeout" from="Lifetime" to="." method="_on_lifetime_timeout"]

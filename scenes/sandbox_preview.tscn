@@ -16,6 +16,7 @@
 
 [ext_resource type="PackedScene" path="res://assets/models/units/farmer.tscn" id="farmer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/engineer.tscn" id="engineer"]
+[ext_resource type="PackedScene" path="res://assets/models/units/priest.tscn" id="priest"]
 
 [node name="PlacementPreview" type="Node3D"]
 physics_interpolation_mode = 2
@@ -51,6 +52,9 @@ visible = false
 visible = false
 
 [node name="farmer" parent="Models" instance=ExtResource("farmer")]
+visible = false
+
+[node name="priest" parent="Models" instance=ExtResource("priest")]
 visible = false
 
 [node name="engineer" parent="Models" instance=ExtResource("engineer")]

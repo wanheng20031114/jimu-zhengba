@@ -17,6 +17,7 @@ func _new_tween() -> Tween:
 
 func reset_effect() -> void:
 	$Lifetime.stop()
+	$Healing.stop()
 	for tween: Tween in _tweens:
 		if tween.is_valid():
 			tween.kill()
@@ -100,7 +101,7 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 			var marker: Tween = _new_tween()
 			marker.tween_method(_animate_direction, 0.0, 1.0, 0.65)
 			duration = 0.8
-		"spawn", "heal":
+		"spawn":
 			_show_ring(Color("d8c98d"), 2.0, 0.8)
 			$Sparks.direction = Vector3.UP
 			$Sparks.initial_velocity_min = 0.6
@@ -109,6 +110,9 @@ func initialize(kind: String, color: Color = Color.WHITE) -> void:
 			$Sparks.show()
 			$Sparks.restart()
 			$Sparks.emitting = true
+			duration = 1.1
+		"heal":
+			$Healing.play()
 			duration = 1.1
 		"charge":
 			_show_ring(Color("eed6a0"), 2.2, 0.5)

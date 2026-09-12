@@ -8,7 +8,7 @@ const BUILDING_DESCRIPTIONS: Dictionary = {
 	"headquarters": "城镇的中心。训练农民、守护经济，并为重建保留希望。",
 	"barracks": "训练剑士、盾卫、长矛兵、弓箭手、骑士、战象与轻骑兵，用不同兵种组成你的主力。",
 	"factory": "制造投石车、加农炮并训练工程兵，为前线提供火力和维修支援。",
-	"academy": "研究军队、人口与采矿科技。已完成的研究永久保留。",
+	"academy": "训练牧师，并研究军队、人口与采矿科技。训练和研究独立进行，已完成的研究永久保留。",
 	"defense_tower": "自动攻击范围内的敌人。无法驻军，需要部队保护。",
 }
 const MODEL_PATHS: Dictionary = {
@@ -21,7 +21,7 @@ const MODEL_PATHS: Dictionary = {
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
 	"swordsman": Vector2(1.0, 3.2), "shield_guard": Vector2(1.05, 3.4), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5), "light_cavalry": Vector2(1.3, 4.2), "war_elephant": Vector2(1.85, 6.4),
-	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2),
+	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
 var category: int = 0
@@ -45,6 +45,9 @@ var _cycle_seconds: float = 1.0
 @onready var _pedestal: MeshInstance3D = %Pedestal
 
 func _ready() -> void:
+	%Target.locomotion.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+	%Target.attack.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+	%Target.set_team(0)
 	for title: String in ["单位", "建筑", "科技"]:
 		%CategoryTabs.add_tab(title)
 	%Portrait.texture = _viewport.get_texture()
@@ -98,6 +101,9 @@ func _on_codex_visibility_changed() -> void:
 func _refresh_preview_activity() -> void:
 	var showing: bool = is_visible_in_tree()
 	var playing: bool = showing and category == 0 and _preview_unit != null and not _preview_paused
+	if _preview_unit != null:
+		_preview_unit.set_support_particles_paused(not playing)
+	%Healing.set_paused(not playing)
 	set_process(showing and (playing or _dragging))
 	if is_instance_valid(_model):
 		_model.process_mode = Node.PROCESS_MODE_INHERIT if showing else Node.PROCESS_MODE_DISABLED
@@ -140,11 +146,28 @@ func _select_preview_action(action: PreviewAction) -> void:
 			# Preserve the whole authored motion and the unit's real attack cadence.
 			_cycle_seconds = maxf(BalanceCatalog.unit(_preview_unit.kind).cooldown, _preview_unit.attack.get_animation("strike").length)
 		PreviewAction.GATHER:
-			_preview_unit.set_working(true, "repair" if selected_id == "engineer" else "gather")
+			var ability: String = String(BalanceCatalog.unit(_preview_unit.kind).support_kind)
+			var work_mode: String = "gather" if ability.is_empty() else ability
+			_preview_unit.set_working(true, work_mode)
 			_preview_unit.attack.seek(0.0, true, true)
-			_cycle_seconds = _preview_unit.attack.get_animation("repair" if selected_id == "engineer" else "gather").length
+			_cycle_seconds = _preview_unit.attack.get_animation(work_mode).length
+	_configure_support_preview()
 	_update_preview_controls()
 	_refresh_preview_activity()
+
+func _configure_support_preview() -> void:
+	var healing: bool = _preview_unit.kind == "priest" and _preview_action == PreviewAction.GATHER
+	%SupportPreview.visible = healing
+	%Healing.stop()
+	if _preview_unit.kind != "priest": return
+	_model.position = Vector3(.7, 0, .5) if healing else Vector3.ZERO
+	_model.rotation = Vector3.ZERO
+	if healing:
+		_model.look_at(%SupportPreview.global_position, Vector3.UP)
+	_base_camera_size = 4.7 if healing else UNIT_FRAMING["priest"].y
+	_camera.size = _base_camera_size
+	_camera.look_at(Vector3(0, 1.05, -.25 if healing else 0), Vector3.UP)
+	_pedestal.scale = Vector3(2, 1, 2) if healing else Vector3(1.4, 1, 1.4)
 
 func _advance_preview(delta: float) -> void:
 	# Both native players use MANUAL mode here. This single presentation clock
@@ -156,6 +179,10 @@ func _advance_preview(delta: float) -> void:
 			_preview_unit.locomotion.advance(step)
 		if _preview_unit.attack.is_playing():
 			_preview_unit.attack.advance(step)
+		if %SupportPreview.visible:
+			%Target.locomotion.advance(step)
+			if _cycle_elapsed < .6 and _cycle_elapsed + step >= .6:
+				%Healing.play()
 		_cycle_elapsed += step
 		remaining -= step
 		if _cycle_elapsed + 0.000001 < _cycle_seconds:
@@ -242,9 +269,11 @@ func _on_entry_selected(index: int) -> void:
 			content += _combat_rows(unit)
 			content += _row("移动速度", _number(unit.speed))
 			content += _row("视野", _number(unit.sight))
-			if unit.support_kind == &"repair":
-				content += _row("免费维修", "%s生命 / %s秒" % [_number(unit.support_amount), _number(unit.support_period)])
-				content += _row("维修距离", _number(unit.support_range))
+			if not unit.support_kind.is_empty():
+				var action: String = "治疗" if unit.support_kind == &"heal" else "维修"
+				content += _row("免费" + action, "%s生命 / %s秒" % [_number(unit.support_amount), _number(unit.support_period)])
+				content += _row(action + "距离", _number(unit.support_range))
+				if unit.support_kind == &"heal": content += _row("首次施法", _number(unit.support_windup_seconds) + " 秒")
 			if unit.min_range > 0.0:
 				content += _row("最小射程", _number(unit.min_range))
 			%Special.text = _unit_notes(unit)
@@ -312,6 +341,8 @@ func _combat_rows(definition: CombatDefinition) -> String:
 	return rows
 
 func _unit_notes(unit: UnitDefinition) -> String:
+	if unit.support_kind == &"heal":
+		return "治疗己方和盟友的步兵、骑兵、弓手、农民及其他牧师；不能治疗自身、攻城器或建筑。同一目标同时一名牧师治疗。移动中断施法，手动指定可跟随；攻击科技只提高挥拳伤害。"
 	if unit.support_kind == &"repair":
 		return "免费维修己方和盟友的受损攻城器，工作满1秒恢复5生命。同一目标同时一人维修。不能维修建筑或战象；右键指定目标，停止命令中断维修。"
 	if unit.id == &"light_cavalry":
@@ -346,6 +377,8 @@ func _number(value: float) -> String:
 
 func _set_preview(kind: String) -> void:
 	_preview_unit = null
+	%SupportPreview.hide()
+	%Healing.stop()
 	if is_instance_valid(_model):
 		_anchor.remove_child(_model)
 		_model.queue_free()
@@ -372,8 +405,8 @@ func _set_preview(kind: String) -> void:
 	_camera.look_at(Vector3(0, center, 0), Vector3.UP)
 	_pedestal.scale = Vector3(1.4, 1.0, 1.4) if unit else Vector3(4.7, 1.0, 4.7)
 	%PreviewAnimationControls.visible = category == 0 and unit
-	%PreviewGather.visible = kind in ["farmer", "engineer"]
-	%PreviewGather.text = "维修" if kind == "engineer" else "采矿"
+	%PreviewGather.visible = kind in ["farmer", "engineer", "priest"]
+	%PreviewGather.text = "治疗" if kind == "priest" else ("维修" if kind == "engineer" else "采矿")
 	%PreviewAttack.text = "开炮" if kind == "cannon" else ("投射" if kind == "catapult" else "攻击")
 	_reset_view()
 	_refresh_preview_activity()

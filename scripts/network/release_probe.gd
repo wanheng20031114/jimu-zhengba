@@ -116,7 +116,7 @@ func validate_resource_values() -> void:
 	# saved exported property. Exercise the actual ResourceLoader values in PCK.
 	var began := checks
 	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry"],
-		"factory": ["catapult", "cannon", "engineer"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
+		"factory": ["catapult", "cannon", "engineer"], "academy": ["priest"], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
 	var defensive_damage := {"headquarters": 40, "enemy_keep": 40, "defense_tower": 16, "tower": 17}
 	for kind: String in production:
 		var building := BalanceCatalog.building(kind)
@@ -129,7 +129,7 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
-	var training_seconds := {"engineer": 10.0, "light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var training_seconds := {"priest": 18.0, "engineer": 10.0, "light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 16], ["swordsman", "knight", 10],
@@ -138,6 +138,13 @@ func validate_resource_values() -> void:
 		var damage := DamageResolver.resolve(DamageResolver.snapshot(BalanceCatalog.unit(pair[0]), 0.0, 0, 0), defender)
 		check(ceili(defender.hp / damage) == pair[2], "packaged_combat_hits_" + pair[0] + "_" + pair[1])
 	var archer := BalanceCatalog.unit("archer")
+	var priest := BalanceCatalog.unit("priest")
+	check(priest.cost==180 and priest.hp==70 and priest.damage==3 and priest.melee_armor==0 and priest.ranged_armor==1
+		and priest.speed==3.5 and priest.sight==14 and priest.supply==2 and priest.military and priest.cooldown==1.5
+		and priest.attack_windup_seconds==.25 and priest.range==.8 and priest.radius==.45
+		and priest.combat_class==&"infantry" and priest.projectile.is_empty() and priest.bonuses.is_empty(), "packaged_priest_combat_values")
+	check(priest.support_kind==&"heal" and priest.support_range==6 and priest.support_amount==10 and priest.support_period==1
+		and priest.support_windup_seconds==.6 and not priest.support_auto_chase, "packaged_priest_healing_contract")
 	var swordsman := BalanceCatalog.unit("swordsman")
 	var guard := BalanceCatalog.unit("shield_guard")
 	var engineer := BalanceCatalog.unit("engineer")

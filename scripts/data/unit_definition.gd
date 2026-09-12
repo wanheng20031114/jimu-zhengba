@@ -23,4 +23,6 @@ extends CombatDefinition
 @export var support_range: float = 0.0
 @export var support_amount: float = 0.0
 @export var support_period: float = 1.0
+@export var support_windup_seconds: float = 1.0
 @export var support_discovery_range: float = 0.0
+@export var support_auto_chase: bool = true

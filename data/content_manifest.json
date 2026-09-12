@@ -1,8 +1,8 @@
 {
   "build": "0.11.0",
-  "protocol": 11,
+  "protocol": 12,
   "files": {
-    "data/buildings/academy.tres": "f868bc59ee251b7885d2499e81db0b2135c752b063e841ec3a7d97003e69f45e",
+    "data/buildings/academy.tres": "c46d4e8a0a2951829041ff993634641240caea0b2cc8d1708d2291c72ccd4bea",
     "data/buildings/barracks.tres": "84b9e77bdf048dd31259728c0da4b2520200cecd6a37953e997ffd15d89225b9",
     "data/buildings/defense_tower.tres": "405dd0e74b4e61e458ece50b8f4f98b80c272bc4ed0f20c05fbcbba3c94dd345",
     "data/buildings/enemy_keep.tres": "6c393418bbe472611fd4176c658463fcb6536347e66d0d08d119216e62782109",
@@ -24,6 +24,7 @@
     "data/units/farmer.tres": "6983f24ea24c14078bdb31b37384e9da7a114d51496bc3cdb71a9f1ad0a8b7cf",
     "data/units/knight.tres": "02bfbf9ca74bd21ea1df32dab02d80c8fc35094ef392429a633dd390df5905a8",
     "data/units/light_cavalry.tres": "5eb0f0124c3d003944096808ccd71b411a186149306f5a12fd09c8649f4f879a",
+    "data/units/priest.tres": "03b9ad99632bd995951ca2ffc825552ddbc24b8bbcb2a6ca994f6f390e33b2ee",
     "data/units/shield_guard.tres": "25af8d3260d7bfdf0b56821afdd12ad6b8411e01cc0cb6a191c2208d7589ab0a",
     "data/units/spearman.tres": "caff832085fb181b19be34bb1f0a906a288126072450521ab59bd6a15d0bcbef",
     "data/units/swordsman.tres": "10ac23d538fab29a4cb9b1bb532652dd594c89a6ab22423a59a864c16c7110c0",

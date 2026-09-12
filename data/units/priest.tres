@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = &"priest"
+name = "牧师"
+description = "以祈祷治疗友军的随军牧师，双手施法，近身时挥拳自卫。"
+hp = 70
+damage = 3
+melee_armor = 0
+ranged_armor = 1
+combat_class = &"infantry"
+range = 0.8
+cooldown = 1.5
+attack_windup_seconds = 0.25
+cost = 180
+supply = 2
+speed = 3.5
+radius = 0.45
+sight = 14
+production_building = &"academy"
+training_seconds = 18
+support_kind = &"heal"
+support_range = 6.0
+support_amount = 10.0
+support_period = 1.0
+support_windup_seconds = 0.6
+support_discovery_range = 6.0
+support_auto_chase = false

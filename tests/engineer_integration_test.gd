@@ -122,8 +122,6 @@ func _run() -> void:
 	check(victim.hp==147,"tool strike applies three melee damage")
 	engineer.stop()
 	check(engineer._attack_cooldown==1.5,"stop cannot refund attack cycle")
-	for future: String in ["priest","heavy_cannon","triple_cannon"]:
-		check(not BalanceCatalog.UNITS.has(future),"later unit remains unstarted: "+future)
 	await game.prepare_shutdown()
 	game.queue_free()
 	await process_frame

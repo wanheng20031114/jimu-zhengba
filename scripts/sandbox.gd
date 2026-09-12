@@ -112,6 +112,7 @@ func set_running(value: bool) -> void:
 	var mode: ProcessMode = Node.PROCESS_MODE_INHERIT if running else Node.PROCESS_MODE_DISABLED
 	$Units.process_mode = mode
 	$ProjectilePool.process_mode = mode
+	$EffectPool.process_mode = mode
 	# Keep physics-space queries and the camera alive while troops are paused.
 	hud.refresh()
 
