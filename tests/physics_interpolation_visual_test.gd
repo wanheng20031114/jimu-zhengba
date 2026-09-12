@@ -234,7 +234,12 @@ func _combat_case() -> void:
 	change_scene_to_file("res://scenes/main.tscn")
 	await scene_changed
 	game = current_scene
+	while not game._match_ready: await process_frame
 	game.tests_running = true
+	# This fixture replaces the armies. Stop current Bot scheduling and its
+	# queued commands before deleting units referenced by the initial match.
+	game.bots.clear()
+	game.command_bus.pending.clear()
 	game.camera_rig.edge_scroll = false
 	game.get_node("EnemyTimer").stop()
 	game.get_node("IncomeTimer").stop()

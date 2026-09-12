@@ -23,7 +23,7 @@ def collect(folder: Path, names: list[str], rejected_names: list[str]) -> dict:
         if name in rejected_names:
             assert report["failures"], "A rejected run must retain its actual failures"
         else:
-            assert not report["failures"] and report["health_multiplier"] == 100
+            assert not report["failures"] and report["health_multiplier"] >= 100
             assert all(p["starting_units"] == p["ending_units"] == 600 and p["damage_events"] > 0
                        and all(m["alive"] == 600 for m in p["monitors"]) for p in report["phases"])
         concurrent = [probe for probe in environment if probe["other_tests"]]

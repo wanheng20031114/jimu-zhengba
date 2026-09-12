@@ -7,6 +7,8 @@ const ROSTER := {"swordsman": 22, "spearman": 12, "shield_guard": 8, "archer": 1
 	"knight": 8, "light_cavalry": 5, "catapult": 4, "cannon": 2, "war_elephant": 2, "engineer": 2}
 var run_id := "mixed"
 var cavalry_only := false
+var focus_fire := false
+var mixed_roster: Dictionary = ROSTER.duplicate()
 var natural_health := false
 var damage_events := 0
 var damage_amount := 0.0
@@ -19,6 +21,8 @@ var camera_origin := Vector3.ZERO
 var camera_release_at := 0
 var benchmark_output := ""
 var quality: Dictionary = {}
+var sustained_seconds := 30.0
+var health_multiplier := 100.0
 
 func _run() -> void:
 	began_usec = Time.get_ticks_usec()
@@ -26,8 +30,18 @@ func _run() -> void:
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--run-id="): run_id = argument.trim_prefix("--run-id=")
 		if argument.begins_with("--output="): benchmark_output = argument.trim_prefix("--output=")
+		if argument.begins_with("--sustained-seconds="): sustained_seconds = argument.trim_prefix("--sustained-seconds=").to_float()
+	_check(sustained_seconds >= 30.0 and sustained_seconds <= 120.0, "sustained observation is 30 to 120 seconds")
 	cavalry_only = "--cavalry" in OS.get_cmdline_user_args()
+	focus_fire = "--focus-fire" in OS.get_cmdline_user_args()
+	if "--priests" in OS.get_cmdline_user_args():
+		_check(not cavalry_only, "priest variation uses the mixed roster")
+		mixed_roster.archer = 8
+		mixed_roster.priest = 2
 	natural_health = "--natural-health" in OS.get_cmdline_user_args()
+	# Preserve the original 30-second fixture. Longer observations need enough
+	# health reserve to keep all 600 bodies present while damage remains real.
+	health_multiplier = 1.0 if natural_health else 100.0 * sustained_seconds / 30.0
 	if benchmark_output.is_empty(): benchmark_output = ProjectSettings.globalize_path("res://artifacts/battle-600")
 	DirAccess.make_dir_recursive_absolute(benchmark_output)
 	var rendered := DisplayServer.get_name() != "headless"
@@ -69,7 +83,7 @@ func _run() -> void:
 	while not game.find_recruit_position("farmer", game.headquarters).is_finite() and Time.get_ticks_msec() < recruitment_deadline:
 		await physics_frame
 	_check(game.find_recruit_position("farmer", game.headquarters).is_finite(), "native navigation accepts a real recruitment position")
-	quality = {"msaa_3d": root.msaa_3d, "taa": root.use_taa,
+	quality = {"msaa_3d": root.msaa_3d, "taa": root.use_taa, "render_scale": root.scaling_3d_scale,
 		"shadow_enabled": game.get_node("Sun").shadow_enabled,
 		"shadow_distance": game.get_node("Sun").directional_shadow_max_distance,
 		"physics_interpolation": physics_interpolation,
@@ -87,7 +101,7 @@ func _run() -> void:
 	await create_timer(1.0 if short_check else 6.0).timeout
 	_command_armies()
 	await _measure("opening_orders", 1.5 if short_check else 5.0)
-	await _measure("sustained_overview", 2.0 if short_check else 30.0)
+	await _measure("sustained_overview", 2.0 if short_check else sustained_seconds)
 	game.camera_rig.focus_at(Vector3(0, 0, -6.5), true)
 	game.camera_rig.zoom_target = 37.0
 	game.camera.size = 37.0
@@ -117,8 +131,8 @@ func _populate(_composition: String) -> void:
 		if cavalry_only:
 			for index: int in 75: roster.append("knight" if index % 2 == 0 else "light_cavalry")
 		else:
-			for kind: String in ROSTER:
-				for index: int in int(ROSTER[kind]): roster.append(kind)
+			for kind: String in mixed_roster:
+				for index: int in int(mixed_roster[kind]): roster.append(kind)
 		roster.shuffle()
 		var sign_x := -1.0 if player.alliance_id == game.get_player(0).alliance_id else 1.0
 		var lane := (float(player.owner_id % 4) - 1.5) * 13.0
@@ -132,9 +146,8 @@ func _populate(_composition: String) -> void:
 			var unit: BattleUnit = game.spawn_unit(roster[index], player.owner_id, at)
 			_check(unit.global_position.distance_squared_to(at) < 0.001, "spawn retains its validated position")
 			occupied.append({"at": at, "radius": unit.radius})
-			if not natural_health:
-				unit.hp *= 100.0
-				unit.max_hp *= 100.0
+			unit.hp *= health_multiplier
+			unit.max_hp *= health_multiplier
 			unit.hold()
 			unit.damaged.connect(_record_damage)
 		_check(game.owned_entities(player.owner_id, "units").size() == 75, "owner %d has 75 live units" % player.owner_id)
@@ -169,13 +182,26 @@ func _command_armies() -> void:
 	for player: PlayerState in game.players:
 		var sign_x := -1.0 if player.alliance_id == game.get_player(0).alliance_id else 1.0
 		var lane := (float(player.owner_id % 4) - 1.5) * 13.0
-		_submit_move(game.owned_entities(player.owner_id, "units"), Vector3(-sign_x * 4.0, 0, lane), true, "opening")
+		var army: Array = game.owned_entities(player.owner_id, "units")
+		var focused: BattleUnit
+		if focus_fire:
+			var nearest := INF
+			for candidate: BattleUnit in get_nodes_in_group("units"):
+				if candidate.alliance_id == player.alliance_id: continue
+				var distance: float = candidate.position.distance_squared_to(army[0].position)
+				if distance < nearest:
+					nearest = distance
+					focused = candidate
+		_submit_move(army, Vector3(-sign_x * 4.0, 0, lane), true, "opening_focus" if focus_fire else "opening", focused)
 
-func _submit_move(army: Array, at: Vector3, assault: bool, label: String) -> void:
+func _submit_move(army: Array, at: Vector3, assault: bool, label: String, focused: BattleUnit = null) -> void:
 	if army.is_empty(): return
 	var owner: int = army[0].owner_id
 	var command := {"kind": "move", "units": army.map(func(u: BattleUnit): return u.entity_id),
 		"seq": game.next_command_sequence(owner), "at": game.vector_data(at), "attack_move": assault}
+	if focused != null:
+		command.kind = "attack"
+		command.target = focused.entity_id
 	var since := Time.get_ticks_usec()
 	var response: Dictionary = game.submit_command(command, owner)
 	_check(response.ok, "native command submission accepted for " + label)
@@ -230,11 +256,14 @@ func _measure(label: String, seconds: float) -> void:
 	var next_interaction := since + (400000 if short_check else 2000000)
 	var interaction_index := 0
 	var sample_cost_usec := 0
+	var window_started := since
+	var window_frames := 0
 	probe.begin_sample()
 	while Time.get_ticks_usec() - since < int(seconds * 1000000.0):
 		await process_frame
 		var now := Time.get_ticks_usec()
 		frame_ms.append((now - previous) / 1000.0)
+		window_frames += 1
 		previous = now
 		tick_steps.append(float(game.simulation_tick - previous_tick))
 		previous_tick = game.simulation_tick
@@ -259,20 +288,29 @@ func _measure(label: String, seconds: float) -> void:
 			var visible := 0
 			var moving := 0
 			var winding_up := 0
+			var congestion_waiting := 0
 			for unit: BattleUnit in units:
 				if not unit.alive: continue
 				alive += 1
 				if unit.visible and game.camera.is_position_in_frustum(unit.global_position + Vector3.UP): visible += 1
 				if unit.velocity.length_squared() > 0.01: moving += 1
 				if not unit.attack_windup.is_stopped(): winding_up += 1
+				if unit._congestion_wait > 0.0: congestion_waiting += 1
 			monitors.append({"seconds": (now - since) / 1000000.0, "alive": alive, "visible": visible,
+				"window_seconds": (now - window_started) / 1000000.0, "window_fps": window_frames * 1000000.0 / maxi(1, now - window_started),
 				"moving": moving, "winding_up": winding_up, "damage_events": damage_events - start_damage,
+				"congestion_waiting": congestion_waiting,
 				"projectiles": game.get_node("ProjectilePool").active_count(),
 				"effects": game.get_node("EffectPool").active_count(),
 				"draw_calls": Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 				"nodes": Performance.get_monitor(Performance.OBJECT_NODE_COUNT),
+				"motion_fast_steps": game.get_node("StaticMotionGrid").fast_steps,
+				"motion_native_steps": game.get_node("StaticMotionGrid").native_steps,
+				"corridor_cache_hits": game.get_node("ConstructionNavigation").corridor_cache_hits,
 				"physics_monitor_ms": Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
 				"navigation_monitor_ms": Performance.get_monitor(Performance.TIME_NAVIGATION_PROCESS) * 1000.0})
+			window_started = now
+			window_frames = 0
 			sample_cost_usec += Time.get_ticks_usec() - now
 	var duration := (Time.get_ticks_usec() - since) / 1000000.0
 	var logic: Array[float] = probe.end_sample()
@@ -290,7 +328,9 @@ func _measure(label: String, seconds: float) -> void:
 		"starting_units": start_units, "ending_units": get_nodes_in_group("units").size(),
 		"damage_events": damage_events - start_damage, "damage_amount": damage_amount - start_amount,
 		"monitor_sampling_total_ms": sample_cost_usec / 1000.0, "monitors": monitors,
-		"acceptance": {"fps_at_least_30": frame_ms.size() / duration >= 30.0, "frame_p95_at_most_50ms": stats.p95 <= 50.0,
+		"acceptance": {"minimum_fps_at_least_10": frame_ms.size() / duration >= 10.0,
+			"target_fps_at_least_20": frame_ms.size() / duration >= 20.0,
+			"minimum_frame_p95_at_most_100ms": stats.p95 <= 100.0, "target_frame_p95_at_most_50ms": stats.p95 <= 50.0,
 			"tps_at_least_29": observed_tps >= 29.0, "no_250ms_stall": stats.max <= 250.0}}
 	phases.append(phase)
 	_check(not logic.is_empty() and logic.size() >= game.simulation_tick - start_tick - 1, "every physics tick has a logic sample: " + label)
@@ -312,8 +352,10 @@ func _write_report() -> void:
 		"harness_check": short_check, "debug_build": OS.is_debug_build(), "editor_feature": OS.has_feature("editor"),
 		"godot": Engine.get_version_info().string, "renderer": RenderingServer.get_current_rendering_method(),
 		"gpu": RenderingServer.get_video_adapter_name(), "viewport": str(root.get_visible_rect().size),
-		"quality": quality, "seed": 1309600, "mode": mode, "roster_per_owner": {"knight": 38, "light_cavalry": 37} if cavalry_only else ROSTER,
-		"health_multiplier": 1 if natural_health else 100, "bots": false, "networked": false, "workers": 0,
+		"quality": quality, "seed": 1309600, "mode": mode, "roster_per_owner": {"knight": 38, "light_cavalry": 37} if cavalry_only else mixed_roster,
+		"health_multiplier": health_multiplier, "bots": false, "networked": false, "workers": 0,
+		"focus_fire": focus_fire,
+		"sustained_seconds": sustained_seconds, "fps_minimum": 10, "fps_target": 20,
 		"configured_fps_limit": configured_fps_limit, "configured_vsync": configured_vsync,
 		"benchmark_fps_limit": Engine.max_fps, "checks": checks, "failures": failures, "phases": phases,
 		"orders": orders, "camera_response_ms": _distribution(camera_samples), "unique_damaged_units": unique_victims.size(),

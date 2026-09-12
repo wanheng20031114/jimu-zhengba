@@ -5,6 +5,8 @@ extends Node3D
 ## https://docs.godotengine.org/en/4.6/classes/class_multimesh.html
 
 @export_range(1, 2048, 1) var initial_capacity: int = 128
+# Small armies retain native per-part interpolation at high display rates.
+@export_range(1, 2048, 1) var render_sampled_threshold: int = 192
 
 class PartBatch extends RefCounted:
 	var node: MultiMeshInstance3D
@@ -15,6 +17,8 @@ class PartBatch extends RefCounted:
 
 class ModelEntry extends RefCounted:
 	var model: UnitVisual
+	var pose_root: Node3D
+	var authority: bool
 	var id: int
 	var parts: Array[Node3D] = []
 	var batches: Array[PartBatch] = []
@@ -31,6 +35,7 @@ var _batch_by_key: Dictionary[StringName, PartBatch] = {}
 var _models: Array[ModelEntry] = []
 var _model_index: Dictionary[int, int] = {}
 var _kind_count: Dictionary[String, int] = {}
+var _render_sampling: bool = false
 
 func _ready() -> void:
 	# World-space interpolated transforms are submitted below; applying native
@@ -55,12 +60,14 @@ func _ready() -> void:
 		batch.node.hide()
 	set_process(false)
 
-func register_model(model: UnitVisual, relation: int) -> void:
+func register_model(model: UnitVisual, relation: int, authority: bool = true) -> void:
 	var id: int = model.get_instance_id()
 	assert(not _model_index.has(id), "A model must be registered once")
 	assert(not model.batch_parts.is_empty(), "Batch model must carry authored part paths")
 	var entry := ModelEntry.new()
 	entry.model = model
+	entry.pose_root = model.get_parent()
+	entry.authority = authority
 	entry.id = id
 	entry.custom = FactionPalette.model_color(relation).srgb_to_linear()
 	entry.custom.a = 1.0
@@ -81,6 +88,9 @@ func register_model(model: UnitVisual, relation: int) -> void:
 	_model_index[id] = _models.size()
 	_models.append(entry)
 	registered_models = _models.size()
+	_update_animation_sampling()
+	if authority:
+		model.set_render_sampled_animation(_render_sampling)
 	set_process(true)
 
 func unregister_model(model: UnitVisual) -> void:
@@ -105,6 +115,7 @@ func unregister_model(model: UnitVisual) -> void:
 	_models.pop_back()
 	_model_index.erase(id)
 	registered_models = _models.size()
+	_update_animation_sampling()
 	if _models.is_empty():
 		for batch: PartBatch in _batches:
 			batch.mesh.visible_instance_count = 0
@@ -112,6 +123,15 @@ func unregister_model(model: UnitVisual) -> void:
 		visible_models = 0
 		submitted_parts = 0
 		set_process(false)
+
+func _update_animation_sampling() -> void:
+	var enabled: bool = registered_models >= render_sampled_threshold
+	if enabled == _render_sampling:
+		return
+	_render_sampling = enabled
+	for entry: ModelEntry in _models:
+		if entry.authority:
+			entry.model.set_render_sampled_animation(enabled)
 
 func set_team(model: UnitVisual, relation: int) -> void:
 	var entry: ModelEntry = _models[_model_index[model.get_instance_id()]]
@@ -136,13 +156,21 @@ func _process(_delta: float) -> void:
 		if not model.is_visible_in_tree() or not model.visibility_notifier.is_on_screen() or entry.custom.a <= 0.0:
 			continue
 		visible_models += 1
+		var pose_to_render := Transform3D.IDENTITY
+		if model.render_sampled_animation:
+			if not model._dead and model.can_process():
+				model.synchronize_animation()
+			# One interpolated movement/facing transform per unit instead of an
+			# interpolation pump for every animated rigid part on every physics tick.
+			pose_to_render = entry.pose_root.get_global_transform_interpolated() * entry.pose_root.global_transform.affine_inverse()
 		for part_index: int in entry.parts.size():
 			var part: Node3D = entry.parts[part_index]
 			if not part.is_visible_in_tree():
 				continue
 			var batch: PartBatch = entry.batches[part_index]
 			var slot: int = batch.count
-			batch.mesh.set_instance_transform(slot, part.get_global_transform_interpolated())
+			var displayed: Transform3D = pose_to_render * part.global_transform if model.render_sampled_animation else part.get_global_transform_interpolated()
+			batch.mesh.set_instance_transform(slot, displayed)
 			# Dense slot identities can change after fog/culling/death. Cache by
 			# output slot, not by unit; only changed colors/fades need an upload.
 			if batch.colors[slot] != entry.custom:

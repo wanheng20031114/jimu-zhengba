@@ -203,6 +203,9 @@ func _case(mode: String) -> void:
 			test._check(state.repeat_commands >= 5 and state.repeat_resets == 0, "real bow repeated display-frame commands never reset the windup or pose")
 	state.erase("projectile")
 	cases.append(state)
+	# The repeat case queues commands on display frames. Let the final command
+	# reach the fixed tick while its fixture entities still exist.
+	while not game.command_bus.pending.is_empty(): await test.process_frame
 	game.select_entities([])
 	fighter.set_physics_process(false)
 	fighter.navigation_agent.avoidance_enabled = false

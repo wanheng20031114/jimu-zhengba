@@ -31,6 +31,7 @@ const RECOVERY_DELAY: float = 10.0
 # A small contact tolerance (about one knight step at the authoritative 30 TPS),
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
+const CONGESTION_SECONDS: float = 0.6
 
 @export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
@@ -87,6 +88,8 @@ var _fog: FogOfWar
 var _recovery_quiet_seconds: float = 0.0
 var _recovery_progress: float = 0.0
 var _path_budget: PathBudget
+var _navigation_route: PathBudget.Route
+var _avoidance_rid: RID
 var _motion_grid: StaticMotionGrid
 var _motion_clearance: float = 0.0
 var _motion_region := Rect2()
@@ -104,10 +107,20 @@ var _moving: bool = false
 var _avoidance_moving: bool = false
 var _moving_neighbor_limit: int = 10
 var _observed_velocity := Vector3.ZERO
+var _congestion_seconds: float = 0.0
+var _congestion_wait: float = 0.0
+var _congestion_target: Node3D
+var _congestion_probe: bool = false
+var _preferred_speed_squared: float = 0.0
+var _preferred_velocity := Vector3.ZERO
 var _move_retaliation: Node3D
 var _retaliation_time: float = 0.0
 var _corpse_meshes: Array[GeometryInstance3D] = []
 var _target_query: PhysicsShapeQueryParameters3D
+var _target_shape := BoxShape3D.new()
+var _target_extent: float = -1.0
+var _largest_unit_radius: float = 0.0
+var _largest_entity_radius: float = 0.0
 var _space_state: PhysicsDirectSpaceState3D
 var _foley_distance: float = 0.0
 var _working: bool = false
@@ -138,10 +151,13 @@ func _ready() -> void:
 	min_attack_range = _stats.min_range
 	# Keep the common picking layer; dedicated faction layers filter native queries.
 	collision_layer = 4 | CombatLayers.UNIT_LAYERS[alliance_id]
-	var sight_shape := SphereShape3D.new()
-	sight_shape.radius = float(_stats.sight) + radius
+	for definition: UnitDefinition in BalanceCatalog.UNITS.values():
+		_largest_unit_radius = maxf(_largest_unit_radius, definition.radius)
+	_largest_entity_radius = _largest_unit_radius
+	for definition: BuildingDefinition in BalanceCatalog.BUILDINGS.values():
+		_largest_entity_radius = maxf(_largest_entity_radius, definition.radius)
 	_target_query = PhysicsShapeQueryParameters3D.new()
-	_target_query.shape = sight_shape
+	_target_query.shape = _target_shape
 	_target_query.collision_mask = CombatLayers.hostile_entities(alliance_id)
 	_space_state = get_world_3d().direct_space_state
 	_game = get_tree().current_scene
@@ -162,12 +178,13 @@ func _ready() -> void:
 	_model.set_team(relation)
 	model_pivot.add_child(_model)
 	if render_batches != null:
-		_model.bind_render_batches(render_batches)
+		_model.bind_render_batches(render_batches, _game.is_authority)
 	_attack_animation = _model.get_node("Attack")
 	model_pivot.rotation.y = rotation.y
 	rotation.y = 0.0
 	_model.set_motion(false)
 	navigation_agent.radius = radius
+	_avoidance_rid = navigation_agent.get_rid()
 	navigation_agent.max_speed = 0.0
 	navigation_agent.neighbor_distance = 5.5
 	navigation_agent.avoidance_priority = 1.0
@@ -197,7 +214,10 @@ func _physics_process(delta: float) -> void:
 	if not alive or not _game.is_authority:
 		return
 	_tick_recovery(delta)
-	support.advance_clock(delta)
+	# Recipient healing deadlines use the match clock. Only actual providers
+	# need a discovery timer and job selection; ordinary troops do neither.
+	if support.is_supporter:
+		support.advance_clock(delta)
 	# Keep the fractional tick at expiry for continuous attacks (e.g. 1.05 s
 	# at 30 physics ticks). An already-ready unit never banks idle attack time.
 	_attack_cooldown = _attack_cooldown - delta if _attack_cooldown > 0.0 else 0.0
@@ -206,6 +226,8 @@ func _physics_process(delta: float) -> void:
 	_retaliation_time = maxf(0.0, _retaliation_time - delta)
 	_scan_time -= delta
 	_repath_time -= delta
+	_congestion_wait = maxf(0.0, _congestion_wait - delta)
+	_congestion_probe = false
 	var show_health: bool = selected or _damage_bar_time > 0.0 or hp < max_hp
 	if health_bar.visible != show_health:
 		health_bar.visible = show_health
@@ -227,10 +249,13 @@ func _physics_process(delta: float) -> void:
 	if target != checked_target:
 		checked_target = target
 		target_valid = _valid_target(checked_target)
+	if target != _congestion_target:
+		_reset_congestion()
+		_congestion_target = target
 	var desired_velocity := Vector3.ZERO
 	var facing_direction := Vector3.ZERO
 	var path_velocity_requested: bool = false
-	if support.select_job():
+	if support.is_supporter and support.select_job():
 		desired_velocity = support.velocity_for_job(delta)
 	elif order == Order.GATHER or order == Order.BUILD:
 		desired_velocity = _work_velocity(delta)
@@ -238,6 +263,8 @@ func _physics_process(delta: float) -> void:
 		var windup_active: bool = not attack_windup.is_stopped()
 		var can_start_strike: bool = _can_start_strike(target)
 		if can_start_strike:
+			_congestion_wait = 0.0
+			_congestion_seconds = 0.0
 			facing_direction = target.global_position - global_position
 			facing_direction.y = 0.0
 			if _attack_cooldown <= 0.000001 and not windup_active:
@@ -252,8 +279,10 @@ func _physics_process(delta: float) -> void:
 		if melee_windup:
 			chase_needed = not _within_attack_range(target, -attack_range * 0.4)
 		if can_chase and chase_needed and (not windup_active or melee_windup):
-			desired_velocity = _chase_velocity(target)
-			path_velocity_requested = true
+			if _congestion_wait <= 0.0:
+				desired_velocity = _chase_velocity(target)
+				path_velocity_requested = true
+				_congestion_probe = not can_start_strike and min_attack_range == 0.0 and order in [Order.IDLE, Order.ATTACK_MOVE, Order.ATTACK]
 	elif order == Order.MOVE or order == Order.ATTACK_MOVE:
 		var arrival_distance: float = maxf(0.65, radius * 0.8)
 		if global_position.distance_squared_to(destination) < arrival_distance * arrival_distance:
@@ -274,6 +303,8 @@ func _physics_process(delta: float) -> void:
 		if not target_valid:
 			desired_velocity = _path_velocity()
 	var is_moving: bool = desired_velocity.length_squared() > 0.08
+	_preferred_speed_squared = desired_velocity.length_squared()
+	_preferred_velocity = desired_velocity
 	if is_moving:
 		facing_direction = desired_velocity
 		if unit_type == "knight" and _charge_cooldown <= 0.0:
@@ -282,62 +313,79 @@ func _physics_process(delta: float) -> void:
 		_charge_time = maxf(0.0, _charge_time - delta * 0.25)
 	if facing_direction.length_squared() > 0.001:
 		_face_direction(facing_direction, delta)
-	if is_moving != _moving:
-		_moving = is_moving
+	# A one-tick congestion probe must not restart walking animation on a unit
+	# that is still unable to move. Successful motion releases this state below.
+	var visually_moving: bool = is_moving and _congestion_seconds < CONGESTION_SECONDS
+	if visually_moving != _moving:
+		_moving = visually_moving
 		_model.set_motion(_moving)
 	if navigation_agent.avoidance_enabled:
 		_set_avoidance_moving(is_moving)
 		# Feed the native RVO agent directly: route progression is owned by
 		# PathBudget, including direct movement and the final wall-contact step.
-		NavigationServer3D.agent_set_velocity(navigation_agent.get_rid(), desired_velocity)
+		NavigationServer3D.agent_set_velocity(_avoidance_rid, desired_velocity)
 	else:
 		_apply_velocity(desired_velocity)
 
 func _chase_velocity(entity: Node3D) -> Vector3:
-	var building: bool = entity.is_in_group("buildings")
-	var attack_point: Vector3 = entity.get_attack_position(global_position) if building else entity.global_position
-	var approach: Vector3 = global_position - attack_point
+	var origin: Vector3 = global_position
+	var building: bool = entity is BattleBuilding
+	var attack_point: Vector3
+	var target_radius: float = 0.0
+	var target_velocity := Vector3.ZERO
+	if building:
+		var structure: BattleBuilding = entity
+		attack_point = structure.get_attack_position(origin)
+	else:
+		var unit: BattleUnit = entity
+		attack_point = unit.global_position
+		target_radius = unit.radius
+		target_velocity = unit._observed_velocity
+		target_velocity.y = 0.0
+	var approach: Vector3 = origin - attack_point
 	approach.y = 0.0
 	if approach.length_squared() < 0.01:
 		approach = Vector3.RIGHT
-	var target_radius: float = 0.0 if building else entity.radius
 	var spacing: float = maxf(attack_range * 0.6, min_attack_range + 0.35)
 	var contact_distance: float = target_radius + radius + spacing
-	if entity is BattleUnit:
+	var approach_length: float = approach.length()
+	var approach_direction: Vector3 = approach / approach_length
+	if not target_velocity.is_zero_approx():
 		# Lead only as far as the remaining approach permits. A fixed time lead
 		# can cross behind us when a fast enemy approaches, ordering a retreat.
 		# Include incoming radial speed in the closing time, but keep the full
 		# replan horizon for distant or fleeing targets. Use actual planar motion.
-		var target_velocity: Vector3 = entity._observed_velocity
-		target_velocity.y = 0.0
-		var remaining: float = maxf(0.0, approach.length() - contact_distance)
-		var closing_speed: float = speed + target_velocity.dot(approach.normalized())
+		var remaining: float = maxf(0.0, approach_length - contact_distance)
+		var closing_speed: float = speed + target_velocity.dot(approach_direction)
 		var lead_time: float = CHASE_PREDICTION_SECONDS
 		if closing_speed > 0.0:
 			lead_time = minf(lead_time, remaining / closing_speed)
 		attack_point += target_velocity * lead_time
 		# Rebuild the contact offset around the predicted center. Translating
 		# yesterday's offset also gives the wrong approach side on crossing paths.
-		approach = global_position - attack_point
+		approach = origin - attack_point
 		approach.y = 0.0
-	var chase_destination: Vector3 = attack_point + approach.normalized() * contact_distance
+		approach_direction = approach.normalized()
+	var chase_destination: Vector3 = attack_point + approach_direction * contact_distance
 	if _path_budget.try_direct_pursuit(self, chase_destination):
 		# The authoritative cell cache certifies the whole body corridor on
 		# this tick. Native RVO and CharacterBody collision still resolve motion.
-		var direction: Vector3 = chase_destination - global_position
+		var direction: Vector3 = chase_destination - origin
 		direction.y = 0.0
 		# Arrive at the contact point without stepping past it on a coarse tick.
-		return direction.limit_length(speed * get_physics_process_delta_time()) / get_physics_process_delta_time()
-	if _repath_time <= 0.0 or _path_budget.is_finished(self):
+		var delta: float = get_physics_process_delta_time()
+		return direction.limit_length(speed * delta) / delta
+	var route_finished: bool = _path_budget.is_finished(self)
+	if _repath_time <= 0.0 or route_finished:
 		_repath_time = randf_range(0.4, CHASE_PREDICTION_SECONDS)
-		if _path_budget.is_finished(self) or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
+		if route_finished or _path_budget.target_position(self).distance_squared_to(chase_destination) > 1.44:
 			_set_navigation_target(chase_destination)
 	var desired_velocity: Vector3 = _path_velocity()
 	if building and _stats.projectile.is_empty() and _path_budget.is_finished(self):
 		# Finish contact with physical walls beyond a padded navigation edge.
 		var wall_contact_distance: float = attack_range + radius + 1.0
 		if approach.length_squared() <= wall_contact_distance * wall_contact_distance:
-			desired_velocity = -approach.normalized() * speed
+			desired_velocity = -approach_direction * speed
 	return desired_velocity
 
 func _path_velocity() -> Vector3:
@@ -369,6 +417,19 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 		return
 	velocity = safe_velocity
 	velocity.y = 0.0
+	if _congestion_probe and _preferred_speed_squared > speed * speed * 0.25:
+		# Observe RVO's permitted forward progress, not wall collision or distance
+		# to a fleeing target. Brief side steps remain uninterrupted; a pursuit
+		# with less than 20% forward progress for 0.6 s briefly yields. Every new
+		# order clears this wait, including an explicit attack on the same target.
+		if velocity.dot(_preferred_velocity) < _preferred_speed_squared * 0.2:
+			_congestion_seconds += get_physics_process_delta_time()
+			if _congestion_seconds + 0.000001 >= CONGESTION_SECONDS:
+				_congestion_seconds = CONGESTION_SECONDS
+				_congestion_wait = 0.18 + (entity_id % 4) * 0.033
+		else:
+			_congestion_seconds = 0.0
+			_congestion_wait = 0.0
 	if velocity.length_squared() < 0.001:
 		velocity = Vector3.ZERO
 		_observed_velocity = Vector3.ZERO
@@ -419,8 +480,12 @@ func _set_navigation_target(at: Vector3) -> void:
 func _face_direction(direction: Vector3, delta: float) -> void:
 	if direction.length_squared() > 0.001:
 		var desired_angle: float = atan2(-direction.x, -direction.z)
-		if absf(angle_difference(model_pivot.rotation.y, desired_angle)) > 0.002:
-			model_pivot.rotation.y = lerp_angle(model_pivot.rotation.y, desired_angle, minf(1.0, delta * 12.0))
+		# Read the native Basis-to-Euler conversion once. Assigning rotation.y
+		# would read the complete native property again for the component write.
+		var facing: Vector3 = model_pivot.rotation
+		if absf(angle_difference(facing.y, desired_angle)) > 0.002:
+			facing.y = lerp_angle(facing.y, desired_angle, minf(1.0, delta * 12.0))
+			model_pivot.rotation = facing
 
 func _valid_target(entity: Variant) -> bool:
 	# Freed cached targets must reach the validity guard before object-type checks.
@@ -511,25 +576,55 @@ func _refresh_target() -> void:
 			_set_navigation_target(destination)
 		target = null
 	var previous_target: Variant = target
-	var best_distance: float = INF
-	_target_query.transform.origin = global_position + Vector3.UP
-	for hit: Dictionary in _space_state.intersect_shape(_target_query, 64):
-		var entity: Node3D = hit.collider
-		if not _valid_target(entity):
-			continue
-		if (order == Order.HOLD or keep_current_target or support.enabled()) and not _within_attack_range(entity):
-			continue
-		var distance: float = global_position.distance_squared_to(entity.global_position)
-		var sight: float = attack_range + radius + entity.radius if order == Order.HOLD else float(_stats.sight) + entity.radius
-		if distance > sight * sight:
-			continue
-		# Troops in contact take precedence over a nearby unarmed structure.
-		var priority_distance: float = distance * (1.3 if entity.is_in_group("buildings") else 1.0)
-		if priority_distance < best_distance:
-			best_distance = priority_distance
-			target = entity
+	var nearby: Node3D = _find_auto_target(order == Order.HOLD or keep_current_target or support.enabled())
+	if nearby != null:
+		target = nearby
 	if target != null and target != previous_target:
 		_repath_time = 0.0
+
+func _find_auto_target(contact_only: bool) -> Node3D:
+	# The broad phase follows the decision being made. Rear ranks with a valid
+	# chase target only need a replacement already in weapon reach, not all the
+	# enemies in their sight. Keep native collision-space indexing and the exact
+	# range/visibility checks; do not reduce the scan rate or truncate candidates.
+	var reach: float = attack_range + radius
+	var extent: float = reach + _largest_unit_radius if contact_only else float(_stats.sight) + _largest_entity_radius
+	if extent != _target_extent:
+		_target_extent = extent
+		# Combat is planar. The box covers the bases of every authored ground
+		# body, including large units and building edges at the range boundary.
+		_target_shape.size = Vector3(extent * 2.0, 2.0, extent * 2.0)
+	var origin: Vector3 = global_position
+	_target_query.transform.origin = origin + Vector3.UP
+	var best_distance: float = INF
+	var best: Node3D
+	# intersect_shape does not promise nearest-first results. A fixed 64-result
+	# cap can hide the nearest eligible enemy in a dense battle. Each combat
+	# entity owns one body shape, so the native group count bounds all results
+	# without copying the group or depending on a particular match fixture.
+	for hit: Dictionary in _space_state.intersect_shape(_target_query, get_tree().get_node_count_in_group(&"entities")):
+		var entity: Node3D = hit.collider
+		var building: bool = entity is BattleBuilding
+		var distance: float = origin.distance_squared_to(entity.global_position)
+		var priority_distance: float = distance * (1.3 if building else 1.0)
+		if priority_distance > best_distance:
+			continue
+		if contact_only:
+			if not _within_attack_range(entity):
+				continue
+		else:
+			var sight: float = float(_stats.sight) + entity.radius
+			if distance > sight * sight:
+				continue
+		# Reject distance and weapon dead zones before fog queries. Usually only
+		# a handful of closer candidates need authoritative visibility checks.
+		if not _valid_target(entity):
+			continue
+		if priority_distance == best_distance and best != null and entity.entity_id >= best.entity_id:
+			continue
+		best_distance = priority_distance
+		best = entity
+	return best
 
 func _start_attack() -> void:
 	_strike_target = target
@@ -775,6 +870,7 @@ func queue_move(at: Vector3, attack_move: bool = false, plan: MovementPlan = nul
 		_begin_move(at, attack_move, plan)
 
 func _begin_move(at: Vector3, attack_move: bool, plan: MovementPlan = null) -> void:
+	_reset_congestion()
 	_interrupt_work()
 	support.auto_allowed = true
 	_movement_plan = plan
@@ -802,6 +898,7 @@ func issue_attack(entity: Node3D, queued: bool = false) -> void:
 	_begin_attack(entity)
 
 func _begin_attack(entity: Node3D) -> void:
+	_reset_congestion()
 	_movement_plan = null
 	_path_budget.release_shared_plan(self)
 	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
@@ -821,8 +918,14 @@ func stop() -> void:
 	if not alive:
 		return
 	waypoint_queue.clear()
+	_reset_congestion()
 	_finish_order()
 	support.auto_allowed = false
+
+func _reset_congestion() -> void:
+	_congestion_seconds = 0.0
+	_congestion_wait = 0.0
+	_congestion_probe = false
 
 func hold(queued: bool = false) -> void:
 	if not alive:

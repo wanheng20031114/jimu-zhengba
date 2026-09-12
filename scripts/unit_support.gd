@@ -3,6 +3,7 @@ extends Node
 ## One saved component owns outgoing work and the recipient's exclusive claim.
 ## The BattleUnit fixed tick drives it; animations never modify health.
 var unit: BattleUnit
+var is_supporter: bool = false
 var recipient: BattleUnit
 var provider: UnitSupport
 ## Both sides use the match clock, so entity update order cannot shorten a gap.
@@ -21,7 +22,8 @@ var _query: PhysicsShapeQueryParameters3D
 
 func configure(value: BattleUnit) -> void:
 	unit = value
-	if unit._stats.support_kind.is_empty():
+	is_supporter = not unit._stats.support_kind.is_empty()
+	if not is_supporter:
 		return
 	_query = PhysicsShapeQueryParameters3D.new()
 	var shape := SphereShape3D.new()
@@ -30,7 +32,7 @@ func configure(value: BattleUnit) -> void:
 	_query.collision_mask = CombatLayers.UNIT_LAYERS[unit.alliance_id]
 
 func enabled() -> bool:
-	return not unit._stats.support_kind.is_empty()
+	return is_supporter
 
 func valid_target(candidate: Variant, require_damage: bool = true) -> bool:
 	if not is_instance_valid(candidate) or not candidate is BattleUnit or candidate == unit or not candidate.alive \

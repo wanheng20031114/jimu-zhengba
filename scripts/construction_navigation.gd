@@ -28,6 +28,14 @@ var _corridor_stride: int = 0
 var _blocked_prefix := PackedInt32Array()
 var _flow_blocked := PackedByteArray()
 var _published_map_iteration: int = 0
+var _certificate_source_id: int = get_instance_id()
+var corridor_cache_hits: int = 0
+
+class Clearance extends RefCounted:
+	var source_id: int = 0
+	var revision: int = -1
+	var radius: float = 0.0
+	var centers := Rect2()
 
 class MeshJob extends RefCounted:
 	var revision: int
@@ -265,9 +273,19 @@ func _rebuild_corridor_prefix() -> void:
 				_flow_blocked[z * _corridor_size.x + x] = 1
 			_blocked_prefix[current_row + x + 1] = _blocked_prefix[previous_row + x + 1] + blocked_in_row
 
-func has_clear_corridor(from: Vector3, to: Vector3, body_radius: float) -> bool:
+func has_clear_corridor(from: Vector3, to: Vector3, body_radius: float, certificate: Clearance = null) -> bool:
 	if _blocked_prefix.is_empty():
 		return false
+	if not from.is_finite() or not to.is_finite() or not is_finite(body_radius) or body_radius < 0.0:
+		return false
+	if certificate != null:
+		# An empty rectangle is convex. Any new segment whose endpoints remain
+		# inside its radius-eroded center region is still wholly clear. Reuse the
+		# geometry proof, never a stale pursuit destination or a blocked answer.
+		if certificate.source_id == _certificate_source_id and certificate.revision == _revision and certificate.radius == body_radius and certificate.centers.has_point(Vector2(from.x, from.z)) and certificate.centers.has_point(Vector2(to.x, to.z)):
+			corridor_cache_hits += 1
+			return true
+		certificate.revision = -1
 	# An empty bounding rectangle is the O(1) common case. For a diagonal near
 	# an obstacle, narrow each grid row to the body's conservative swept square:
 	# a rock beside the route must not force every pursuer to repeat native A*.
@@ -278,6 +296,14 @@ func has_clear_corridor(from: Vector3, to: Vector3, body_radius: float) -> bool:
 		return false
 	var blocked: int = _blocked_prefix[high.y * _corridor_stride + high.x] - _blocked_prefix[low.y * _corridor_stride + high.x] - _blocked_prefix[high.y * _corridor_stride + low.x] + _blocked_prefix[low.y * _corridor_stride + low.x]
 	if blocked == 0:
+		if certificate != null:
+			var corner := Vector2(low + _corridor_origin) + Vector2.ONE * margin
+			var end := Vector2(high + _corridor_origin) - Vector2.ONE * margin
+			# Keep cached endpoints away from float32 cell-boundary roundoff.
+			certificate.centers = Rect2(corner, end - corner).grow(-0.0001)
+			certificate.source_id = _certificate_source_id
+			certificate.revision = _revision
+			certificate.radius = body_radius
 		return true
 	var dz: float = to.z - from.z
 	if absf(dz) < 0.000001:

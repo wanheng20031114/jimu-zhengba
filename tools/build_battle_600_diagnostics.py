@@ -103,7 +103,7 @@ def prepare(project: Path, profiled: bool) -> dict:
 
     def unit(source: str) -> str:
         source = replace_once(source, "\t\tmove_and_slide()", "\t\t_diagnostic_sweep(proposed)")
-        source = replace_once(source, "_space_state.intersect_shape(_target_query, 64)", "_diagnostic_query()")
+        source = replace_once(source, "_space_state.intersect_shape(_target_query, ", "_diagnostic_query(")
         return source + '''
 func _diagnostic_sweep(proposed: Vector3) -> void:
 \tif Battle600Counters.experiment == "no-body-sweep":
@@ -111,8 +111,8 @@ func _diagnostic_sweep(proposed: Vector3) -> void:
 \telse:
 \t\tmove_and_slide()
 
-func _diagnostic_query() -> Array[Dictionary]:
-\treturn _space_state.intersect_shape(_target_query, 64)
+func _diagnostic_query(max_results: int) -> Array[Dictionary]:
+\treturn _space_state.intersect_shape(_target_query, max_results)
 '''
 
     edit("scripts/battle_unit.gd", unit)
@@ -175,7 +175,7 @@ func _diagnostic_query() -> Array[Dictionary]:
     return changed
 
 
-def build(base: Path, output: Path, editor: Path, profiled: bool) -> None:
+def build(base: Path, output: Path, editor: Path, profiled: bool, single_thread_avoidance: bool = False) -> None:
     base, output = base.resolve(), output.resolve()
     if output.exists():
         raise ValueError("Choose a fresh diagnostics output; preserve earlier evidence")
@@ -190,6 +190,16 @@ def build(base: Path, output: Path, editor: Path, profiled: bool) -> None:
     project = output / "source"
     shutil.copytree(base / "source", project)
     changed = prepare(project, profiled)
+    if single_thread_avoidance:
+        config_path = project / "project.godot"
+        config = config_path.read_text(encoding="utf-8-sig")
+        key = "avoidance/thread_model/avoidance_use_multiple_threads"
+        if re.search(rf"^{re.escape(key)}=", config, re.MULTILINE):
+            config = re.sub(rf"^{re.escape(key)}=.*$", key + "=false", config, flags=re.MULTILINE)
+        else:
+            config = replace_once(config, "[navigation]", "[navigation]\n" + key + "=false")
+        config_path.write_text(config, encoding="utf-8")
+        changed["project.godot"] = digest(config_path)
     bundle = output / "bin"
     bundle.mkdir()
     steps = []
@@ -215,6 +225,7 @@ def build(base: Path, output: Path, editor: Path, profiled: bool) -> None:
     shutil.copy2(base / "bin/battle-600.exe", bundle / "battle-600.exe")
     evidence = {"base_pck_sha256": receipt["pck_sha256"], "base_head": receipt["head"],
                 "base_source_sha256": receipt["source_sha256"], "instrumented": profiled,
+                "single_thread_avoidance": single_thread_avoidance,
                 "diagnostic_source_sha256": changed, "pck_sha256": digest(bundle / "battle-600.pck"),
                 "editor_sha256": digest(editor), "release_template_sha256": digest(bundle / "battle-600.exe"),
                 "build_steps": steps}
@@ -228,5 +239,6 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--editor", type=Path, default=Path("C:/Program Files/Godot/Godot.exe"))
     parser.add_argument("--profile", action="store_true")
+    parser.add_argument("--single-thread-avoidance", action="store_true")
     args = parser.parse_args()
-    build(args.base, args.output, args.editor, args.profile)
+    build(args.base, args.output, args.editor, args.profile, args.single_thread_avoidance)

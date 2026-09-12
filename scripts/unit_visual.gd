@@ -28,6 +28,7 @@ var _dead: bool = false
 var _rigid_skeleton: Skeleton3D
 var _rigid_socket_index: int = -1
 var _batch_renderer: UnitRenderBatches
+var render_sampled_animation: bool = false
 var _support_particles: Array[GPUParticles3D] = []
 
 func _ready() -> void:
@@ -63,6 +64,10 @@ func _refresh_animation_visibility() -> void:
 	if not is_node_ready() or not is_inside_tree() or _dead:
 		return
 	_refresh_support_particles()
+	# Batched authority poses are sampled by the renderer or an exact gameplay
+	# release, using the same paused simulation clock as off-screen animation.
+	if render_sampled_animation:
+		return
 	# Replicas are driven explicitly by snapshot interpolation, including when
 	# their BattleUnit physics callback is disabled. Do not replace that clock.
 	if attack.callback_mode_process == AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL:
@@ -206,13 +211,35 @@ func set_team(team: int) -> void:
 	if _batch_renderer != null:
 		_batch_renderer.set_team(self, team)
 
-func bind_render_batches(renderer: UnitRenderBatches) -> void:
+func bind_render_batches(renderer: UnitRenderBatches, authority: bool = true) -> void:
 	assert(not batch_parts.is_empty() and _batch_renderer == null, "Batch models require authored parts and one renderer")
 	_batch_renderer = renderer
-	_batch_renderer.register_model(self, _team)
+	_batch_renderer.register_model(self, _team, authority)
 	# The connection disappears with the renderer if the entire match exits.
 	# Ordinary model deletion releases every batch slot before its nodes free.
 	tree_exiting.connect(_batch_renderer.unregister_model.bind(self))
+
+func set_render_sampled_animation(value: bool) -> void:
+	if value == render_sampled_animation:
+		return
+	synchronize_animation()
+	render_sampled_animation = value
+	if value:
+		if not _animations_suspended:
+			_suspended_frame = _visual_frame()
+			_locomotion_advanced = 0.0
+			_attack_advanced = 0.0
+		_animations_suspended = true
+		locomotion.process_mode = Node.PROCESS_MODE_DISABLED
+		attack.process_mode = Node.PROCESS_MODE_DISABLED
+		# Only the unit's position and facing require native physics interpolation.
+		# Per-part poses are sampled once for the displayed frame; the batch
+		# renderer composes them with their interpolated ModelPivot parent.
+		physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	else:
+		physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_INHERIT
+		_refresh_animation_visibility()
+	reset_physics_interpolation()
 
 func set_batch_fade(amount: float) -> void:
 	if _batch_renderer != null:

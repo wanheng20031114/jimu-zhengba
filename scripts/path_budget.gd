@@ -21,6 +21,7 @@ class Route extends RefCounted:
 	var next: Vector3
 	var path: PackedVector3Array
 	var corridor := PathCorridor.new()
+	var pursuit_clearance := ConstructionNavigation.Clearance.new()
 	var topology: int = -1
 	var active: bool = false
 	var finished: bool = true
@@ -87,8 +88,8 @@ func set_walkability(navigation: ConstructionNavigation) -> void:
 	_walkability = navigation
 
 func try_direct_pursuit(unit: BattleUnit, at: Vector3) -> bool:
-	var route: Route = _routes[unit.get_instance_id()]
-	if _walkability == null or route.agent.navigation_layers != 1 or unit.global_position.distance_squared_to(at) > DIRECT_PURSUIT_DISTANCE * DIRECT_PURSUIT_DISTANCE or not _walkability.has_clear_corridor(unit.global_position, at, unit.radius):
+	var route: Route = unit._navigation_route
+	if _walkability == null or route.agent.navigation_layers != 1 or unit.global_position.distance_squared_to(at) > DIRECT_PURSUIT_DISTANCE * DIRECT_PURSUIT_DISTANCE or not _walkability.has_clear_corridor(unit.global_position, at, unit.radius, route.pursuit_clearance):
 		if route.direct:
 			cancel(unit)
 		return false
@@ -106,14 +107,18 @@ func register(unit: BattleUnit) -> void:
 	route.agent = unit.navigation_agent
 	route.goal = unit.global_position
 	route.next = unit.global_position
+	# Units use a typed handle in their per-tick pursuit. The ID dictionary
+	# remains the scheduler's ownership/generation check for queued requests.
+	unit._navigation_route = route
 	_routes[unit.get_instance_id()] = route
 
 func unregister(unit: BattleUnit) -> void:
 	_waiting_for_map.erase(unit.get_instance_id())
 	_routes.erase(unit.get_instance_id())
+	unit._navigation_route = null
 
 func request(unit: BattleUnit, at: Vector3) -> void:
-	var route: Route = _routes[unit.get_instance_id()]
+	var route: Route = unit._navigation_route
 	route.plan = null
 	route.shared_following = false
 	route.direct = false
@@ -127,15 +132,15 @@ func request_shared(unit: BattleUnit, at: Vector3, plan: MovementPlan) -> void:
 	# Native paths remain responsive while the shared field is being built.
 	# A formation's final per-unit destination is never replaced by its center.
 	request(unit, at)
-	_routes[unit.get_instance_id()].plan = plan
+	unit._navigation_route.plan = plan
 
 func release_shared_plan(unit: BattleUnit) -> void:
 	# An explicit attack no longer owns a group command. If the old shared
 	# route is needed again, next_position performs the native handoff once.
-	_routes[unit.get_instance_id()].plan = null
+	unit._navigation_route.plan = null
 
 func cancel(unit: BattleUnit) -> void:
-	var route: Route = _routes[unit.get_instance_id()]
+	var route: Route = unit._navigation_route
 	route.plan = null
 	route.shared_following = false
 	route.direct = false
@@ -148,26 +153,26 @@ func cancel(unit: BattleUnit) -> void:
 	route.corridor.clear()
 
 func has_pending(unit: BattleUnit) -> bool:
-	var route: Route = _routes[unit.get_instance_id()]
+	var route: Route = unit._navigation_route
 	return route.pending or route.waiting_for_map
 
 func is_blocked(unit: BattleUnit) -> bool:
 	# An empty corridor is explicitly blocked, not a completed move. It waits
 	# for changed map connectivity; unchanged maps never cause periodic queries.
-	return _routes[unit.get_instance_id()].waiting_for_map
+	return unit._navigation_route.waiting_for_map
 
 func target_position(unit: BattleUnit) -> Vector3:
-	return _routes[unit.get_instance_id()].goal
+	return unit._navigation_route.goal
 
 func current_path(unit: BattleUnit) -> PackedVector3Array:
-	return _routes[unit.get_instance_id()].path
+	return unit._navigation_route.path
 
 func at_path_end(unit: BattleUnit, tolerance: float) -> bool:
-	var route: Route = _routes[unit.get_instance_id()]
+	var route: Route = unit._navigation_route
 	return route.active and route.corridor.at_end(unit.global_position, tolerance)
 
 func is_finished(unit: BattleUnit) -> bool:
-	var route: Route = _routes[unit.get_instance_id()]
+	var route: Route = unit._navigation_route
 	return not route.shared_following and route.finished and not route.pending and not route.waiting_for_map
 
 func pending_count() -> int:
@@ -268,7 +273,7 @@ func _physics_process(_delta: float) -> void:
 		_head = 0
 
 func next_position(unit: BattleUnit) -> Vector3:
-	var route: Route = _routes[unit.get_instance_id()]
+	var route: Route = unit._navigation_route
 	if shared_paths_enabled and route.plan != null and _walkability != null:
 		var shared_next: Vector3 = _shared_next(unit, route)
 		if shared_next.is_finite():
