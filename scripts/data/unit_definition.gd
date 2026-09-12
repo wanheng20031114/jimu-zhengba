@@ -18,3 +18,9 @@ extends CombatDefinition
 @export var production_building: StringName
 @export var training_seconds: float = 0.0
 @export var military: bool = true
+## Authored support capability; recovery uses a separate authority-only channel.
+@export var support_kind: StringName
+@export var support_range: float = 0.0
+@export var support_amount: float = 0.0
+@export var support_period: float = 1.0
+@export var support_discovery_range: float = 0.0

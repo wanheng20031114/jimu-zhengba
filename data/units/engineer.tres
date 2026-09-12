@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"engineer"
+name = "工程兵"
+description = "携带铁锤和工具的随军工匠，免费维修友方攻城器。"
+hp = 80
+damage = 3
+melee_armor = 0
+ranged_armor = 1
+combat_class = &"infantry"
+range = 0.9
+cooldown = 1.5
+attack_windup_seconds = 0.3
+cost = 80
+supply = 1
+speed = 3.5
+radius = 0.45
+death_rest_height = 0.29
+sight = 12
+production_building = &"factory"
+training_seconds = 10
+support_kind = &"repair"
+support_range = 1.2
+support_amount = 5
+support_period = 1.0
+support_discovery_range = 6.0

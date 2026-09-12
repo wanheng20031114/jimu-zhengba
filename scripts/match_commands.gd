@@ -2,7 +2,7 @@ class_name MatchCommands
 extends RefCounted
 ## Every human, Bot and remote request crosses the same fixed-tick validator.
 
-const KINDS := ["recruit", "build", "move", "attack", "gather", "work", "stop", "hold", "research", "cancel_research", "cancel_training", "cancel_queue", "cancel_site", "demolish", "destroy", "rally"]
+const KINDS := ["recruit", "build", "move", "attack", "gather", "work", "support", "stop", "hold", "research", "cancel_research", "cancel_training", "cancel_queue", "cancel_site", "demolish", "destroy", "rally"]
 const MAX_INTEGER: int = 2147483647
 var game: Node3D
 var pending: Array[Dictionary] = []
@@ -86,7 +86,7 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 	if buildings.is_empty() and own_building:
 		buildings.append(target)
 	var queued: bool = command.get("queued", false) == true
-	if queued and kind in ["move", "attack", "gather", "work", "build", "hold"]:
+	if queued and kind in ["move", "attack", "gather", "work", "support", "build", "hold"]:
 		for unit: BattleUnit in entities:
 			if unit.waypoint_queue.size() >= BattleUnit.MAX_QUEUED_ORDERS:
 				return failure("连续指令已达上限（64 项）")
@@ -194,6 +194,14 @@ func execute(command: Dictionary, owner: int) -> Dictionary:
 				return failure("目标不在视野内或不是敌军")
 			for unit: BattleUnit in entities:
 				unit.issue_attack(target, queued)
+		"support":
+			if not target_valid or not target is BattleUnit or not game.can_see_entity(owner, target):
+				return failure("需要视野内的友方攻城器")
+			var accepted := false
+			for unit: BattleUnit in entities:
+				if unit.support.valid_target(target):
+					accepted = unit.issue_support(target, queued) or accepted
+			if not accepted: return failure("需要工程兵和受损友方攻城器")
 		"gather":
 			if not target_valid or not target is ResourceVein:
 				return failure("需要矿脉目标")

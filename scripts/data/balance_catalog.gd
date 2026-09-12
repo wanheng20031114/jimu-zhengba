@@ -13,6 +13,7 @@ const UNITS: Dictionary = {
 	"war_elephant": preload("res://data/units/war_elephant.tres"),
 	"catapult": preload("res://data/units/catapult.tres"),
 	"cannon": preload("res://data/units/cannon.tres"),
+	"engineer": preload("res://data/units/engineer.tres"),
 	"farmer": preload("res://data/units/farmer.tres"),
 }
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3]
+[gd_scene load_steps=36 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/context_cursor.tscn" id="context_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/order_plan_overlay.tscn" id="order_plan"]
@@ -43,6 +43,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/catapult.tscn" id="batch_catapult"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/cannon.tscn" id="batch_cannon"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/farmer.tscn" id="batch_farmer"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/engineer.tscn" id="batch_engineer"]
 [ext_resource type="PackedScene" path="res://scenes/effect_pool.tscn" id="effect_pool"]
 [ext_resource type="PackedScene" path="res://scenes/projectile_pool.tscn" id="projectile_pool"]
 
@@ -96,6 +97,7 @@ unit_model_overrides = Dictionary[String, PackedScene]({
 "cannon": ExtResource("batch_cannon"),
 "catapult": ExtResource("batch_catapult"),
 "farmer": ExtResource("batch_farmer"),
+"engineer": ExtResource("batch_engineer"),
 "war_elephant": ExtResource("batch_war_elephant"),
 "light_cavalry": ExtResource("batch_light_cavalry"),
 "knight": ExtResource("batch_knight"),

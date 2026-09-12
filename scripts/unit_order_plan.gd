@@ -3,7 +3,7 @@ extends RefCounted
 ## Presentation data only: never executable commands or hidden entity handles.
 const MAX_FUTURE := 8
 const MAX_ENTRIES := MAX_FUTURE + 1
-const KINDS := ["move", "attack", "gather", "build", "hold", "unknown"]
+const KINDS := ["move", "attack", "gather", "build", "support", "hold", "unknown"]
 
 static func build(unit: BattleUnit, game: Node) -> Array:
 	var plan: Array = []
@@ -14,6 +14,8 @@ static func build(unit: BattleUnit, game: Node) -> Array:
 			plan.append(_entity("attack", unit.target, unit.owner_id, game))
 		BattleUnit.Order.GATHER, BattleUnit.Order.BUILD:
 			plan.append(_entity("gather" if unit.order == BattleUnit.Order.GATHER else "build", unit.work_target, unit.owner_id, game))
+		BattleUnit.Order.SUPPORT:
+			plan.append(_entity("support", unit.support.recipient if is_instance_valid(unit.support.recipient) else unit.work_target, unit.owner_id, game))
 		BattleUnit.Order.HOLD:
 			plan.append(_point("hold", unit.global_position))
 	for job: Dictionary in unit.waypoint_queue.slice(0, MAX_FUTURE):
@@ -24,6 +26,8 @@ static func build(unit: BattleUnit, game: Node) -> Array:
 				plan.append(_entity("attack", job.entity, unit.owner_id, game))
 			"work":
 				plan.append(_entity("gather" if job.order == BattleUnit.Order.GATHER else "build", job.entity, unit.owner_id, game))
+			"support":
+				plan.append(_entity("support", job.entity, unit.owner_id, game))
 			"hold":
 				# A terminal hold happens wherever the previous order completes.
 				if not plan.is_empty() and plan.back().has("at"):

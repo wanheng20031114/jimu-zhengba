@@ -4,6 +4,7 @@ const TEXTURES := {
 	"attack": preload("res://assets/ui/cursors/attack.svg"),
 	"gather": preload("res://assets/ui/cursors/gather.svg"),
 	"build": preload("res://assets/ui/cursors/build.svg"),
+	"support": preload("res://assets/ui/cursors/build.svg"),
 	"rally_gather": preload("res://assets/ui/cursors/rally_gather.svg"),
 	"move": preload("res://assets/ui/cursors/move.svg"),
 	"rally": preload("res://assets/ui/cursors/rally.svg"),
@@ -57,6 +58,8 @@ func context_kind(target: Node3D, at: Vector3) -> String:
 			return "rally" if has_producer else "forbidden"
 		if target.alliance_id != game.get_player(game.local_owner_id).alliance_id:
 			return "attack" if not units.is_empty() else "rally"
+		if game.can_support_selected(target):
+			return "support"
 		if target is BattleBuilding:
 			if target.owner_id == game.local_owner_id and not target.is_constructed:
 				return "build" if has_workers else "forbidden"

@@ -20,6 +20,7 @@ var _home_known: bool = false
 var _front: Vector3 = Vector3.RIGHT
 var _workers: Array[Node3D] = []
 var _army: Array[Node3D] = []
+var _supporters: Array[Node3D] = []
 var _buildings: Array[Node3D] = []
 var _mines: Array[Node3D] = []
 var _visible_enemies: Array[Node3D] = []
@@ -65,14 +66,37 @@ func _decide() -> void:
 	_recruit_farmer(reserve)
 	_recruit_army(reserve)
 	_command_army()
+	_command_supporters()
+
+func _command_supporters() -> void:
+	# Takeover keeps inherited engineers behind machines instead of in raids.
+	for supporter: BattleUnit in _supporters:
+		if is_instance_valid(supporter.support.recipient) or supporter.order == BattleUnit.Order.SUPPORT:
+			continue
+		var machine: BattleUnit
+		var closest: float = INF
+		for member: BattleUnit in _army:
+			if member._stats.combat_class != &"siege": continue
+			var distance := supporter.global_position.distance_squared_to(member.global_position)
+			if distance < closest:
+				closest = distance
+				machine = member
+		var at: Vector3 = _home - _front * 3.0 if machine == null else machine.global_position - _front * 3.0
+		at = _game.clamp_to_map(at)
+		if supporter.global_position.distance_squared_to(at) > 16.0 and (supporter.order != BattleUnit.Order.ATTACK_MOVE or supporter.destination.distance_squared_to(at) > 9.0):
+			_submit({"kind":"move", "units":[supporter.entity_id], "at":[at.x,0,at.z], "attack_move":true})
 
 func _refresh_own_army() -> void:
 	_workers.clear()
 	_army.clear()
+	_supporters.clear()
 	_buildings.assign(_game.owned_entities(_owner, "buildings"))
 	for unit: Node3D in _game.owned_entities(_owner, "units"):
 		if unit.unit_type == "farmer":
 			_workers.append(unit)
+		elif not BalanceCatalog.unit(unit.unit_type).support_kind.is_empty():
+			_supporters.append(unit)
+			unit.support.auto_allowed = true
 		else:
 			_army.append(unit)
 	for building: Node3D in _buildings:
@@ -319,13 +343,14 @@ func _recruitment_role(kind: String) -> String:
 	if kind == "spearman":
 		return kind
 	var definition := BalanceCatalog.unit(kind)
+	if not definition.support_kind.is_empty(): return "support"
 	match definition.combat_class:
 		&"infantry": return "swordsman"
 		&"cavalry": return "knight"
 	return kind
 
 func _composition() -> Dictionary:
-	var counts: Dictionary = {"spearman": 0.0, "swordsman": 0.0, "archer": 0.0, "knight": 0.0, "siege": 0.0}
+	var counts: Dictionary = {"spearman": 0.0, "swordsman": 0.0, "archer": 0.0, "knight": 0.0, "siege": 0.0, "support": 0.0}
 	for record: Dictionary in _memory.values():
 		if record.building or record.kind == "farmer":
 			continue
@@ -372,7 +397,7 @@ func _recruit_army(reserve: int) -> void:
 	# of saving forever for infrastructure that this player can no longer build.
 	if factory_only and (_building("headquarters") != null or not _workers.is_empty() or _building("factory", true) == null):
 		return
-	var counts: Dictionary = {"spearman": 0, "swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0}
+	var counts: Dictionary = {"spearman": 0, "swordsman": 0, "archer": 0, "knight": 0, "catapult": 0, "cannon": 0, "support": 0}
 	for unit: Node3D in _army:
 		counts[_recruitment_role(unit.unit_type)] += 1
 	var queued_counts: Dictionary = {}

@@ -5,7 +5,7 @@ const MAX_LINES := 256
 const MAX_BUILDING_ROUTES := 64
 const RALLY_MARKER_SCALE := 2.2
 const COLORS := {"move": Color("6aaed4"), "attack": Color("e96b52"), "gather": Color("e9bf5c"),
-	"build": Color("71c9bf"), "hold": Color("c5bd9d"), "rally": Color("78bdeb"), "rally_gather": Color("f1c452")}
+	"build": Color("71c9bf"), "support": Color("83d9be"), "hold": Color("c5bd9d"), "rally": Color("78bdeb"), "rally_gather": Color("f1c452")}
 @onready var game: Node3D = get_parent()
 @onready var poles: MultiMesh = $Poles.multimesh
 @onready var flags: MultiMesh = $Flags.multimesh

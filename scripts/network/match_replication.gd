@@ -587,7 +587,7 @@ func _apply_entity(entity: Node3D, state: Dictionary) -> void:
 
 func _present_unit(unit: BattleUnit, a: Dictionary, b: Dictionary, weight: float, delta: float) -> void:
 	unit._model.set_motion(bool(a.moving))
-	unit._model.set_working(bool(a.working), "gather" if a.anim == "gather" else "build")
+	unit._model.set_working(bool(a.working), String(a.anim) if a.anim in ["gather", "build", "repair"] else "gather")
 	unit._model.locomotion.advance(delta)
 	var player: AnimationPlayer = unit._attack_animation
 	var animation: String = a.anim
@@ -697,11 +697,13 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			var range_bonus: float = BalanceCatalog.upgrade(&"cannon_range_1").total_bonus if state.kind == "cannon" else 0.0
 			if not _number(state.get("attack_range"), base_range, base_range + range_bonus):
 				return false
-			if not state.get("anim") in ["", "strike", "gather", "build"] or not _number(state.get("phase"), 0, 100) or not _number(state.get("work"), 0, 1):
+			if not state.get("anim") in ["", "strike", "gather", "build", "repair"] or not _number(state.get("phase"), 0, 100) or not _number(state.get("work"), 0, 1):
+				return false
+			if state.anim == "repair" and BalanceCatalog.unit(state.kind).support_kind != &"repair":
 				return false
 			if state.anim in ["gather", "build"] and state.kind != "farmer":
 				return false
-			if int(state.owner) == game.local_owner_id and not NetworkProtocol.integer(state.get("order"), 0, 6):
+			if int(state.owner) == game.local_owner_id and not NetworkProtocol.integer(state.get("order"), 0, 7):
 				return false
 			if int(state.owner) == game.local_owner_id and not NetworkProtocol.integer(state.get("queued_count"), 0, 2147483647):
 				return false

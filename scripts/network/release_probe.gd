@@ -116,7 +116,7 @@ func validate_resource_values() -> void:
 	# saved exported property. Exercise the actual ResourceLoader values in PCK.
 	var began := checks
 	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry"],
-		"factory": ["catapult", "cannon"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
+		"factory": ["catapult", "cannon", "engineer"], "academy": [], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
 	var defensive_damage := {"headquarters": 40, "enemy_keep": 40, "defense_tower": 16, "tower": 17}
 	for kind: String in production:
 		var building := BalanceCatalog.building(kind)
@@ -129,7 +129,7 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
-	var training_seconds := {"light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var training_seconds := {"engineer": 10.0, "light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 16], ["swordsman", "knight", 10],
@@ -140,6 +140,14 @@ func validate_resource_values() -> void:
 	var archer := BalanceCatalog.unit("archer")
 	var swordsman := BalanceCatalog.unit("swordsman")
 	var guard := BalanceCatalog.unit("shield_guard")
+	var engineer := BalanceCatalog.unit("engineer")
+	check(engineer.cost==80 and engineer.hp==80 and engineer.damage==3 and engineer.melee_armor==0
+		and engineer.ranged_armor==1 and engineer.speed==3.5 and engineer.sight==12 and engineer.supply==1
+		and engineer.training_seconds==10 and engineer.cooldown==1.5 and engineer.attack_windup_seconds==.3
+		and engineer.range==.9 and engineer.radius==.45 and engineer.combat_class==&"infantry"
+		and engineer.support_kind==&"repair" and engineer.support_range==1.2 and engineer.support_amount==5
+		and engineer.support_period==1 and engineer.support_discovery_range==6 and engineer.military
+		and engineer.production_building==&"factory", "packaged_engineer_approved_values")
 	var elephant := BalanceCatalog.unit("war_elephant")
 	check(elephant.cost==300 and elephant.hp==360 and elephant.damage==26 and elephant.melee_armor==2
 		and elephant.ranged_armor==3 and elephant.speed==3.2 and elephant.sight==15 and elephant.supply==5

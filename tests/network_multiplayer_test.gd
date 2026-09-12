@@ -185,9 +185,12 @@ func _sparse_room() -> void:
 	clients[7].send_command({"kind": "move", "owner": 5, "units": [1]})
 	check(await until(func(): return commands.size() == 1), "sparse_last_owner_command_arrives")
 	check(commands[0].owner == 7, "cannot_impersonate_empty_owner")
-	clients[0].snapshot_to(7, {"tick": 2, "private_recipient": 7})
-	check(await until(func(): return snapshots.size() == 1), "sparse_last_owner_receives_private_snapshot")
-	check(snapshots[0].client == 7, "sparse_snapshot_not_broadcast")
+	# Snapshots use an unreliable presentation channel. Exercise the recurring
+	# publisher used by real matches, including its native per-recipient throttle.
+	check(await until(func():
+		if snapshots.is_empty(): clients[0].snapshot_to(7, {"tick": 2, "private_recipient": 7})
+		return not snapshots.is_empty()), "sparse_last_owner_receives_private_snapshot")
+	check(not snapshots.is_empty() and snapshots.all(func(item: Dictionary): return item.client == 7), "sparse_snapshot_not_broadcast")
 	var token: String = clients[7]._token
 	clients[7]._peer.peer_disconnect_now()
 	clients[7]._close_transport()

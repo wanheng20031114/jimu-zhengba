@@ -1329,6 +1329,10 @@ def attack_tracks(s):
 
 
 def write_scene(s):
+    if s.name == "engineer":
+        from unit_engineer import write_engineer_scene
+        write_engineer_scene(s)
+        return
     if s.name=="farmer":
         write_farmer_scene(s)
         return
@@ -1479,9 +1483,10 @@ def write_scene(s):
 
 if __name__=="__main__":
     import argparse
+    from unit_engineer import build_engineer
     builders={"swordsman":lambda:infantry("swordsman"), "shield_guard":shield_guard, "spearman":lambda:infantry("spearman"),
               "archer":lambda:infantry("archer",True), "knight":horse_knight, "war_elephant":war_elephant, "light_cavalry":light_cavalry,
-              "catapult":catapult, "cannon":cannon, "farmer":farmer}
+              "catapult":catapult, "cannon":cannon, "farmer":farmer, "engineer":build_engineer}
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("kinds",nargs="*",help="Only rebuild these units (default: all)")
     args=parser.parse_args()

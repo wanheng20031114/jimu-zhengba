@@ -1,7 +1,7 @@
 class_name UnitVisual
 extends Node3D
 ## Saved rigid-part sculptures driven by native AnimationPlayers.
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer") var kind: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "farmer") var kind: String = "swordsman"
 @export var projectile_socket: NodePath
 ## Optional authored rigid-skin representation. The original editable rigs
 ## continue to use their Marker3D socket and need neither field.
@@ -137,7 +137,7 @@ func set_motion(moving: bool) -> void:
 		_locomotion_advanced = _suspended_seconds()
 
 func set_working(active: bool, mode: String = "gather") -> void:
-	if kind != "farmer":
+	if kind not in ["farmer", "engineer"]:
 		return
 	if _working == active and (not active or _work_mode == mode):
 		return

@@ -18,11 +18,12 @@ const MODELS: Dictionary = {
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
 	"farmer": preload("res://assets/models/units/farmer.tscn"),
+	"engineer": preload("res://assets/models/units/engineer.tscn"),
 }
 
 const STATS: Dictionary = BalanceCatalog.UNITS
 
-enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD }
+enum Order { IDLE, MOVE, ATTACK_MOVE, ATTACK, HOLD, GATHER, BUILD, SUPPORT }
 const MAX_QUEUED_ORDERS: int = 64
 const CHASE_PREDICTION_SECONDS: float = 0.55
 const RECOVERY_DELAY: float = 10.0
@@ -30,7 +31,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -120,6 +121,7 @@ var _claimed_mine: bool = false
 @onready var selection_ring: MeshInstance3D = $SelectionRing
 @onready var attack_windup: Timer = $AttackWindup
 @onready var work_bar: MeshInstance3D = $WorkBar
+@onready var support: UnitSupport = $Support
 
 func _ready() -> void:
 	if owner_id < 0:
@@ -188,11 +190,13 @@ func _ready() -> void:
 	reset_physics_interpolation()
 	_game.register_entity(self)
 	_path_budget.register(self)
+	support.configure(self)
 
 func _physics_process(delta: float) -> void:
 	if not alive or not _game.is_authority:
 		return
 	_tick_recovery(delta)
+	support.advance_clock(delta)
 	# Keep the fractional tick at expiry for continuous attacks (e.g. 1.05 s
 	# at 30 physics ticks). An already-ready unit never banks idle attack time.
 	_attack_cooldown = _attack_cooldown - delta if _attack_cooldown > 0.0 else 0.0
@@ -225,7 +229,9 @@ func _physics_process(delta: float) -> void:
 	var desired_velocity := Vector3.ZERO
 	var facing_direction := Vector3.ZERO
 	var path_velocity_requested: bool = false
-	if order == Order.GATHER or order == Order.BUILD:
+	if support.select_job():
+		desired_velocity = support.velocity_for_job(delta)
+	elif order == Order.GATHER or order == Order.BUILD:
 		desired_velocity = _work_velocity(delta)
 	elif target_valid:
 		var windup_active: bool = not attack_windup.is_stopped()
@@ -472,6 +478,13 @@ func _refresh_target() -> void:
 	if unit_type == "farmer" and order != Order.ATTACK:
 		target = null
 		return
+	if support.enabled() and order != Order.ATTACK:
+		# Supporters defend only in contact when no work owns their action.
+		if order == Order.SUPPORT or is_instance_valid(support.recipient):
+			target = null
+			return
+		if not _valid_target(target) or not _within_attack_range(target):
+			target = null
 	if order == Order.MOVE:
 		target = _move_retaliation if _retaliation_time > 0.0 and _valid_target(_move_retaliation) and _within_attack_range(_move_retaliation) else null
 		return
@@ -502,7 +515,7 @@ func _refresh_target() -> void:
 		var entity: Node3D = hit.collider
 		if not _valid_target(entity):
 			continue
-		if (order == Order.HOLD or keep_current_target) and not _within_attack_range(entity):
+		if (order == Order.HOLD or keep_current_target or support.enabled()) and not _within_attack_range(entity):
 			continue
 		var distance: float = global_position.distance_squared_to(entity.global_position)
 		var sight: float = attack_range + radius + entity.radius if order == Order.HOLD else float(_stats.sight) + entity.radius
@@ -582,7 +595,7 @@ func issue_build(site: Node3D, queued: bool = false) -> bool:
 	return _issue_work(site, Order.BUILD, queued)
 
 func _issue_work(entity: Node3D, work_order: Order, queued: bool) -> bool:
-	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD, Order.SUPPORT]:
 		if waypoint_queue.is_empty() and order == work_order and work_target == entity:
 			return true
 		if not waypoint_queue.is_empty():
@@ -713,12 +726,13 @@ func _set_working(value: bool) -> void:
 		return
 	_working = value
 	work_bar.visible = value
-	_model.set_working(value, "gather" if order == Order.GATHER else "build")
+	_model.set_working(value, String(_stats.support_kind) if support.enabled() else ("gather" if order == Order.GATHER else "build"))
 	if value:
 		_work_sound_time = 0.45
 		work_bar.set_instance_shader_parameter("bar_color", Color("e9bf5c") if order == Order.GATHER else Color("72c6d8"))
 
 func _interrupt_work() -> void:
+	support.cancel()
 	if _claimed_mine and is_instance_valid(work_target):
 		work_target.release(self)
 	_claimed_mine = false
@@ -748,7 +762,7 @@ func issue_move(at: Vector3, attack_move: bool = false, plan: MovementPlan = nul
 func queue_move(at: Vector3, attack_move: bool = false, plan: MovementPlan = null) -> void:
 	if not alive:
 		return
-	if order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+	if order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD, Order.SUPPORT]:
 		if waypoint_queue.size() >= MAX_QUEUED_ORDERS:
 			return
 		if not waypoint_queue.is_empty():
@@ -763,6 +777,7 @@ func queue_move(at: Vector3, attack_move: bool = false, plan: MovementPlan = nul
 
 func _begin_move(at: Vector3, attack_move: bool, plan: MovementPlan = null) -> void:
 	_interrupt_work()
+	support.auto_allowed = true
 	_movement_plan = plan
 	order = Order.ATTACK_MOVE if attack_move else Order.MOVE
 	order_name = "攻击前进" if attack_move else "移动中"
@@ -776,7 +791,7 @@ func _begin_move(at: Vector3, attack_move: bool, plan: MovementPlan = null) -> v
 func issue_attack(entity: Node3D, queued: bool = false) -> void:
 	if not alive or not _valid_target(entity):
 		return
-	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD, Order.SUPPORT]:
 		if waypoint_queue.is_empty() and order == Order.ATTACK and target == entity:
 			return
 		if not waypoint_queue.is_empty() and waypoint_queue.back().kind == "attack" and waypoint_queue.back().entity == entity:
@@ -792,6 +807,7 @@ func _begin_attack(entity: Node3D) -> void:
 	_path_budget.release_shared_plan(self)
 	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
 	_interrupt_work()
+	support.auto_allowed = true
 	order = Order.ATTACK
 	order_name = "攻击目标"
 	# Repeated focus fire replaces queued orders without canceling the current strike.
@@ -807,15 +823,17 @@ func stop() -> void:
 		return
 	waypoint_queue.clear()
 	_finish_order()
+	support.auto_allowed = false
 
 func hold(queued: bool = false) -> void:
 	if not alive:
 		return
-	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD]:
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD, Order.SUPPORT]:
 		if waypoint_queue.size() < MAX_QUEUED_ORDERS and (waypoint_queue.is_empty() or waypoint_queue.back().kind != "hold"):
 			waypoint_queue.append({"kind": "hold"})
 		return
 	stop()
+	support.auto_allowed = true
 	order = Order.HOLD
 	order_name = "坚守阵地"
 	_scan_time = 0.0
@@ -836,6 +854,11 @@ func _complete_waypoint() -> void:
 		if next_waypoint.kind == "attack":
 			if _valid_target(next_entity):
 				_begin_attack(next_entity)
+				return
+			continue
+		if next_waypoint.kind == "support":
+			if support.valid_target(next_entity):
+				_begin_support(next_entity)
 				return
 			continue
 		if next_waypoint.order == Order.BUILD and next_entity.is_constructed:
@@ -867,6 +890,42 @@ func _finish_order() -> void:
 func get_combat_definition() -> CombatDefinition:
 	return _stats
 
+func issue_support(entity: Node3D, queued: bool = false) -> bool:
+	if not alive or not _game.is_authority or not support.valid_target(entity):
+		return false
+	if queued and order in [Order.MOVE, Order.ATTACK_MOVE, Order.ATTACK, Order.GATHER, Order.BUILD, Order.SUPPORT]:
+		if waypoint_queue.is_empty() and order == Order.SUPPORT and work_target == entity:
+			return true
+		if not waypoint_queue.is_empty() and waypoint_queue.back().kind == "support" and waypoint_queue.back().entity == entity:
+			return true
+		if waypoint_queue.size() >= MAX_QUEUED_ORDERS: return false
+		waypoint_queue.append({"kind": "support", "entity": entity})
+		return true
+	waypoint_queue.clear()
+	if order != Order.SUPPORT or work_target != entity:
+		_begin_support(entity)
+	return true
+
+func _begin_support(entity: BattleUnit) -> void:
+	_interrupt_work()
+	support.auto_allowed = true
+	_movement_plan = null
+	_path_budget.release_shared_plan(self)
+	order = Order.SUPPORT
+	work_target = entity
+	target = null
+	_move_retaliation = null
+	_cancel_attack()
+	order_name = "前往维修" + entity.display_name
+
+func restore_health(amount: float) -> float:
+	if not alive or not _game.is_authority or not is_finite(amount) or amount <= 0.0:
+		return 0.0
+	var restored: float = minf(max_hp - hp, amount)
+	hp += restored
+	_update_health_bar()
+	return restored
+
 func receive_hit(payload: DamagePayload, source: Node3D = null) -> void:
 	if not alive or payload.alliance_id == alliance_id:
 		return
@@ -893,7 +952,7 @@ func _apply_damage(actual_damage: float, source: Node3D, attacker_owner: int = -
 		defeated_by_owner = attacker_owner
 		_die()
 		return
-	if unit_type != "farmer" and _valid_target(source):
+	if unit_type != "farmer" and _valid_target(source) and (not support.enabled() or (not is_instance_valid(support.recipient) and order != Order.SUPPORT and _within_attack_range(source))):
 		if order == Order.MOVE:
 			_move_retaliation = source
 			_retaliation_time = 2.0
@@ -926,6 +985,7 @@ func _update_health_bar() -> void:
 	health_bar.set_instance_shader_parameter("health", hp / max_hp)
 
 func _die() -> void:
+	support.shutdown()
 	_movement_plan = null
 	_interrupt_work()
 	_path_budget.cancel(self)

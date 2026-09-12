@@ -7,7 +7,7 @@ const CLASS_NAMES: Dictionary = {&"infantry": "步兵", &"archer": "弓箭手", 
 const BUILDING_DESCRIPTIONS: Dictionary = {
 	"headquarters": "城镇的中心。训练农民、守护经济，并为重建保留希望。",
 	"barracks": "训练剑士、盾卫、长矛兵、弓箭手、骑士、战象与轻骑兵，用不同兵种组成你的主力。",
-	"factory": "制造投石车与加农炮，为前线提供范围火力和攻城支援。",
+	"factory": "制造投石车、加农炮并训练工程兵，为前线提供火力和维修支援。",
 	"academy": "研究军队、人口与采矿科技。已完成的研究永久保留。",
 	"defense_tower": "自动攻击范围内的敌人。无法驻军，需要部队保护。",
 }
@@ -21,7 +21,7 @@ const MODEL_PATHS: Dictionary = {
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
 	"swordsman": Vector2(1.0, 3.2), "shield_guard": Vector2(1.05, 3.4), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5), "light_cavalry": Vector2(1.3, 4.2), "war_elephant": Vector2(1.85, 6.4),
-	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2),
+	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
 var category: int = 0
@@ -140,9 +140,9 @@ func _select_preview_action(action: PreviewAction) -> void:
 			# Preserve the whole authored motion and the unit's real attack cadence.
 			_cycle_seconds = maxf(BalanceCatalog.unit(_preview_unit.kind).cooldown, _preview_unit.attack.get_animation("strike").length)
 		PreviewAction.GATHER:
-			_preview_unit.set_working(true, "gather")
+			_preview_unit.set_working(true, "repair" if selected_id == "engineer" else "gather")
 			_preview_unit.attack.seek(0.0, true, true)
-			_cycle_seconds = _preview_unit.attack.get_animation("gather").length
+			_cycle_seconds = _preview_unit.attack.get_animation("repair" if selected_id == "engineer" else "gather").length
 	_update_preview_controls()
 	_refresh_preview_activity()
 
@@ -242,6 +242,9 @@ func _on_entry_selected(index: int) -> void:
 			content += _combat_rows(unit)
 			content += _row("移动速度", _number(unit.speed))
 			content += _row("视野", _number(unit.sight))
+			if unit.support_kind == &"repair":
+				content += _row("免费维修", "%s生命 / %s秒" % [_number(unit.support_amount), _number(unit.support_period)])
+				content += _row("维修距离", _number(unit.support_range))
 			if unit.min_range > 0.0:
 				content += _row("最小射程", _number(unit.min_range))
 			%Special.text = _unit_notes(unit)
@@ -309,6 +312,8 @@ func _combat_rows(definition: CombatDefinition) -> String:
 	return rows
 
 func _unit_notes(unit: UnitDefinition) -> String:
+	if unit.support_kind == &"repair":
+		return "免费维修己方和盟友的受损攻城器，工作满1秒恢复5生命。同一目标同时一人维修。不能维修建筑或战象；右键指定目标，停止命令中断维修。"
 	if unit.id == &"light_cavalry":
 		return "移动速度6.8、视野20的轻装侦察骑兵，适合迂回与追击落单弓手。装备较轻，正面交战需要谨慎，完整承受长矛兵等单位的反骑兵附加伤害。"
 	if unit.id == &"war_elephant":
@@ -367,7 +372,8 @@ func _set_preview(kind: String) -> void:
 	_camera.look_at(Vector3(0, center, 0), Vector3.UP)
 	_pedestal.scale = Vector3(1.4, 1.0, 1.4) if unit else Vector3(4.7, 1.0, 4.7)
 	%PreviewAnimationControls.visible = category == 0 and unit
-	%PreviewGather.visible = kind == "farmer"
+	%PreviewGather.visible = kind in ["farmer", "engineer"]
+	%PreviewGather.text = "维修" if kind == "engineer" else "采矿"
 	%PreviewAttack.text = "开炮" if kind == "cannon" else ("投射" if kind == "catapult" else "攻击")
 	_reset_view()
 	_refresh_preview_activity()

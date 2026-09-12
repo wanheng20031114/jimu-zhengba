@@ -1,12 +1,12 @@
 {
   "build": "0.11.0",
-  "protocol": 10,
+  "protocol": 11,
   "files": {
     "data/buildings/academy.tres": "f868bc59ee251b7885d2499e81db0b2135c752b063e841ec3a7d97003e69f45e",
     "data/buildings/barracks.tres": "84b9e77bdf048dd31259728c0da4b2520200cecd6a37953e997ffd15d89225b9",
     "data/buildings/defense_tower.tres": "405dd0e74b4e61e458ece50b8f4f98b80c272bc4ed0f20c05fbcbba3c94dd345",
     "data/buildings/enemy_keep.tres": "6c393418bbe472611fd4176c658463fcb6536347e66d0d08d119216e62782109",
-    "data/buildings/factory.tres": "f18f588bf650968bbfee22a04c10d07ea58288993951173cfeffee638a08c272",
+    "data/buildings/factory.tres": "4f32e0fc64f12eba33819cfc2504598b348d40d82bb60b6fbc1877acaca5fa85",
     "data/buildings/headquarters.tres": "6aa1b528b7f1ce8d5cb7c552d9ac1687c7baaf99805c0846dca840b2b4500d69",
     "data/buildings/house.tres": "e4bfbed0d5723246f840ba52f6da59ed44006475f08948d42fc4fcfefeb46093",
     "data/buildings/tower.tres": "ee2db30a3803a3fabb40c5d2a0b6ddd4f191505ebdab5bba58cf67192ab4718b",
@@ -20,6 +20,7 @@
     "data/units/archer.tres": "16c0dba79356e57c7b55119b3ceec0824ff1e5422bc0175d1de388029cf134f9",
     "data/units/cannon.tres": "00a52bc19e753f5771648328696961eae810edcb44728aa688cd1564d2971d39",
     "data/units/catapult.tres": "b82d26e32cadd7ef98acb798cc5595caf34b67999e91a810393ca648b8ca7a39",
+    "data/units/engineer.tres": "712a61f803d6de2d027a915466dec00132b15444b7e27fb7b39697e6c16d153e",
     "data/units/farmer.tres": "6983f24ea24c14078bdb31b37384e9da7a114d51496bc3cdb71a9f1ad0a8b7cf",
     "data/units/knight.tres": "02bfbf9ca74bd21ea1df32dab02d80c8fc35094ef392429a633dd390df5905a8",
     "data/units/light_cavalry.tres": "5eb0f0124c3d003944096808ccd71b411a186149306f5a12fd09c8649f4f879a",

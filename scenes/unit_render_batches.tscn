@@ -98,6 +98,15 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearRight.res" id="mesh_93"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearRightLower.res" id="mesh_94"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/light_cavalry/LegRearRightHoof.res" id="mesh_95"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/Body.res" id="mesh_96"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/Head.res" id="mesh_97"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/ArmLeft.res" id="mesh_98"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/ForearmLeft.res" id="mesh_99"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/ArmRight.res" id="mesh_100"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/ForearmRight.res" id="mesh_101"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/Hammer.res" id="mesh_102"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/LegLeft.res" id="mesh_103"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/engineer/LegRight.res" id="mesh_104"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -771,6 +780,69 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_95")
 
+[sub_resource type="MultiMesh" id="batch_96"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_96")
+
+[sub_resource type="MultiMesh" id="batch_97"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_97")
+
+[sub_resource type="MultiMesh" id="batch_98"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_98")
+
+[sub_resource type="MultiMesh" id="batch_99"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_99")
+
+[sub_resource type="MultiMesh" id="batch_100"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_100")
+
+[sub_resource type="MultiMesh" id="batch_101"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_101")
+
+[sub_resource type="MultiMesh" id="batch_102"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_102")
+
+[sub_resource type="MultiMesh" id="batch_103"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_103")
+
+[sub_resource type="MultiMesh" id="batch_104"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_104")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -1351,3 +1423,57 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_95")
 metadata/batch_key = &"light_cavalry::Rig/Action/LegRearRight/LegRearRightLower/LegRearRightHoof"
+
+[node name="Engineer_Rig_Action_Waist_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_96")
+metadata/batch_key = &"engineer::Rig/Action/Waist/Body"
+
+[node name="Engineer_Rig_Action_Waist_Head" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_97")
+metadata/batch_key = &"engineer::Rig/Action/Waist/Head"
+
+[node name="Engineer_Rig_Action_Waist_ArmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_98")
+metadata/batch_key = &"engineer::Rig/Action/Waist/ArmLeft"
+
+[node name="Engineer_Rig_Action_Waist_ArmLeft_ForearmLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_99")
+metadata/batch_key = &"engineer::Rig/Action/Waist/ArmLeft/ForearmLeft"
+
+[node name="Engineer_Rig_Action_Waist_ArmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_100")
+metadata/batch_key = &"engineer::Rig/Action/Waist/ArmRight"
+
+[node name="Engineer_Rig_Action_Waist_ArmRight_ForearmRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_101")
+metadata/batch_key = &"engineer::Rig/Action/Waist/ArmRight/ForearmRight"
+
+[node name="Engineer_Rig_Action_Waist_Hammer" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_102")
+metadata/batch_key = &"engineer::Rig/Action/Waist/Hammer"
+
+[node name="Engineer_Rig_Action_LegLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_103")
+metadata/batch_key = &"engineer::Rig/Action/LegLeft"
+
+[node name="Engineer_Rig_Action_LegRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_104")
+metadata/batch_key = &"engineer::Rig/Action/LegRight"

@@ -9,8 +9,8 @@ const UNIT_SCENE: PackedScene = preload("res://scenes/unit.tscn")
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
 const EFFECT_SCENE: PackedScene = preload("res://scenes/battle_effect.tscn")
 const BUILDING_SCENE: PackedScene = preload("res://scenes/building.tscn")
-const UNIT_TYPES := ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "farmer"]
-const UNIT_NAMES := {"swordsman": "剑士", "shield_guard": "盾卫", "spearman": "长矛兵", "archer": "弓箭手", "knight": "骑士", "war_elephant": "战象", "light_cavalry": "轻骑兵", "catapult": "投石车", "cannon": "加农炮", "farmer": "农民"}
+const UNIT_TYPES := ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "farmer"]
+const UNIT_NAMES := {"swordsman": "剑士", "shield_guard": "盾卫", "spearman": "长矛兵", "archer": "弓箭手", "knight": "骑士", "war_elephant": "战象", "light_cavalry": "轻骑兵", "catapult": "投石车", "cannon": "加农炮", "engineer": "工程兵", "farmer": "农民"}
 const MAX_ARMY: int = 160
 const EFFECT_SOUNDS: Dictionary = {"hit": &"sword_hit", "wood_hit": &"wood_hit", "stone_chip": &"stone_chip", "arrow_hit": &"arrow_hit", "muzzle": &"cannon_shot", "explosion": &"explosion", "stone_hit": &"stone_hit", "collapse": &"collapse"}
 
@@ -281,6 +281,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				command_build(entity, event.shift_pressed)
 			elif is_instance_valid(entity) and entity.alliance_id != get_player(local_owner_id).alliance_id:
 				command_attack(entity, event.shift_pressed)
+			elif can_support_selected(entity):
+				command_support(entity, event.shift_pressed)
 			else:
 				command_move(camera_rig.world_at(event.position), false, event.shift_pressed)
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -443,6 +445,15 @@ func _on_gathered(worker: Node3D, amount: int) -> void:
 	if is_authority and not finished and not get_tree().paused and worker.alive:
 		var player := get_player(worker.owner_id)
 		player.gold += amount * player.get_gather_yield_multiplier()
+
+func can_support_selected(entity: Node3D) -> bool:
+	for unit: BattleUnit in own_selected_units():
+		if unit.support.valid_target(entity): return true
+	return false
+
+func command_support(entity: Node3D, queued: bool = false) -> void:
+	if can_support_selected(entity):
+		submit_local({"kind": "support", "units": selected_ids(), "target": entity.entity_id, "queued": queued})
 
 func command_gather(mine: Node3D, queued: bool = false) -> void:
 	if not own_selected_buildings().is_empty():

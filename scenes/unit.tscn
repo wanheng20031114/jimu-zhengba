@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle_unit.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/unit_support.gd" id="2_support"]
 
 [sub_resource type="CapsuleShape3D" id="Capsule_body"]
 resource_local_to_scene = true
@@ -84,6 +85,9 @@ mesh = SubResource("Mesh_health")
 [node name="AttackWindup" type="Timer" parent="."]
 process_callback = 0
 one_shot = true
+
+[node name="Support" type="Node" parent="."]
+script = ExtResource("2_support")
 
 [connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_apply_velocity"]
 [connection signal="timeout" from="AttackWindup" to="." method="_on_attack_windup_timeout"]
