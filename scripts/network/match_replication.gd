@@ -694,7 +694,7 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			if not state.get("kind") in BalanceCatalog.UNITS or not state.get("moving") is bool or not state.get("working") is bool:
 				return false
 			var base_range: float = BalanceCatalog.unit(state.kind).range
-			var range_bonus: float = BalanceCatalog.upgrade(&"cannon_range_1").total_bonus if state.kind == "cannon" else 0.0
+			var range_bonus: float = BalanceCatalog.upgrade(&"cannon_range_1").total_bonus if BalanceCatalog.unit(state.kind).cannon_range_upgrades else 0.0
 			if not _number(state.get("attack_range"), base_range, base_range + range_bonus):
 				return false
 			if not state.get("anim") in ["", "strike", "gather", "build", "repair", "heal"] or not _number(state.get("phase"), 0, 100) or not _number(state.get("work"), 0, 1):

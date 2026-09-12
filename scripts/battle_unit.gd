@@ -17,6 +17,7 @@ const MODELS: Dictionary = {
 	"war_elephant": preload("res://assets/models/units/war_elephant.tscn"),
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
+	"heavy_cannon": preload("res://assets/models/units/heavy_cannon.tscn"),
 	"farmer": preload("res://assets/models/units/farmer.tscn"),
 	"engineer": preload("res://assets/models/units/engineer.tscn"),
 	"priest": preload("res://assets/models/units/priest.tscn"),
@@ -33,7 +34,7 @@ const RECOVERY_DELAY: float = 10.0
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 const CONGESTION_SECONDS: float = 0.6
 
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -65,7 +66,7 @@ var attack_range: float:
 	get:
 		# Before _ready this property has its authored base. After binding, only
 		# the authority derives combat values; clients receive the visible result.
-		return _base_or_replicated_range + (_owner_state.get_cannon_range_bonus() if unit_type == "cannon" and _game != null and _game.is_authority else 0.0)
+		return _base_or_replicated_range + (_owner_state.get_cannon_range_bonus() if _game != null and _game.is_authority and _stats.cannon_range_upgrades else 0.0)
 	set(value):
 		_base_or_replicated_range = value
 var attack_damage: float = 20.0

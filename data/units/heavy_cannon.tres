@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="UnitDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"heavy_cannon"
+name = "重型火炮"
+description = "四轮重炮，射程更长、单发火力强劲，擅长轰击建筑，需要前排保护。"
+hp = 260.0
+damage = 100.0
+melee_armor = 0.0
+melee_defense_upgrades = false
+ranged_armor = 2.0
+damage_channel = 1
+combat_class = &"siege"
+bonuses = {&"building": 100}
+range = 14.0
+min_range = 3.5
+cannon_range_upgrades = true
+cooldown = 4.2
+attack_windup_seconds = 0.45
+cost = 500
+supply = 5
+speed = 1.8
+radius = 1.15
+sight = 16.0
+health_bar_height = 2.6
+collision_height = 2.0
+projectile = "cannon"
+production_building = &"factory"
+training_seconds = 36.0
+military = true

@@ -580,6 +580,11 @@ theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = SubResource("Kinds")
 
+[node name="heavy_cannon" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
+layout_mode = 2
+text = "重型火炮"
+toggle_mode = true
+
 [node name="engineer" type="Button" parent="Sidebar/Scroll/Content/Kinds"]
 layout_mode = 2
 text = "工程兵"

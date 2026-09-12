@@ -2,7 +2,9 @@
 
 单位模型由 `tools/build_units.py` 离线雕塑并导出，运行时只实例化保存的 Godot 原生场景，不拼接零碎几何。所有模型面向 -Z，Y=0 为地面。没有使用外部付费模型或素材。
 
-牧师v1（2026-09-13，等待验收）：`priest.tscn` 为可编辑场景，`priest/` 保存10个分件的GLB、原生RES和部件清单，`batched/priest.tscn` 用于战场。共3,612三角面（预算4,500）。敞口亚麻兜帽、象牙色长袍、阵营色披带与帽沿、金色胸饰、腰带和书袋构成牧师轮廓；双手不持武器。两段式袖子在肘部衔接，前后袍摆分别随短步行走。保存待机、行走、0.25秒挥拳命中以及1秒治疗循环；首次治疗动作0.6秒达到释放姿态。两手的原生 `GPUParticles3D` 跟随前臂关节，目标光点与光晕使用 `scenes/healing_target_particles.tscn`；粒子不参与恢复生命。离线作者代码在 `tools/unit_priest.py`，通过 `python tools/build_units.py priest` 定向导出，后续烘焙和批量转换也只传 `priest`。数值与能力在 `data/units/priest.tres`，实际治疗由单位的 `Support` 子节点负责。展示入口：战争图鉴→牧师→治疗（含受伤剑士）；学院训练与沙盒均已接入。
+重型火炮v1（2026-09-13，等待验收）：`heavy_cannon.tscn` 为可编辑原生场景，`heavy_cannon/` 保存7个刚性部件的GLB、RES和清单，`batched/heavy_cannon.tscn` 用于战场；共7,324三角面，预算7,500。四轮木钢底盘配独立俯仰支架和加粗长钢炮管，炮口具有真实内腔，侧板与后甲板保留阵营色。按用户追加确认，炮管主体长4.45模型单位、明显伸出底盘；外伸部分无独立碰撞，车体占位半径维持1.15。轮子按0.60半径、1.8速度匹配整圈时长，0.45秒释放后后坐、缓慢复位，完整射击周期4.2秒。实际炮口由炮管下的 `ProjectileSocket` 提供。作者文件为 `tools/unit_heavy_cannon.py`；仅导出时执行 `python tools/build_units.py heavy_cannon`，烘焙和批量转换也只传 `heavy_cannon`。军工厂、战争图鉴→重型火炮→开炮和沙盒均已接入；不创建静态头像。详细记录见 `report/heavy-cannon-2026-09-13.md`。
+
+牧师v1（2026-09-13，已验收）：`priest.tscn` 为可编辑场景，`priest/` 保存10个分件的GLB、原生RES和部件清单，`batched/priest.tscn` 用于战场。共3,612三角面（预算4,500）。敞口亚麻兜帽、象牙色长袍、阵营色披带与帽沿、金色胸饰、腰带和书袋构成牧师轮廓；双手不持武器。两段式袖子在肘部衔接，前后袍摆分别随短步行走。保存待机、行走、0.25秒挥拳命中以及1秒治疗循环；首次治疗动作0.6秒达到释放姿态。两手的原生 `GPUParticles3D` 跟随前臂关节，目标光点与光晕使用 `scenes/healing_target_particles.tscn`；粒子不参与恢复生命。离线作者代码在 `tools/unit_priest.py`，通过 `python tools/build_units.py priest` 定向导出，后续烘焙和批量转换也只传 `priest`。数值与能力在 `data/units/priest.tres`，实际治疗由单位的 `Support` 子节点负责。展示入口：战争图鉴→牧师→治疗（含受伤剑士）；学院训练与沙盒均已接入。
 
 工程兵v2（2026-09-13，已验收）：`engineer.tscn` 为可编辑场景，`engineer/` 保存9个分件的GLB、原生RES与部件清单，`batched/engineer.tscn` 用于战场，共4,224三角面（预算4,500）。工匠帽带皮革帽檐、上翻护目镜与固定带，搭配卷袖上衣、围裙、背部工具卷和铁锤；帽顶与衣料保留队伍色。身体、头部、两臂、两前臂、双腿和铁锤分件，保存待机、行走、0.30秒接触的攻击与1秒维修循环。v2把带有握柄孔的右拳合入铁锤分件，并固定在右前臂子层级，取消铁锤独立的位置轨道；保存的腕部旋转让锤柄斜向前方，避开前臂。工具标记点随锤头运动，维修火花与音效使用现有效果池。雕塑与动画作者代码在 `tools/unit_engineer.py`，由 `python tools/build_units.py engineer` 定向调用；烘焙与批量工具同样只传 `engineer`。实际维修由单位场景内的 `Support` 原生子节点驱动。
 

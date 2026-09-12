@@ -179,12 +179,12 @@ func _pause_case(subject: BattleUnit) -> void:
 func _ui(academy: BattleBuilding) -> void:
 	game.select_entities([academy])
 	var hud: Control = game.hud
-	check(hud._actions.size() == 6 and hud._actions[-1].kind == "action_page", "seven academy tracks fit six slots with an explicit more button")
+	check(hud._actions.size() == 6 and hud._actions[0].id == "priest" and hud._actions[-1].kind == "action_page", "priest and seven academy tracks share paged action slots")
 	hud.trigger_action_slot(5)
-	check(hud._actions.size() == 3 and hud._actions[0].id == &"cannon_range_1" and hud._actions[1].id == &"recovery_1", "more hotkey exposes both special research actions")
+	check(hud._actions.size() == 4 and hud._actions[1].id == &"cannon_range_1" and hud._actions[2].id == &"recovery_1", "more hotkey exposes both special research actions")
 	check(hud.buttons[0].get_node("Hotkey").text == game.settings.hotkey_text("rts_slot_1") and not hud.buttons[1].disabled, "new research cards display active slot hotkeys and paid availability")
 	var before: int = game.get_player(0).gold
-	hud.trigger_action_slot(1)
+	hud.trigger_action_slot(2)
 	game.command_bus.tick()
 	check(academy.production.research_id == "recovery_1" and game.get_player(0).gold == before - 100, "research slot hotkey submits real paid recovery job")
 	hud.refresh()
@@ -201,7 +201,7 @@ func _ui(academy: BattleBuilding) -> void:
 		codex.select_entry(2, id)
 		var definition := BalanceCatalog.upgrade(id)
 		check(codex.get_node("%EntryTitle").text == definition.name and codex.get_node("%Stats").get_parsed_text().contains(str(definition.cost)), id + " codex reads real name and research cost")
-		check(is_instance_valid(codex._model) and codex.get_node("%ModelAnchor").get_child_count() == 1, id + " codex displays a single native model")
+		check(is_instance_valid(codex._model) and codex._model.get_parent() == codex.get_node("%ModelAnchor") and not codex.get_node("%SupportPreview").visible, id + " codex displays the selected native model without a support recipient")
 	check(codex.get_node("%Description").text.contains("阵亡") and codex.get_node("%Stats").get_parsed_text().contains("农民"), "recovery codex states death and farmer applicability")
 	codex.free()
 

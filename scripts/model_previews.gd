@@ -1,6 +1,6 @@
 extends Node
 ## Cached isolated native render targets. Only the active portrait advances at 15 Hz.
-const KINDS: Array[String] = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer", "headquarters", "gold_vein", "defense_tower", "barracks", "factory", "academy"]
+const KINDS: Array[String] = ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer", "headquarters", "gold_vein", "defense_tower", "barracks", "factory", "academy"]
 const FRAME_TIME := 1.0 / 15.0
 
 var _viewports: Dictionary[String, SubViewport] = {}
@@ -18,7 +18,7 @@ func _ready() -> void:
 		model.process_mode = Node.PROCESS_MODE_DISABLED
 		var camera: Camera3D = viewport.get_node("World/Camera3D")
 		camera.look_at(viewport.get_node("World/LookAt").global_position, Vector3.UP)
-		if kind in ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer"]:
+		if kind in ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer"]:
 			model.set_team(0)
 			var idle: AnimationPlayer = model.get_node("Locomotion")
 			var attack: AnimationPlayer = model.get_node("Attack")
@@ -48,7 +48,7 @@ func set_animated(kind: String) -> void:
 
 func set_team(team: int) -> void:
 	for kind: String in KINDS:
-		if kind in ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer"]:
+		if kind in ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer"]:
 			_models[kind].set_team(team)
 		elif kind != "gold_vein":
 			FactionPalette.apply_model(_models[kind], team)

@@ -13,6 +13,8 @@ extends CombatDefinition
 @export var radius: float = 0.5
 @export var sight: float = 10.0
 @export var min_range: float = 0.0
+## Explicit eligibility for the academy barrel-length research.
+@export var cannon_range_upgrades: bool = false
 @export var splash_radius: float = 0.0
 @export var projectile: String = ""
 @export var production_building: StringName

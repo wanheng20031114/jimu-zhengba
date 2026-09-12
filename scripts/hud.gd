@@ -1,6 +1,6 @@
 extends Control
 
-const UNIT_ORDER := ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "engineer", "priest", "farmer"]
+const UNIT_ORDER := ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer"]
 const UNIT_NAMES := ["剑士", "盾卫", "长矛兵", "弓箭手", "骑士", "战象", "轻骑兵", "投石车", "加农炮", "农民"]
 const BUILD_ORDER := ["barracks", "factory", "academy", "defense_tower", "headquarters"]
 var _actions: Array[Dictionary] = []
@@ -421,7 +421,7 @@ func _paginate_actions(building: BattleBuilding) -> void:
 
 func _upgrade_hint(upgrade: UpgradeDefinition) -> String:
 	if upgrade.track == &"cannon_range":
-		return "%d 秒 · 加农炮射程 +%d，提升至 %d · 现有及未来加农炮生效" % [upgrade.research_seconds, upgrade.total_bonus, BalanceCatalog.unit(&"cannon").range + upgrade.total_bonus]
+		return "%d 秒 · 加农炮与重型火炮射程 +%d，分别达到 %d / %d · 现有及未来单位生效" % [upgrade.research_seconds, upgrade.total_bonus, BalanceCatalog.unit(&"cannon").range + upgrade.total_bonus, BalanceCatalog.unit(&"heavy_cannon").range + upgrade.total_bonus]
 	if upgrade.track == &"recovery":
 		return "%d 秒 · 全部可移动单位（含农民、攻城器）10秒未受伤后，每秒恢复%d生命；建筑不受益" % [upgrade.research_seconds, upgrade.total_bonus]
 	if upgrade.track == &"workforce":

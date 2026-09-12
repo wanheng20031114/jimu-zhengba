@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/war_elephant.tscn" id="elephant_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/catapult.tscn" id="5_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/cannon.tscn" id="6_model"]
+[ext_resource type="PackedScene" path="res://assets/models/units/heavy_cannon.tscn" id="heavy_cannon_model"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/headquarters.tscn" id="7_model"]
 
 
@@ -373,6 +374,42 @@ position = Vector3(0, 0.65, -0.12)
 position = Vector3(4.5, 3.4, -6.3)
 projection = 1
 size = 3.7
+near = 0.1
+far = 60.0
+current = true
+
+[node name="heavy_cannon" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="heavy_cannon"]
+
+[node name="Model" parent="heavy_cannon/World" instance=ExtResource("heavy_cannon_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="heavy_cannon/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="heavy_cannon/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="heavy_cannon/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="heavy_cannon/World"]
+position = Vector3(0, 0.95, -0.7)
+
+[node name="Camera3D" type="Camera3D" parent="heavy_cannon/World"]
+position = Vector3(4.5, 3.4, -6.3)
+projection = 1
+size = 5.9
 near = 0.1
 far = 60.0
 current = true

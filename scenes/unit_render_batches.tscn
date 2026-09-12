@@ -117,6 +117,13 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/priest/RobeBack.res" id="mesh_112"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/priest/LegLeft.res" id="mesh_113"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/priest/LegRight.res" id="mesh_114"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/Body.res" id="mesh_115"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/WheelFrontLeft.res" id="mesh_116"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/WheelFrontRight.res" id="mesh_117"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/WheelRearLeft.res" id="mesh_118"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/WheelRearRight.res" id="mesh_119"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/Cradle.res" id="mesh_120"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/Barrel.res" id="mesh_121"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -923,6 +930,55 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_114")
 
+[sub_resource type="MultiMesh" id="batch_115"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_115")
+
+[sub_resource type="MultiMesh" id="batch_116"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_116")
+
+[sub_resource type="MultiMesh" id="batch_117"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_117")
+
+[sub_resource type="MultiMesh" id="batch_118"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_118")
+
+[sub_resource type="MultiMesh" id="batch_119"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_119")
+
+[sub_resource type="MultiMesh" id="batch_120"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_120")
+
+[sub_resource type="MultiMesh" id="batch_121"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_121")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -1617,3 +1673,45 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_114")
 metadata/batch_key = &"priest::Rig/Action/LegRight"
+
+[node name="Heavy Cannon_Rig_Action_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_115")
+metadata/batch_key = &"heavy_cannon::Rig/Action/Body"
+
+[node name="Heavy Cannon_Rig_Action_WheelFrontLeftKick_WheelFrontLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_116")
+metadata/batch_key = &"heavy_cannon::Rig/Action/WheelFrontLeftKick/WheelFrontLeft"
+
+[node name="Heavy Cannon_Rig_Action_WheelFrontRightKick_WheelFrontRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_117")
+metadata/batch_key = &"heavy_cannon::Rig/Action/WheelFrontRightKick/WheelFrontRight"
+
+[node name="Heavy Cannon_Rig_Action_WheelRearLeftKick_WheelRearLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_118")
+metadata/batch_key = &"heavy_cannon::Rig/Action/WheelRearLeftKick/WheelRearLeft"
+
+[node name="Heavy Cannon_Rig_Action_WheelRearRightKick_WheelRearRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_119")
+metadata/batch_key = &"heavy_cannon::Rig/Action/WheelRearRightKick/WheelRearRight"
+
+[node name="Heavy Cannon_Rig_Action_Elevation_Cradle" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_120")
+metadata/batch_key = &"heavy_cannon::Rig/Action/Elevation/Cradle"
+
+[node name="Heavy Cannon_Rig_Action_Elevation_Barrel" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_121")
+metadata/batch_key = &"heavy_cannon::Rig/Action/Elevation/Barrel"

@@ -25,6 +25,7 @@ speed = 2
 radius = 1
 sight = 14
 min_range = 2.5
+cannon_range_upgrades = true
 projectile = "cannon"
 production_building = &"factory"
 training_seconds = 20

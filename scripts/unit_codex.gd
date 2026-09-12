@@ -7,7 +7,7 @@ const CLASS_NAMES: Dictionary = {&"infantry": "步兵", &"archer": "弓箭手", 
 const BUILDING_DESCRIPTIONS: Dictionary = {
 	"headquarters": "城镇的中心。训练农民、守护经济，并为重建保留希望。",
 	"barracks": "训练剑士、盾卫、长矛兵、弓箭手、骑士、战象与轻骑兵，用不同兵种组成你的主力。",
-	"factory": "制造投石车、加农炮并训练工程兵，为前线提供火力和维修支援。",
+	"factory": "制造投石车、加农炮、重型火炮并训练工程兵，为前线提供火力和维修支援。",
 	"academy": "训练牧师，并研究军队、人口与采矿科技。训练和研究独立进行，已完成的研究永久保留。",
 	"defense_tower": "自动攻击范围内的敌人。无法驻军，需要部队保护。",
 }
@@ -21,7 +21,7 @@ const MODEL_PATHS: Dictionary = {
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
 	"swordsman": Vector2(1.0, 3.2), "shield_guard": Vector2(1.05, 3.4), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5), "light_cavalry": Vector2(1.3, 4.2), "war_elephant": Vector2(1.85, 6.4),
-	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
+	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "heavy_cannon": Vector2(.95, 7.2), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
 var category: int = 0
@@ -316,6 +316,7 @@ func _on_entry_selected(index: int) -> void:
 				content += _row("农民上限", str(PlayerState.WORKER_LIMIT + upgrade.total_bonus))
 			elif upgrade.track == &"cannon_range":
 				content += _row("加农炮射程", "%s → %s" % [_number(BalanceCatalog.unit(&"cannon").range), _number(BalanceCatalog.unit(&"cannon").range + upgrade.total_bonus)])
+				content += _row("重型火炮射程", "%s → %s" % [_number(BalanceCatalog.unit(&"heavy_cannon").range), _number(BalanceCatalog.unit(&"heavy_cannon").range + upgrade.total_bonus)])
 			elif upgrade.track == &"recovery":
 				content += _row("未受伤等待", "%d 秒" % BattleUnit.RECOVERY_DELAY)
 				content += _row("恢复速率", "%d 生命 / 秒" % upgrade.total_bonus)
@@ -353,7 +354,7 @@ func _unit_notes(unit: UnitDefinition) -> String:
 		return "高远程护甲适合承受箭雨，持盾短剑攻击单个目标。护甲全方向生效，攻击与防御研究同时影响现有和新训练的盾卫。"
 	if unit.id == &"catapult":
 		return "半径 %s 的范围伤害，范围内伤害一致。巨石落点在发射时确定，可以躲避；不会伤及友军。" % _number(unit.splash_radius)
-	if unit.id == &"cannon":
+	if unit.cannon_range_upgrades:
 		return "炮弹命中单个目标。适合拆除建筑；需要前排保护，无法攻击贴身敌人。学院研究加长炮管可使射程 +%d。" % BalanceCatalog.upgrade(&"cannon_range_1").total_bonus
 	if not unit.military:
 		return "每 %.1f 秒采得 %d 金币，无需运输。每座矿脉最多同时容纳 6 名农民。学院可提升采矿效率与农民上限。" % [BalanceCatalog.ECONOMY.mining_seconds, BalanceCatalog.ECONOMY.mining_gold]
@@ -365,7 +366,7 @@ func _upgrade_description(upgrade: UpgradeDefinition) -> String:
 		&"defense": return "全部军事单位的近战与远程护甲提高 %d 点。攻城器的近战护甲仍为 0；农民和建筑不受影响。" % upgrade.total_bonus
 		&"army_capacity": return "军事人口上限提高至 %d，可容纳更多军队。农民使用独立的人数上限。" % (PlayerState.SUPPLY_LIMIT + upgrade.total_bonus)
 		&"mining": return "农民采矿效率提高 %d%%。单次收入不变，采集周期缩短；正在采集的进度保留。" % upgrade.total_bonus
-		&"cannon_range": return "现有及未来加农炮的射程增加 %d。其他单位和建筑不受影响，最小射程不变。" % upgrade.total_bonus
+		&"cannon_range": return "现有及未来加农炮、重型火炮的射程增加 %d，分别达到14与15。其他单位和建筑不受影响，最小射程不变。" % upgrade.total_bonus
 		&"recovery": return "现有及未来可移动单位在连续 10 秒未受伤后，每满 1 秒恢复 %d 生命。满血停止，受伤重置；农民与攻城器同样生效，建筑不受益，阵亡单位不会恢复。" % upgrade.total_bonus
 	return "农民人数上限提高至 %d，包括存活农民与训练队列中的名额。" % (PlayerState.WORKER_LIMIT + upgrade.total_bonus)
 
@@ -407,7 +408,7 @@ func _set_preview(kind: String) -> void:
 	%PreviewAnimationControls.visible = category == 0 and unit
 	%PreviewGather.visible = kind in ["farmer", "engineer", "priest"]
 	%PreviewGather.text = "治疗" if kind == "priest" else ("维修" if kind == "engineer" else "采矿")
-	%PreviewAttack.text = "开炮" if kind == "cannon" else ("投射" if kind == "catapult" else "攻击")
+	%PreviewAttack.text = "开炮" if kind in ["cannon", "heavy_cannon"] else ("投射" if kind == "catapult" else "攻击")
 	_reset_view()
 	_refresh_preview_activity()
 

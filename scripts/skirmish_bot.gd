@@ -291,7 +291,7 @@ func _develop_base() -> int:
 		var mining := BalanceCatalog.upgrade("mining_%d" % (player.mining_level + 1))
 		if _budget >= mining.cost + BalanceCatalog.unit(&"swordsman").cost * 2 and _start_research(academy, mining):
 			return 0
-	if player.cannon_range_level == 0 and _army.any(func(unit: Node3D): return unit.unit_type == "cannon"):
+	if player.cannon_range_level == 0 and _army.any(func(unit: Node3D): return BalanceCatalog.unit(unit.unit_type).cannon_range_upgrades):
 		var range_upgrade := BalanceCatalog.upgrade(&"cannon_range_1")
 		if _budget >= range_upgrade.cost + BalanceCatalog.unit(&"swordsman").cost * 2 and _start_research(academy, range_upgrade):
 			return 0
@@ -347,6 +347,7 @@ func _recruitment_role(kind: String) -> String:
 	match definition.combat_class:
 		&"infantry": return "swordsman"
 		&"cavalry": return "knight"
+		&"siege": return "cannon" if definition.projectile == "cannon" else "catapult"
 	return kind
 
 func _composition() -> Dictionary:
@@ -463,7 +464,7 @@ func _attack_target(from: Vector3, reach: float) -> Node3D:
 		if distance > reach:
 			continue
 		var score: float = distance + (18.0 if record.building else 0.0)
-		if record.kind in ["catapult", "cannon"]:
+		if not record.building and BalanceCatalog.unit(record.kind).combat_class == &"siege":
 			score *= 0.65
 		elif record.kind == "farmer":
 			score += 8.0
