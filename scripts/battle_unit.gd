@@ -13,6 +13,7 @@ const MODELS: Dictionary = {
 	"spearman": preload("res://assets/models/units/spearman.tscn"),
 	"archer": preload("res://assets/models/units/archer.tscn"),
 	"knight": preload("res://assets/models/units/knight.tscn"),
+	"war_elephant": preload("res://assets/models/units/war_elephant.tscn"),
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
 	"farmer": preload("res://assets/models/units/farmer.tscn"),
@@ -28,7 +29,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "catapult", "cannon", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -171,7 +172,7 @@ func _ready() -> void:
 		navigation_agent.max_neighbors = 0
 	var capsule: CapsuleShape3D = $CollisionShape3D.shape
 	capsule.radius = radius * 0.85
-	capsule.height = maxf(radius * 1.7, 1.8)
+	capsule.height = maxf(radius * 1.7, _stats.collision_height)
 	_motion_clearance = capsule.radius + capsule.margin + safe_margin
 	$CollisionShape3D.position.y = capsule.height * 0.5
 	selection_ring.scale = Vector3.ONE * radius * 1.65
@@ -550,6 +551,8 @@ func _on_attack_windup_timeout() -> void:
 		var effect_kind: String = strike_target.get_hit_effect() if strike_target.is_in_group("buildings") else "hit"
 		var contact: Vector3 = strike_target.get_attack_position(global_position) if strike_target.is_in_group("buildings") else strike_target.global_position
 		strike_target.receive_hit(payload, self)
+		if unit_type == "war_elephant":
+			_game.spawn_effect(global_position + model_pivot.global_basis * Vector3(.56,.08,-.77), "dust", Color("be9a72"))
 		_game.spawn_effect(contact + Vector3.UP * 1.1, effect_kind, Color("f5d691"))
 	else:
 		if kind != "cannon":
@@ -946,7 +949,7 @@ func _die() -> void:
 	remove_from_group("friendly_units" if team == 0 else "enemy_units")
 	var fall: Tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS).set_parallel(true)
 	fall.tween_property(model_pivot, "rotation:z", 1.35 if randf() > 0.5 else -1.35, 0.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	fall.tween_property(model_pivot, "position:y", 0.15, 0.42)
+	fall.tween_property(model_pivot, "position:y", _stats.death_rest_height, 0.42)
 	fall.chain().tween_interval(2.0)
 	for mesh: GeometryInstance3D in _model.find_children("*", "GeometryInstance3D", true, false):
 		_corpse_meshes.append(mesh)

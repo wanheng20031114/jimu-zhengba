@@ -4,6 +4,9 @@ extends CombatDefinition
 ## Seconds from attack start to melee contact or projectile release.
 @export var attack_windup_seconds: float = 0.22
 @export var health_bar_height: float = 2.45
+## Full capsule height; keep the legacy diameter floor for large footprints.
+@export var collision_height: float = 1.8
+@export var death_rest_height: float = 0.15
 @export var cost: int = 0
 @export var supply: int = 1
 @export var speed: float = 3.5

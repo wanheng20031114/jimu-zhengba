@@ -38,6 +38,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/spearman.tscn" id="batch_spearman"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/archer.tscn" id="batch_archer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/knight.tscn" id="batch_knight"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/war_elephant.tscn" id="batch_war_elephant"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/catapult.tscn" id="batch_catapult"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/cannon.tscn" id="batch_cannon"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/farmer.tscn" id="batch_farmer"]
@@ -94,6 +95,7 @@ unit_model_overrides = Dictionary[String, PackedScene]({
 "cannon": ExtResource("batch_cannon"),
 "catapult": ExtResource("batch_catapult"),
 "farmer": ExtResource("batch_farmer"),
+"war_elephant": ExtResource("batch_war_elephant"),
 "knight": ExtResource("batch_knight"),
 "spearman": ExtResource("batch_spearman"),
 "shield_guard": ExtResource("batch_shield_guard"),

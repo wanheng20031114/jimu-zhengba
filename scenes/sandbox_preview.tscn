@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/archer.tscn" id="archer"]
 
 [ext_resource type="PackedScene" path="res://assets/models/units/knight.tscn" id="knight"]
+[ext_resource type="PackedScene" path="res://assets/models/units/war_elephant.tscn" id="war_elephant"]
 
 [ext_resource type="PackedScene" path="res://assets/models/units/catapult.tscn" id="catapult"]
 
@@ -33,6 +34,9 @@ visible = false
 visible = false
 
 [node name="knight" parent="Models" instance=ExtResource("knight")]
+visible = false
+
+[node name="war_elephant" parent="Models" instance=ExtResource("war_elephant")]
 visible = false
 
 [node name="catapult" parent="Models" instance=ExtResource("catapult")]

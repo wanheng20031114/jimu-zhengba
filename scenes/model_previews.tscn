@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/model_previews.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/models/units/swordsman.tscn" id="2_model"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/spearman.tscn" id="spearman_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/archer.tscn" id="3_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/knight.tscn" id="4_model"]
+[ext_resource type="PackedScene" path="res://assets/models/units/war_elephant.tscn" id="elephant_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/catapult.tscn" id="5_model"]
 [ext_resource type="PackedScene" path="res://assets/models/units/cannon.tscn" id="6_model"]
 [ext_resource type="PackedScene" path="res://assets/models/environment/headquarters.tscn" id="7_model"]
@@ -225,6 +226,42 @@ position = Vector3(0, 1.22, -0.05)
 position = Vector3(4, 3.2, -6)
 projection = 1
 size = 3.65
+near = 0.1
+far = 60.0
+current = true
+
+[node name="war_elephant" type="SubViewport" parent="."]
+transparent_bg = true
+own_world_3d = true
+msaa_3d = 2
+gui_disable_input = true
+size = Vector2i(192, 216)
+render_target_update_mode = 1
+
+[node name="World" type="Node3D" parent="war_elephant"]
+
+[node name="Model" parent="war_elephant/World" instance=ExtResource("elephant_model")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="war_elephant/World"]
+environment = SubResource("PortraitEnvironment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="war_elephant/World"]
+rotation_degrees = Vector3(-42, 145, 0)
+light_color = Color(1, 0.88, 0.70, 1)
+light_energy = 1.25
+
+[node name="RimLight" type="DirectionalLight3D" parent="war_elephant/World"]
+rotation_degrees = Vector3(-22, -35, 0)
+light_color = Color(0.64, 0.76, 1, 1)
+light_energy = 0.48
+
+[node name="LookAt" type="Marker3D" parent="war_elephant/World"]
+position = Vector3(0, 1.8, -0.2)
+
+[node name="Camera3D" type="Camera3D" parent="war_elephant/World"]
+position = Vector3(4, 3.2, -6)
+projection = 1
+size = 4.9
 near = 0.1
 far = 60.0
 current = true

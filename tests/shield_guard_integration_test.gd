@@ -29,8 +29,6 @@ func _run() -> void:
 	var old_windups := {"swordsman":.22,"spearman":.22,"archer":.27,"knight":.2,"catapult":.48,"cannon":.25,"farmer":.22}
 	for kind: String in old_windups:
 		check(is_equal_approx(BalanceCatalog.unit(kind).attack_windup_seconds, old_windups[kind]), "preserve old attack release "+kind)
-	for kind: String in ["war_elephant","light_cavalry","engineer","priest","heavy_cannon","triple_cannon"]:
-		check(not BalanceCatalog.UNITS.has(kind) and not ResourceLoader.exists("res://data/units/"+kind+".tres"), "later unit remains unimplemented: "+kind)
 	change_scene_to_file("res://scenes/main.tscn")
 	await scene_changed
 	game = current_scene

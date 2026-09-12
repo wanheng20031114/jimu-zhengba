@@ -267,11 +267,11 @@ func _takeover_without_headquarters_case() -> void:
 	_check(ally_soldier.global_position == Vector3(-10, 0, 6), "army-only takeover leaves allied units in place")
 	await _fresh()
 	barracks = host.add_building("barracks", 0, Vector3(-30, 0, 0))
-	host.players[0].gold = 45
+	host.players[0].gold = 60
 	bot = BOT.new(host, 0)
 	bot.tick(1.0)
 	_check(host.commands.size() == 1 and host.commands[0].kind == "recruit" and host.commands[0].target == barracks.entity_id and host.commands[0].unit_type == "swordsman", "barracks-only takeover spends available gold instead of reserving an impossible HQ rebuild")
-	_check(host.total_spent == 45 and host.players[0].gold == 0, "barracks-only takeover pays the full military price")
+	_check(host.total_spent == 60 and host.players[0].gold == 0, "barracks-only takeover pays the full military price")
 	await _fresh()
 	host.add_building("barracks", 0, Vector3(-30, 0, 0))
 	host.add_unit("farmer", 0, Vector3(-24, 0, 0))
@@ -398,18 +398,24 @@ func _mining_research_case() -> void:
 	_ready_base(["swordsman", "swordsman", "archer", "archer", "knight", "knight", "swordsman", "archer"])
 	var player: PlayerState = host.players[0]
 	player.active_research.clear()
+	# Isolate the mining decision below its threshold; 169 gold can already
+	# buy defense I with today's balance, unlike the old 139-gold fixture.
+	player.attack_level = 3
+	player.defense_level = 3
+	player.recovery_level = 1
+	player.workforce_level = 1
 	player.farmers = 0
 	for index in range(6):
 		host.add_unit("farmer", 0, Vector3(-24, 0, index * 0.5))
 	host.add_mine(Vector3(-24, 0, -8))
-	player.gold = 139
+	player.gold = 169
 	var bot: RefCounted = BOT.new(host, 0)
 	bot.tick(1.0)
-	_check(not host.commands.any(func(c): return c.kind == "research" and String(c.upgrade).begins_with("mining")), "mining research preserves a ninety-gold reinforcement budget")
+	_check(not host.commands.any(func(c): return c.kind == "research" and String(c.upgrade).begins_with("mining")), "mining research preserves 120 gold for two current swordsmen")
 	var costs: Array[int] = [50, 150, 300]
 	var seconds: Array[float] = [15.0, 25.0, 35.0]
 	for level in range(1, 4):
-		player.gold = costs[level - 1] + 90
+		player.gold = costs[level - 1] + 120
 		bot.tick(1.0 if level == 1 else seconds[level - 2])
 		var id := "mining_%d" % level
 		_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == id and c.cost == costs[level - 1]), "developed bot researches " + id + " at its catalog price")
@@ -429,11 +435,11 @@ func _special_research_case() -> void:
 	player.workforce_level = 1
 	player.recovery_level = 1
 	player.farmers = 12
-	player.gold = 329
+	player.gold = 359
 	var bot: RefCounted = BOT.new(host, 0)
 	bot.tick(1.0)
-	_check(not host.commands.any(func(c): return c.kind == "research" and c.upgrade == "cannon_range_1"), "bot cannon range preserves ninety gold for reinforcements")
-	player.gold = 330
+	_check(not host.commands.any(func(c): return c.kind == "research" and c.upgrade == "cannon_range_1"), "bot cannon range preserves 120 gold for two current swordsmen")
+	player.gold = 360
 	bot.tick(1.0)
 	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "cannon_range_1" and c.cost == 240), "bot with cannon submits paid 240 gold range research")
 	_check(player.cannon_range_level == 0, "bot range does not apply at purchase")
@@ -442,7 +448,7 @@ func _special_research_case() -> void:
 	host.advance(1.0)
 	_check(player.cannon_range_level == 1 and host.players[1].cannon_range_level == 0, "bot range completion affects only the researching owner")
 	player.recovery_level = 0
-	player.gold = 190
+	player.gold = 220
 	bot.tick(30.0)
 	_check(host.commands.any(func(c): return c.kind == "research" and c.upgrade == "recovery_1" and c.cost == 100), "developed bot invests one hundred real gold in recovery")
 	_check(player.recovery_level == 0, "bot recovery waits for completion")

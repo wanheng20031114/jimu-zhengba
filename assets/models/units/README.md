@@ -2,6 +2,10 @@
 
 单位模型由 `tools/build_units.py` 离线雕塑并导出，运行时只实例化保存的 Godot 原生场景，不拼接零碎几何。所有模型面向 -Z，Y=0 为地面。没有使用外部付费模型或素材。
 
+战象首版（2026-09-12）：`war_elephant.tscn` 为可编辑场景，`war_elephant/` 保存14个分件的GLB、原生RES及部件清单，`batched/war_elephant.tscn` 用于战场。共6,644三角面，低于10,000预算。包含独立象身、四足、象头、双耳、三段象鼻、尾巴、骑手和骑手头部；象牙、局部钢甲、蓝金披布、鞍具与缰绳合入相应刚性部件。四足采用交错承重步态，0.55秒象牙顶击伴随前足落地；骑手没有第二套攻击。
+
+仅重建战象时，将下方定向命令中的 `shield_guard` 换成 `war_elephant`。不要运行默认全量导出。战象的血条、点击胶囊高度和倒地停留高度由单位资源配置；死亡沿用原有倒地与淡出流程。
+
 盾卫首版（2026-09-12）：`shield_guard.tscn` 是可编辑模型，`shield_guard/` 保存7个分件的GLB、原生RES与部件清单，`batched/shield_guard.tscn` 用于战场批量渲染。模型4,628三角面，包含分层胸背甲、护颈头盔、眼部开口、护胫、短剑，以及带厚度、金属包边、木质背板、握把与绑带的大盾。盾与左臂合为刚性部件；持盾攻击在0.30秒向盾侧刺出短剑。待机、行走与攻击均保存为场景内的原生动画轨道。
 
 只重建盾卫时，依次运行：`python tools/build_units.py shield_guard`；Godot `--headless --path . --editor --import --quit`；Godot `--headless --path . --script res://assets/models/units/bake_native_meshes.gd -- shield_guard`；Godot `--headless --path . --script res://tools/build_rigid_batches.gd -- res://artifacts/shield_guard_batches.json shield_guard`。这会更新盾卫及共享批量渲染清单，不重写其他单位模型。保存的资源可以直接运行，无需重建。当前验收状态见项目的 `docs/unit-expansion-status.md`；下方未注明日期的统计保留早期六模型交付记录。

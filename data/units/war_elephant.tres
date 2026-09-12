@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+attack_windup_seconds = 0.55
+health_bar_height = 3.95
+collision_height = 3.6
+death_rest_height = 0.78
+id = &"war_elephant"
+name = "战象"
+description = "昂贵而厚实的骑兵，以象牙顶击单个目标，惧怕反骑兵和集火。"
+hp = 360
+damage = 26
+melee_armor = 2
+ranged_armor = 3
+damage_channel = 0
+combat_class = &"cavalry"
+bonuses = {}
+range = 1.5
+cooldown = 2.4
+cost = 300
+supply = 5
+speed = 3.2
+radius = 1.15
+sight = 15
+min_range = 0
+splash_radius = 0
+projectile = ""
+production_building = &"barracks"
+training_seconds = 30
+military = true

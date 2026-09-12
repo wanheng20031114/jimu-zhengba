@@ -65,6 +65,20 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/Sword.res" id="mesh_60"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/LegLeft.res" id="mesh_61"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/shield_guard/LegRight.res" id="mesh_62"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/Body.res" id="mesh_63"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/Head.res" id="mesh_64"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/EarLeft.res" id="mesh_65"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/EarRight.res" id="mesh_66"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/TrunkUpper.res" id="mesh_67"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/TrunkMiddle.res" id="mesh_68"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/TrunkTip.res" id="mesh_69"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/Tail.res" id="mesh_70"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/Rider.res" id="mesh_71"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/RiderHead.res" id="mesh_72"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegFrontLeft.res" id="mesh_73"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegFrontRight.res" id="mesh_74"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegRearLeft.res" id="mesh_75"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/war_elephant/LegRearRight.res" id="mesh_76"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -507,6 +521,104 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_62")
 
+[sub_resource type="MultiMesh" id="batch_63"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_63")
+
+[sub_resource type="MultiMesh" id="batch_64"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_64")
+
+[sub_resource type="MultiMesh" id="batch_65"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_65")
+
+[sub_resource type="MultiMesh" id="batch_66"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_66")
+
+[sub_resource type="MultiMesh" id="batch_67"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_67")
+
+[sub_resource type="MultiMesh" id="batch_68"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_68")
+
+[sub_resource type="MultiMesh" id="batch_69"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_69")
+
+[sub_resource type="MultiMesh" id="batch_70"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_70")
+
+[sub_resource type="MultiMesh" id="batch_71"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_71")
+
+[sub_resource type="MultiMesh" id="batch_72"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_72")
+
+[sub_resource type="MultiMesh" id="batch_73"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_73")
+
+[sub_resource type="MultiMesh" id="batch_74"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_74")
+
+[sub_resource type="MultiMesh" id="batch_75"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_75")
+
+[sub_resource type="MultiMesh" id="batch_76"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_76")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -889,3 +1001,87 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_62")
 metadata/batch_key = &"shield_guard::Rig/Action/LegRight"
+
+[node name="War Elephant_Rig_Action_BodyMotion_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_63")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/Body"
+
+[node name="War Elephant_Rig_Action_BodyMotion_HeadMotion_Head" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_64")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/HeadMotion/Head"
+
+[node name="War Elephant_Rig_Action_BodyMotion_HeadMotion_EarLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_65")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/HeadMotion/EarLeft"
+
+[node name="War Elephant_Rig_Action_BodyMotion_HeadMotion_EarRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_66")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/HeadMotion/EarRight"
+
+[node name="War Elephant_Rig_Action_BodyMotion_HeadMotion_TrunkSwing_TrunkUpper" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_67")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/HeadMotion/TrunkSwing/TrunkUpper"
+
+[node name="War Elephant_Rig_Action_BodyMotion_HeadMotion_TrunkSwing_TrunkUpper_TrunkMiddle" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_68")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/HeadMotion/TrunkSwing/TrunkUpper/TrunkMiddle"
+
+[node name="War Elephant_Rig_Action_BodyMotion_HeadMotion_TrunkSwing_TrunkUpper_TrunkMiddle_TrunkTip" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_69")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/HeadMotion/TrunkSwing/TrunkUpper/TrunkMiddle/TrunkTip"
+
+[node name="War Elephant_Rig_Action_BodyMotion_Tail" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_70")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/Tail"
+
+[node name="War Elephant_Rig_Action_BodyMotion_Rider" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_71")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/Rider"
+
+[node name="War Elephant_Rig_Action_BodyMotion_Rider_RiderHead" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_72")
+metadata/batch_key = &"war_elephant::Rig/Action/BodyMotion/Rider/RiderHead"
+
+[node name="War Elephant_Rig_Action_LegFrontLeftStep_LegFrontLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_73")
+metadata/batch_key = &"war_elephant::Rig/Action/LegFrontLeftStep/LegFrontLeft"
+
+[node name="War Elephant_Rig_Action_LegFrontRightStep_LegFrontRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_74")
+metadata/batch_key = &"war_elephant::Rig/Action/LegFrontRightStep/LegFrontRight"
+
+[node name="War Elephant_Rig_Action_LegRearLeftStep_LegRearLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_75")
+metadata/batch_key = &"war_elephant::Rig/Action/LegRearLeftStep/LegRearLeft"
+
+[node name="War Elephant_Rig_Action_LegRearRightStep_LegRearRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_76")
+metadata/batch_key = &"war_elephant::Rig/Action/LegRearRightStep/LegRearRight"

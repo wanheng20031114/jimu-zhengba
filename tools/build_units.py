@@ -25,6 +25,8 @@ P = {
     "ivory": (226, 216, 183), "horse": (132, 84, 49),
     "horselight": (161, 111, 65), "mane": (51, 38, 28),
     "bronze": (122, 110, 69), "bronzelight": (171, 147, 82),
+    "elephant": (120, 126, 124), "elephantlight": (147, 150, 141),
+    "elephantdark": (91, 100, 99),
 }
 METALS = {"steel", "edge", "darksteel", "gold", "goldlight", "bronze", "bronzelight"}
 
@@ -602,6 +604,121 @@ def horse_knight():
     return s
 
 
+def war_elephant():
+    s = Sculpture("war_elephant")
+    torso = s.pivot("BodyMotion", (0, 1.68, .12))
+    body = s.joint("Body", parent=torso)
+    s.e(body, (.87, .78, 1.19), (0, 0, 0), "elephant", sub=2)
+    s.e(body, (.72, .63, .58), (0, -.03, .77), "elephant", sub=1)
+    s.e(body, (.72, .78, .63), (0, .06, -.67), "elephant", sub=1)
+    # Thick column feet. Separate Step pivots own gait; the leg meshes own
+    # attack motion, so stomping never overwrites the locomotion tracks.
+    for name, xx, zz in [("LegFrontLeft", -.56, -.65), ("LegFrontRight", .56, -.65),
+                         ("LegRearLeft", -.59, .89), ("LegRearRight", .59, .89)]:
+        step = s.pivot(name + "Step", (xx, 1.22, zz))
+        leg = s.joint(name, parent=step)
+        s.add(leg, lathe([(-1.16,.265),(-1.02,.272),(-.73,.218),(-.40,.231),(-.07,.30),(.08,.285)],10), "elephant")
+        s.e(leg,(.238,.20,.23),(0,-.54,-.025),"elephantlight")
+        for nail_x in (-.15,0,.15):
+            s.b(leg,(.108,.112,.075),(nail_x,-1.078,-.236+abs(nail_x)*.18),"ivory",bevel=.026)
+        for y in (-.77,-.85):
+            s.add(leg,lathe([(y,.224),(y+.012,.224)],10,caps=False),"elephantdark")
+    head_motion = s.pivot("HeadMotion", (0,.40,-1.0), parent=torso)
+    head = s.joint("Head", parent=head_motion)
+    s.e(head,(.585,.68,.575),(0,.06,-.07),"elephant",sub=2)
+    s.e(head,(.38,.39,.39),(0,-.32,-.22),"elephant",sub=1)
+    # Twin brow domes, lateral eyes and heavy lids read as an elephant,
+    # independently of the rider above it.
+    for side in (-1,1):
+        s.e(head,(.30,.32,.28),(side*.225,.48,-.23),"elephantlight")
+        s.e(head,(.080,.046,.049),(side*.49,.115,-.345),"black")
+        s.e(head,(.019,.024,.023),(side*.51,.12,-.384),"ivory")
+        s.r(head,(side*.432,.18,-.404),(side*.551,.165,-.287),.036,"elephantdark",7)
+        # Ivory tusks curve forward and gently upward, rather than following
+        # the nose down. Their length is decorative, never a range input.
+        points=[(side*.365,-.28,-.40),(side*.45,-.40,-.70),
+                (side*.47,-.39,-1.02),(side*.44,-.28,-1.31),(side*.41,-.13,-1.47)]
+        radii=[.108,.093,.067,.038,.003]
+        for i in range(4):
+            s.r(head,points[i],points[i+1],radii[i],"ivory",9,r2=radii[i+1])
+        s.add(head,ring(.113,.016,points[0],(.95,side*.1,0),n=10),"gold")
+    # Small forehead plate and straps leave most of the skin exposed.
+    s.add(head,polygon([(-.19,.30),(.19,.30),(.245,.03),(0,-.21),(-.245,.03)],.055,(0,.30,-.566),(-.22,0,0)),"steel")
+    s.b(head,(.033,.29,.032),(0,.33,-.63),"gold",rot=(-.22,0,0),bevel=.007)
+    for side in (-1,1):
+        s.r(head,(side*.14,.57,-.55),(side*.49,.39,-.27),.029,"leather",8)
+        ear=s.joint("EarLeft" if side<0 else "EarRight",(side*.46,.16,.18),parent=head_motion)
+        # Rounded upper lobe and tapered lower edge; deliberately less wide
+        # than African-elephant ears, keeping the war mount's face readable.
+        outline=[(0,.31),(side*.27,.47),(side*.61,.27),(side*.64,-.13),
+                 (side*.38,-.48),(side*.13,-.42),(-side*.04,-.12)]
+        s.add(ear,polygon(outline,.12,rot=(.04,-side*.30,0)),"elephantdark")
+        inset=[(x*.84,y*.82) for x,y in outline]
+        s.add(ear,polygon(inset,.055,(0,0,-.070),(.04,-side*.30,0)),"elephantlight")
+    trunk_swing=s.pivot("TrunkSwing",(0,-.02,-.54),parent=head_motion)
+    upper=s.joint("TrunkUpper",parent=trunk_swing)
+    s.r(upper,(0,.025,0),(0,-.57,-.13),.245,"elephant",10,r2=.184)
+    s.e(upper,(.198,.19,.193),(0,-.54,-.125),"elephant",sub=1)
+    middle=s.joint("TrunkMiddle",(0,-.54,-.125),parent=upper)
+    s.r(middle,(0,.05,0),(0,-.55,-.09),.184,"elephant",10,r2=.129)
+    s.e(middle,(.139,.14,.14),(0,-.52,-.085),"elephant",sub=1)
+    tip=s.joint("TrunkTip",(0,-.52,-.085),parent=middle)
+    s.r(tip,(0,.035,0),(0,-.27,-.14),.129,"elephant",9,r2=.096)
+    s.r(tip,(0,-.27,-.14),(0,-.24,-.33),.096,"elephant",9,r2=.064)
+    s.r(tip,(0,-.24,-.33),(0,-.14,-.38),.064,"elephant",8,r2=.042)
+    for part, ys, z in [(upper,[-.16,-.30,-.43],-.17),(middle,[-.16,-.29,-.40],-.13)]:
+        for y in ys:
+            s.r(part,(-.11,y,z-.06),(.11,y,z-.06),.012,"elephantdark",6)
+    tail=s.joint("Tail",(0,.02,1.075),parent=torso)
+    s.r(tail,(0,0,0),(0,-.62,.23),.055,"elephant",8,r2=.028)
+    s.e(tail,(.065,.17,.085),(0,-.66,.24),"elephantdark")
+    # A blue saddle cloth drapes onto both sides, with a gold hem and emblem.
+    s.b(body,(1.32,.09,1.36),(0,.69,.18),"blue",bevel=.035)
+    for side in (-1,1):
+        panel=[(-.60,.24),(.57,.24),(.62,-.32),(.32,-.53),(-.47,-.43)]
+        s.add(body,polygon(panel,.048,(side*.82,.15,.20),(0,math.pi/2,0)),"gold")
+        s.add(body,polygon([(x*.91,y*.88) for x,y in panel],.052,(side*.846,.15,.20),(0,math.pi/2,0)),"blue")
+        s.b(body,(.042,.40,.048),(side*.881,.12,.20),"goldlight",bevel=.007)
+        s.b(body,(.043,.048,.31),(side*.882,.18,.20),"goldlight",bevel=.007)
+        s.e(body,(.025,.062,.062),(side*.908,.18,.20),"gold")
+        s.b(body,(.095,.63,.11),(side*.755,.22,-.39),"leather",rot=(0,0,side*.18))
+        s.b(body,(.12,.12,.14),(side*.82,.06,-.39),"gold")
+    # Breast plate stays below the head and is attached to a broad belly strap.
+    s.add(body,polygon([(-.40,.22),(.40,.22),(.34,-.22),(0,-.34),(-.34,-.22)],.075,(0,-.04,-1.01)),"steel")
+    s.b(body,(.055,.35,.034),(0,-.03,-1.063),"edge",bevel=.009)
+    s.b(body,(.90,.17,.73),(0,.81,.17),"leatherlight",bevel=.045)
+    for z in (-.20,.56):
+        s.b(body,(.88,.19,.105),(0,.90,z),"wooddark",bevel=.03)
+        s.b(body,(.91,.045,.12),(0,1.005,z),"gold",bevel=.008)
+    rider=s.joint("Rider",(0,.96,.08),parent=torso)
+    s.add(rider,lathe([(-.14,.23),(.02,.235),(.25,.29),(.34,.22)],8),"blue")
+    s.b(rider,(.41,.31,.11),(0,.14,-.20),"steel",bevel=.046)
+    s.b(rider,(.44,.075,.38),(0,-.045,0),"leather",bevel=.02)
+    s.b(rider,(.083,.075,.032),(0,-.038,-.213),"gold")
+    for side in (-1,1):
+        s.r(rider,(side*.14,-.06,0),(side*.39,-.27,-.07),.103,"leather",8)
+        s.r(rider,(side*.39,-.27,-.07),(side*.43,-.57,-.16),.095,"blue",8)
+        s.b(rider,(.18,.17,.29),(side*.43,-.60,-.23),"leather",bevel=.03)
+        s.e(rider,(.15,.12,.155),(side*.28,.25,-.01),"steel")
+        s.r(rider,(side*.28,.18,-.03),(side*.32,-.01,-.24),.083,"blue",8)
+        s.r(rider,(side*.32,-.01,-.24),(side*.16,.01,-.42),.073,"leather",8)
+        s.e(rider,(.073,.067,.079),(side*.14,.01,-.43),"skin")
+        # Hands hold a short padded rein loop fixed to the saddle. No second
+        # weapon or damage source is attached to the rider.
+        s.r(rider,(side*.14,.01,-.46),(side*.29,-.13,-.43),.016,"rope",6)
+    rider_head=s.joint("RiderHead",(0,.57,-.015),parent=rider)
+    s.e(rider_head,(.236,.246,.217),(0,-.005,-.008),"skin")
+    s.e(rider_head,(.249,.162,.23),(0,.157,.02),"blue")
+    s.b(rider_head,(.44,.049,.081),(0,.17,-.186),"gold",bevel=.012)
+    for side in (-1,1):
+        s.b(rider_head,(.038,.030,.026),(side*.085,.049,-.211),"black",bevel=.004)
+        s.b(rider_head,(.073,.025,.025),(side*.085,.102,-.203),"leather",bevel=.004)
+        s.e(rider_head,(.052,.077,.066),(side*.234,-.004,0),"skin")
+    s.e(rider_head,(.045,.061,.051),(0,-.012,-.225),"skin")
+    s.b(rider_head,(.108,.022,.023),(0,-.115,-.190),"leather",bevel=.003)
+    return s
+
+
 def wheel(s, part, radius=.46, width=.16):
     # Real open spokes and separate iron tire. Axis X.
     s.add(part,ring(radius-.045,.057,rot=(0,math.pi/2,0),n=16,m=4),"woodlight")
@@ -972,6 +1089,17 @@ def attack_tracks(s):
     def pos(part,offsets,times):
         base=np.zeros(3) if part=="Action" else np.array(s.joints[part])
         tracks.append((prop(part,"position"),[tuple(base+np.array(o)) for o in offsets],times))
+    if s.name=="war_elephant":
+        t=[0,.16,.34,.48,.55,.66,.90,1.23,1.55]
+        rot("HeadMotion",[(x,0,0) for x in [0,-.055,-.12,-.08,.22,.27,.10,-.025,0]],t)
+        rot("BodyMotion",[(x,0,0) for x in [0,-.006,-.015,-.012,.018,.026,.008,-.004,0]],t)
+        rot("TrunkUpper",[(x,0,0) for x in [0,.06,.18,.28,.44,.48,.25,.06,0]],t)
+        rot("TrunkMiddle",[(x,0,0) for x in [0,.03,.12,.18,.29,.31,.18,.03,0]],t)
+        rot("TrunkTip",[(x,0,0) for x in [0,-.08,-.18,-.26,-.35,-.38,-.20,-.04,0]],t)
+        pos("Action",[(0,y,z) for y,z in [(0,0),(0,.015),(-.012,.035),(-.008,.025),(-.025,-.13),(-.03,-.15),(-.01,-.06),(0,0),(0,0)]],t)
+        pos("LegFrontRight",[(0,y,z) for y,z in [(0,0),(.035,-.015),(.17,-.065),(.09,-.10),(0,-.12),(0,-.12),(.015,-.055),(0,0),(0,0)]],t)
+        rot("Rider",[(x,0,0) for x in [0,.025,.06,.04,-.06,-.075,-.015,.012,0]],t)
+        return 1.55,tracks
     if s.name=="shield_guard":
         t=[0,.10,.22,.30,.37,.52,.72,.96]
         rot("Waist",[(0,0,0),(.015,.045,0),(.025,.08,0),(-.035,-.07,0),(-.04,-.09,0),(-.02,-.04,0),(0,.01,0),(0,0,0)],t)
@@ -1086,6 +1214,37 @@ def write_scene(s):
         rise = .032 if s.name == "shield_guard" else .042
         walk.append(("Rig:position",[(0,y,0) for y in (0,rise,0,rise,0)]))
         idle.append(("Rig:position",[(0,0,0),(0,.014,0),(0,0,0)]))
+    elif s.name=="war_elephant":
+        cycle=1.24
+        times=[cycle*i/16 for i in range(17)]
+        for p,phase in (("LegFrontLeft",0), ("LegRearLeft",.24),
+                        ("LegFrontRight",.50), ("LegRearRight",.74)):
+            # Four-beat walk: each foot remains down for three quarters of
+            # its cycle, with a short lifted return stroke. No runtime IK.
+            rotations=[]; offsets=[]
+            base=np.array(s.joints[p+"Step"])
+            for i in range(17):
+                u=(i/16+phase)%1
+                if u<.75:
+                    angle=-.24+.48*u/.75
+                    lift=0.0
+                else:
+                    v=(u-.75)/.25
+                    angle=.24-.48*v
+                    lift=.15*math.sin(v*math.pi)
+                rotations.append((angle,0,0))
+                offsets.append(tuple(base+np.array((0,lift,0))))
+            walk.append((f"Rig/{p}Step:rotation",rotations,times))
+            walk.append((f"Rig/{p}Step:position",offsets,times))
+            idle.append((f"Rig/{p}Step:rotation",[(0,0,0),(0,0,0)]))
+            idle.append((f"Rig/{p}Step:position",[tuple(base),tuple(base)]))
+        for tracks,amount in ((idle,.012),(walk,.032)):
+            base=np.array(s.joints["BodyMotion"])
+            tracks.append(("Rig/BodyMotion:position",[tuple(base+np.array((0,y,0))) for y in (0,amount,0,amount,0)]))
+            for part,sign in (("EarLeft",1),("EarRight",-1)):
+                tracks.append((f"Rig/{part}:rotation",[(0,sign*y,0) for y in (0,.07,0,-.04,0)]))
+            tracks.append(("Rig/TrunkSwing:rotation",[(x,0,z) for x,z in [(0,0),(.025,.028),(0,0),(-.02,-.025),(0,0)]]))
+            tracks.append(("Rig/Tail:rotation",[(0,0,z) for z in (0,.10,0,-.08,0)]))
     elif s.name=="knight":
         for p,sign in (("LegFrontLeft",1),("LegFrontRight",-1),("LegRearLeft",-1),("LegRearRight",1)):
             walk.append((f"Rig/{p}:rotation",[(sign*a,0,0) for a in (0,.53,0,-.53,0)]))
@@ -1108,7 +1267,8 @@ def write_scene(s):
     duration,strike=attack_tracks(s)
     socket_parent=s.part_path("Bow") if s.name=="archer" else s.part_path("ThrowArm") if s.name=="catapult" else s.part_path("Barrel") if s.name=="cannon" else "Rig/Action"
     socket_position=(0,0,-.83) if s.name=="archer" else (0,.91,.89) if s.name=="catapult" else (0,-.10,-1.25) if s.name=="cannon" else (0,1.4,-.6)
-    lines += [anim_resource("walk",.72 if s.name!="knight" else .60,walk,True),
+    walk_duration = 1.24 if s.name=="war_elephant" else .60 if s.name=="knight" else .72
+    lines += [anim_resource("walk",walk_duration,walk,True),
               anim_resource("idle",2.6,idle,True),anim_resource("strike",duration,strike),
               '[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
               '[sub_resource type="AnimationLibrary" id="AnimationLibrary_attack"]\n_data = {&"strike": SubResource("Animation_strike")}',
@@ -1148,7 +1308,7 @@ def write_scene(s):
 if __name__=="__main__":
     import argparse
     builders={"swordsman":lambda:infantry("swordsman"), "shield_guard":shield_guard, "spearman":lambda:infantry("spearman"),
-              "archer":lambda:infantry("archer",True), "knight":horse_knight,
+              "archer":lambda:infantry("archer",True), "knight":horse_knight, "war_elephant":war_elephant,
               "catapult":catapult, "cannon":cannon, "farmer":farmer}
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("kinds",nargs="*",help="Only rebuild these units (default: all)")
