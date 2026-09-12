@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/health_bar_visual_test.gd" id="1_test"]
+
+[sub_resource type="QuadMesh" id="Quad_bar"]
+size = Vector2(1, 1)
+
+[node name="HealthBarVisualTest" type="Node"]
+script = ExtResource("1_test")
+
+[node name="Viewport" type="SubViewport" parent="."]
+own_world_3d = true
+size = Vector2i(1024, 256)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Viewport"]
+position = Vector3(0, 0, 5)
+projection = 1
+size = 2.0
+current = true
+
+[node name="UnitBar" type="MeshInstance3D" parent="Viewport"]
+position = Vector3(0, 0.45, 0)
+scale = Vector3(6, 0.24, 1)
+cast_shadow = 0
+mesh = SubResource("Quad_bar")
+
+[node name="BuildingBar" type="MeshInstance3D" parent="Viewport"]
+position = Vector3(0, -0.45, 0)
+scale = Vector3(6, 0.24, 1)
+cast_shadow = 0
+mesh = SubResource("Quad_bar")
