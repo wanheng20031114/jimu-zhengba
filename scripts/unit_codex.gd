@@ -7,7 +7,7 @@ const CLASS_NAMES: Dictionary = {&"infantry": "步兵", &"archer": "弓箭手", 
 const BUILDING_DESCRIPTIONS: Dictionary = {
 	"headquarters": "城镇的中心。训练农民、守护经济，并为重建保留希望。",
 	"barracks": "训练剑士、盾卫、长矛兵、弓箭手、骑士、战象与轻骑兵，用不同兵种组成你的主力。",
-	"factory": "制造投石车、加农炮、重型火炮并训练工程兵，为前线提供火力和维修支援。",
+	"factory": "制造投石车、加农炮、重型火炮、三管短炮并训练工程兵，为前线提供火力和维修支援。",
 	"academy": "训练牧师，并研究军队、人口与采矿科技。训练和研究独立进行，已完成的研究永久保留。",
 	"defense_tower": "自动攻击范围内的敌人。无法驻军，需要部队保护。",
 }
@@ -21,7 +21,7 @@ const MODEL_PATHS: Dictionary = {
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
 	"swordsman": Vector2(1.0, 3.2), "shield_guard": Vector2(1.05, 3.4), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5), "light_cavalry": Vector2(1.3, 4.2), "war_elephant": Vector2(1.85, 6.4),
-	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "heavy_cannon": Vector2(.95, 6.0), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
+	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "heavy_cannon": Vector2(.95, 6.0), "triple_cannon": Vector2(.75, 3.8), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
 var category: int = 0
@@ -267,6 +267,8 @@ func _on_entry_selected(index: int) -> void:
 			content += _row("生产建筑", BalanceCatalog.building(unit.production_building).name)
 			content += _row("人口", "%d 军事人口" % unit.supply if unit.military else "1 名农民")
 			content += _combat_rows(unit)
+			if unit.volley_targets > 1:
+				content += _row("每轮目标", "最多 %d 个 · 每目标一发" % unit.volley_targets)
 			content += _row("移动速度", _number(unit.speed))
 			content += _row("视野", _number(unit.sight))
 			if not unit.support_kind.is_empty():
@@ -354,6 +356,8 @@ func _unit_notes(unit: UnitDefinition) -> String:
 		return "高远程护甲适合承受箭雨，持盾短剑攻击单个目标。护甲全方向生效，攻击与防御研究同时影响现有和新训练的盾卫。"
 	if unit.id == &"catapult":
 		return "半径 %s 的范围伤害，范围内伤害一致。巨石落点在发射时确定，可以躲避；不会伤及友军。" % _number(unit.splash_radius)
+	if unit.volley_targets > 1:
+		return "每轮最多攻击正面扇形内的三个不同目标，每个目标只承受一发；额外目标优先步兵。没有溅射，弓箭手不属于步兵附伤类别。无法攻击贴身敌人，不受加长炮管科技影响。"
 	if unit.cannon_range_upgrades:
 		return "炮弹命中单个目标。适合拆除建筑；需要前排保护，无法攻击贴身敌人。学院研究加长炮管可使射程 +%d。" % BalanceCatalog.upgrade(&"cannon_range_1").total_bonus
 	if not unit.military:
@@ -408,7 +412,7 @@ func _set_preview(kind: String) -> void:
 	%PreviewAnimationControls.visible = category == 0 and unit
 	%PreviewGather.visible = kind in ["farmer", "engineer", "priest"]
 	%PreviewGather.text = "治疗" if kind == "priest" else ("维修" if kind == "engineer" else "采矿")
-	%PreviewAttack.text = "开炮" if kind in ["cannon", "heavy_cannon"] else ("投射" if kind == "catapult" else "攻击")
+	%PreviewAttack.text = "开炮" if kind in ["cannon", "heavy_cannon", "triple_cannon"] else ("投射" if kind == "catapult" else "攻击")
 	_reset_view()
 	_refresh_preview_activity()
 

@@ -124,6 +124,12 @@
 [ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/WheelRearRight.res" id="mesh_119"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/Cradle.res" id="mesh_120"]
 [ext_resource type="ArrayMesh" path="res://assets/models/units/heavy_cannon/Barrel.res" id="mesh_121"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Body.res" id="mesh_122"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/WheelLeft.res" id="mesh_123"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/WheelRight.res" id="mesh_124"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel0.res" id="mesh_125"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel1.res" id="mesh_126"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel2.res" id="mesh_127"]
 
 [sub_resource type="MultiMesh" id="batch_0"]
 resource_local_to_scene = true
@@ -979,6 +985,48 @@ use_custom_data = true
 custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
 mesh = ExtResource("mesh_121")
 
+[sub_resource type="MultiMesh" id="batch_122"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_122")
+
+[sub_resource type="MultiMesh" id="batch_123"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_123")
+
+[sub_resource type="MultiMesh" id="batch_124"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_124")
+
+[sub_resource type="MultiMesh" id="batch_125"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_125")
+
+[sub_resource type="MultiMesh" id="batch_126"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_126")
+
+[sub_resource type="MultiMesh" id="batch_127"]
+resource_local_to_scene = true
+transform_format = 1
+use_custom_data = true
+custom_aabb = AABB(-128, -8, -128, 256, 32, 256)
+mesh = ExtResource("mesh_127")
+
 [node name="UnitRenderBatches" type="Node3D"]
 process_priority = 1000
 physics_interpolation_mode = 2
@@ -1715,3 +1763,39 @@ physics_interpolation_mode = 2
 material_override = ExtResource("2_material")
 multimesh = SubResource("batch_121")
 metadata/batch_key = &"heavy_cannon::Rig/Action/Elevation/Barrel"
+
+[node name="Triple Cannon_Rig_Action_Body" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_122")
+metadata/batch_key = &"triple_cannon::Rig/Action/Body"
+
+[node name="Triple Cannon_Rig_Action_WheelLeft" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_123")
+metadata/batch_key = &"triple_cannon::Rig/Action/WheelLeft"
+
+[node name="Triple Cannon_Rig_Action_WheelRight" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_124")
+metadata/batch_key = &"triple_cannon::Rig/Action/WheelRight"
+
+[node name="Triple Cannon_Rig_Action_Barrel0" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_125")
+metadata/batch_key = &"triple_cannon::Rig/Action/Barrel0"
+
+[node name="Triple Cannon_Rig_Action_Barrel1" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_126")
+metadata/batch_key = &"triple_cannon::Rig/Action/Barrel1"
+
+[node name="Triple Cannon_Rig_Action_Barrel2" type="MultiMeshInstance3D" parent="."]
+physics_interpolation_mode = 2
+material_override = ExtResource("2_material")
+multimesh = SubResource("batch_127")
+metadata/batch_key = &"triple_cannon::Rig/Action/Barrel2"

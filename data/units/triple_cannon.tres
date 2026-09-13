@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="UnitDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/unit_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = &"triple_cannon"
+name = "三管短炮"
+description = "近距离反步兵炮车，每轮最多向三个不同目标各发射一炮。"
+hp = 160.0
+damage = 18.0
+melee_armor = 0.0
+melee_defense_upgrades = false
+ranged_armor = 2.0
+damage_channel = 1
+combat_class = &"siege"
+bonuses = {&"infantry": 12}
+range = 7.0
+min_range = 1.0
+cooldown = 2.4
+attack_windup_seconds = 0.25
+volley_targets = 3
+volley_interval = 0.1
+volley_arc_degrees = 90.0
+cost = 280
+supply = 3
+speed = 2.4
+radius = 0.95
+sight = 12.0
+health_bar_height = 2.0
+collision_height = 1.9
+projectile = "cannon"
+production_building = &"factory"
+training_seconds = 22.0
+military = true

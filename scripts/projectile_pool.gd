@@ -40,9 +40,9 @@ func _register_visual(projectile: BattleProjectile) -> void:
 	projectile.hide()
 	_available_visuals.append(projectile)
 
-func launch(source: Node3D, target: Node3D, payload: DamagePayload, kind: String) -> ProjectileFlight:
+func launch(source: Node3D, target: Node3D, payload: DamagePayload, kind: String, barrel_index: int = 0) -> ProjectileFlight:
 	var flight := _borrow_flight()
-	flight.initialize(_game, source, target, payload, kind)
+	flight.initialize(_game, source, target, payload, kind, barrel_index)
 	return flight if _activate(flight) else null
 
 func launch_visual(from: Vector3, to: Vector3, kind: String, duration: float, arc: float, target: Node3D) -> ProjectileFlight:

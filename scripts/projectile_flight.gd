@@ -33,14 +33,14 @@ func initialize_visual(game: Node3D, from: Vector3, to: Vector3, kind: String, d
 	position = from
 	_active = true
 
-func initialize(game: Node3D, source: Node3D, target: Node3D, payload: DamagePayload, kind: String) -> void:
+func initialize(game: Node3D, source: Node3D, target: Node3D, payload: DamagePayload, kind: String, barrel_index: int = 0) -> void:
 	_game = game
 	_source = source
 	_target = target
 	_payload = payload
 	_kind = kind
 	collision_mask = CombatLayers.hostile_entities(payload.alliance_id)
-	_start = source.get_projectile_origin()
+	_start = source.get_projectile_origin() if barrel_index == 0 else source.get_projectile_origin(barrel_index)
 	_end = target.global_position + Vector3.UP * (2.0 if target.is_in_group("buildings") else 1.0)
 	if source.is_in_group("buildings"):
 		_start += (_end - _start).normalized() * source.radius * 0.7

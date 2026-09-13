@@ -595,10 +595,18 @@ func _present_unit(unit: BattleUnit, a: Dictionary, b: Dictionary, weight: float
 		if player.is_playing():
 			player.stop()
 		return
+	var phase: float = float(a.phase)
+	if animation.begins_with("volley_") and String(b.anim).begins_with("volley_") and float(b.phase) >= phase:
+		phase = lerpf(phase, float(b.phase), weight)
+		var mask: int = animation.trim_prefix("volley_").to_int()
+		var released: int = String(b.anim).trim_prefix("volley_").to_int()
+		for index: int in unit._stats.volley_targets:
+			if phase >= unit._stats.attack_windup_seconds + index * unit._stats.volley_interval:
+				mask |= released & (1 << index)
+		animation = "volley_%d" % mask
 	if player.current_animation != animation:
 		player.play(animation)
-	var phase: float = float(a.phase)
-	if b.anim == animation:
+	if b.anim == animation and not animation.begins_with("volley_"):
 		var end: float = float(b.phase)
 		var clip: Animation = player.get_animation(animation)
 		if end < phase and clip.loop_mode != Animation.LOOP_NONE:
@@ -697,7 +705,9 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 			var range_bonus: float = BalanceCatalog.upgrade(&"cannon_range_1").total_bonus if BalanceCatalog.unit(state.kind).cannon_range_upgrades else 0.0
 			if not _number(state.get("attack_range"), base_range, base_range + range_bonus):
 				return false
-			if not state.get("anim") in ["", "strike", "gather", "build", "repair", "heal"] or not _number(state.get("phase"), 0, 100) or not _number(state.get("work"), 0, 1):
+			if not state.get("anim") in ["", "strike", "gather", "build", "repair", "heal", "volley_0", "volley_1", "volley_2", "volley_3", "volley_4", "volley_5", "volley_6", "volley_7"] or not _number(state.get("phase"), 0, 100) or not _number(state.get("work"), 0, 1):
+				return false
+			if String(state.anim).begins_with("volley_") and (BalanceCatalog.unit(state.kind).volley_targets <= 1 or float(state.phase) > BalanceCatalog.unit(state.kind).cooldown + .001):
 				return false
 			if state.anim in ["repair", "heal"] and BalanceCatalog.unit(state.kind).support_kind != StringName(state.anim):
 				return false

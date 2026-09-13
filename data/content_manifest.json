@@ -1,12 +1,12 @@
 {
   "build": "0.11.0",
-  "protocol": 12,
+  "protocol": 13,
   "files": {
     "data/buildings/academy.tres": "c46d4e8a0a2951829041ff993634641240caea0b2cc8d1708d2291c72ccd4bea",
     "data/buildings/barracks.tres": "84b9e77bdf048dd31259728c0da4b2520200cecd6a37953e997ffd15d89225b9",
     "data/buildings/defense_tower.tres": "405dd0e74b4e61e458ece50b8f4f98b80c272bc4ed0f20c05fbcbba3c94dd345",
     "data/buildings/enemy_keep.tres": "6c393418bbe472611fd4176c658463fcb6536347e66d0d08d119216e62782109",
-    "data/buildings/factory.tres": "38ed6ee96d4453f69e665f6efe7c11692ab10bffd18a103c8c3a0937966dd18c",
+    "data/buildings/factory.tres": "da15beac155e581b69cbbce71f799155e5d8d13868d23e81a802f6b277d7568e",
     "data/buildings/headquarters.tres": "6aa1b528b7f1ce8d5cb7c552d9ac1687c7baaf99805c0846dca840b2b4500d69",
     "data/buildings/house.tres": "e4bfbed0d5723246f840ba52f6da59ed44006475f08948d42fc4fcfefeb46093",
     "data/buildings/tower.tres": "ee2db30a3803a3fabb40c5d2a0b6ddd4f191505ebdab5bba58cf67192ab4718b",
@@ -29,6 +29,7 @@
     "data/units/shield_guard.tres": "25af8d3260d7bfdf0b56821afdd12ad6b8411e01cc0cb6a191c2208d7589ab0a",
     "data/units/spearman.tres": "caff832085fb181b19be34bb1f0a906a288126072450521ab59bd6a15d0bcbef",
     "data/units/swordsman.tres": "10ac23d538fab29a4cb9b1bb532652dd594c89a6ab22423a59a864c16c7110c0",
+    "data/units/triple_cannon.tres": "97c689e7ea3e5dd9ee52d3b983b2f94c93b8d9c2d8600fa89733d0f2f7b826d9",
     "data/units/war_elephant.tres": "736c57154c5ede489d8fe6a68a66c4d90da8c2a93c0df2944f18f1bd4867fb4f",
     "data/upgrades/army_capacity_1.tres": "86bf7f035f13da8a43270357f13dfb5efc9e1c8357dd0403242a199edc9b768d",
     "data/upgrades/army_capacity_2.tres": "160d182132be6da1c3e3f97c36210c47c669e28c8e5f6ebc20833e3fcb473c5c",

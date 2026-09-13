@@ -15,6 +15,10 @@ extends CombatDefinition
 @export var min_range: float = 0.0
 ## Explicit eligibility for the academy barrel-length research.
 @export var cannon_range_upgrades: bool = false
+## Fixed distinct targets per cycle; the first release uses attack_windup_seconds.
+@export_range(1, 3) var volley_targets: int = 1
+@export var volley_interval: float = 0.0
+@export var volley_arc_degrees: float = 0.0
 @export var splash_radius: float = 0.0
 @export var projectile: String = ""
 @export var production_building: StringName

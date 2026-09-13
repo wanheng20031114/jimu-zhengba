@@ -136,8 +136,6 @@ func _run() -> void:
 	academy.production.research("attack_1")
 	academy.production.destroyed()
 	check(academy.production.training.is_empty() and academy.production.research_queue.is_empty() and player.reserved_military_supply == 0 and player.queued_research.is_empty(),"academy destruction clears both queues and reservations")
-	for future: String in ["triple_cannon"]:
-		check(not BalanceCatalog.UNITS.has(future),"later unit has not been started: "+future)
 	await game.prepare_shutdown()
 	game.queue_free()
 	await process_frame

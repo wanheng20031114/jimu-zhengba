@@ -1,8 +1,9 @@
 class_name UnitVisual
 extends Node3D
 ## Saved rigid-part sculptures driven by native AnimationPlayers.
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer") var kind: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "triple_cannon", "engineer", "priest", "farmer") var kind: String = "swordsman"
 @export var projectile_socket: NodePath
+@export var extra_projectile_sockets: Array[NodePath] = []
 @export var support_particle_paths: Array[NodePath] = []
 ## Optional authored rigid-skin representation. The original editable rigs
 ## continue to use their Marker3D socket and need neither field.
@@ -167,12 +168,20 @@ func set_working(active: bool, mode: String = "gather") -> void:
 		_locomotion_advanced = _suspended_seconds()
 		_attack_advanced = _locomotion_advanced
 
-func strike() -> void:
+func strike(mask: int = 7) -> void:
 	if _working:
 		set_working(false)
 	synchronize_animation()
 	attack.stop()
-	attack.play("strike")
+	attack.play("strike" if extra_projectile_sockets.is_empty() else "volley_%d" % mask)
+	if _animations_suspended:
+		_attack_advanced = _suspended_seconds()
+
+func set_volley_mask(mask: int) -> void:
+	synchronize_animation()
+	var phase: float = attack.current_animation_position
+	attack.play("volley_%d" % mask, 0.0)
+	attack.seek(phase, true, true)
 	if _animations_suspended:
 		_attack_advanced = _suspended_seconds()
 
@@ -195,8 +204,10 @@ func set_support_particles_paused(value: bool) -> void:
 	for particles: GPUParticles3D in _support_particles:
 		particles.speed_scale = 0.0 if value else 1.0
 
-func get_projectile_origin() -> Vector3:
+func get_projectile_origin(barrel_index: int = 0) -> Vector3:
 	_synchronize_locomotion()
+	if barrel_index > 0:
+		return get_node(extra_projectile_sockets[barrel_index - 1]).global_position
 	if _rigid_skeleton != null:
 		# BoneAttachment3D publishes after the Skeleton's deferred update. Read
 		# the freshly sampled native pose directly at the authoritative release.

@@ -4,7 +4,7 @@ extends SceneTree
 ## The source text is retained verbatim except MeshInstance3D -> Node3D and
 ## moving each external mesh reference into UnitVisual.batch_parts.
 
-const KINDS: PackedStringArray = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "spearman", "shield_guard", "war_elephant", "light_cavalry", "engineer", "priest", "heavy_cannon"]
+const KINDS: PackedStringArray = ["swordsman", "archer", "knight", "catapult", "cannon", "farmer", "spearman", "shield_guard", "war_elephant", "light_cavalry", "engineer", "priest", "heavy_cannon", "triple_cannon"]
 const OUTPUT := "res://assets/models/units/batched/"
 const MANAGER := "res://scenes/unit_render_batches.tscn"
 const TOLERANCE := 0.00003
@@ -144,8 +144,9 @@ func _validate(kind: String) -> void:
 	var converted: UnitVisual = candidate_scene.instantiate()
 	var part_paths: Array[NodePath] = converted.batch_parts.keys()
 	_check(not part_paths.is_empty() and part_paths.size() == original.find_children("*", "MeshInstance3D", true, false).size(), kind + " every original mesh has exported proxy metadata")
-	var socket_path: NodePath = original.projectile_socket
-	_check(converted.projectile_socket == socket_path, kind + " projectile path unchanged")
+	var socket_paths: Array[NodePath] = [original.projectile_socket]
+	socket_paths.append_array(original.extra_projectile_sockets)
+	_check(converted.projectile_socket == original.projectile_socket and converted.extra_projectile_sockets == original.extra_projectile_sockets, kind + " projectile paths unchanged")
 	_check(converted.find_children("*", "MeshInstance3D", true, false).is_empty(), kind + " contains no per-part rendering instances")
 	for path: NodePath in part_paths:
 		var source_mesh: MeshInstance3D = original.get_node(path)
@@ -181,10 +182,11 @@ func _validate(kind: String) -> void:
 					_pose_comparisons += 1
 					_max_transform_error = maxf(_max_transform_error, error)
 					_check(error <= TOLERANCE and source_part.is_visible_in_tree() == proxy.is_visible_in_tree(), kind + " sampled part pose/visible matches")
-				var error: float = _transform_error(original.get_node(socket_path).global_transform, converted.get_node(socket_path).global_transform)
-				_socket_comparisons += 1
-				_max_socket_error = maxf(_max_socket_error, error)
-				_check(error <= TOLERANCE, kind + " sampled release socket matches")
+				for socket_path: NodePath in socket_paths:
+					var error: float = _transform_error(original.get_node(socket_path).global_transform, converted.get_node(socket_path).global_transform)
+					_socket_comparisons += 1
+					_max_socket_error = maxf(_max_socket_error, error)
+					_check(error <= TOLERANCE, kind + " sampled release socket matches")
 	original.free()
 	converted.free()
 

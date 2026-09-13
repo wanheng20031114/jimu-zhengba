@@ -44,7 +44,7 @@ func _run() -> void:
 	check(queues.training[0].kind == "priest" and queues.research_queue[0].id == "attack_1","academy training and research transmit independently")
 	var bytes := NetworkProtocol.encode({"op":"snapshot","payload":snapshot})
 	var wire: Dictionary = NetworkProtocol.decode(bytes).payload
-	check(not bytes.is_empty() and NetworkProtocol.VERSION == 12,"current protocol encodes priest snapshot")
+	check(not bytes.is_empty() and NetworkProtocol.VERSION == 13,"current protocol encodes priest snapshot")
 	var client: Node3D = FIXTURE.instantiate()
 	root.add_child(client)
 	var client_relay: RelayClient = RELAY.instantiate()

@@ -129,7 +129,6 @@ func _run() -> void:
 	factory.production.recruit("heavy_cannon")
 	factory.production.destroyed()
 	check(factory.production.training.is_empty() and player.reserved_military_supply == 0,"factory destruction clears training reservation")
-	check(not BalanceCatalog.UNITS.has("triple_cannon"),"next stage remains unstarted")
 	await game.prepare_shutdown()
 	game.queue_free()
 	await process_frame

@@ -18,6 +18,7 @@ const MODELS: Dictionary = {
 	"catapult": preload("res://assets/models/units/catapult.tscn"),
 	"cannon": preload("res://assets/models/units/cannon.tscn"),
 	"heavy_cannon": preload("res://assets/models/units/heavy_cannon.tscn"),
+	"triple_cannon": preload("res://assets/models/units/triple_cannon.tscn"),
 	"farmer": preload("res://assets/models/units/farmer.tscn"),
 	"engineer": preload("res://assets/models/units/engineer.tscn"),
 	"priest": preload("res://assets/models/units/priest.tscn"),
@@ -35,7 +36,7 @@ const MELEE_CONTACT_TOLERANCE: float = 0.2
 const CONGESTION_SECONDS: float = 0.6
 const BODY_RADIUS_SCALE: float = 0.85
 
-@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
+@export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "triple_cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
 # Presentation and RVO choices are fixed before this unit enters
 # the tree. Network replicas retain the same authority gate as native models.
@@ -157,6 +158,7 @@ var _claimed_mine: bool = false
 @onready var attack_windup: Timer = $AttackWindup
 @onready var work_bar: MeshInstance3D = $WorkBar
 @onready var support: UnitSupport = $Support
+@onready var volley: UnitVolley = $Volley
 
 func _ready() -> void:
 	if owner_id < 0:
@@ -234,6 +236,7 @@ func _ready() -> void:
 	reset_physics_interpolation()
 	_game.register_entity(self)
 	_path_budget.register(self)
+	volley.configure(self)
 	support.configure(self)
 
 func _physics_process(delta: float) -> void:
@@ -263,13 +266,13 @@ func _physics_process(delta: float) -> void:
 	var checked_target: Variant = target
 	var target_valid: bool = _valid_target(checked_target)
 	# Resolve a death immediately, before a completed chase path can consume the order.
-	if not target_valid and (order == Order.ATTACK or target != null):
+	if not target_valid and not volley.active and (order == Order.ATTACK or target != null):
 		target = null
 		if order == Order.ATTACK:
 			_complete_waypoint()
 		elif order == Order.ATTACK_MOVE:
 			_set_navigation_target(destination)
-	if _scan_time <= 0.0:
+	if _scan_time <= 0.0 and not volley.active:
 		_scan_time = randf_range(0.3, 0.4)
 		_refresh_target()
 		if target == _congestion_target and _congestion_seconds >= CONGESTION_SECONDS:
@@ -290,7 +293,9 @@ func _physics_process(delta: float) -> void:
 	var path_velocity_requested: bool = false
 	if passage.remaining > 0.0 and target_valid and _can_start_strike(target):
 		passage.cancel()
-	if passage.remaining > 0.0:
+	if volley.active:
+		facing_direction = volley.facing
+	elif passage.remaining > 0.0:
 		desired_velocity = passage.velocity(self, delta)
 	elif support.is_supporter and support.select_job():
 		desired_velocity = support.velocity_for_job(delta)
@@ -506,10 +511,10 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 	var travelled: float = displacement.length()
 	_foley_distance += travelled
 	var horse_mounted: bool = unit_type in ["knight", "light_cavalry"]
-	var stride: float = 1.65 if horse_mounted else (1.8 if unit_type in ["catapult", "cannon"] else 1.0)
+	var stride: float = 1.65 if horse_mounted else (1.8 if _stats.combat_class == &"siege" else 1.0)
 	if _foley_distance >= stride:
 		_foley_distance = fmod(_foley_distance, stride)
-		var foot_sound: StringName = &"horse_hoof" if horse_mounted else (&"cart_wheel" if unit_type in ["catapult", "cannon"] else &"footstep_dirt")
+		var foot_sound: StringName = &"horse_hoof" if horse_mounted else (&"cart_wheel" if _stats.combat_class == &"siege" else &"footstep_dirt")
 		sound_requested.emit(foot_sound, global_position)
 
 func _set_navigation_target(at: Vector3) -> void:
@@ -752,7 +757,9 @@ func _start_attack() -> void:
 		_charge_cooldown = 6.0
 		_game.spawn_effect(global_position + Vector3.UP * 0.2, "charge", Color("edd9a1"))
 	_charge_time = 0.0
-	_model.strike()
+	if volley.enabled:
+		volley.begin(target)
+	_model.strike(0 if volley.enabled else 7)
 	if unit_type in ["swordsman", "shield_guard", "spearman", "knight"]:
 		sound_requested.emit(&"sword_swing", global_position + Vector3.UP)
 	attack_windup.start(_windup_seconds())
@@ -762,10 +769,14 @@ func _windup_seconds() -> float:
 
 func _cancel_attack() -> void:
 	attack_windup.stop()
+	volley.cancel()
 	_strike_target = null
 	# Cancellation consumes the existing cycle. Orders cannot skip recovery.
 
 func _on_attack_windup_timeout() -> void:
+	if volley.enabled:
+		volley.release_next()
+		return
 	var strike_target: Variant = _strike_target
 	_strike_target = null
 	if not alive or not _valid_target(strike_target):
@@ -792,8 +803,8 @@ func _on_attack_windup_timeout() -> void:
 		if kind == "cannon":
 			_game.spawn_effect(get_projectile_origin(), "muzzle", Color("ffd898"))
 
-func get_projectile_origin() -> Vector3:
-	return _model.get_projectile_origin()
+func get_projectile_origin(barrel_index: int = 0) -> Vector3:
+	return _model.get_projectile_origin(barrel_index)
 
 func set_selected(value: bool) -> void:
 	selected = value and alive

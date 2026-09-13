@@ -43,6 +43,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/catapult.tscn" id="batch_catapult"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/cannon.tscn" id="batch_cannon"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/heavy_cannon.tscn" id="batch_heavy_cannon"]
+[ext_resource type="PackedScene" path="res://assets/models/units/batched/triple_cannon.tscn" id="batch_triple_cannon"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/farmer.tscn" id="batch_farmer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/engineer.tscn" id="batch_engineer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/batched/priest.tscn" id="batch_priest"]
@@ -101,6 +102,7 @@ unit_model_overrides = Dictionary[String, PackedScene]({
 "archer": ExtResource("batch_archer"),
 "cannon": ExtResource("batch_cannon"),
 "heavy_cannon": ExtResource("batch_heavy_cannon"),
+"triple_cannon": ExtResource("batch_triple_cannon"),
 "catapult": ExtResource("batch_catapult"),
 "farmer": ExtResource("batch_farmer"),
 "engineer": ExtResource("batch_engineer"),

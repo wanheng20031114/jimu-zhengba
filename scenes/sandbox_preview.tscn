@@ -14,6 +14,7 @@
 
 [ext_resource type="PackedScene" path="res://assets/models/units/cannon.tscn" id="cannon"]
 [ext_resource type="PackedScene" path="res://assets/models/units/heavy_cannon.tscn" id="heavy_cannon"]
+[ext_resource type="PackedScene" path="res://assets/models/units/triple_cannon.tscn" id="triple_cannon"]
 
 [ext_resource type="PackedScene" path="res://assets/models/units/farmer.tscn" id="farmer"]
 [ext_resource type="PackedScene" path="res://assets/models/units/engineer.tscn" id="engineer"]
@@ -47,6 +48,9 @@ visible = false
 visible = false
 
 [node name="catapult" parent="Models" instance=ExtResource("catapult")]
+visible = false
+
+[node name="triple_cannon" parent="Models" instance=ExtResource("triple_cannon")]
 visible = false
 
 [node name="heavy_cannon" parent="Models" instance=ExtResource("heavy_cannon")]

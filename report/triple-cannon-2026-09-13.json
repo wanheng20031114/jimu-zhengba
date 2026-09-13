@@ -1,0 +1,273 @@
+{
+  "unit": "triple_cannon",
+  "version": "v1",
+  "state": "等待验收",
+  "base_commit": "4d897a86639b5b90e0800755fe9bccaca2fda4aa",
+  "model": {
+    "triangles": 4868,
+    "budget": 7000,
+    "rigid_parts": 6
+  },
+  "batches": {
+    "checks": 4544,
+    "errors": [],
+    "max_transform_error": 0.0,
+    "max_socket_error": 0.0
+  },
+  "battle": {
+    "checks": 53,
+    "failures": [],
+    "pool_peak": 400,
+    "pool_visual_peak": 256
+  },
+  "production": {
+    "checks": 37,
+    "failures": []
+  },
+  "network": {
+    "checks": 36,
+    "failures": []
+  },
+  "visual": {
+    "checks": 84,
+    "failures": [],
+    "triangles": 4868
+  },
+  "presentation": {
+    "checks": 12,
+    "failures": []
+  },
+  "navigation": {
+    "checks": 5,
+    "failures": [],
+    "minimum_clearance": 2.0
+  },
+  "approach": {
+    "checks": 340,
+    "failures": [],
+    "cases": 46,
+    "backwards_intents": 0,
+    "maximum_reverse_displacement": 0.0239912979304791
+  },
+  "catalogue": {
+    "build": "0.11.0",
+    "catalogue_files": 103,
+    "catalogue_only": true,
+    "checks": 230,
+    "content_hash": "1b6bf5598415d0a0981770942f0ed01edf8fac285c2c6ab0ef389ebe8126a88a",
+    "error_codes": [],
+    "exported_template": false,
+    "failures": [],
+    "handshake_msec": -1,
+    "map_hash_checks": 6,
+    "protocol": 13,
+    "resource_value_checks": 114
+  },
+  "regressions": [
+    {
+      "test": "target_acquisition_test",
+      "exit": 0,
+      "summary": [
+        "TARGET_ACQUISITION 2416 checks; 0 failures",
+        "reg-target_acquisition_test exit 0"
+      ]
+    },
+    {
+      "test": "shield_guard_battle_test",
+      "exit": 0,
+      "summary": [
+        "SHIELD_BATTLE 18 checks; 0 failures; [{\"frame_median_ms\":2.636,\"frame_p95_ms\":6.367,\"initial_units\":100,\"remaining_units\":99},{\"frame_median_ms\":19.563,\"frame_p95_ms\":27.675,\"initial_units\":500,\"remaining_units\":492}]",
+        "reg-shield_guard_battle_test exit 0"
+      ],
+      "rendered": true
+    },
+    {
+      "test": "light_cavalry_battle_test",
+      "exit": 0,
+      "summary": [
+        "LIGHT_CAVALRY_BATTLE 18 checks; 0 failures; [{\"cavalry\":50,\"frame_median_ms\":3.57,\"frame_p95_ms\":7.588,\"initial_units\":100,\"remaining_units\":68},{\"cavalry\":250,\"frame_median_ms\":28.823,\"frame_p95_ms\":33.361,\"initial_units\":500,\"remaining_units\":452}]",
+        "reg-light_cavalry_battle_test exit 0"
+      ],
+      "rendered": true
+    },
+    {
+      "test": "war_elephant_battle_test",
+      "exit": 0,
+      "summary": [
+        "ELEPHANT_BATTLE 18 checks; 0 failures; [{\"elephants\":10,\"frame_median_ms\":2.121,\"frame_p95_ms\":4.369,\"initial_units\":60,\"remaining_units\":53},{\"elephants\":250,\"frame_median_ms\":19.621,\"frame_p95_ms\":28.045,\"initial_units\":500,\"remaining_units\":483}]",
+        "reg-war_elephant_battle_test exit 0"
+      ],
+      "rendered": true
+    },
+    {
+      "test": "heavy_cannon_battle_test",
+      "exit": 0,
+      "summary": [
+        "HEAVY_CANNON_BATTLE 24 checks; 0 failures",
+        "reg-heavy_cannon_battle_test exit 0"
+      ],
+      "rendered": true
+    },
+    {
+      "test": "engineer_support_test",
+      "exit": 0,
+      "summary": [
+        "ENGINEER_SUPPORT 29 checks; 0 failures",
+        "reg-engineer_support_test exit 0"
+      ]
+    },
+    {
+      "test": "priest_support_test",
+      "exit": 0,
+      "summary": [
+        "PRIEST_SUPPORT 47 checks; 0 failures",
+        "reg-priest_support_test exit 0"
+      ]
+    },
+    {
+      "test": "batch_animation_clock_test",
+      "exit": 0,
+      "summary": [
+        "BATCH_ANIMATION_CLOCK 508 checks; 0 failures",
+        "reg-batch_animation_clock_test exit 0"
+      ]
+    },
+    {
+      "test": "network_game_replication_test",
+      "exit": 0,
+      "summary": [
+        "NETWORK_GAME_RESULTS {\"failures\":[],\"passed\":127,\"total\":127}",
+        "reg-network_game_replication_test exit 0"
+      ]
+    },
+    {
+      "test": "network_command_validation_test",
+      "exit": 0,
+      "summary": [
+        "NETWORK_COMMAND_VALIDATION_RESULTS {\"checks\":193,\"failures\":[]}",
+        "reg-network_command_validation_test exit 0"
+      ]
+    },
+    {
+      "test": "effect_pool_test",
+      "exit": 0,
+      "summary": [
+        "EFFECT_POOL_RESULT 45 checks, 0 failures",
+        "reg-effect_pool_test exit 0"
+      ]
+    },
+    {
+      "test": "triple_cannon_navigation_test",
+      "exit": 0,
+      "summary": [
+        "TRIPLE_CANNON_NAVIGATION 5 checks; 0 failures",
+        "reg-triple_cannon_navigation_test exit 0"
+      ]
+    }
+  ],
+  "local_dtls": {
+    "checks": 98,
+    "failures": 0
+  },
+  "performance": {
+    "base_commit": "4d897a86639b5b90e0800755fe9bccaca2fda4aa",
+    "settings": {
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "msaa": 2,
+      "resolution": "(1280, 720)",
+      "tps": 30,
+      "units": 240
+    },
+    "measurements": {
+      "idle_240": {
+        "baseline": {
+          "frames": 879,
+          "median_ms": 5.998,
+          "p95_ms": 8.966
+        },
+        "candidate": {
+          "frames": 888,
+          "median_ms": 5.94,
+          "p95_ms": 8.891
+        },
+        "median_change_percent": -0.9669889963321077,
+        "p95_change_percent": -0.8364934195850937
+      },
+      "march_240": {
+        "baseline": {
+          "frames": 561,
+          "median_ms": 9.824,
+          "p95_ms": 16.499
+        },
+        "candidate": {
+          "frames": 553,
+          "median_ms": 9.875,
+          "p95_ms": 16.569
+        },
+        "median_change_percent": 0.5191368078175884,
+        "p95_change_percent": 0.42426813746287984
+      }
+    }
+  },
+  "combined_battles": {
+    "28": {
+      "active_types": [
+        "light_cavalry",
+        "engineer",
+        "priest",
+        "triple_cannon",
+        "heavy_cannon",
+        "war_elephant",
+        "shield_guard"
+      ],
+      "damage_events": 80,
+      "frames": 4382,
+      "median_ms": 2.163,
+      "p95_ms": 3.498,
+      "peak_flights": 6,
+      "peak_visuals": 6,
+      "projectiles": 35,
+      "survivors": 21
+    },
+    "500": {
+      "active_types": [
+        "engineer",
+        "priest",
+        "heavy_cannon",
+        "archer",
+        "catapult",
+        "cannon",
+        "light_cavalry",
+        "triple_cannon",
+        "knight",
+        "war_elephant",
+        "shield_guard",
+        "spearman",
+        "swordsman"
+      ],
+      "damage_events": 665,
+      "frames": 242,
+      "median_ms": 42.85,
+      "p95_ms": 68.278,
+      "peak_flights": 33,
+      "peak_visuals": 33,
+      "projectiles": 438,
+      "survivors": 376
+    },
+    "checks": 11,
+    "failures": [],
+    "settings": {
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "msaa": 2,
+      "resolution": "(1280, 720)",
+      "tps": 30
+    }
+  },
+  "content_sha256": "1b6bf5598415d0a0981770942f0ed01edf8fac285c2c6ab0ef389ebe8126a88a",
+  "validation_notes": [
+    "使用实际 Godot 4.6.3 Forward+ 渲染；GPU 为 RTX 3080。",
+    "性能对比运行时只保留用户原有编辑器，测试进程顺序执行。",
+    "最初误把要求渲染的旧测试以无头模式启动；已按带窗口入口重跑并通过。",
+    "500单位压力检查通过功能与回收断言，性能数值保留实际测量，不宣称达到60帧。"
+  ]
+}

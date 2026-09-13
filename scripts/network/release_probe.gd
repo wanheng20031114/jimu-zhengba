@@ -116,7 +116,7 @@ func validate_resource_values() -> void:
 	# saved exported property. Exercise the actual ResourceLoader values in PCK.
 	var began := checks
 	var production := {"headquarters": ["farmer"], "barracks": ["swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry"],
-		"factory": ["catapult", "cannon", "engineer", "heavy_cannon"], "academy": ["priest"], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
+		"factory": ["catapult", "cannon", "engineer", "heavy_cannon", "triple_cannon"], "academy": ["priest"], "defense_tower": [], "enemy_keep": ["farmer"], "tower": [], "house": []}
 	var defensive_damage := {"headquarters": 40, "enemy_keep": 40, "defense_tower": 16, "tower": 17}
 	for kind: String in production:
 		var building := BalanceCatalog.building(kind)
@@ -129,7 +129,7 @@ func validate_resource_values() -> void:
 			and String(unit.production_building) in production and kind in production[String(unit.production_building)], "packaged_unit_production_owner_" + kind)
 	var farmer := BalanceCatalog.unit("farmer")
 	check(not farmer.military and farmer.hp == 150 and farmer.damage == 5 and farmer.cost == 50 and farmer.training_seconds == 10.0 and farmer.supply == 0 and farmer.sight == 9, "packaged_farmer_health_and_training_contract")
-	var training_seconds := {"heavy_cannon": 36.0, "priest": 18.0, "engineer": 10.0, "light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
+	var training_seconds := {"triple_cannon": 22.0, "heavy_cannon": 36.0, "priest": 18.0, "engineer": 10.0, "light_cavalry": 7.0, "war_elephant": 30.0, "shield_guard": 10.0, "spearman": 6.0, "swordsman": 6.0, "archer": 7.0, "knight": 8.0, "catapult": 20.0, "cannon": 20.0, "farmer": 10.0}
 	for kind: String in training_seconds:
 		check(BalanceCatalog.unit(kind).training_seconds == training_seconds[kind], "packaged_training_seconds_" + kind)
 	for pair: Array in [["knight", "archer", 5], ["knight", "swordsman", 16], ["swordsman", "knight", 10],
@@ -199,6 +199,18 @@ func validate_resource_values() -> void:
 		"packaged_catapult_needs_five_sword_and_three_archer_hits")
 	var cannon := BalanceCatalog.unit("cannon")
 	var heavy := BalanceCatalog.unit("heavy_cannon")
+	var triple := BalanceCatalog.unit("triple_cannon")
+	check(triple.hp==160 and triple.cost==280 and triple.damage==18 and triple.bonuses=={&"infantry":12}
+		and triple.melee_armor==0 and triple.ranged_armor==2 and not triple.melee_defense_upgrades
+		and triple.speed==2.4 and triple.radius==.95 and triple.sight==12 and triple.supply==3
+		and triple.range==7 and triple.min_range==1 and triple.cooldown==2.4 and triple.attack_windup_seconds==.25
+		and triple.volley_targets==3 and triple.volley_interval==.1 and triple.volley_arc_degrees==90
+		and triple.projectile=="cannon" and triple.combat_class==&"siege" and not triple.cannon_range_upgrades
+		and triple.splash_radius==0 and triple.military and triple.training_seconds==22,
+		"packaged_triple_cannon_approved_values")
+	var triple_shot := DamageResolver.snapshot(triple,0,0,0)
+	for entry: Array in [[swordsman,28],[spearman,29],[guard,23],[knight,11],[archer,13]]:
+		check(DamageResolver.resolve(triple_shot,entry[0])==entry[1],"packaged_triple_cannon_damage_"+String(entry[0].id))
 	check(heavy.hp == 260 and heavy.cost == 500 and heavy.damage == 100 and heavy.bonuses == {&"building": 100}
 		and heavy.melee_armor == 0 and heavy.ranged_armor == 2 and not heavy.melee_defense_upgrades
 		and heavy.speed == 1.8 and heavy.radius == 1.15 and heavy.sight == 16 and heavy.supply == 5
@@ -225,13 +237,13 @@ func validate_resource_values() -> void:
 		and defense_tower.bonuses == {&"infantry": 3, &"cavalry": 9}
 		and Array(defense_tower.cost_progression) == [150, 185, 225, 255, 280, 270],
 		"packaged_tower_price_health_time_and_siege_reach_relationship")
-	for siege: UnitDefinition in [catapult, cannon, heavy]:
+	for siege: UnitDefinition in [catapult, cannon, heavy, triple]:
 		check(siege.melee_armor == 0 and not siege.melee_defense_upgrades
 			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.MELEE, 3) == 0
 			and DamageResolver.armor_for_channel(siege, CombatDefinition.DamageChannel.RANGED, 3) == siege.ranged_armor + 3,
 			"packaged_" + String(siege.id) + "_zero_melee_armor_after_defense_research")
 		var knight_damage := DamageResolver.resolve(DamageResolver.snapshot(knight, 0, 0, 0), siege)
-		check(knight_damage == 20 and ceili(siege.hp / knight_damage) == {&"catapult": 7, &"cannon": 9, &"heavy_cannon": 13}[siege.id],
+		check(knight_damage == 20 and ceili(siege.hp / knight_damage) == {&"catapult": 7, &"cannon": 9, &"heavy_cannon": 13, &"triple_cannon":8}[siege.id],
 			"packaged_knight_extended_hits_against_" + String(siege.id))
 	var technology_bonuses := {"attack": [1, 2, 4], "defense": [1, 2, 3]}
 	for track: String in ["attack", "defense"]:
