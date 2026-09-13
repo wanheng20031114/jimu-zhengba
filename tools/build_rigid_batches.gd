@@ -160,9 +160,8 @@ func _validate(kind: String) -> void:
 	_prepare_sampling(converted)
 	root.add_child(original)
 	root.add_child(converted)
-	for player_name: String in ["Locomotion", "Attack"]:
-		var source_player: AnimationPlayer = original.get_node(player_name)
-		var proxy_player: AnimationPlayer = converted.get_node(player_name)
+	for source_player: AnimationPlayer in original.find_children("*", "AnimationPlayer", true, false):
+		var proxy_player: AnimationPlayer = converted.get_node(original.get_path_to(source_player))
 		_check(source_player.get_animation_list() == proxy_player.get_animation_list(), kind + " animation names unchanged")
 		for clip_name: StringName in source_player.get_animation_list():
 			var clip: Animation = source_player.get_animation(clip_name)
@@ -196,8 +195,7 @@ func _prepare_sampling(model: Node3D) -> void:
 		for connection: Dictionary in notifier.get_signal_connection_list(signal_name):
 			notifier.disconnect(signal_name, connection.callable)
 	model.set_script(null)
-	for player_name: String in ["Locomotion", "Attack"]:
-		var player: AnimationPlayer = model.get_node(player_name)
+	for player: AnimationPlayer in model.find_children("*", "AnimationPlayer", true, false):
 		player.autoplay = ""
 		player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 

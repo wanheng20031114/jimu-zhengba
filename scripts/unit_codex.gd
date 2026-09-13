@@ -267,8 +267,8 @@ func _on_entry_selected(index: int) -> void:
 			content += _row("生产建筑", BalanceCatalog.building(unit.production_building).name)
 			content += _row("人口", "%d 军事人口" % unit.supply if unit.military else "1 名农民")
 			content += _combat_rows(unit)
-			if unit.volley_targets > 1:
-				content += _row("每轮目标", "最多 %d 个 · 每目标一发" % unit.volley_targets)
+			if unit.independent_weapons > 1:
+				content += _row("独立炮管", "%d 根 · 各自装填、允许集火" % unit.independent_weapons)
 			content += _row("移动速度", _number(unit.speed))
 			content += _row("视野", _number(unit.sight))
 			if not unit.support_kind.is_empty():
@@ -337,7 +337,7 @@ func _combat_rows(definition: CombatDefinition) -> String:
 	rows += _row("远程护甲", _number(definition.ranged_armor))
 	if definition.damage > 0.0:
 		rows += _row("攻击力", _number(definition.damage) + (" · 近战" if definition.damage_channel == CombatDefinition.DamageChannel.MELEE else " · 远程"))
-		rows += _row("攻击间隔", _number(definition.cooldown) + " 秒")
+		rows += _row("每管间隔" if definition is UnitDefinition and definition.independent_weapons > 1 else "攻击间隔", _number(definition.cooldown) + " 秒")
 		rows += _row("射程", _number(definition.range))
 	for target_class: StringName in definition.bonuses:
 		rows += _row("对" + String(CLASS_NAMES[target_class]), "+%s 伤害" % _number(definition.bonuses[target_class]))
@@ -356,8 +356,8 @@ func _unit_notes(unit: UnitDefinition) -> String:
 		return "高远程护甲适合承受箭雨，持盾短剑攻击单个目标。护甲全方向生效，攻击与防御研究同时影响现有和新训练的盾卫。"
 	if unit.id == &"catapult":
 		return "半径 %s 的范围伤害，范围内伤害一致。巨石落点在发射时确定，可以躲避；不会伤及友军。" % _number(unit.splash_radius)
-	if unit.volley_targets > 1:
-		return "每轮最多攻击正面扇形内的三个不同目标，每个目标只承受一发；额外目标优先步兵。没有溅射，弓箭手不属于步兵附伤类别。无法攻击贴身敌人，不受加长炮管科技影响。"
+	if unit.independent_weapons > 1:
+		return "三根炮管各有2.4秒冷却，空闲炮管可单独开火。自动攻击优先分散，目标不足时集中火力；手动指定目标时三管集火。额外目标优先步兵，无溅射，弓箭手不属于步兵附伤类别。不受加长炮管科技影响。"
 	if unit.cannon_range_upgrades:
 		return "炮弹命中单个目标。适合拆除建筑；需要前排保护，无法攻击贴身敌人。学院研究加长炮管可使射程 +%d。" % BalanceCatalog.upgrade(&"cannon_range_1").total_bonus
 	if not unit.military:

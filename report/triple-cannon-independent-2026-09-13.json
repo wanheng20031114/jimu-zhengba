@@ -1,0 +1,244 @@
+{
+  "date": "2026-09-13",
+  "unit": "triple_cannon",
+  "version": 2,
+  "status": "awaiting_user_acceptance",
+  "rules": {
+    "independent_guns": 3,
+    "cooldown_seconds": 2.4,
+    "windup_seconds": 0.25,
+    "same_target_allowed": true,
+    "manual_order_focuses_all_guns": true
+  },
+  "effects": {
+    "pool_capacity": 128,
+    "priority_levels": 4,
+    "equal_priority_eviction": false,
+    "close_muzzles_preserved": true,
+    "screen_coalescing_pixels": 16,
+    "coalescing_interval": "one physics frame",
+    "damage_unchanged": true
+  },
+  "battle": {
+    "checks": 69,
+    "failures": []
+  },
+  "network": {
+    "checks": 40,
+    "failures": []
+  },
+  "visual": {
+    "checks": 163,
+    "events": [
+      {
+        "barrel": 0,
+        "target": 8,
+        "time": 0.3
+      },
+      {
+        "barrel": 1,
+        "target": 8,
+        "time": 1.06666666666667
+      },
+      {
+        "barrel": 2,
+        "target": 8,
+        "time": 1.86666666666667
+      },
+      {
+        "barrel": 0,
+        "target": 8,
+        "time": 2.7
+      },
+      {
+        "barrel": 1,
+        "target": 8,
+        "time": 3.46666666666666
+      },
+      {
+        "barrel": 2,
+        "target": 8,
+        "time": 4.26666666666666
+      },
+      {
+        "barrel": 0,
+        "target": 8,
+        "time": 5.09999999999999
+      },
+      {
+        "barrel": 1,
+        "target": 8,
+        "time": 5.86666666666666
+      }
+    ],
+    "failures": [],
+    "frames": 53
+  },
+  "checks": {
+    "effect_pool": 76,
+    "model_batch": 4252,
+    "production_integration": 37,
+    "animation_clocks": 508,
+    "approach_standard": 340,
+    "release_catalogue": 230,
+    "network_general_game": 127,
+    "network_commands": 193,
+    "local_encrypted_relay": 98
+  },
+  "approach_extended_diagnostic": {
+    "checks": 410,
+    "failures": [
+      "30 TPS light_cavalry vs knight native avoidance=true angle=0.00 cavalry also approaches without reversing",
+      "60 TPS light_cavalry vs knight native avoidance=true angle=0.00 cavalry also approaches without reversing"
+    ],
+    "note": "Optional native light cavalry versus knight diagnostics; not fixed in this particle/weapon change. No baseline run establishing introduction."
+  },
+  "performance_before": {
+    "idle_500": {
+      "frames": 2135,
+      "median_ms": 2.55,
+      "p95_ms": 3.937,
+      "peak_flights": 375,
+      "physics_median_ms": 1.489,
+      "physics_p95_ms": 1.711,
+      "shots": 0
+    },
+    "settings": {
+      "cannons": 125,
+      "entities": 500,
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "msaa": 2,
+      "resolution": "(1600, 900)",
+      "tps": 30
+    },
+    "sparse_targets_500": {
+      "frames": 846,
+      "median_ms": 6.722,
+      "p95_ms": 10.386,
+      "peak_flights": 375,
+      "physics_median_ms": 10.075,
+      "physics_p95_ms": 27.152,
+      "shots": 375
+    },
+    "three_targets_500": {
+      "frames": 535,
+      "median_ms": 10.551,
+      "p95_ms": 16.894,
+      "peak_flights": 375,
+      "physics_median_ms": 24.133,
+      "physics_p95_ms": 47.376,
+      "shots": 750
+    }
+  },
+  "performance_final": {
+    "idle_500": {
+      "frame_max_ms": 6.812,
+      "frame_p99_ms": 5.026,
+      "frames": 2030,
+      "median_ms": 2.672,
+      "p95_ms": 4.155,
+      "peak_flights": 375,
+      "physics_monitor_median_ms": 1.423,
+      "physics_monitor_p95_ms": 2.031,
+      "shots": 0
+    },
+    "settings": {
+      "cannons": 125,
+      "entities": 500,
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "msaa": 2,
+      "resolution": "(1600, 900)",
+      "tps": 30
+    },
+    "sparse_targets_500": {
+      "frame_max_ms": 41.566,
+      "frame_p99_ms": 14.675,
+      "frames": 1017,
+      "median_ms": 4.974,
+      "p95_ms": 10.518,
+      "peak_flights": 375,
+      "physics_monitor_median_ms": 17.129,
+      "physics_monitor_p95_ms": 36.271,
+      "shots": 1125
+    },
+    "three_targets_500": {
+      "frame_max_ms": 43.905,
+      "frame_p99_ms": 21.074,
+      "frames": 616,
+      "median_ms": 9.151,
+      "p95_ms": 14.654,
+      "peak_flights": 375,
+      "physics_monitor_median_ms": 6.257,
+      "physics_monitor_p95_ms": 58.414,
+      "shots": 750
+    }
+  },
+  "performance_notes": [
+    "Before: pre-edit working tree based on 4f991ab, with existing user map/editor changes preserved.",
+    "Fixed 500 stationary entities, 125 cannons. 1.5 second warmup and 6 second measurement for each scenario.",
+    "Sparse-target shot count increases because same-target concentration is now allowed; not equal workloads.",
+    "Godot TIME_PHYSICS_PROCESS is a once-per-second maximum, not an individual frame sample.",
+    "Wall-clock render frame median/P95 are the primary comparison. Results are not an all-battles frame-rate guarantee."
+  ],
+  "combination": {
+    "28": {
+      "active_types": [
+        "light_cavalry",
+        "engineer",
+        "priest",
+        "triple_cannon",
+        "heavy_cannon",
+        "war_elephant",
+        "shield_guard"
+      ],
+      "damage_events": 79,
+      "frames": 4487,
+      "median_ms": 2.132,
+      "p95_ms": 3.548,
+      "peak_flights": 10,
+      "peak_visuals": 10,
+      "projectiles": 38,
+      "survivors": 18
+    },
+    "500": {
+      "active_types": [
+        "engineer",
+        "priest",
+        "heavy_cannon",
+        "archer",
+        "catapult",
+        "cannon",
+        "light_cavalry",
+        "triple_cannon",
+        "knight",
+        "war_elephant",
+        "spearman",
+        "shield_guard",
+        "swordsman"
+      ],
+      "damage_events": 675,
+      "frames": 241,
+      "median_ms": 42.005,
+      "p95_ms": 71.455,
+      "peak_flights": 34,
+      "peak_visuals": 34,
+      "projectiles": 541,
+      "survivors": 375
+    },
+    "checks": 11,
+    "failures": [],
+    "settings": {
+      "gpu": "NVIDIA GeForce RTX 3080",
+      "msaa": 2,
+      "resolution": "(1280, 720)",
+      "tps": 30
+    }
+  },
+  "network_release": {
+    "protocol": 14,
+    "release": "0.14.0",
+    "live_deployed": false,
+    "submitted_content_hash": "4098cfe9ad8b8dee4d7fabd1d217abb07d8b6938efbfe59133ffb1a5ccf8a1ff",
+    "working_content_hash": "8c1701ba2783e752742418946359a9eebb787082c416b558bc6571038107fecb"
+  }
+}

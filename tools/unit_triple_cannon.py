@@ -49,29 +49,32 @@ def build_triple_cannon():
     return s
 
 def write_triple_cannon_scene(s):
-    lines=['[gd_scene format=3]','[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="script"]']
+    lines=['[gd_scene format=3]','[ext_resource type="Script" path="res://scripts/battery_visual.gd" id="script"]']
     for part in s.parts:
         lines.append(f'[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/{part}.res" id="{part}"]')
     walk=[(s.part_path(part)+':rotation',[(-i*math.pi/2,0,0) for i in range(5)]) for part in s.parts if part.startswith('Wheel')]
     lines += [anim_resource('idle',2.4,[('Rig:position',[(0,0,0)]*2)],True),anim_resource('walk',math.tau*WHEEL_RADIUS/2.4,walk,True)]
-    for mask in range(8):
-        tracks=[]
-        for i in range(3):
-            at=.25+i*.10
-            times=[0,at,at+.05,at+.16,at+.40,1.25,1.95,2.4]
-            recoil=[0,0,.24,.19,.12,.04,0,0] if mask&(1<<i) else [0]*8
-            base=s.joints['Barrel'+str(i)]
-            tracks.append((s.part_path('Barrel'+str(i))+':position',[(base[0],base[1]-d*math.sin(PITCH),base[2]+d*math.cos(PITCH)) for d in recoil],times))
-        lines.append(anim_resource('volley_'+str(mask),2.4,tracks))
-    clips=', '.join(f'&"volley_{i}": SubResource("Animation_volley_{i}")' for i in range(8))
+    preview_tracks=[]
+    for i in range(3):
+        base=s.joints['Barrel'+str(i)]
+        recoil=[0,.24,.19,.12,.04,0]
+        poses=[(base[0],base[1]-d*math.sin(PITCH),base[2]+d*math.cos(PITCH)) for d in recoil]
+        path=s.part_path('Barrel'+str(i))+':position'
+        lines.append(anim_resource('recoil_'+str(i),1.7,[(path,poses,[0,.05,.16,.40,1.0,1.7])]))
+        preview_tracks.append((path,[poses[0]]+poses+[poses[-1]],[0,.25,.30,.41,.65,1.25,1.95,2.4]))
+        lines.append(f'[sub_resource type="AnimationLibrary" id="barrel_{i}"]\n_data = {{&"recoil": SubResource("Animation_recoil_{i}")}}')
+    # The codex demonstrates the valid all-ready case; live guns use their own players.
+    lines.append(anim_resource('strike',2.4,preview_tracks))
     lines += ['[sub_resource type="AnimationLibrary" id="locomotion"]\n_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}',
-              '[sub_resource type="AnimationLibrary" id="attack"]\n_data = {&"strike": SubResource("Animation_volley_7"), '+clips+'}',
+              '[sub_resource type="AnimationLibrary" id="attack"]\n_data = {&"strike": SubResource("Animation_strike")}',
               '[node name="TripleCannon" type="Node3D"]\nscript = ExtResource("script")\nkind = "triple_cannon"\nprojectile_socket = NodePath("Rig/Action/Barrel0/ProjectileSocket")\nextra_projectile_sockets = Array[NodePath]([NodePath("Rig/Action/Barrel1/ProjectileSocket"), NodePath("Rig/Action/Barrel2/ProjectileSocket")])',
               '[node name="Rig" type="Node3D" parent="."]','[node name="Action" type="Node3D" parent="Rig"]']
     for part in s.parts:
         lines.append(f'[node name="{part}" type="MeshInstance3D" parent="Rig/Action"]\nposition = {vec(s.joints[part])}\nmesh = ExtResource("{part}")')
     for i in range(3):
         lines.append(f'[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel{i}"]\nposition = {vec(MUZZLE)}')
+    for i in range(3):
+        lines.append(f'[node name="Barrel{i}Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 2\nlibraries = {{&"": SubResource("barrel_{i}")}}')
     lines += ['[node name="Locomotion" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("locomotion")}\nautoplay = "idle"',
               '[node name="Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("attack")}',
               '[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]\naabb = AABB(-1.3,-0.2,-1.5,2.6,1.8,3.2)',

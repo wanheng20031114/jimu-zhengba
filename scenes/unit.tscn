@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/battle_unit.gd" id="1_script"]
 [ext_resource type="Script" path="res://scripts/unit_support.gd" id="2_support"]
-[ext_resource type="Script" path="res://scripts/unit_volley.gd" id="3_volley"]
+[ext_resource type="Script" path="res://scripts/unit_battery.gd" id="3_battery"]
 
 [sub_resource type="CapsuleShape3D" id="Capsule_body"]
 resource_local_to_scene = true
@@ -87,8 +87,8 @@ mesh = SubResource("Mesh_health")
 process_callback = 0
 one_shot = true
 
-[node name="Volley" type="Node" parent="."]
-script = ExtResource("3_volley")
+[node name="Battery" type="Node" parent="."]
+script = ExtResource("3_battery")
 
 [node name="Support" type="Node" parent="."]
 script = ExtResource("2_support")

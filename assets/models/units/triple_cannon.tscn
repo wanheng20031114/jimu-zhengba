@@ -1,341 +1,194 @@
 [gd_scene format=3]
 
-[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel0.res" id="Barrel0"]
-[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel1.res" id="Barrel1"]
-[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel2.res" id="Barrel2"]
+[ext_resource type="Script" path="res://scripts/battery_visual.gd" id="script"]
+
 [ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Body.res" id="Body"]
-[ext_resource type="Script" path="res://scripts/unit_visual.gd" id="script"]
+
 [ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/WheelLeft.res" id="WheelLeft"]
+
 [ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/WheelRight.res" id="WheelRight"]
 
-[sub_resource type="Animation" id="Animation_hu6q4"]
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel0.res" id="Barrel0"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel1.res" id="Barrel1"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/units/triple_cannon/Barrel2.res" id="Barrel2"]
+
+[sub_resource type="Animation" id="Animation_idle"]
 resource_name = "idle"
 length = 2.4
 loop_mode = 1
-tracks/0/type = "position_3d"
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Rig")
+tracks/0/path = NodePath("Rig:position")
 tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 2.4, 1, 0, 0, 0)
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0.0, 2.4), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(0.000000, 0.000000, 0.000000)]}
 
-[sub_resource type="Animation" id="Animation_eukkv"]
+[sub_resource type="Animation" id="Animation_walk"]
 resource_name = "walk"
-length = 1.3089969
+length = 1.3089969389957472
 loop_mode = 1
-tracks/0/type = "rotation_3d"
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/WheelLeft")
+tracks/0/path = NodePath("Rig/Action/WheelLeft:rotation")
 tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.32725, 1, -0.70710665, 0, 0, 0.7071069, 0.6545, 1, 1, 0, 0, 1.6292068e-07, 0.98175, 1, 0.70710677, 0, 0, 0.70710677, 1.309, 1, 1.509958e-07, 0, 0, 1)
-tracks/1/type = "rotation_3d"
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0.0, 0.32725, 0.6545, 0.98175, 1.309), "transitions": PackedFloat32Array(1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(-1.570796, 0.000000, 0.000000), Vector3(-3.141593, 0.000000, 0.000000), Vector3(-4.712389, 0.000000, 0.000000), Vector3(-6.283185, 0.000000, 0.000000)]}
+tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/WheelRight")
+tracks/1/path = NodePath("Rig/Action/WheelRight:rotation")
 tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.32725, 1, -0.70710665, 0, 0, 0.7071069, 0.6545, 1, 1, 0, 0, 1.6292068e-07, 0.98175, 1, 0.70710677, 0, 0, 0.70710677, 1.309, 1, 1.509958e-07, 0, 0, 1)
+tracks/1/loop_wrap = true
+tracks/1/keys = {"times": PackedFloat32Array(0.0, 0.32725, 0.6545, 0.98175, 1.309), "transitions": PackedFloat32Array(1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.000000, 0.000000, 0.000000), Vector3(-1.570796, 0.000000, 0.000000), Vector3(-3.141593, 0.000000, 0.000000), Vector3(-4.712389, 0.000000, 0.000000), Vector3(-6.283185, 0.000000, 0.000000)]}
+
+[sub_resource type="Animation" id="Animation_recoil_0"]
+resource_name = "recoil_0"
+length = 1.7
+loop_mode = 0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/Barrel0:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.05, 0.16, 0.4, 1.0, 1.7), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(-0.500000, 1.000000, -0.100000), Vector3(-0.500000, 0.991602, 0.139853), Vector3(-0.500000, 0.993351, 0.089884), Vector3(-0.500000, 0.995801, 0.019927), Vector3(-0.500000, 0.998600, -0.060024), Vector3(-0.500000, 1.000000, -0.100000)]}
+
+[sub_resource type="AnimationLibrary" id="barrel_0"]
+_data = {&"recoil": SubResource("Animation_recoil_0")}
+
+[sub_resource type="Animation" id="Animation_recoil_1"]
+resource_name = "recoil_1"
+length = 1.7
+loop_mode = 0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/Barrel1:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.05, 0.16, 0.4, 1.0, 1.7), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.000000, 1.000000, -0.100000), Vector3(0.000000, 0.991602, 0.139853), Vector3(0.000000, 0.993351, 0.089884), Vector3(0.000000, 0.995801, 0.019927), Vector3(0.000000, 0.998600, -0.060024), Vector3(0.000000, 1.000000, -0.100000)]}
+
+[sub_resource type="AnimationLibrary" id="barrel_1"]
+_data = {&"recoil": SubResource("Animation_recoil_1")}
+
+[sub_resource type="Animation" id="Animation_recoil_2"]
+resource_name = "recoil_2"
+length = 1.7
+loop_mode = 0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/Barrel2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.05, 0.16, 0.4, 1.0, 1.7), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.500000, 1.000000, -0.100000), Vector3(0.500000, 0.991602, 0.139853), Vector3(0.500000, 0.993351, 0.089884), Vector3(0.500000, 0.995801, 0.019927), Vector3(0.500000, 0.998600, -0.060024), Vector3(0.500000, 1.000000, -0.100000)]}
+
+[sub_resource type="AnimationLibrary" id="barrel_2"]
+_data = {&"recoil": SubResource("Animation_recoil_2")}
+
+[sub_resource type="Animation" id="Animation_strike"]
+resource_name = "strike"
+length = 2.4
+loop_mode = 0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Action/Barrel0:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.25, 0.3, 0.41, 0.65, 1.25, 1.95, 2.4), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(-0.500000, 1.000000, -0.100000), Vector3(-0.500000, 1.000000, -0.100000), Vector3(-0.500000, 0.991602, 0.139853), Vector3(-0.500000, 0.993351, 0.089884), Vector3(-0.500000, 0.995801, 0.019927), Vector3(-0.500000, 0.998600, -0.060024), Vector3(-0.500000, 1.000000, -0.100000), Vector3(-0.500000, 1.000000, -0.100000)]}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Action/Barrel1:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {"times": PackedFloat32Array(0, 0.25, 0.3, 0.41, 0.65, 1.25, 1.95, 2.4), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.000000, 1.000000, -0.100000), Vector3(0.000000, 1.000000, -0.100000), Vector3(0.000000, 0.991602, 0.139853), Vector3(0.000000, 0.993351, 0.089884), Vector3(0.000000, 0.995801, 0.019927), Vector3(0.000000, 0.998600, -0.060024), Vector3(0.000000, 1.000000, -0.100000), Vector3(0.000000, 1.000000, -0.100000)]}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/Action/Barrel2:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {"times": PackedFloat32Array(0, 0.25, 0.3, 0.41, 0.65, 1.25, 1.95, 2.4), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [Vector3(0.500000, 1.000000, -0.100000), Vector3(0.500000, 1.000000, -0.100000), Vector3(0.500000, 0.991602, 0.139853), Vector3(0.500000, 0.993351, 0.089884), Vector3(0.500000, 0.995801, 0.019927), Vector3(0.500000, 0.998600, -0.060024), Vector3(0.500000, 1.000000, -0.100000), Vector3(0.500000, 1.000000, -0.100000)]}
 
 [sub_resource type="AnimationLibrary" id="locomotion"]
-_data = {
-&"idle": SubResource("Animation_hu6q4"),
-&"walk": SubResource("Animation_eukkv")
-}
-
-[sub_resource type="Animation" id="Animation_4s3sg"]
-resource_name = "volley_7"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 0.991602, 0.139853, 0.41, 1, -0.5, 0.993351, 0.089884, 0.65, 1, -0.5, 0.995801, 0.019927, 1.25, 1, -0.5, 0.9986, -0.060024, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 0.991602, 0.139853, 0.51, 1, 0, 0.993351, 0.089884, 0.75, 1, 0, 0.995801, 0.019927, 1.25, 1, 0, 0.9986, -0.060024, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 0.991602, 0.139853, 0.61, 1, 0.5, 0.993351, 0.089884, 0.85, 1, 0.5, 0.995801, 0.019927, 1.25, 1, 0.5, 0.9986, -0.060024, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_o32ub"]
-resource_name = "volley_0"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 1, -0.1, 0.41, 1, -0.5, 1, -0.1, 0.65, 1, -0.5, 1, -0.1, 1.25, 1, -0.5, 1, -0.1, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 1, -0.1, 0.51, 1, 0, 1, -0.1, 0.75, 1, 0, 1, -0.1, 1.25, 1, 0, 1, -0.1, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 1, -0.1, 0.61, 1, 0.5, 1, -0.1, 0.85, 1, 0.5, 1, -0.1, 1.25, 1, 0.5, 1, -0.1, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_tvg41"]
-resource_name = "volley_1"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 0.991602, 0.139853, 0.41, 1, -0.5, 0.993351, 0.089884, 0.65, 1, -0.5, 0.995801, 0.019927, 1.25, 1, -0.5, 0.9986, -0.060024, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 1, -0.1, 0.51, 1, 0, 1, -0.1, 0.75, 1, 0, 1, -0.1, 1.25, 1, 0, 1, -0.1, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 1, -0.1, 0.61, 1, 0.5, 1, -0.1, 0.85, 1, 0.5, 1, -0.1, 1.25, 1, 0.5, 1, -0.1, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_2jnbl"]
-resource_name = "volley_2"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 1, -0.1, 0.41, 1, -0.5, 1, -0.1, 0.65, 1, -0.5, 1, -0.1, 1.25, 1, -0.5, 1, -0.1, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 0.991602, 0.139853, 0.51, 1, 0, 0.993351, 0.089884, 0.75, 1, 0, 0.995801, 0.019927, 1.25, 1, 0, 0.9986, -0.060024, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 1, -0.1, 0.61, 1, 0.5, 1, -0.1, 0.85, 1, 0.5, 1, -0.1, 1.25, 1, 0.5, 1, -0.1, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_kxask"]
-resource_name = "volley_3"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 0.991602, 0.139853, 0.41, 1, -0.5, 0.993351, 0.089884, 0.65, 1, -0.5, 0.995801, 0.019927, 1.25, 1, -0.5, 0.9986, -0.060024, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 0.991602, 0.139853, 0.51, 1, 0, 0.993351, 0.089884, 0.75, 1, 0, 0.995801, 0.019927, 1.25, 1, 0, 0.9986, -0.060024, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 1, -0.1, 0.61, 1, 0.5, 1, -0.1, 0.85, 1, 0.5, 1, -0.1, 1.25, 1, 0.5, 1, -0.1, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_4l7o8"]
-resource_name = "volley_4"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 1, -0.1, 0.41, 1, -0.5, 1, -0.1, 0.65, 1, -0.5, 1, -0.1, 1.25, 1, -0.5, 1, -0.1, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 1, -0.1, 0.51, 1, 0, 1, -0.1, 0.75, 1, 0, 1, -0.1, 1.25, 1, 0, 1, -0.1, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 0.991602, 0.139853, 0.61, 1, 0.5, 0.993351, 0.089884, 0.85, 1, 0.5, 0.995801, 0.019927, 1.25, 1, 0.5, 0.9986, -0.060024, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_il2jw"]
-resource_name = "volley_5"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 0.991602, 0.139853, 0.41, 1, -0.5, 0.993351, 0.089884, 0.65, 1, -0.5, 0.995801, 0.019927, 1.25, 1, -0.5, 0.9986, -0.060024, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 1, -0.1, 0.51, 1, 0, 1, -0.1, 0.75, 1, 0, 1, -0.1, 1.25, 1, 0, 1, -0.1, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 0.991602, 0.139853, 0.61, 1, 0.5, 0.993351, 0.089884, 0.85, 1, 0.5, 0.995801, 0.019927, 1.25, 1, 0.5, 0.9986, -0.060024, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_hdsy2"]
-resource_name = "volley_6"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 1, -0.1, 0.41, 1, -0.5, 1, -0.1, 0.65, 1, -0.5, 1, -0.1, 1.25, 1, -0.5, 1, -0.1, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 0.991602, 0.139853, 0.51, 1, 0, 0.993351, 0.089884, 0.75, 1, 0, 0.995801, 0.019927, 1.25, 1, 0, 0.9986, -0.060024, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 0.991602, 0.139853, 0.61, 1, 0.5, 0.993351, 0.089884, 0.85, 1, 0.5, 0.995801, 0.019927, 1.25, 1, 0.5, 0.9986, -0.060024, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
-
-[sub_resource type="Animation" id="Animation_jyu5l"]
-resource_name = "volley_7"
-length = 2.4
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Rig/Action/Barrel0")
-tracks/0/interp = 1
-tracks/0/loop_wrap = false
-tracks/0/keys = PackedFloat32Array(0, 1, -0.5, 1, -0.1, 0.25, 1, -0.5, 1, -0.1, 0.3, 1, -0.5, 0.991602, 0.139853, 0.41, 1, -0.5, 0.993351, 0.089884, 0.65, 1, -0.5, 0.995801, 0.019927, 1.25, 1, -0.5, 0.9986, -0.060024, 1.95, 1, -0.5, 1, -0.1, 2.4, 1, -0.5, 1, -0.1)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Rig/Action/Barrel1")
-tracks/1/interp = 1
-tracks/1/loop_wrap = false
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 1, -0.1, 0.35, 1, 0, 1, -0.1, 0.4, 1, 0, 0.991602, 0.139853, 0.51, 1, 0, 0.993351, 0.089884, 0.75, 1, 0, 0.995801, 0.019927, 1.25, 1, 0, 0.9986, -0.060024, 1.95, 1, 0, 1, -0.1, 2.4, 1, 0, 1, -0.1)
-tracks/2/type = "position_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Rig/Action/Barrel2")
-tracks/2/interp = 1
-tracks/2/loop_wrap = false
-tracks/2/keys = PackedFloat32Array(0, 1, 0.5, 1, -0.1, 0.45, 1, 0.5, 1, -0.1, 0.5, 1, 0.5, 0.991602, 0.139853, 0.61, 1, 0.5, 0.993351, 0.089884, 0.85, 1, 0.5, 0.995801, 0.019927, 1.25, 1, 0.5, 0.9986, -0.060024, 1.95, 1, 0.5, 1, -0.1, 2.4, 1, 0.5, 1, -0.1)
+_data = {&"idle": SubResource("Animation_idle"), &"walk": SubResource("Animation_walk")}
 
 [sub_resource type="AnimationLibrary" id="attack"]
-_data = {
-&"strike": SubResource("Animation_4s3sg"),
-&"volley_0": SubResource("Animation_o32ub"),
-&"volley_1": SubResource("Animation_tvg41"),
-&"volley_2": SubResource("Animation_2jnbl"),
-&"volley_3": SubResource("Animation_kxask"),
-&"volley_4": SubResource("Animation_4l7o8"),
-&"volley_5": SubResource("Animation_il2jw"),
-&"volley_6": SubResource("Animation_hdsy2"),
-&"volley_7": SubResource("Animation_jyu5l")
-}
+_data = {&"strike": SubResource("Animation_strike")}
 
-[node name="TripleCannon" type="Node3D" unique_id=925895556]
+[node name="TripleCannon" type="Node3D"]
 script = ExtResource("script")
 kind = "triple_cannon"
 projectile_socket = NodePath("Rig/Action/Barrel0/ProjectileSocket")
 extra_projectile_sockets = Array[NodePath]([NodePath("Rig/Action/Barrel1/ProjectileSocket"), NodePath("Rig/Action/Barrel2/ProjectileSocket")])
 
-[node name="Rig" type="Node3D" parent="." unique_id=1365221330]
+[node name="Rig" type="Node3D" parent="."]
 
-[node name="Action" type="Node3D" parent="Rig" unique_id=1775671326]
+[node name="Action" type="Node3D" parent="Rig"]
 
-[node name="Body" type="MeshInstance3D" parent="Rig/Action" unique_id=815941641]
+[node name="Body" type="MeshInstance3D" parent="Rig/Action"]
+position = Vector3(0.000000, 0.000000, 0.000000)
 mesh = ExtResource("Body")
 
-[node name="WheelLeft" type="MeshInstance3D" parent="Rig/Action" unique_id=77768861]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93, 0.5, 0.17)
+[node name="WheelLeft" type="MeshInstance3D" parent="Rig/Action"]
+position = Vector3(-0.930000, 0.500000, 0.170000)
 mesh = ExtResource("WheelLeft")
 
-[node name="WheelRight" type="MeshInstance3D" parent="Rig/Action" unique_id=140684024]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.93, 0.5, 0.17)
+[node name="WheelRight" type="MeshInstance3D" parent="Rig/Action"]
+position = Vector3(0.930000, 0.500000, 0.170000)
 mesh = ExtResource("WheelRight")
 
-[node name="Barrel0" type="MeshInstance3D" parent="Rig/Action" unique_id=1292157505]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, -0.1)
+[node name="Barrel0" type="MeshInstance3D" parent="Rig/Action"]
+position = Vector3(-0.500000, 1.000000, -0.100000)
 mesh = ExtResource("Barrel0")
 
-[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel0" unique_id=1919527796]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.033243, -0.949418)
-
-[node name="Barrel1" type="MeshInstance3D" parent="Rig/Action" unique_id=1329973520]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.1)
+[node name="Barrel1" type="MeshInstance3D" parent="Rig/Action"]
+position = Vector3(0.000000, 1.000000, -0.100000)
 mesh = ExtResource("Barrel1")
 
-[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel1" unique_id=1591609305]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.033243, -0.949418)
-
-[node name="Barrel2" type="MeshInstance3D" parent="Rig/Action" unique_id=213295075]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -0.1)
+[node name="Barrel2" type="MeshInstance3D" parent="Rig/Action"]
+position = Vector3(0.500000, 1.000000, -0.100000)
 mesh = ExtResource("Barrel2")
 
-[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel2" unique_id=793919413]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.033243, -0.949418)
+[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel0"]
+position = Vector3(0.000000, 0.033243, -0.949418)
 
-[node name="Locomotion" type="AnimationPlayer" parent="." unique_id=192785615]
+[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel1"]
+position = Vector3(0.000000, 0.033243, -0.949418)
+
+[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Barrel2"]
+position = Vector3(0.000000, 0.033243, -0.949418)
+
+[node name="Barrel0Attack" type="AnimationPlayer" parent="."]
+callback_mode_process = 2
+libraries = {&"": SubResource("barrel_0")}
+
+[node name="Barrel1Attack" type="AnimationPlayer" parent="."]
+callback_mode_process = 2
+libraries = {&"": SubResource("barrel_1")}
+
+[node name="Barrel2Attack" type="AnimationPlayer" parent="."]
+callback_mode_process = 2
+libraries = {&"": SubResource("barrel_2")}
+
+[node name="Locomotion" type="AnimationPlayer" parent="."]
 callback_mode_process = 0
-libraries/ = SubResource("locomotion")
-autoplay = &"idle"
+libraries = {&"": SubResource("locomotion")}
+autoplay = "idle"
 
-[node name="Attack" type="AnimationPlayer" parent="." unique_id=353247513]
+[node name="Attack" type="AnimationPlayer" parent="."]
 callback_mode_process = 0
-libraries/ = SubResource("attack")
+libraries = {&"": SubResource("attack")}
 
-[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="." unique_id=797669577]
-aabb = AABB(-1.3, -0.2, -1.5, 2.6, 1.8, 3.2)
+[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]
+aabb = AABB(-1.3,-0.2,-1.5,2.6,1.8,3.2)
 
 [connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]
+
 [connection signal="screen_exited" from="VisibilityNotifier" to="." method="_on_screen_exited"]

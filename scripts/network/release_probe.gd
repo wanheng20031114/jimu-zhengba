@@ -204,7 +204,7 @@ func validate_resource_values() -> void:
 		and triple.melee_armor==0 and triple.ranged_armor==2 and not triple.melee_defense_upgrades
 		and triple.speed==2.4 and triple.radius==.95 and triple.sight==12 and triple.supply==3
 		and triple.range==7 and triple.min_range==1 and triple.cooldown==2.4 and triple.attack_windup_seconds==.25
-		and triple.volley_targets==3 and triple.volley_interval==.1 and triple.volley_arc_degrees==90
+		and triple.independent_weapons==3 and triple.weapon_arc_degrees==90
 		and triple.projectile=="cannon" and triple.combat_class==&"siege" and not triple.cannon_range_upgrades
 		and triple.splash_radius==0 and triple.military and triple.training_seconds==22,
 		"packaged_triple_cannon_approved_values")

@@ -158,7 +158,7 @@ var _claimed_mine: bool = false
 @onready var attack_windup: Timer = $AttackWindup
 @onready var work_bar: MeshInstance3D = $WorkBar
 @onready var support: UnitSupport = $Support
-@onready var volley: UnitVolley = $Volley
+@onready var battery: UnitBattery = $Battery
 
 func _ready() -> void:
 	if owner_id < 0:
@@ -236,7 +236,7 @@ func _ready() -> void:
 	reset_physics_interpolation()
 	_game.register_entity(self)
 	_path_budget.register(self)
-	volley.configure(self)
+	battery.configure(self)
 	support.configure(self)
 
 func _physics_process(delta: float) -> void:
@@ -266,13 +266,13 @@ func _physics_process(delta: float) -> void:
 	var checked_target: Variant = target
 	var target_valid: bool = _valid_target(checked_target)
 	# Resolve a death immediately, before a completed chase path can consume the order.
-	if not target_valid and not volley.active and (order == Order.ATTACK or target != null):
+	if not target_valid and not battery.winding and (order == Order.ATTACK or target != null):
 		target = null
 		if order == Order.ATTACK:
 			_complete_waypoint()
 		elif order == Order.ATTACK_MOVE:
 			_set_navigation_target(destination)
-	if _scan_time <= 0.0 and not volley.active:
+	if _scan_time <= 0.0 and not battery.winding:
 		_scan_time = randf_range(0.3, 0.4)
 		_refresh_target()
 		if target == _congestion_target and _congestion_seconds >= CONGESTION_SECONDS:
@@ -293,8 +293,8 @@ func _physics_process(delta: float) -> void:
 	var path_velocity_requested: bool = false
 	if passage.remaining > 0.0 and target_valid and _can_start_strike(target):
 		passage.cancel()
-	if volley.active:
-		facing_direction = volley.facing
+	if battery.enabled and battery.engage(target):
+		facing_direction = battery.facing
 	elif passage.remaining > 0.0:
 		desired_velocity = passage.velocity(self, delta)
 	elif support.is_supporter and support.select_job():
@@ -751,15 +751,16 @@ func _melee_target_score(entity: Node3D, distance_squared: float) -> float:
 	return pow(sqrt(distance_squared) + queue_distance, 2.0)
 
 func _start_attack() -> void:
+	if battery.enabled:
+		battery.engage(target)
+		return
 	_strike_target = target
 	_attack_cooldown = float(_stats.cooldown) + minf(0.0, _attack_cooldown)
 	if unit_type == "knight" and _charge_time >= 0.95 and _charge_cooldown <= 0.0:
 		_charge_cooldown = 6.0
 		_game.spawn_effect(global_position + Vector3.UP * 0.2, "charge", Color("edd9a1"))
 	_charge_time = 0.0
-	if volley.enabled:
-		volley.begin(target)
-	_model.strike(0 if volley.enabled else 7)
+	_model.strike()
 	if unit_type in ["swordsman", "shield_guard", "spearman", "knight"]:
 		sound_requested.emit(&"sword_swing", global_position + Vector3.UP)
 	attack_windup.start(_windup_seconds())
@@ -769,13 +770,13 @@ func _windup_seconds() -> float:
 
 func _cancel_attack() -> void:
 	attack_windup.stop()
-	volley.cancel()
+	battery.cancel()
 	_strike_target = null
 	# Cancellation consumes the existing cycle. Orders cannot skip recovery.
 
 func _on_attack_windup_timeout() -> void:
-	if volley.enabled:
-		volley.release_next()
+	if battery.enabled:
+		battery.release_due()
 		return
 	var strike_target: Variant = _strike_target
 	_strike_target = null
@@ -1033,7 +1034,7 @@ func _begin_attack(entity: Node3D) -> void:
 	_reset_congestion()
 	_movement_plan = null
 	_path_budget.release_shared_plan(self)
-	var same_attack: bool = target == entity and (attack_windup.is_stopped() or _strike_target == entity)
+	var same_attack: bool = target == entity and (battery.enabled or attack_windup.is_stopped() or _strike_target == entity)
 	_interrupt_work()
 	support.auto_allowed = true
 	order = Order.ATTACK

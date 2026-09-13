@@ -168,20 +168,12 @@ func set_working(active: bool, mode: String = "gather") -> void:
 		_locomotion_advanced = _suspended_seconds()
 		_attack_advanced = _locomotion_advanced
 
-func strike(mask: int = 7) -> void:
+func strike() -> void:
 	if _working:
 		set_working(false)
 	synchronize_animation()
 	attack.stop()
-	attack.play("strike" if extra_projectile_sockets.is_empty() else "volley_%d" % mask)
-	if _animations_suspended:
-		_attack_advanced = _suspended_seconds()
-
-func set_volley_mask(mask: int) -> void:
-	synchronize_animation()
-	var phase: float = attack.current_animation_position
-	attack.play("volley_%d" % mask, 0.0)
-	attack.seek(phase, true, true)
+	attack.play("strike")
 	if _animations_suspended:
 		_attack_advanced = _suspended_seconds()
 

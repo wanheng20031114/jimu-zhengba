@@ -54,14 +54,14 @@ func scenario(count: int,seconds: float) -> void:
 		last_scan=now
 		for unit: BattleUnit in original:
 			if not is_instance_valid(unit) or not unit.alive: continue
-			if unit._attack_cooldown>0 or is_instance_valid(unit.support.recipient): observed[unit.unit_type]=true
+			if unit._attack_cooldown>0 or unit.battery.shots_fired>0 or is_instance_valid(unit.support.recipient): observed[unit.unit_type]=true
 		await RenderingServer.frame_post_draw
 	samples.sort()
 	var pool: BattleProjectilePool = game.get_node("ProjectilePool")
 	var survivors: Array[Node] = get_nodes_in_group("units")
 	check(damage_events>10,"real incoming damage continues "+str(count))
 	check(survivors.all(func(u: BattleUnit):return u.position.is_finite() and u.hp>0 and u.hp<=u.max_hp),"finite positions and health "+str(count))
-	check(observed.has("engineer") and observed.has("priest") and observed.has("triple_cannon"),"support and triple volley work in mixed battle "+str(count))
+	check(observed.has("engineer") and observed.has("priest") and observed.has("triple_cannon"),"support and independent guns work in mixed battle "+str(count))
 	results[str(count)]={"median_ms":samples[samples.size()/2],"p95_ms":samples[int(samples.size()*.95)],"frames":samples.size(),"damage_events":damage_events,"active_types":observed.keys(),"survivors":survivors.size(),"projectiles":pool.launch_count,"peak_flights":pool.peak_active,"peak_visuals":pool.peak_visuals}
 	print("COMBINATION_MEASURE ",count," ",JSON.stringify(results[str(count)]))
 	if count==500:
