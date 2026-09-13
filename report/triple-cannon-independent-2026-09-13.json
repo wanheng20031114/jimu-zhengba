@@ -174,7 +174,7 @@
     }
   },
   "performance_notes": [
-    "Before: pre-edit working tree based on 4f991ab, with existing user map/editor changes preserved.",
+    "Before: pre-edit working tree based on 94da02d, with existing user map/editor changes preserved.",
     "Fixed 500 stationary entities, 125 cannons. 1.5 second warmup and 6 second measurement for each scenario.",
     "Sparse-target shot count increases because same-target concentration is now allowed; not equal workloads.",
     "Godot TIME_PHYSICS_PROCESS is a once-per-second maximum, not an individual frame sample.",
