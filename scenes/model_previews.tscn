@@ -404,12 +404,12 @@ light_color = Color(0.64, 0.76, 1, 1)
 light_energy = 0.48
 
 [node name="LookAt" type="Marker3D" parent="heavy_cannon/World"]
-position = Vector3(0, 0.95, -0.7)
+position = Vector3(0, 0.95, -0.45)
 
 [node name="Camera3D" type="Camera3D" parent="heavy_cannon/World"]
 position = Vector3(4.5, 3.4, -6.3)
 projection = 1
-size = 5.9
+size = 5.0
 near = 0.1
 far = 60.0
 current = true

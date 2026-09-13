@@ -39,18 +39,19 @@ func _run() -> void:
 		await capture("angle-%03d"%angle,codex.get_node("CodexViewport"))
 	codex._anchor.rotation.y = 0
 	var camera_transform: Transform3D = codex._camera.transform
+	var camera_size: float = codex._camera.size
 	codex._camera.position = Vector3(2.8,2.6,-6.5)
-	codex._camera.look_at(Vector3(0,1.55,-2.85),Vector3.UP)
+	codex._camera.look_at(model.get_projectile_origin(),Vector3.UP)
 	codex._camera.size = 2.5
 	codex._request_preview_redraw()
 	await capture("muzzle",codex.get_node("CodexViewport"))
 	codex._camera.position = Vector3(1,7,-1.5)
 	codex._camera.look_at(Vector3(0,.8,0),Vector3.UP)
-	codex._camera.size = 7.2
+	codex._camera.size = camera_size
 	codex._request_preview_redraw()
 	await capture("top",codex.get_node("CodexViewport"))
 	codex._camera.transform = camera_transform
-	codex._camera.size = 7.2
+	codex._camera.size = camera_size
 	for action: int in [1,2]:
 		codex._select_preview_action(action)
 		codex.set_process(false)
@@ -96,7 +97,9 @@ func _run() -> void:
 	await capture("comparison",root)
 	game.clear_units()
 	await process_frame
-	for owner: int in 3: game.spawn_unit("heavy_cannon",owner,Vector3((owner-1)*3.2,0,0))
+	for owner: int in 3:
+		game.spawn_unit("heavy_cannon",owner,Vector3((owner-1)*3.2,0,1.6))
+		game.spawn_unit("cannon",owner,Vector3((owner-1)*3.2,0,-2.0))
 	game.camera_rig.camera.size = 12
 	await capture("teams",root)
 	game.camera_rig.camera.size = 30

@@ -3,7 +3,8 @@ import math
 from build_units import Sculpture, OUT, lathe, ring, polygon, anim_resource, vec
 
 WHEEL_RADIUS = .60
-MUZZLE = (0, 3.45 * math.sin(.065), -3.45 * math.cos(.065))
+BARREL_FRONT = 2.65
+MUZZLE = (0, BARREL_FRONT * math.sin(.065), -BARREL_FRONT * math.cos(.065))
 
 
 def heavy_wheel(s, part):
@@ -56,13 +57,14 @@ def build_heavy_cannon():
     s.add(body,ring(.17,.025,(0,.86,.87),(math.pi/2,0,0),n=12),'steel')
     barrel = s.joint('Barrel',(0,.05,0),elevation)
     axis = (-math.pi/2+.065,0,0)
-    profile=[(-1.00,.28),(-.87,.41),(-.38,.417),(.35,.354),(2.91,.324),(3.17,.413),(3.37,.413),(3.45,.372),(3.45,.262)]
+    # Shorten the exposed tube while retaining the breech, bore and muzzle widths.
+    profile=[(-1.00,.28),(-.87,.41),(-.38,.417),(.35,.354),(BARREL_FRONT-.54,.324),(BARREL_FRONT-.28,.413),(BARREL_FRONT-.08,.413),(BARREL_FRONT,.372),(BARREL_FRONT,.262)]
     s.add(barrel,lathe(profile,18,rot=axis,caps=False),'darksteel')
-    s.add(barrel,lathe([(3.45,.262),(2.65,.262)],18,rot=axis,caps=False),'black')
-    s.add(barrel,lathe([(2.64,.261),(2.65,.261)],18,rot=axis),'black')
-    for y,r in [(-.70,.424),(-.18,.402),(1.19,.35),(3.28,.423)]:
-        s.add(barrel,lathe([(y-.05,r),(y+.05,r)],18,rot=axis,caps=False),'steel')
-    s.add(barrel,lathe([(3.425,.395),(3.45,.372),(3.45,.262),(3.425,.262)],18,rot=axis,caps=False),'edge')
+    s.add(barrel,lathe([(BARREL_FRONT,.262),(BARREL_FRONT-.80,.262)],18,rot=axis,caps=False),'black')
+    s.add(barrel,lathe([(BARREL_FRONT-.81,.261),(BARREL_FRONT-.80,.261)],18,rot=axis),'black')
+    for y,r,color in [(-.70,.424,'steel'),(-.18,.402,'steel'),(.90,.35,'blue'),(BARREL_FRONT-.17,.423,'steel')]:
+        s.add(barrel,lathe([(y-.05,r),(y+.05,r)],18,rot=axis,caps=False),color)
+    s.add(barrel,lathe([(BARREL_FRONT-.025,.395),(BARREL_FRONT,.372),(BARREL_FRONT,.262),(BARREL_FRONT-.025,.262)],18,rot=axis,caps=False),'edge')
     s.e(barrel,(.29,.29,.10),(0,-.055,1.00),'darksteel')
     s.e(barrel,(.105,.105,.13),(0,-.063,1.13),'bronzelight')
     s.b(barrel,(.11,.065,.13),(0,.393,.47),'bronzelight',bevel=.015)
@@ -126,7 +128,7 @@ def write_heavy_cannon_scene(s):
     lines += [f'[node name="ProjectileSocket" type="Marker3D" parent="Rig/Action/Elevation/Barrel"]\nposition = {vec(MUZZLE)}',
               '[node name="Locomotion" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("locomotion")}\nautoplay = "idle"',
               '[node name="Attack" type="AnimationPlayer" parent="."]\ncallback_mode_process = 0\nlibraries = {&"": SubResource("attack")}',
-              '[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]\naabb = AABB(-1.6,-0.3,-4.1,3.2,2.7,6.4)',
+              '[node name="VisibilityNotifier" type="VisibleOnScreenNotifier3D" parent="."]\naabb = AABB(-1.6,-0.3,-3.3,3.2,2.7,5.6)',
               '[connection signal="screen_entered" from="VisibilityNotifier" to="." method="_on_screen_entered"]',
               '[connection signal="screen_exited" from="VisibilityNotifier" to="." method="_on_screen_exited"]']
     (OUT/'heavy_cannon.tscn').write_text('\n\n'.join(lines)+'\n',encoding='utf-8')

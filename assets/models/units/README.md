@@ -2,7 +2,7 @@
 
 单位模型由 `tools/build_units.py` 离线雕塑并导出，运行时只实例化保存的 Godot 原生场景，不拼接零碎几何。所有模型面向 -Z，Y=0 为地面。没有使用外部付费模型或素材。
 
-重型火炮v1（2026-09-13，等待验收）：`heavy_cannon.tscn` 为可编辑原生场景，`heavy_cannon/` 保存7个刚性部件的GLB、RES和清单，`batched/heavy_cannon.tscn` 用于战场；共7,324三角面，预算7,500。四轮木钢底盘配独立俯仰支架和加粗长钢炮管，炮口具有真实内腔，侧板与后甲板保留阵营色。按用户追加确认，炮管主体长4.45模型单位、明显伸出底盘；外伸部分无独立碰撞，车体占位半径维持1.15。轮子按0.60半径、1.8速度匹配整圈时长，0.45秒释放后后坐、缓慢复位，完整射击周期4.2秒。实际炮口由炮管下的 `ProjectileSocket` 提供。作者文件为 `tools/unit_heavy_cannon.py`；仅导出时执行 `python tools/build_units.py heavy_cannon`，烘焙和批量转换也只传 `heavy_cannon`。军工厂、战争图鉴→重型火炮→开炮和沙盒均已接入；不创建静态头像。详细记录见 `report/heavy-cannon-2026-09-13.md`。
+重型火炮v2（2026-09-13，等待验收）：`heavy_cannon.tscn` 为可编辑原生场景，`heavy_cannon/` 保存7个刚性部件的GLB、RES和清单，`batched/heavy_cannon.tscn` 用于战场；共7,324三角面，预算7,500。四轮木钢底盘配独立俯仰支架和加粗长钢炮管，炮口具有真实内腔，侧板与后甲板保留阵营色。按用户追加确认，v2将炮管主体从4.45缩至3.65模型单位，保留原有粗细、炮尾和支架，外伸长度减少约三分之一；外伸部分无独立碰撞，车体占位半径维持1.15。重型火炮与普通加农炮的中段细环均使用阵营色，其他金属箍保持本色。轮子按0.60半径、1.8速度匹配整圈时长，0.45秒释放后后坐、缓慢复位，完整射击周期4.2秒。实际炮口由炮管下的 `ProjectileSocket` 提供。作者文件为 `tools/unit_heavy_cannon.py`；仅导出时执行 `python tools/build_units.py heavy_cannon`，烘焙和批量转换也只传 `heavy_cannon`。军工厂、战争图鉴→重型火炮→开炮和沙盒均已接入；不创建静态头像。详细记录见 `report/heavy-cannon-2026-09-13.md`。
 
 牧师v1（2026-09-13，已验收）：`priest.tscn` 为可编辑场景，`priest/` 保存10个分件的GLB、原生RES和部件清单，`batched/priest.tscn` 用于战场。共3,612三角面（预算4,500）。敞口亚麻兜帽、象牙色长袍、阵营色披带与帽沿、金色胸饰、腰带和书袋构成牧师轮廓；双手不持武器。两段式袖子在肘部衔接，前后袍摆分别随短步行走。保存待机、行走、0.25秒挥拳命中以及1秒治疗循环；首次治疗动作0.6秒达到释放姿态。两手的原生 `GPUParticles3D` 跟随前臂关节，目标光点与光晕使用 `scenes/healing_target_particles.tscn`；粒子不参与恢复生命。离线作者代码在 `tools/unit_priest.py`，通过 `python tools/build_units.py priest` 定向导出，后续烘焙和批量转换也只传 `priest`。数值与能力在 `data/units/priest.tres`，实际治疗由单位的 `Support` 子节点负责。展示入口：战争图鉴→牧师→治疗（含受伤剑士）；学院训练与沙盒均已接入。
 

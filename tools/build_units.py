@@ -953,9 +953,9 @@ def cannon():
     s.add(barrel,lathe([(1.25,.16),(.97,.16)],16,rot=(-math.pi/2-.08,0,0),caps=False),"black")
     # Deep black chamber seals bore well behind the lip: muzzle reads as hollow.
     s.add(barrel,lathe([(.96,.158),(.97,.158)],16,rot=(-math.pi/2-.08,0,0)),"black")
-    # Multiple polished reinforcement bands and muzzle crown.
-    for yy,rr in ((-.59,.285),(-.19,.286),(.44,.238),(1.085,.281)):
-        s.add(barrel,lathe([(yy-.034,rr),(yy+.034,rr)],16,rot=(-math.pi/2-.08,0,0),caps=False),"bronzelight")
+    # The mid-barrel band carries team paint; the other rings retain bronze.
+    for yy,rr,color in ((-.59,.285,"bronzelight"),(-.19,.286,"bronzelight"),(.44,.238,"blue"),(1.085,.281,"bronzelight")):
+        s.add(barrel,lathe([(yy-.034,rr),(yy+.034,rr)],16,rot=(-math.pi/2-.08,0,0),caps=False),color)
     s.e(barrel,(.24,.24,.16),(0,-.047,.78),"bronze")
     s.e(barrel,(.095,.095,.13),(0,-.07,.95),"bronzelight")
     s.r(barrel,(-.59,0,0),(.59,0,0),.10,"darksteel",12)

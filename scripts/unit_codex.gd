@@ -21,7 +21,7 @@ const MODEL_PATHS: Dictionary = {
 const TECH_MODELS: Dictionary = {&"attack": "swordsman", &"defense": "knight", &"workforce": "farmer", &"army_capacity": "barracks", &"mining": "farmer", &"cannon_range": "cannon", &"recovery": "farmer"}
 const UNIT_FRAMING: Dictionary = {
 	"swordsman": Vector2(1.0, 3.2), "shield_guard": Vector2(1.05, 3.4), "spearman": Vector2(1.35, 4.1), "archer": Vector2(1.0, 3.3), "knight": Vector2(1.35, 4.5), "light_cavalry": Vector2(1.3, 4.2), "war_elephant": Vector2(1.85, 6.4),
-	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "heavy_cannon": Vector2(.95, 7.2), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
+	"catapult": Vector2(1.25, 5.4), "cannon": Vector2(0.8, 4.4), "heavy_cannon": Vector2(.95, 6.0), "farmer": Vector2(1.0, 3.2), "engineer": Vector2(1.0, 3.2), "priest": Vector2(1.0, 3.2),
 }
 enum PreviewAction { IDLE, WALK, ATTACK, GATHER }
 var category: int = 0
