@@ -1,5 +1,22 @@
 extends Control
 
+# A circle's geometry is identical for every soldier and every map refresh.
+# Share its native GPU mesh instead of tessellating/uploading each draw_circle.
+# Keep the same 64-sided, two-pixel disc and the original entity draw order.
+static var _unit_dot_mesh: ArrayMesh = _create_unit_dot_mesh()
+
+static func _create_unit_dot_mesh() -> ArrayMesh:
+	var points := PackedVector2Array()
+	for index: int in 64:
+		points.append(Vector2.from_angle(index * TAU / 64.0) * 2.0)
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = points
+	arrays[Mesh.ARRAY_INDEX] = Geometry2D.triangulate_polygon(points)
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
 signal map_clicked(world: Vector3, command: bool)
 var game: Node3D
 var _elapsed: float = 0
@@ -78,7 +95,7 @@ func _draw() -> void:
 			if is_building:
 				draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), tint)
 			else:
-				draw_circle(at, 2, tint)
+				draw_mesh(_unit_dot_mesh, null, Transform2D(0.0, at), tint)
 			if selected:
 				draw_arc(at, 4.5, 0, TAU, 12, Color("fff1bc"), 1)
 	var view := get_viewport().get_visible_rect().size

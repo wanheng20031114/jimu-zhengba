@@ -68,6 +68,12 @@ func _case(mode: String) -> void:
 	var victim: Node3D = game.spawn_unit("knight", 1, Vector3(0, 0, 1))
 	victim.set_physics_process(false)
 	victim.navigation_agent.avoidance_enabled = false
+	# This fixture just replaced both vision sources. Publish their real fog
+	# before issuing a visible-target command; otherwise its 0.7 s observation
+	# includes a random discovery delay, or the command is rejected outright.
+	game.get_node("FogOfWar").tick(FogOfWar.UPDATE_SECONDS)
+	game.get_node("FogOfWar").apply_visibility(game.local_owner_id)
+	test._check(game.can_see_entity(0, victim), "real bow " + mode + " fixture target is visible before the command")
 	var attack: AnimationPlayer = fighter._attack_animation
 	var hand: Node3D = fighter._model.find_child("ForearmRight")
 	var string: Node3D = fighter._model.find_child("StringUpper")
