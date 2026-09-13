@@ -33,6 +33,7 @@ const RECOVERY_DELAY: float = 10.0
 # rather than the former 1.4-meter extension. Faster targets can still escape.
 const MELEE_CONTACT_TOLERANCE: float = 0.2
 const CONGESTION_SECONDS: float = 0.6
+const BODY_RADIUS_SCALE: float = 0.85
 
 @export_enum("swordsman", "shield_guard", "spearman", "archer", "knight", "war_elephant", "light_cavalry", "catapult", "cannon", "heavy_cannon", "engineer", "priest", "farmer") var unit_type: String = "swordsman"
 @export var model_scene_override: PackedScene
@@ -73,7 +74,23 @@ var attack_damage: float = 20.0
 var min_attack_range: float = 0.0
 var order_name: String = "待命"
 var order: Order = Order.IDLE
-var target: Node3D
+var target: Node3D:
+	set(value):
+		if target == value:
+			return
+		_release_melee_claim()
+		target = value
+		_sync_melee_claim()
+var melee_pressure := MeleePressure.new()
+var passage := FriendlyPassage.new()
+var _melee_fighter: bool = false
+var _claimed_pressure: MeleePressure
+var _claim_sector: int = 0
+var _claim_arc: float = 0.0
+var _claim_alliance: int = 0
+var _next_rebalance_frame: int = 0
+var melee_rebalances: int = 0
+var _approach_queued: bool = false
 var destination: Vector3
 var waypoint_queue: Array[Dictionary] = []
 var _movement_plan: MovementPlan
@@ -106,12 +123,14 @@ var _charge_time: float = 0.0
 var _charge_cooldown: float = 0.0
 var _moving: bool = false
 var _avoidance_moving: bool = false
+var _avoidance_speed_limit: float = 0.0
 var _moving_neighbor_limit: int = 10
 var _observed_velocity := Vector3.ZERO
 var _congestion_seconds: float = 0.0
 var _congestion_wait: float = 0.0
 var _congestion_target: Node3D
 var _congestion_probe: bool = false
+var _blocked_intent := Vector3.ZERO
 var _preferred_speed_squared: float = 0.0
 var _preferred_velocity := Vector3.ZERO
 var _move_retaliation: Node3D
@@ -121,7 +140,8 @@ var _target_query: PhysicsShapeQueryParameters3D
 var _target_shape := BoxShape3D.new()
 var _target_extent: float = -1.0
 var _largest_unit_radius: float = 0.0
-var _largest_entity_radius: float = 0.0
+var _unit_query_padding: float = 0.001
+var _sight_query_padding: float = 0.001
 var _space_state: PhysicsDirectSpaceState3D
 var _foley_distance: float = 0.0
 var _working: bool = false
@@ -142,6 +162,7 @@ func _ready() -> void:
 	if owner_id < 0:
 		owner_id = alliance_id
 	_stats = BalanceCatalog.unit(unit_type)
+	_melee_fighter = _stats.military and _stats.projectile.is_empty()
 	display_name = _stats.name
 	max_hp = _stats.hp
 	hp = max_hp
@@ -154,9 +175,13 @@ func _ready() -> void:
 	collision_layer = 4 | CombatLayers.UNIT_LAYERS[alliance_id]
 	for definition: UnitDefinition in BalanceCatalog.UNITS.values():
 		_largest_unit_radius = maxf(_largest_unit_radius, definition.radius)
-	_largest_entity_radius = _largest_unit_radius
+		_unit_query_padding = maxf(_unit_query_padding, definition.radius * (1.0 - BODY_RADIUS_SCALE) + 0.001)
+	_sight_query_padding = _unit_query_padding
 	for definition: BuildingDefinition in BalanceCatalog.BUILDINGS.values():
-		_largest_entity_radius = maxf(_largest_entity_radius, definition.radius)
+		# intersect_shape already includes the target's physical footprint.
+		# A building contains a disk of this radius at every planar rotation.
+		var inscribed_radius: float = minf(definition.size.x, definition.size.z) * 0.5
+		_sight_query_padding = maxf(_sight_query_padding, definition.radius - inscribed_radius + 0.001)
 	_target_query = PhysicsShapeQueryParameters3D.new()
 	_target_query.shape = _target_shape
 	_target_query.collision_mask = CombatLayers.hostile_entities(alliance_id)
@@ -193,7 +218,7 @@ func _ready() -> void:
 	if prune_stationary_avoidance:
 		navigation_agent.max_neighbors = 0
 	var capsule: CapsuleShape3D = $CollisionShape3D.shape
-	capsule.radius = radius * 0.85
+	capsule.radius = radius * BODY_RADIUS_SCALE
 	capsule.height = maxf(radius * 1.7, _stats.collision_height)
 	_motion_clearance = capsule.radius + capsule.margin + safe_margin
 	$CollisionShape3D.position.y = capsule.height * 0.5
@@ -247,16 +272,27 @@ func _physics_process(delta: float) -> void:
 	if _scan_time <= 0.0:
 		_scan_time = randf_range(0.3, 0.4)
 		_refresh_target()
+		if target == _congestion_target and _congestion_seconds >= CONGESTION_SECONDS:
+			_path_budget.combat_approaches.enqueue(self)
 	if target != checked_target:
 		checked_target = target
 		target_valid = _valid_target(checked_target)
 	if target != _congestion_target:
-		_reset_congestion()
+		if target_valid and _congestion_seconds >= CONGESTION_SECONDS:
+			# A new automatic target gets one immediate movement probe. Only
+			# actual forward progress wakes sustained RVO work in a blocked rank.
+			_congestion_wait = 0.0
+		else:
+			_reset_congestion()
 		_congestion_target = target
 	var desired_velocity := Vector3.ZERO
 	var facing_direction := Vector3.ZERO
 	var path_velocity_requested: bool = false
-	if support.is_supporter and support.select_job():
+	if passage.remaining > 0.0 and target_valid and _can_start_strike(target):
+		passage.cancel()
+	if passage.remaining > 0.0:
+		desired_velocity = passage.velocity(self, delta)
+	elif support.is_supporter and support.select_job():
 		desired_velocity = support.velocity_for_job(delta)
 	elif order == Order.GATHER or order == Order.BUILD:
 		desired_velocity = _work_velocity(delta)
@@ -401,12 +437,16 @@ func _path_velocity() -> Vector3:
 	return direction.limit_length(speed * delta) / delta
 
 func _set_avoidance_moving(moving: bool) -> void:
-	if _avoidance_moving == moving:
+	var maximum_speed: float = (minf(speed, FriendlyPassage.STEP_SPEED) if passage.remaining > 0.0 else speed) if moving else 0.0
+	if _avoidance_moving == moving and _avoidance_speed_limit == maximum_speed:
 		return
 	_avoidance_moving = moving
+	_avoidance_speed_limit = maximum_speed
 	# RVO must route moving troops around units that have planted to attack,
 	# hold or work. A zero desired velocity alone still permits lateral shoves.
-	navigation_agent.max_speed = speed if moving else 0.0
+	# Bound the RVO solution itself during a sidestep; clipping its returned
+	# velocity afterwards could violate the collision-avoidance constraints.
+	navigation_agent.max_speed = maximum_speed
 	navigation_agent.avoidance_priority = 0.5 if moving else 1.0
 	if prune_stationary_avoidance:
 		# A zero-speed agent cannot choose a different velocity. Keep it in the
@@ -424,6 +464,7 @@ func _apply_velocity(safe_velocity: Vector3) -> void:
 		# with less than 20% forward progress for 0.6 s briefly yields. Every new
 		# order clears this wait, including an explicit attack on the same target.
 		if velocity.dot(_preferred_velocity) < _preferred_speed_squared * 0.2:
+			_blocked_intent = _preferred_velocity
 			_congestion_seconds += get_physics_process_delta_time()
 			if _congestion_seconds + 0.000001 >= CONGESTION_SECONDS:
 				_congestion_seconds = CONGESTION_SECONDS
@@ -540,6 +581,7 @@ func _can_start_strike(entity: Node3D) -> bool:
 	return release_distance <= reach and release_distance >= minimum
 
 func _refresh_target() -> void:
+	_sync_melee_claim()
 	var keep_current_target: bool = false
 	# Workers finish economic orders even under fire. An explicit attack still
 	# lets the player use a pickaxe for self-defence.
@@ -577,19 +619,49 @@ func _refresh_target() -> void:
 			_set_navigation_target(destination)
 		target = null
 	var previous_target: Variant = target
-	var nearby: Node3D = _find_auto_target(order == Order.HOLD or keep_current_target or support.enabled())
+	var nearby: Node3D = _find_auto_target(order == Order.HOLD or keep_current_target or support.enabled(), _melee_fighter)
 	if nearby != null:
 		target = nearby
 	if target != null and target != previous_target:
 		_repath_time = 0.0
 
-func _find_auto_target(contact_only: bool) -> Node3D:
+func _resolve_combat_congestion() -> void:
+	# Queued work revalidates the current order; death, player commands and
+	# contact can all happen while waiting for the shared budget.
+	if not alive or not _game.is_authority or _congestion_seconds < CONGESTION_SECONDS or passage.remaining > 0.0 or order not in [Order.IDLE, Order.ATTACK_MOVE, Order.ATTACK] or not attack_windup.is_stopped() or not _valid_target(target) or _within_attack_range(target):
+		return
+	var frame: int = Engine.get_physics_frames()
+	if frame < _next_rebalance_frame:
+		return
+	_next_rebalance_frame = frame + ceili((1.0 + (entity_id % 4) * 0.1) * Engine.physics_ticks_per_second)
+	if _melee_fighter and order != Order.ATTACK:
+		_sync_melee_claim()
+		# Congestion is a local problem. A rear rank without an enemy nearby
+		# keeps its existing route instead of scanning the whole enemy army.
+		var search_radius: float = minf(8.0, minf(float(_stats.sight), global_position.distance_to(target.global_position) + 3.0))
+		melee_rebalances += 1
+		var nearby: Node3D = _find_auto_target(false, true, search_radius)
+		if nearby != null and nearby != target:
+			# Preserve an approach unless the new score is materially better.
+			var current_score: float = _melee_target_score(target, global_position.distance_squared_to(target.global_position))
+			var next_score: float = _melee_target_score(nearby, global_position.distance_squared_to(nearby.global_position))
+			if _within_attack_range(nearby) or next_score < current_score * 0.75:
+				target = nearby
+				_repath_time = 0.0
+				return
+	passage.request(self)
+
+func _find_auto_target(contact_only: bool, coordinate_melee: bool = false, search_radius: float = -1.0) -> Node3D:
 	# The broad phase follows the decision being made. Rear ranks with a valid
 	# chase target only need a replacement already in weapon reach, not all the
 	# enemies in their sight. Keep native collision-space indexing and the exact
 	# range/visibility checks; do not reduce the scan rate or truncate candidates.
 	var reach: float = attack_range + radius
-	var extent: float = reach + _largest_unit_radius if contact_only else float(_stats.sight) + _largest_entity_radius
+	var sight_radius: float = float(_stats.sight) if search_radius < 0.0 else search_radius
+	# The native query intersects volumes, not centers. Add only the gap
+	# between combat radius and physical radius; adding the entire enemy
+	# radius counts its body twice and returns much of the rear enemy army.
+	var extent: float = reach + _unit_query_padding if contact_only else sight_radius + _sight_query_padding
 	if extent != _target_extent:
 		_target_extent = extent
 		# Combat is planar. The box covers the bases of every authored ground
@@ -599,6 +671,7 @@ func _find_auto_target(contact_only: bool) -> Node3D:
 	_target_query.transform.origin = origin + Vector3.UP
 	var best_distance: float = INF
 	var best: Node3D
+	var best_in_contact: bool = false
 	# intersect_shape does not promise nearest-first results. A fixed 64-result
 	# cap can hide the nearest eligible enemy in a dense battle. Each combat
 	# entity owns one body shape, so the native group count bounds all results
@@ -607,25 +680,70 @@ func _find_auto_target(contact_only: bool) -> Node3D:
 		var entity: Node3D = hit.collider
 		var building: bool = entity is BattleBuilding
 		var distance: float = origin.distance_squared_to(entity.global_position)
+		if not contact_only:
+			var sight: float = sight_radius + entity.radius
+			if distance > sight * sight:
+				continue
 		var priority_distance: float = distance * (1.3 if building else 1.0)
-		if priority_distance > best_distance:
+		var in_contact: bool = coordinate_melee and not contact_only and (distance <= (reach + entity.radius) * (reach + entity.radius) if not building else _within_attack_range(entity))
+		if best_in_contact and not in_contact:
+			continue
+		# Geometric distance is a lower bound: occupancy can only add cost.
+		# Reject it before angle/footprint scoring, just as the contact query
+		# rejects distant bodies before visibility and exact shape checks.
+		if in_contact == best_in_contact and priority_distance > best_distance:
+			continue
+		if coordinate_melee and not contact_only and not in_contact:
+			priority_distance = _melee_target_score(entity, distance)
+		if in_contact == best_in_contact and priority_distance > best_distance:
 			continue
 		if contact_only:
 			if not _within_attack_range(entity):
-				continue
-		else:
-			var sight: float = float(_stats.sight) + entity.radius
-			if distance > sight * sight:
 				continue
 		# Reject distance and weapon dead zones before fog queries. Usually only
 		# a handful of closer candidates need authoritative visibility checks.
 		if not _valid_target(entity):
 			continue
-		if priority_distance == best_distance and best != null and entity.entity_id >= best.entity_id:
+		if in_contact == best_in_contact and priority_distance == best_distance and best != null and entity.entity_id >= best.entity_id:
 			continue
 		best_distance = priority_distance
 		best = entity
+		best_in_contact = in_contact
 	return best
+
+func _release_melee_claim() -> void:
+	if _claimed_pressure == null:
+		return
+	_claimed_pressure.add(_claim_alliance, _claim_sector, -_claim_arc)
+	_claimed_pressure = null
+
+func _sync_melee_claim() -> void:
+	if not _melee_fighter or not alive or not is_instance_valid(target) or not target is BattleUnit or _game == null or not _game.is_authority:
+		_release_melee_claim()
+		return
+	var victim: BattleUnit = target
+	if not victim.alive or victim.alliance_id == alliance_id:
+		_release_melee_claim()
+		return
+	var approach: int = MeleePressure.sector(global_position - victim.global_position)
+	if _claimed_pressure == victim.melee_pressure and _claim_sector == approach and _claim_alliance == alliance_id:
+		return
+	_release_melee_claim()
+	_claimed_pressure = victim.melee_pressure
+	_claim_alliance = alliance_id
+	_claim_sector = approach
+	_claim_arc = MeleePressure.footprint(radius, radius + victim.radius + attack_range * 0.6)
+	_claimed_pressure.add(_claim_alliance, _claim_sector, _claim_arc)
+
+func _melee_target_score(entity: Node3D, distance_squared: float) -> float:
+	if not entity is BattleUnit:
+		return distance_squared * 1.3
+	var victim: BattleUnit = entity
+	var contact: float = radius + victim.radius + attack_range * 0.6
+	var approach: int = MeleePressure.sector(global_position - victim.global_position)
+	var incoming: float = 0.0 if _claimed_pressure == victim.melee_pressure else MeleePressure.footprint(radius, contact)
+	var queue_distance: float = victim.melee_pressure.excess(alliance_id, approach, incoming) * contact
+	return pow(sqrt(distance_squared) + queue_distance, 2.0)
 
 func _start_attack() -> void:
 	_strike_target = target
@@ -827,6 +945,7 @@ func _set_working(value: bool) -> void:
 		work_bar.set_instance_shader_parameter("bar_color", Color("e9bf5c") if order == Order.GATHER else Color("72c6d8"))
 
 func _interrupt_work() -> void:
+	passage.cancel()
 	support.cancel()
 	if _claimed_mine and is_instance_valid(work_target):
 		work_target.release(self)
@@ -840,6 +959,7 @@ func _interrupt_work() -> void:
 	_work_seconds = 0.0
 
 func _exit_tree() -> void:
+	_release_melee_claim()
 	# During full scene shutdown the sibling scheduler may already be gone.
 	if is_instance_valid(_path_budget):
 		_path_budget.unregister(self)
@@ -927,6 +1047,7 @@ func _reset_congestion() -> void:
 	_congestion_seconds = 0.0
 	_congestion_wait = 0.0
 	_congestion_probe = false
+	_blocked_intent = Vector3.ZERO
 
 func hold(queued: bool = false) -> void:
 	if not alive:
@@ -1088,6 +1209,7 @@ func _update_health_bar() -> void:
 	health_bar.set_instance_shader_parameter("health", hp / max_hp)
 
 func _die() -> void:
+	target = null
 	support.shutdown()
 	_movement_plan = null
 	_interrupt_work()

@@ -51,6 +51,7 @@ var _walkability: ConstructionNavigation
 var shared_samples_this_tick: int = 0
 var total_shared_samples: int = 0
 var shared_paths := SharedPathService.new()
+var combat_approaches := CombatApproachBudget.new()
 var map_iteration_native_reads: int = 0
 var map_iteration_cache_hits: int = 0
 var _map_iteration_tick: int = -1
@@ -198,6 +199,7 @@ func _physics_process(_delta: float) -> void:
 	query_usec_this_tick = 0
 	shared_samples_this_tick = 0
 	if not get_parent().is_authority: return
+	combat_approaches.tick()
 	if _walkability != null:
 		shared_paths.poll(_walkability.topology_revision())
 		if not _walkability.paths_ready(): return

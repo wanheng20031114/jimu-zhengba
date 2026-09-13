@@ -27,36 +27,58 @@ def digest(path: Path) -> str:
         return hashlib.file_digest(source, "sha256").hexdigest()
 
 
-def build(output: Path, editor: Path, template: Path) -> None:
+def build(output: Path, editor: Path, template: Path, base: Path | None = None, overrides: list[str] | None = None) -> None:
     output = output.resolve()
     if output.exists():
         raise ValueError("Choose a new output directory to preserve earlier benchmark evidence")
     output.mkdir(parents=True)
     project = output / "source"
     project.mkdir()
-    paths = subprocess.check_output(
-        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"], cwd=ROOT
-    ).decode("utf-8").split("\0")
-    selected = sorted(set(HARNESS) | {
+    overrides = overrides or []
+    base_receipt = None
+    if base is not None:
+        base = base.resolve()
+        base_receipt = json.loads((base / "receipt.json").read_text(encoding="utf-8"))
+        if digest(base / "bin/battle-600.pck") != base_receipt["pck_sha256"]:
+            raise ValueError("Base PCK no longer matches its receipt")
+        for relative, expected in base_receipt["source_sha256"].items():
+            if relative == "project.godot":
+                expected = base_receipt["benchmark_project_sha256"]
+            if digest(base / "source" / relative) != expected:
+                raise ValueError(f"Frozen base source changed: {relative}")
+        paths = list(base_receipt["source_sha256"]) + overrides
+    else:
+        if overrides:
+            raise ValueError("--override requires --base")
+        paths = subprocess.check_output(
+            ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"], cwd=ROOT
+        ).decode("utf-8").split("\0")
+    selected = sorted(set(HARNESS) | set(overrides) | {
         path for path in paths
         if path.startswith(("assets/", "scripts/", "scenes/", "data/", "shaders/", "resources/"))
         or path in ("project.godot", "default_bus_layout.tres")
     })
     hashes = {}
     for relative in selected:
-        original = ROOT / relative
+        if Path(relative).is_absolute() or ".." in Path(relative).parts:
+            raise ValueError("Overrides must be repository-relative paths")
+        original = ROOT / relative if base is None or relative in overrides else base / "source" / relative
         if not original.is_file():
+            if relative in overrides:
+                raise ValueError(f"Missing explicit override: {relative}")
             continue
         target = project / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(original, target)
         hashes[relative] = digest(target)
     # Imported resources are copied, never hard-linked to editor-owned caches.
-    shutil.copytree(ROOT / ".godot/imported", project / ".godot/imported")
+    import_source = ROOT if base is None else base / "source"
+    shutil.copytree(import_source / ".godot/imported", project / ".godot/imported")
     config = (project / "project.godot").read_text(encoding="utf-8-sig")
     # Official release templates still require a main scene during startup.
     # The custom SceneTree replaces that scene before benchmark preparation.
-    config = config.replace("[application]", '[application]\nrun/main_loop_type="Battle600Performance"', 1)
+    if 'run/main_loop_type="Battle600Performance"' not in config:
+        config = config.replace("[application]", '[application]\nrun/main_loop_type="Battle600Performance"', 1)
     (project / "project.godot").write_text(config, encoding="utf-8")
     presets = f'''[preset.0]
 name="Battle 600"
@@ -110,6 +132,9 @@ texture_format/s3tc_bptc=true
         "benchmark_project_sha256": digest(project / "project.godot"),
         "build_steps": steps,
     }
+    if base_receipt is not None:
+        receipt["base_pck_sha256"] = base_receipt["pck_sha256"]
+        receipt["overrides"] = overrides
     (output / "receipt.json").write_text(json.dumps(receipt, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Frozen release benchmark: {bundle / 'battle-600.exe'}", flush=True)
 
@@ -117,7 +142,9 @@ texture_format/s3tc_bptc=true
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--base", type=Path, help="Preserve all content from a frozen build except explicit overrides")
+    parser.add_argument("--override", action="append", default=[], help="Repository-relative source to replace in --base (repeatable)")
     parser.add_argument("--editor", type=Path, default=Path("C:/Program Files/Godot/Godot.exe"))
     parser.add_argument("--template", type=Path, default=Path(os.environ["APPDATA"]) / "Godot/export_templates/4.6.3.stable/windows_release_x86_64.exe")
     args = parser.parse_args()
-    build(args.output, args.editor, args.template)
+    build(args.output, args.editor, args.template, args.base, args.override)

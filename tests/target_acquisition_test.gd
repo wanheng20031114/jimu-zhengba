@@ -10,6 +10,10 @@ class SelectiveFog extends FogOfWar:
 	func building_visible_to_alliance(_alliance: int, building: BattleBuilding) -> bool:
 		return building.global_position.z >= 0.0
 
+class BoundaryFog extends FogOfWar:
+	func position_visible_to_alliance(_alliance: int, _at: Vector3) -> bool: return true
+	func building_visible_to_alliance(_alliance: int, _building: BattleBuilding) -> bool: return true
+
 func _initialize() -> void: _run.call_deferred()
 
 func check(ok: bool, label: String) -> void:
@@ -47,7 +51,7 @@ func reference(unit: BattleUnit, contact: bool) -> Node3D:
 	return best
 
 func _run() -> void:
-	create_timer(90.0, true, false, true).timeout.connect(func(): quit(3))
+	create_timer(240.0, true, false, true).timeout.connect(func(): quit(3))
 	change_scene_to_file("res://scenes/sandbox.tscn")
 	await scene_changed
 	game = current_scene
@@ -129,9 +133,47 @@ func _run() -> void:
 	soldier._refresh_target()
 	check(soldier.target == building, "HOLD uses a large building's edge, not center distance")
 	game.clear_units()
+	for structure: Node in game.get_node("Buildings").get_children(): structure.queue_free()
+	await sync_space()
+	await tight_query_boundaries()
 	await game.prepare_shutdown()
 	game.queue_free()
 	await process_frame
 	await process_frame
 	print("TARGET_ACQUISITION %d checks; %d failures" % [checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)
+
+func tight_query_boundaries() -> void:
+	# Broad-phase coverage must follow physical volumes, including rotated
+	# walls and corners. Isolate visibility so sight-edge bodies stay eligible.
+	var attacker := spawn("knight", Vector3.ZERO, 0)
+	var original_fog: FogOfWar = attacker._fog
+	var boundary_fog := BoundaryFog.new()
+	attacker._fog = boundary_fog
+	for buildings: bool in [false, true]:
+		var catalog: Dictionary = BalanceCatalog.BUILDINGS if buildings else BalanceCatalog.UNITS
+		for kind: String in catalog:
+			var victim: Node3D = game.spawn_building(kind, 1, Vector3.ZERO) if buildings else spawn(kind, Vector3.ZERO)
+			victim.set_physics_process(false)
+			for rotation_angle: float in ([0.0, PI * 0.17] if buildings else [0.0]):
+				victim.rotation.y = rotation_angle
+				for index: int in 16:
+					var angle: float = index * TAU / 16.0
+					var direction := Vector3(cos(angle), 0, sin(angle))
+					for contact: bool in [false, true]:
+						for margin: float in [-0.01, 0.01]:
+							var distance: float = attacker.attack_range + attacker.radius + (0.0 if buildings else victim.radius) if contact else attacker._stats.sight + victim.radius
+							var at: Vector3 = direction * (distance + margin)
+							if buildings and contact:
+								var half_size: Vector3 = victim._stats.size * 0.5
+								var corner := Vector3(signf(direction.x) * half_size.x, 0, signf(direction.z) * half_size.z)
+								at = victim.to_global(corner + at)
+							attacker.global_position = at
+							await sync_space()
+							check(attacker._find_auto_target(contact) == reference(attacker, contact), "tight volume query %s rotation %.2f angle %d contact %s margin %.2f" % [kind, rotation_angle, index, contact, margin])
+			victim.queue_free()
+			await sync_space()
+	attacker._fog = original_fog
+	boundary_fog.free()
+	game.clear_units()
+	await sync_space()
